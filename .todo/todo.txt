@@ -1,0 +1,11 @@
+2025-02-14 Log the amount of time the script took to run.
+2025-02-14 Instead of opening a save dialog, allow the user to click a button to download.
+2025-02-14 Add an option to download as CSV/TSV/JSON.
+2025-02-14 For TSV/CSV, detect newlines in critic/publisher summary and remove or change.
+2025-02-14 Add series information.
+2025-02-14 Add my review if it exists.
+2025-02-14 add option to download goodreads CSV importable file
+2025-02-14 add ASIN
+2025-02-14 change date format and/or use timestamp
+2025-02-14 fix progress bar, says 100% when not yet complete
+2025-02-14 fix TSV linebreaks
