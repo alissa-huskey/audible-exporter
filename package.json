@@ -1,0 +1,24 @@
+{
+  "name": "audible-exporter",
+  "version": "1.0.0",
+  "description": "Javascript to export a TSV or JSON file of your audible library.",
+  "main": "src/exporter.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alissa-huskey/audible-exporter.git"
+  },
+  "author": "Alissa Huskey",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alissa-huskey/audible-exporter/issues"
+  },
+  "homepage": "https://github.com/alissa-huskey/audible-exporter#readme",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  }
+}

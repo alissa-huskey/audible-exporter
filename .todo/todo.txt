@@ -9,3 +9,7 @@
 2025-02-14 change date format and/or use timestamp
 2025-02-14 fix progress bar, says 100% when not yet complete
 2025-02-14 fix TSV linebreaks
+2025-02-14 add stop button
+2025-02-14 Modify status message to say title instead of author.
+2025-02-14 get account name
+

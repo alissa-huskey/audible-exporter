@@ -14,7 +14,7 @@ Prerequisites
 Usage
 -----
 
-1. Copy the code from [](downloadAudibleLibrary.js).
+1. Copy the code from [](exporter.js).
 1. Open [audible.com](http://audible.com) and log into your account.
 1. Open your browser developer tools. (⌃⇧J on Windows/Linux, or ⌘⌥J on Mac) and
    navigate to the Console tab.
