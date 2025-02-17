@@ -46,6 +46,10 @@ describe("exporter", function() {
       .toBe('{\\\"a\\\":1,\\\"b\\\":\\\"B\\\"}');
   });
 
+  test(".entityDecode()", function() {
+    expect(exporter.entityDecode("Science Fiction &amp; Fantasy")).toBe("Science Fiction & Fantasy")
+  });
+
   test("attr() function", function() {
     expect(exporter.attr).toBeDefined();
   });
@@ -92,6 +96,7 @@ describe("exporter: DOM functions", function() {
     '<p id="text">xyz</p>'
 
   let doc = toDoc(markup);
+  document.body.innerHTML = markup;
   exporter = Exporter();
 
   test("cn() function", function() {
@@ -144,6 +149,48 @@ describe("exporter: DOM functions", function() {
 
     div = $("#downloading_percentage_txt");
     expect(div[0].innerText).toBe("Goodbye.");
+  });
+
+  test(".getGenre(): tags include Fiction or Nonfiction", function() {
+    let categories = [];
+    let tags = ["Science Fiction", "Fiction"];
+    genre = exporter.getGenre(categories, tags);
+
+    expect(genre).toBe("fiction");
+  });
+
+  test(".getGenre(): categories include partial ficition or nonfiction", function() {
+    genre = exporter.getGenre(["Science Fiction & Fantasy"], []);
+    expect(genre).toBe("fiction");
+  });
+
+  test(".getGenre(): tags include partial ficition or nonfiction", function() {
+    genre = exporter.getGenre([], ["Science Fiction"]);
+
+    expect(genre).toBe("fiction");
+  });
+
+  test(".getGenre(): look up by category", function() {
+    genre = exporter.getGenre(["Geography & Cultures"], []);
+    expect(genre).toBe("nonfiction");
+
+    genre = exporter.getGenre(["Children's Audiobooks"], ["Action & Adventure"]);
+    expect(genre).toBe("fiction");
+  });
+
+  test(".getSubgenre(): two categories", function() {
+    subgenre = exporter.getSubgenre(["Science Fiction & Fantasy", "Fantasy"], []);
+    expect(subgenre).toBe("Fantasy");
+  });
+
+  test(".getSubgenre(): first listed subgenre", function() {
+    subgenre = exporter.getSubgenre(["Mystery, Thriller & Suspense"], ["Suspense", "True Crime", "Thriller & Suspense"]);
+    expect(subgenre).toBe("True Crime");
+  });
+
+  test(".getSubgenre(): first tag", function() {
+    subgenre = exporter.getSubgenre(["Biographies & Memoirs"], ["Entertainment & Celebrities", "Inspiring"]);
+    expect(subgenre).toBe("Entertainment & Celebrities");
   });
 
   test("filterByInnerHTML()", function() {
@@ -221,38 +268,34 @@ describe("exporter: parsing functions", function() {
 
   test("parseBookDetails(): audible original", function() {
     let html = getFixtureFile("book-details-audible-original.html");
-    let doc = toDoc(html);
+    document.body.innerHTML = html;
 
-    let book = {
-      title: "Ghosts of Zenith",
-      main_category: "Science Fiction &amp; Fantasy",
-      sub_category: "Science Fiction",
-      categories: [
-        "Science Fiction",
-        "Fiction",
-        "Funny",
-        "Scary",
-        "Detective",
-        "Solar System",
-        "Science Fiction &amp; Fantasy",
-        "Science Fiction"
-      ],
-      duration_minutes: 145,
-      language: "English",
-      release_date: "2023 Jan 12",
-      release_timestamp: 1673506800000,
-      publisher: "Audible Originals",
-      category_type: 0,
-      publisher_summary: "<b>On a nightmare world a thousand light years from Earth, one honest cop won’t rest until he solves the mystery of why his colony was condemned there, in this Audible Original story from best-selling author Larry Correia. </b><p>On a planet where life is cheap, in a city built on corruption, very few things are considered holy. The Landing Site is one of them. The remains of the century-old habitat pod—which delivered the colonists to the only barely habitable place on the cruel world of Croatoan—has become a monument to the hardscrabble people who somehow survived the unsurvivable.</p><p>So when blood is shed on that sacred ground, it’s seen as an attack against the entire colony. With a fanatical terrorist group holding hostages inside the monument, DCI Lutero Cade and the Zenith PD have to end the crisis and put the bad guys down.</p><p>Only there’s far more to this case than meets the eye. The lander may have been carrying a hidden cargo. And a shadowy figure with his own drone army will do anything to make sure the mission’s secrets stay buried—no matter how many nosy detectives he has to kill to do it.</p><p><br></p>",
-      audible_oginal: true,
-      book: '2',
-      rating: 4.6,
-      num_ratings: 1719
-    };
+    let summary = "<b>On a nightmare world a thousand light years from Earth, one honest cop won’t rest until he solves the mystery of why his colony was condemned there, in this Audible Original story from best-selling author Larry Correia. </b><p>On a planet where life is cheap, in a city built on corruption, very few things are considered holy. The Landing Site is one of them. The remains of the century-old habitat pod—which delivered the colonists to the only barely habitable place on the cruel world of Croatoan—has become a monument to the hardscrabble people who somehow survived the unsurvivable.</p><p>So when blood is shed on that sacred ground, it’s seen as an attack against the entire colony. With a fanatical terrorist group holding hostages inside the monument, DCI Lutero Cade and the Zenith PD have to end the crisis and put the bad guys down.</p><p>Only there’s far more to this case than meets the eye. The lander may have been carrying a hidden cargo. And a shadowy figure with his own drone army will do anything to make sure the mission’s secrets stay buried—no matter how many nosy detectives he has to kill to do it.</p><p><br></p>";
+    let categories = [
+      "Funny",
+      "Scary",
+      "Detective",
+      "Solar System",
+    ];
 
-    let result = exporter.parseBookDetails(doc);
+    let book = exporter.parseBookDetails(document.documentElement);
+    // log("book", book);
 
-    expect(result).toEqual(book)
+    expect(book.title).toEqual("Ghosts of Zenith");
+    expect(book.duration_minutes).toEqual(145);
+    expect(book.language).toEqual("English");
+    expect(book.release_date).toEqual("2023 Jan 12");
+    expect(book.release_timestamp).toEqual(1673506800000);
+    expect(book.publisher).toEqual("Audible Originals");
+    expect(book.audible_oginal).toBe(true);
+    expect(book.rating).toBe(4.6);
+    expect(book.num_ratings).toBe(1719);
+    expect(book.book).toBe("2");
+    expect(book.publisher_summary).toBe(summary);
+    expect(book.category_type).toBe("fiction");
+    expect(book.main_category).toBe("Science Fiction & Fantasy");
+    expect(book.sub_category).toBe("Science Fiction");
+    expect(book.categories).toEqual(categories);
   });
 
 });

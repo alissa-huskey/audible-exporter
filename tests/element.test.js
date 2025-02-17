@@ -145,18 +145,18 @@ describe("Element", function() {
     expect(res.element.attributes["class"].value).toBe("selected")
   });
 
-  test(".qs()", function() {
+  test(".qsf()", function() {
     element = new Element(document.getElementById("wrapper"));
-    res = element.qs("li");
+    res = element.qsf("li");
 
     expect(res.constructor?.name).toBe("Element");
     expect(res.tagName).toBe("LI");
     expect(res.innerHTML).toBe("a");
   });
 
-  test(".qsa()", function() {
+  test(".qs()", function() {
     element = new Element(document.getElementById("wrapper"));
-    res = element.qsa("li");
+    res = element.qs("li");
 
     expect(res.constructor?.name).toBe("List");
     expect(res.length).toBe(3);

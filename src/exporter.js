@@ -115,13 +115,13 @@ Element = class {
   gtf(name) { return this.gt(name)[0] }
 
   qs(query) {
-    let res = this.element.querySelector(query);
-    return new Element(res);
-  }
-
-  qsa(query) {
     let res = this.element.querySelectorAll(query);
     return new List(res);
+  }
+
+  qsf(query) {
+    let res = this.element.querySelector(query);
+    return new Element(res);
   }
 
   set(attrs, value=null) {
@@ -150,245 +150,92 @@ List = class extends Array {
 }
 
 Exporter = function() {
-  const all_cats = [
-    { category: "Architecture", type: "nonfiction" },
-    { category: "Art", type: "nonfiction" },
-    { category: "Arts & Entertainment" },
-    { category: "Audio Performances & Dramatizations" },
-    { category: "Entertainment & Performing Arts", type: "nonfiction" },
-    { category: "Music", type: "nonfiction" },
-    { category: "Photography", type: "nonfiction" },
-    { category: "Adventurers, Explorers & Survival", type: "nonfiction" },
-    { category: "Art & Literature", type: "nonfiction" },
-    { category: "Biographies & Memoirs" },
-    { category: "Cultural, Ethnic & Regional", type: "nonfiction" },
-    { category: "Diaries & Correspondence", type: "nonfiction" },
-    { category: "Entertainment & Celebrities", type: "nonfiction" },
-    { category: "Historical", type: "nonfiction" },
-    { category: "LGBT", type: "nonfiction" },
-    { category: "Military & War", type: "nonfiction" },
-    { category: "People with Disabilities", type: "nonfiction" },
-    { category: "Politics & Activism", type: "nonfiction" },
-    { category: "Professionals & Academics", type: "nonfiction" },
-    { category: "Religious", type: "nonfiction" },
-    { category: "Sports", type: "nonfiction" },
-    { category: "True Crime", type: "nonfiction" },
-    { category: "Women", type: "nonfiction" },
-    { category: "Business & Careers" },
-    { category: "Business Development & Entrepreneurship", type: "nonfiction" },
-    { category: "Career Success", type: "nonfiction" },
-    { category: "Management & Leadership", type: "nonfiction" },
-    { category: "Marketing & Sales", type: "nonfiction" },
-    { category: "Women in Business", type: "nonfiction" },
-    { category: "Workplace & Organizational Behavior", type: "nonfiction" },
-    { category: "Action & Adventure", type: "fiction" },
-    { category: "Animals & Nature", type: "fiction" },
-    { category: "Art", type: "fiction" },
-    { category: "Biographies", type: "nonfiction" },
-    { category: "Children's Audiobooks" },
-    { category: "Education & Learning", type: "nonfiction" },
-    { category: "Fairy Tales, Folk Tales & Myths", type: "fiction" },
-    { category: "History", type: "nonfiction" },
-    { category: "Holidays & Celebrations", type: "nonfiction" },
-    { category: "Literature & Fiction", type: "fiction" },
-    { category: "Music & Performing Arts", type: "fiction" },
-    { category: "Mystery & Suspense", type: "fiction" },
-    { category: "Religions" },
-    { category: "Science & Technology", type: "nonfiction" },
-    { category: "Science Fiction & Fantasy", type: "fiction" },
-    { category: "Vehicles & Transportation" },
-    { category: "Computer Science", type: "nonfiction" },
-    { category: "Computers & Technology" },
-    { category: "Content Creation & Social Media", type: "nonfiction" },
-    { category: "History & Culture", type: "nonfiction" },
-    { category: "Security & Encryption", type: "nonfiction" },
-    { category: "Education & Learning" },
-    { category: "Language Learning", type: "nonfiction" },
-    { category: "Study Guides & Test Preparation", type: "nonfiction" },
-    { category: "Words, Language & Grammar", type: "nonfiction" },
-    { category: "Writing & Publishing", type: "nonfiction" },
-    { category: "Erotica" },
-    { category: "Literature & Fiction", type: "fiction" },
-    { category: "Sex Instruction", type: "fiction" },
-    { category: "Addiction & Recovery", type: "nonfiction" },
-    { category: "Aging & Longevity", type: "nonfiction" },
-    { category: "Alternative & Complementary Medicine", type: "nonfiction" },
-    { category: "Beauty, Grooming & Style", type: "nonfiction" },
-    { category: "Children's Health", type: "nonfiction" },
-    { category: "Dentistry & Oral Health", type: "nonfiction" },
-    { category: "Fitness, Diet & Nutrition", type: "nonfiction" },
-    { category: "Health & Wellness" },
-    { category: "Medicine & Health Care Industry", type: "nonfiction" },
-    { category: "Psychology & Mental Health", type: "nonfiction" },
-    { category: "Safety & Emergency Preparedness", type: "nonfiction" },
-    { category: "Sexual & Reproductive Health", type: "nonfiction" },
-    { category: "Africa", type: "nonfiction" },
-    { category: "Americas", type: "nonfiction" },
-    { category: "Ancient History", type: "nonfiction" },
-    { category: "Arctic & Antarctica", type: "nonfiction" },
-    { category: "Asia", type: "nonfiction" },
-    { category: "Australia, New Zealand & Oceania", type: "nonfiction" },
-    { category: "Europe", type: "nonfiction" },
-    { category: "History" },
-    { category: "Middle East", type: "nonfiction" },
-    { category: "Military", type: "nonfiction" },
-    { category: "Religious", type: "nonfiction" },
-    { category: "Russia", type: "nonfiction" },
-    { category: "Women", type: "nonfiction" },
-    { category: "World", type: "nonfiction" },
-    { category: "Food & Wine", type: "nonfiction" },
-    { category: "Gardening & Horticulture", type: "nonfiction" },
-    { category: "Home & Garden" },
-    { category: "House & Home", type: "nonfiction" },
-    { category: "Pets & Animal Care", type: "nonfiction" },
-    { category: "Sustainable & Green Living", type: "nonfiction" },
-    { category: "Biographies & Memoirs", type: "nonfiction" },
-    { category: "LGBT" },
-    { category: "LGBT Studies", type: "nonfiction" },
-    { category: "Literature & Fiction", type: "fiction" },
-    { category: "Mystery, Thriller & Suspense", type: "fiction" },
-    { category: "Romance", type: "fiction" },
-    { category: "Science Fiction & Fantasy", type: "fiction" },
-    { category: "Action & Adventure", type: "fiction" },
-    { category: "African American", type: "fiction" },
-    { category: "Ancient, Classical & Medieval Literature", type: "fiction" },
-    { category: "Anthologies & Short Stories", type: "fiction" },
-    { category: "Classics", type: "fiction" },
-    { category: "Drama & Plays", type: "fiction" },
-    { category: "Erotica", type: "fiction" },
-    { category: "Essays", type: "fiction" },
-    { category: "Genre Fiction", type: "fiction" },
-    { category: "Historical Fiction", type: "fiction" },
-    { category: "Horror", type: "fiction" },
-    { category: "Humor & Satire", type: "fiction" },
-    { category: "LGBT", type: "fiction" },
-    { category: "Literary History & Criticism", type: "fiction" },
-    { category: "Literature & Fiction" },
-    { category: "Memoirs, Diaries & Correspondence", type: "fiction" },
-    { category: "Poetry", type: "fiction" },
-    { category: "Women's Fiction", type: "fiction" },
-    { category: "World Literature", type: "fiction" },
-    { category: "Banks & Banking", type: "nonfiction" },
-    { category: "Corporate & Public Finance", type: "nonfiction" },
-    { category: "E-Commerce", type: "nonfiction" },
-    { category: "Economics", type: "nonfiction" },
-    { category: "Insurance", type: "nonfiction" },
-    { category: "International", type: "nonfiction" },
-    { category: "Investing & Trading", type: "nonfiction" },
-    { category: "Money & Finance" },
-    { category: "Personal Finance", type: "nonfiction" },
-    { category: "Real Estate", type: "nonfiction" },
-    { category: "Crime Fiction", type: "fiction" },
-    { category: "Mystery", type: "fiction" },
-    { category: "Mystery, Thriller & Suspense" },
-    { category: "Thriller & Suspense", type: "fiction" },
-    { category: "True Crime", type: "nonfiction" },
-    { category: "Anthropology", type: "nonfiction" },
-    { category: "Archaeology", type: "nonfiction" },
-    { category: "Law", type: "nonfiction" },
-    { category: "Philosophy", type: "nonfiction" },
-    { category: "Politics & Government", type: "nonfiction" },
-    { category: "Politics & Social Sciences" },
-    { category: "Social Sciences", type: "nonfiction" },
-    { category: "Parenting & Families", type: "nonfiction" },
-    { category: "Personal Development", type: "nonfiction" },
-    { category: "Relationships", type: "nonfiction" },
-    { category: "Relationships, Parenting & Personal Development" },
-    { category: "Agnosticism", type: "nonfiction" },
-    { category: "Atheism", type: "nonfiction" },
-    { category: "Buddhism", type: "nonfiction" },
-    { category: "Christianity", type: "nonfiction" },
-    { category: "Hinduism", type: "nonfiction" },
-    { category: "Islam", type: "nonfiction" },
-    { category: "Judaism", type: "nonfiction" },
-    { category: "Occult", type: "nonfiction" },
-    {
-      category: "Other Religions, Practices & Sacred Texts",
-      type: "nonfiction",
-    },
-    { category: "Religion & Spirituality" },
-    { category: "Religious Studies", type: "nonfiction" },
-    { category: "Spirituality", type: "nonfiction" },
-    { category: "Action & Adventure", type: "fiction" },
-    { category: "Anthologies & Short Stories", type: "fiction" },
-    { category: "Christian", type: "fiction" },
-    { category: "Clean & Wholesome", type: "fiction" },
-    { category: "Contemporary", type: "fiction" },
-    { category: "Fantasy", type: "fiction" },
-    { category: "Historical", type: "fiction" },
-    { category: "LGBT", type: "fiction" },
-    { category: "Military", type: "fiction" },
-    { category: "Multicultural", type: "fiction" },
-    { category: "Paranormal", type: "fiction" },
-    { category: "Romance" },
-    { category: "Romantic Comedy", type: "fiction" },
-    { category: "Romantic Suspense", type: "fiction" },
-    { category: "Royalty", type: "fiction" },
-    { category: "Science Fiction", type: "fiction" },
-    { category: "Sports", type: "fiction" },
-    { category: "Westerns", type: "fiction" },
-    { category: "Engineering", type: "nonfiction" },
-    { category: "Mathematics", type: "nonfiction" },
-    { category: "Science", type: "nonfiction" },
-    { category: "Science & Engineering" },
-    { category: "Fantasy", type: "nonfiction" },
-    { category: "Science Fiction", type: "nonfiction" },
-    { category: "Science Fiction & Fantasy", type: "nonfiction" },
-    { category: "Adventurers, Explorers & Survival", type: "nonfiction" },
-    { category: "Baseball & Softball", type: "nonfiction" },
-    { category: "Basketball", type: "nonfiction" },
-    { category: "Biographies & Memoirs", type: "nonfiction" },
-    { category: "Coaching", type: "nonfiction" },
-    { category: "Combat Sports & Self-Defense", type: "nonfiction" },
-    { category: "Cricket", type: "nonfiction" },
-    { category: "Cycling", type: "nonfiction" },
-    { category: "Equestrian Sports", type: "nonfiction" },
-    { category: "Extreme Sports", type: "nonfiction" },
-    { category: "Football", type: "nonfiction" },
-    { category: "Golf", type: "nonfiction" },
-    { category: "Hockey", type: "nonfiction" },
-    { category: "Motor Sports", type: "nonfiction" },
-    { category: "Olympics & Paralympics", type: "nonfiction" },
-    { category: "Outdoors & Nature", type: "nonfiction" },
-    { category: "Running & Jogging", type: "nonfiction" },
-    { category: "Soccer", type: "nonfiction" },
-    { category: "Sociology of Sports", type: "nonfiction" },
-    { category: "Sports & Outdoors" },
-    { category: "Sports History", type: "nonfiction" },
-    { category: "Sports Psychology", type: "nonfiction" },
-    { category: "Sports Writing", type: "nonfiction" },
-    { category: "Tennis", type: "nonfiction" },
-    { category: "Track & Field", type: "nonfiction" },
-    { category: "Triathlon", type: "nonfiction" },
-    { category: "Walking", type: "nonfiction" },
-    { category: "Water Sports", type: "nonfiction" },
-    { category: "Winter Sports", type: "nonfiction" },
-    { category: "Biographies", type: "nonfiction" },
-    { category: "Health, Lifestyle & Relationships", type: "nonfiction" },
-    { category: "History & Culture", type: "nonfiction" },
-    { category: "Literature & Fiction", type: "fiction" },
-    { category: "Mystery, Thriller & Suspense", type: "fiction" },
-    { category: "Politics, Society & Current Events", type: "nonfiction" },
-    { category: "Religion & Spirituality", type: "nonfiction" },
-    { category: "Romance", type: "fiction" },
-    { category: "Science & Technology", type: "nonfiction" },
-    { category: "Science Fiction & Fantasy", type: "fiction" },
-    { category: "Teen & Young Adult" },
-    { category: "Adventure Travel", type: "nonfiction" },
-    { category: "Africa", type: "nonfiction" },
-    { category: "Asia", type: "nonfiction" },
-    { category: "Australia & Oceania", type: "nonfiction" },
-    { category: "Caribbean", type: "nonfiction" },
-    { category: "Central & South America", type: "nonfiction" },
-    { category: "Europe", type: "nonfiction" },
-    { category: "Guided Tours", type: "nonfiction" },
-    { category: "Middle East", type: "nonfiction" },
-    { category: "North America", type: "nonfiction" },
-    { category: "Polar Regions", type: "nonfiction" },
-    { category: "Russia", type: "nonfiction" },
-    { category: "Travel & Tourism" },
-    { category: "Travel Writing & Commentary", type: "nonfiction" },
-  ];
+
+  const genres = ["Fiction", "Nonfiction"];
+
+  const subgenres = [
+    "Science Fiction",
+    "Fantasy",
+    "LitRPG",
+    "True Crime",
+    "Mystery",
+    "Horror",
+    "Epic Fantasy",
+    "Satire",
+    "Paranormal Romance",
+    "Contemporary Romance",
+    "Sex Instruction",
+    "Romantic Suspense",
+    "History & Criticism", // Arts & Entertainment
+    "Instruction & Technique", // Arts & Entertainment
+    "Historical Fiction",
+    "Literary Fiction",
+    "Personal Development",
+    "Classics",
+    "Fairy Tales",
+    "Crime Fiction",
+    "Fairy Tales, Folk Tales & Myths", // Children's Audiobooks
+    "Education & Learning", // Children's Audiobooks
+    "Essays", // biographies & Memoiirs
+    "Historical", // biographies & Memoiirs
+    "Young Adult",
+    "Thriller & Suspense",
+    "Adventure",
+    // "Adventurers, Explorers & Survival", // Biographies & Memoirs
+    // "Cultural & Regional", // biographies & Memoiirs
+    // "Business", // biographies & Memoiirs
+    // "Entertainment & Celebrities", // biographies & Memoiirs
+    // "Law", // biographies & Memoiirs
+    // "Politics & Government", // biographies & Memoiirs
+    // "Memoirs, Diaries & Correspondence", // biographies & Memoiirs, literature & fiction
+    // "Cyberpunk",  // science fiction & fantasy
+    // "Dystopian"
+    // "Post-Apocalyptic",
+    // "Alternate History",
+  ]
+
+  const category_genres = {
+    'Arts & Entertainment': "nonfiction",
+    'Biographies & Memoirs': "nonfiction",
+    'Business & Careers': "nonfiction",
+    'Children\'s Audiobooks': null,
+    'Action & Adventure': "fiction", // children's audiobooks
+    'Activities & Hobbies': "nonfiction", // children's audiobooks
+    'Animals & Nature': "nonfiction", // children's audiobooks
+    'Education & Learning': "nonfiction",
+    'Fairy Tales, Folk Tales & Myths': "fiction",
+    'Geography & Cultures': "nonfiction",
+    'Comedy & Humor': null,
+    'Performing Arts': "nonfiction", // comedy & humor
+    'Computers & Technology': "nonfiction",
+    'Education & Learning': "nonfiction",
+    'Erotica': null,
+    'Sex Instruction': "nonfiction", // erotica
+    'Health & Wellness': "nonfiction",
+    'History': "nonfiction",
+    'Home & Garden': "nonfiction",
+    'LGBTQ+': "null",
+    'LGBTQ+ Studies': "nonfiction",
+    'Parenting & Families': "nonfiction",
+    'Literature & Fiction': "fiction",
+    'Money & Finance': "nonfiction",
+    'Mystery, Thriller & Suspense': null,
+    'True Crime': "nonfiction", // mystery, thriller & suspense
+    'Mystery': "fiction", // mystery, thriller & suspense
+    'Thriller & Suspense': "fiction", // mystery, thriller & suspense
+    'Crime Fiction': "fiction", // mystery, thriller & suspense
+    'Politics & Social Sciences': "nonfiction",
+    'Politics, Society & Current Events': "nonfiction",
+    'Relationships, Parenting & Personal Development': "nonfiction",
+    'Religion & Spirituality': "nonfiction",
+    'Romance': "fiction",
+    'Science & Engineering': "nonfiction",
+    'Sports & Outdoors': "nonfiction",
+    'Teen & Young Adult': null,
+    'Health, Lifestyle & Relationships': "nonfiction", // teen & young adult
+    'History & Culture': "nonfiction", // teen & young adult
+    'Travel & Tourism': "nonfiction",
+  }
 
   var classes = {
     notifier: "downloading_notifier",
@@ -430,9 +277,44 @@ Exporter = function() {
       return q;
     },
 
-    getCatType: (subcat) => {
-      return all_cats.filter((r) => r.category === subcat).length &&
-      all_cats.filter((r) => r.category === subcat)[0].type;
+    getGenre: (categories, tags) => {
+      // check if the fiction tag is listed in the tags
+      for (var genre of genres) {
+        let idx = tags.indexOf(genre);
+        if (idx >= 0) {
+          return genre.toLowerCase();
+        }
+      }
+
+      let all = [...categories, ...tags];
+      for (var genre of genres) {
+        if (all.some( (c) => { return c.toLowerCase().includes(genre.toLowerCase()) } )) {
+          return genre.toLowerCase();
+        }
+      }
+
+      for (var label of all) {
+        genre = category_genres[label];
+        if (genre) {
+          return genre.toLowerCase();
+        }
+      }
+    },
+
+    getSubgenre: function(categories, tags) {
+      // return the second category if there is one
+      if (categories.length == 2) {
+        return categories[1];
+      }
+
+      // find the first subgenre listed in tags
+      let listed_subgenres = [...(new Set(tags)).intersection(new Set(subgenres))];
+      if (listed_subgenres.length >= 1) {
+        return listed_subgenres[0];
+      }
+
+      // return the first tag
+      return tags[0]
     },
 
     filterByInnerHTML: function(collection, pattern) {
@@ -445,6 +327,10 @@ Exporter = function() {
      */
 
     reg: (o, n) => (o ? o[n] : ""),
+
+    entityDecode: function(text) {
+      return text.replace("&amp;", "&");
+    },
 
     str: function(o) {
       return typeof o == "object"
@@ -461,6 +347,9 @@ Exporter = function() {
     },
 
     dateString: function(d) {
+      if (!d) {
+        return ""
+      }
       var months = [
         "Jan",
         "Feb",
@@ -548,12 +437,9 @@ Exporter = function() {
      * --------------------------------------------------------------------------------
      */
 
-    // cn: (o, s) => (o ? o.getElementsByClassName(s) : ""),
-    // tn: (o, s) => (o ? o.getElementsByTagName(s) : ""),
-    // gi: (o, s) => ( o ? o.getElementById(s) : ""),
-    cn: (s) => document.body.getElementsByClassName(s),
+    cn: (o, s) => (o ? o.getElementsByClassName(s) : ""),
     tn: (o, s) => (o ? o.getElementsByTagName(s) : ""),
-    gi: (o, s) => ( o ? o.getElementById(s) : ""),
+    gi: (o, s) => document.getElementById(s),
 
     ele: (t) => document.createElement(t),
     attr: (o, k, v) => o.setAttribute(k, v),
@@ -640,73 +526,51 @@ Exporter = function() {
     },
 
     parseBookDetails: function(doc) {
-      let publisher = this.tn(
-        this.cn(doc, classes.publisher)[0],
-        "a"
-      )[0]?.innerHTML?.trim() || "";
+      page = new Element(doc);
+      let runtime = page.gcf(classes.runtime);
+      let publisher = page.qsf(`li.${classes.publisher} a`)?.innerHTML?.trim();
+      let date = page.gcf(classes.release_date)?.innerHTML.replace(/.+date:/i, "").trim();
 
-      let publisher_summary = this.cn(
-        this.cn(
-          this.gi(doc, "center-1"),
-          "bc-container"
-        )[1],
-        "bc-text"
-      )?.[0]
-      ?.innerHTML?.trim()
-      ?.replace(/Publisher's Summary\s*/, "")
-      ?.replace(/([\n\r\s]+|)©.+/, "")
-      ?.replace(/[\n\r]+(\s+|)/g, "<br>")
-      ?.replace(/\t/g, " ")
-      ?.replace(/"/g, "'");
-
-      let audible_og = /^Audible Original/.test(publisher);
-
-      var categories =
-        this.cn(doc, classes.categories)[0] &&
-        Array.from(this.tn(this.cn(doc, classes.categories)[0], "a")).length
-          ? Array.from(this.tn(this.cn(doc, classes.categories)[0], "a")).map((a) =>
-              a.innerText.trim()
-            )
-          : [];
-
-      var date = this.cn(doc, classes.release_date)[0]
-        ? this.dateString(
-            this.cn(doc, classes.release_date)[0]
-              .innerHTML?.replace(/.+date:/i, "")
-              .trim()
-          )
-        : "";
-
-      let extra_cats = Array.from(this.cn(doc, "bc-chip-text"))?.map((i) =>
-        i.getAttribute("data-text")
+      let publisher_summary = (
+        page.qs("#center-1 .bc-container")[1]?.gcf("bc-text")
+        ?.innerHTML?.trim()
+        ?.replace(/Publisher's Summary\s*/, "")
+        ?.replace(/([\n\r\s]+|)©.+/, "")
+        ?.replace(/[\n\r]+(\s+|)/g, "<br>")
+        ?.replace(/\t/g, " ")
+        ?.replace(/"/g, "'")
       );
 
-      var audible_og_cats = Array.from(
-        this.tn(this.cn(doc, "categoriesLabel")?.[0], "a")
-      ).map((i) => i.innerHTML);
+      let categories = page.qs(".categoriesLabel a").map((c) => { return this.entityDecode(c.innerHTML) || "" });
+      let tags = page.gc("bc-chip-text").map((c) => { return c.attributes["data-text"]?.value || "" });
+      let main_category = categories[0] || "";
+      tags = [...(new Set(tags).difference(new Set(categories)))]
+      let category_type = this.getGenre(categories, tags);
+      let exclude = [main_category, ...genres]
+      tags = tags.filter((t) => {return !exclude.includes(t)})
+      let sub_category = this.getSubgenre(categories, tags);
+      tags = tags.filter((t) => {return t != sub_category})
 
       return this.cleanObject({
-        title: this.tn(doc, "h1")[0].innerHTML,
-        main_category: categories?.[0] || audible_og_cats?.[0],
-        sub_category: categories?.at(-1) || audible_og_cats?.at(-1),
-        categories: [...categories, ...extra_cats, ...audible_og_cats],
-        duration_minutes: this.cn(doc, classes.runtime)[0]
-          ? this.lengthOfBookInMinutes(
-              this.cn(doc, classes.runtime)[0]
-                .innerHTML?.replace(/length:/i, "")
-                .trim()
-            )
-          : "",
-        language: this.cn(doc, classes.language)?.[0]
+        title: page.qsf(".hero-content h1.bc-heading")?.innerHTML,
+        duration_minutes: (
+          runtime ?
+          this.lengthOfBookInMinutes(runtime.innerHTML?.replace(/length:/i, ""))
+          : ""
+        ),
+        language: page.gcf(classes.language)
           ?.innerHTML?.replace(/[\s\n\r]*language:[\s\n\r]+/gi, "")
           ?.trim(),
-        release_date: date,
+        release_date: this.dateString(date),
         release_timestamp: date ? new Date(date).getTime() : "",
         publisher: publisher,
-        category_type: this.getCatType(categories[categories.length - 1]),
         publisher_summary: publisher_summary,
-        audible_oginal: audible_og ? true : false,
+        audible_oginal: /^Audible Original/.test(publisher),
         book: /, Book (\d+)/i.exec(this.cn(doc, classes.series)?.[0]?.innerHTML)?.[1],
+        category_type: category_type,
+        main_category: main_category,
+        sub_category: this.getSubgenre(categories, tags),
+        categories: tags,
         rating: this.tryFloat(
           /[\d\.]+/.exec(
             this.cn(this.cn(doc, "ratingsLabel")?.[0], "bc-pub-offscreen")?.[0]?.innerHTML
