@@ -18,12 +18,12 @@ describe("Element", function() {
     );
   });
 
-  test("empty constructor", function() {
+  test("Element()", function() {
     e = new Element();
-    expect(e.gc).toBeDefined();
+    expect(e.constructor.name).toBe("Element");
   });
 
-  test("constructor", function() {
+  test("Element(HTMLElement())", function() {
     elm = document.getElementById("wrapper");
     element = new Element(elm);
 
@@ -32,7 +32,31 @@ describe("Element", function() {
     expect(element.element.attributes["class"].value).toBe("container");
   });
 
-  test("Element.gt", function() {
+  test("Element.create()", function() {
+    e = Element.create("p");
+    expect(e.element.tagName).toBe("P")
+
+    e = Element.create("p", {style: "width: 200px; border: 2px;"});
+    expect(e.element.style.width).toBe("200px")
+    expect(e.element.style.border).toBe("2px")
+
+    e = Element.create("p", {style: {width: "500px", color: "blue"}});
+    expect(e.element.style.width).toBe("500px")
+    expect(e.element.style.color).toBe("blue")
+
+    e = Element.create("p", {style: "width: 200px;"});
+    expect(e.element.style.width).toBe("200px")
+
+    e = Element.create("p", {id: "summary"});
+    expect(e.element.tagName).toBe("P")
+    expect(e.element.id).toBe("summary")
+
+    e = Element.create("<p>hello</p>");
+    expect(e.element.tagName).toBe("P")
+    expect(e.element.innerHTML).toBe("hello")
+  });
+
+  test("Element.gt()", function() {
     items = Element.gt("ul");
 
     expect(items.constructor.name).toBe("List");
@@ -40,7 +64,7 @@ describe("Element", function() {
     expect(items[0].element.tagName).toBe("UL");
   });
 
-  test("Element.gc", function() {
+  test("Element.gc()", function() {
     items = Element.gc("selected");
 
     expect(items.constructor.name).toBe("List");
@@ -48,7 +72,7 @@ describe("Element", function() {
     expect(items[0].element.tagName).toBe("LI");
   });
 
-  test("Element.gi", function() {
+  test("Element.gi()", function() {
     e = Element.gi("list");
 
     expect(e.constructor.name).toBe("Element");
@@ -66,7 +90,7 @@ describe("Element", function() {
     expect(element.element.id).toBe("nav");
   });
 
-  test(".from_html()", function() {
+  test("Element.from_html()", function() {
     element = Element.from_html("<html><head></head><body><p>hello</p></body></html>");
     expect(element.element.tagName).toBe("HTML");
     expect(element.element.lastChild?.lastChild?.tagName).toBe("P");
@@ -104,6 +128,23 @@ describe("Element", function() {
     expect(res[0].attributes["class"].value).toBe("selected")
   });
 
+  test(".gtf()", function() {
+    element = new Element(document.getElementById("wrapper"));
+    res = element.gtf("li")
+
+    expect(res.constructor?.name).toBe("Element");
+    expect(res.element.tagName).toBe("LI")
+  });
+
+  test(".gc()", function() {
+    element = new Element(document.getElementById("wrapper"));
+
+    res = element.gcf("selected")
+
+    expect(res.constructor?.name).toBe("Element");
+    expect(res.element.attributes["class"].value).toBe("selected")
+  });
+
   test(".qs()", function() {
     element = new Element(document.getElementById("wrapper"));
     res = element.qs("li");
@@ -121,7 +162,7 @@ describe("Element", function() {
     expect(res.length).toBe(3);
   });
 
-  test("set()", function() {
+  test(".set()", function() {
     e = new Element(document.createElement("h1"));
     e.set("id", "title");
 
@@ -132,4 +173,5 @@ describe("Element", function() {
 
     // e.set({id: "title"})
   });
+
 });

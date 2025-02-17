@@ -24,13 +24,46 @@ Element = class {
     }
   }
 
-  static from_html(text, attrs={}) {
+  static from_html(text) {
     let html = document.createElement("html");
     html.innerHTML = text;
 
     let elm = new Element(html);
-    elm.set(attrs)
     return elm;
+  }
+
+  /**
+   * Create HTML Element.
+   *
+   * @param {str}    html     Tag name or HTML string.
+   * @param {object} [attrs]  Attributes to set on element.
+   *
+   * @return {Element}
+   *
+   * @example
+   * let elm = Element.create("div", {id: "container"});
+   * let elm = Element.create("<p>hello</p>");
+   */
+  static create(html, attrs={}) {
+    let dom;
+    if (html.includes("<")) {
+      let doc = document.createElement("body");
+      doc.innerHTML = html;
+      dom = doc.lastChild;
+    } else if (html) {
+      dom = document.createElement(html);
+    }
+
+    if (attrs.style && typeof attrs.style == "object") {
+      for (let [k, v] of Object.entries(attrs.style)) {
+        dom.style[k] = v;
+      }
+      delete attrs.style;
+    }
+
+    let element = new Element(dom);
+    element.set(attrs)
+    return element;
   }
 
   static gc (name) {
@@ -358,6 +391,9 @@ Exporter = function() {
   ];
 
   var classes = {
+    notifier: "downloading_notifier",
+    bar: "downloading_percentage_bar",
+    status_text: "downloading_percentage_txt",
     ul_card: "bc-list bc-list-nostyle",
     title: "bc-size-headline3",
     narrator: "narratorLabel",
@@ -524,45 +560,50 @@ Exporter = function() {
     a: function(o, attrs) { attrs.forEach(attr => this.attr(o, attr[0], attr[1])) },
 
     createDownloadHTML: function() {
-      if (this.gi(document, "downloading_notifier"))
-        this.gi(document, "downloading_notifier").outerHTML = "";
+      if (this.gi(document, classes.notifier))
+        this.gi(document, classes.notifier).outerHTML = "";
+
       const body_width = document.body.getBoundingClientRect().width;
-      let cont = this.ele("div");
-      this.a(cont, [
-        ["id", "downloading_notifier"],
-        [
-          "style",
-          `position: fixed; top: 100px; left: ${
-            (body_width - this.download_bar_width) / 2
-          }px; width: ${this.download_bar_width}px; z-index: ${new Date().getTime()}; background: #121212; border: 1px solid #3de367; border-radius: 0.2em;`,
-        ],
-      ]);
-      document.body.appendChild(cont);
-      let perc = this.ele("div");
-      this.a(perc, [
-        ["id", "downloading_percentage_bar"],
-        [
-          "style",
-          `width: 0px; height: 50px; background: #3de367; border: 1px solid #3de367; border-bottom-right-radius: 0.2em; border-top-right-radius: 0.2em; transition: all 1s;`,
-        ],
-      ]);
-      cont.appendChild(perc);
-      let txt = this.ele("div");
-      this.a(txt, [
-        ["id", "downloading_percentage_txt"],
-        [
-          "style",
-          `float: left; padding: 14px; color: #fff; width: ${
-            this.download_bar_width - 50
-          }px;`,
-        ],
-      ]);
-      perc.appendChild(txt);
-      txt.innerText = "initiating download...";
+
+      let div = Element.create("div", {id: classes.notifier, style: {
+        width: `${this.download_bar_width}px`,
+        position: "fixed",
+        top: "100px",
+        left: `${(body_width - this.download_bar_width) / 2}px`,
+        background: "#121212",
+        border: "1px solid #3de367",
+        'border-radius': "0.2em",
+        'z-index': new Date().getTime(),
+      }})
+
+      let bar = Element.create("div", {id: classes.bar, style: {
+        width: "0px",
+        height: "50px",
+        background: "#3de367",
+        border: "1px solid #3de367",
+        'border-bottom-right-radius': "0.2em",
+        'border-top-right-radius': "0.2em",
+        transition: "all 1s",
+      }});
+
+      let text = Element.create("div", {id: classes.status_text, style: {
+        float: "left",
+        padding: "14px",
+        color: "#fff",
+        width: `${this.download_bar_width - 50}px`,
+      }});
+
+      bar.element.appendChild(text.element);
+      div.element.appendChild(bar.element);
+      document.body.appendChild(div.element);
+
+      this.setStatus("initiating download...");
+
+      return div.element;
     },
 
     setStatus: function(text) {
-      this.gi(document, "downloading_percentage_txt").innerText = text;
+      this.gi(document, classes.status_text).innerText = text;
     },
 
 

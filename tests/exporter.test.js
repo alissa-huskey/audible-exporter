@@ -138,18 +138,6 @@ describe("exporter: DOM functions", function() {
     expect(div.attributes["style"].value).toBe("width: 100px")
   });
 
-  test("createDownloadHTML()", function() {
-    document.body.innerHTML = "<html><body><p>Hello.</p></body></html>";
-    exporter.createDownloadHTML();
-    notifier = document.body.children[1];
-    bar = document.body.children[1].firstChild;
-    txt = document.body.children[1].firstChild.firstChild;
-
-    expect(notifier.attributes["id"].value).toBe("downloading_notifier")
-    expect(bar.attributes["id"].value).toBe("downloading_percentage_bar")
-    expect(txt.attributes["id"].value).toBe("downloading_percentage_txt")
-  });
-
   test("setStatus()", function() {
     document.body.innerHTML = "<html><body><div id='downloading_percentage_txt'>Hello.</div></body></html>";
     exporter.setStatus("Goodbye.");
@@ -167,18 +155,29 @@ describe("exporter: DOM functions", function() {
     expect(items[1].innerHTML).toBe("Pepperoni Pizza")
   });
 
-  // test("createDownloadHTML()", function() {
-  //   document.body.innerHTML = "<html><body><p>Hello.</p></body></html>";
-  //   // console.log("---------->", document.body.children.length, "<----------");
-  //   console.log("---------->", document.body.innerHTML, "<----------");
+  test("createDownloadHTML()", function() {
+    document.body.innerHTML = "<html><body><p>Hello.</p></body></html>";
+    // console.log("---------->", document.body.children.length, "<----------");
+    // console.log("---------->", document.body.innerHTML, "<----------");
 
-  //   exporter.createDownloadHTML();
-  //   console.log("---------->", document.body.children[1].innerHTML, "<----------");
-  //   console.log("---------->", document.body.children[1].firstChild.innerHTML, "<----------");
+    exporter.createDownloadHTML();
+    let div = Element.gi("downloading_notifier");
+    let bar = div.gi("downloading_percentage_bar");
+    let txt = div.gi("downloading_percentage_txt");
 
-  //   // expect(div.attributes["id"].value).toBe("download_notifier")
-  //   // expect(div.attributes["style"].value).toBe("width: 100px")
-  // });
+    expect(div.attributes["id"].value).toBe("downloading_notifier")
+    expect(div.style.width).toBe("0px");
+    expect(div.style.position).toBe("fixed");
+    expect(div.style.top).toBe("100px");
+    expect(div.style.left).toBe("0px");
+    expect(div.style.border).toBe("1px solid #3de367");
+    expect(div.style["border-radius"]).toBe("0.2em");
+    expect(div.style.background).toMatch(/^rgb\(\d+, \d+, \d+\)$/);
+
+    expect(bar.id).toBe("downloading_percentage_bar");
+    expect(txt.id).toBe("downloading_percentage_txt");
+    expect(txt.element.innerText).toBe("initiating download...");
+  });
 });
 
 describe("exporter: parsing functions", function() {
