@@ -204,8 +204,6 @@ describe("exporter: DOM functions", function() {
 
   test("createDownloadHTML()", function() {
     document.body.innerHTML = "<html><body><p>Hello.</p></body></html>";
-    // console.log("---------->", document.body.children.length, "<----------");
-    // console.log("---------->", document.body.innerHTML, "<----------");
 
     exporter.createDownloadHTML();
     let div = Element.gi("downloading_notifier");
@@ -247,24 +245,41 @@ describe("exporter: parsing functions", function() {
     expect(books[0]).toEqual(book)
   });
 
-  // test("parseBookDetails(): basic", function() {
-  //   let html = getFixtureFile("book-details.html");
-  //   let doc = toDoc(html);
+  test("parseADBLBookDetails()", function() {
+    let html = getFixtureFile("book-details.html");
+    let doc = toDoc(html);
 
-  //   let book = {
-  //       url: "pd/Ghosts-of-Zenith-Audiobook/B0BL84CBLZZ",
-  //       title: "Midnight Riot",
-  //       author: "Ben Aaronovitch",
-  //       narrator: "Kobna Holdbrook-Smith",
-  //       series: "Rivers of London",
-  //       book: "1"
-  //   };
+    let summary = "Probationary constable Peter Grant dreams of being a detective in London's Metropolitan Police. Too bad his superior plans to assign him to the Case Progression Unit, where the biggest threat he'll face is a paper cut. But Peter's prospects change in the aftermath of a puzzling murder, when he gains exclusive information from an eyewitness who happens to be a ghost. Peter's ability to speak with the lingering dead brings him to the attention of Detective Chief Inspector Thomas Nightingale, who investigates crimes involving magic and other manifestations of the uncanny.  Now, as a wave of brutal and bizarre murders engulfs the city, Peter is plunged into a world where gods and goddesses mingle with mortals and a long-dead evil is making a comeback on a rising tide of magic.";
+    let categories = [
+      "Fantasy Essentials",
+      "Mystery",
+      "Paranormal",
+      "Police Procedural",
+      "Urban",
+      "City",
+      "Witty",
+      "Suspenseful",
+      "England"
+    ];
 
-  //   let result = exporter.parseBookDetails(doc);
-  //   console.log(result);
+    let book = exporter.parseADBLBookDetails(doc);
 
-  //   // expect(result).toEqual(book)
-  // });
+    expect(book.title).toEqual("Midnight Riot");
+    expect(book.duration_minutes).toEqual(596);
+    expect(book.language).toEqual("English");
+    expect(book.release_date).toEqual("2012 Sep 28");
+    expect(book.release_timestamp).toEqual(1348812000000);
+    expect(book.publisher).toEqual("Tantor Audio");
+    expect(book.audible_oginal).toBe(false);
+    expect(book.rating).toBe(4.3);
+    expect(book.num_ratings).toBe(7856);
+    expect(book.book).toBe("1");
+    expect(book.publisher_summary).toBe(summary);
+    expect(book.category_type).toBe("fiction");
+    expect(book.main_category).toBe("Mystery, Thriller & Suspense");
+    expect(book.sub_category).toBe("Mystery");
+    expect(book.categories).toEqual(categories);
+  });
 
   test("parseBookDetails(): audible original", function() {
     let html = getFixtureFile("book-details-audible-original.html");
@@ -279,7 +294,6 @@ describe("exporter: parsing functions", function() {
     ];
 
     let book = exporter.parseBookDetails(document.documentElement);
-    // log("book", book);
 
     expect(book.title).toEqual("Ghosts of Zenith");
     expect(book.duration_minutes).toEqual(145);

@@ -6,6 +6,62 @@ function log(...msg) {
   console.log("--->", ...msg);
 }
 
+titleCase = function(text) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+tryFloat = function(d) {
+  try {
+    return parseFloat(d);
+  } catch (err) {
+    return d;
+  }
+}
+
+dateString = function(d) {
+  if (!d) {
+    return ""
+  }
+  var months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  var date = new Date(d);
+  return `${date.getFullYear()} ${months[date.getMonth()]} ${date.getDate()}`;
+}
+
+cleanObject = function(ob) {
+  return Object.entries(ob).reduce((r, [k, v]) => {
+    if (
+      v != null &&
+      v != undefined &&
+      v !== "" &&
+      (typeof v == "boolean" ||
+        typeof v == "string" ||
+        typeof v == "symbol" ||
+        typeof v == "number" ||
+        typeof v == "function" ||
+        (typeof v == "object" &&
+          ((Array.isArray(v) && v.length) || Array.isArray(v) != true)))
+    ) {
+      r[k] = v;
+      return r;
+    } else {
+      return r;
+    }
+  }, {});
+}
+
 Element = class {
   constructor(elm=null) {
     this.element = elm;
@@ -146,6 +202,171 @@ List = class extends Array {
 
   first() {
     return this[0];
+  }
+}
+
+BookPageParser = class {
+
+  #fields = [
+    "title",
+    "duration_minutes",
+    "language",
+    "release_date",
+    "release_timestamp",
+    "publisher",
+    "publisher_summary",
+    "audible_oginal",
+    "book",
+    "category_type",
+    "main_category",
+    "sub_category",
+    "categories",
+    "rating",
+    "num_ratings",
+  ]
+
+  constructor(doc=null, digitalData={}) {
+    this.doc = new Element(doc);
+    this.digitalData = digitalData;
+  }
+
+  /* Convert duration string to minutes int.
+   *
+   * @example
+   * page.toMinutes("2 hrs and 25 mins"); // 145
+   */
+  toMinutes(text) {
+    let mins = /\d+(?=\smin)/.exec(text)?.[0] || "0";
+    let hours = /\d+(?=\shrs)/.exec(text)?.[0] || "0"
+    return (parseInt(hours) * 60) + parseInt(mins);
+  }
+
+  data() {
+    let data = Object.fromEntries(this.#fields.map((f) => {
+      return [f, this[f]]
+    }));
+
+    return cleanObject(data)
+  }
+
+  get details() {
+    return this.digitalData?.product[0]?.productInfo || {};
+  }
+
+  get release_date() {
+    if (!this.date) {
+      return;
+    }
+    return dateString(this.date);
+  }
+
+  get release_timestamp() {
+    if (!this.date) {
+      return;
+    }
+    return new Date(this.date).getTime();
+  }
+
+  get title() {
+    return this.details.productName;
+  }
+
+  get publisher() {
+    return this.details.publisherName;
+  }
+
+  get publisher_summary() {
+    if (!this.summary) {
+      return;
+    }
+    return (
+      this.summary
+        ?.trim()
+        ?.replace(/([\n\r\s]+|)©.+/, "")
+        ?.replace(/\t/g, " ")
+    );
+  }
+
+  get audible_oginal () {
+    if (!this.publisher) {
+      return;
+    }
+    return /^Audible Original/.test(this.publisher);
+  }
+
+  get language() {
+    let lang = this.details.language;
+    if (!lang) {
+      return;
+    }
+    return titleCase(lang);
+  }
+}
+
+ADBLBookPageParser = class extends BookPageParser {
+  get adbl() {
+    return this.doc.qs("adbl-product-metadata script");
+  }
+  
+  get info() {
+    return Object.assign({}, ...this.adbl.map((e) => {return JSON.parse(e.textContent)}));
+  }
+
+  get duration_minutes() {
+    return this.toMinutes(this.info.duration);
+  }
+
+  get rating() {
+    return tryFloat(Number(this.info.rating.value).toFixed(1));
+  }
+
+  get num_ratings() {
+    return this.info.rating.count;
+  }
+
+  get book() {
+    return /Book (\d+)/i.exec(this.info.series?.[0].part)?.[1];
+  }
+
+  get summary() {
+    return this.doc.qsf("adbl-text-block[slot='summary']").textContent;
+  }
+}
+
+
+NormalBookPageParser = class extends BookPageParser {
+  get duration_minutes() {
+    let text = this.doc.gcf("runtimeLabel").innerHTML?.replace(/length:/i, "");
+    return this.toMinutes(text);
+  }
+
+  get rating() {
+    let elm = this.doc.qsf(".ratingsLabel .bc-pub-offscreen").innerHTML;
+    let score = /[\d\.]+/.exec(elm)?.[0]
+    return tryFloat(score);
+  }
+
+  get num_ratings() {
+    let elm = this.doc.qsf(".ratingsLabel .bc-color-link");
+    let text = elm.innerHTML?.trim()
+    let num = /[\d,]+/.exec(text)[0]?.replace(/\D/, "");
+    return tryFloat(num);
+  }
+
+  get book() {
+    return /, Book (\d+)/i.exec(this.doc.gcf("seriesLabel").innerHTML)?.[1];
+  }
+
+  get summary() {
+    let elm = this.doc.qs("#center-1 .bc-container")[1]?.gcf("bc-text")
+
+    return (
+      elm.innerHTML
+        ?.replace(/([\n\r\s]+|)©.+/, "")
+        ?.replace(/[\n\r]+(\s+|)/g, "<br>")
+        ?.replace(/\t/g, " ")
+        ?.replace(/"/g, "'")
+    );
   }
 }
 
@@ -525,6 +746,48 @@ Exporter = function() {
       return books;
     },
 
+    parseADBLBookDetails: function(doc) {
+      page = new Element(doc);
+      let adbl = page.qs("adbl-product-metadata script");
+      let info = Object.assign({}, ...adbl.map((e) => {return JSON.parse(e.textContent)}));
+
+      let publisher_summary = (
+        page.qsf("adbl-text-block[slot='summary']")
+        ?.textContent?.trim()
+        ?.replace(/([\n\r\s]+|)©.+/, "")
+        ?.replace(/\t/g, " ")
+      );
+
+      let categories = info.categories.map((c) => {return c.name});
+      let tags = page.qs("adbl-chip-group.product-topictag-impression adbl-chip").map((t) => {return t.textContent})
+      let main_category = categories[0] || "";
+      tags = [...(new Set(tags).difference(new Set(categories)))]
+      let category_type = this.getGenre(categories, tags);
+      let exclude = [main_category, ...genres]
+      tags = tags.filter((t) => {return !exclude.includes(t)})
+      let sub_category = this.getSubgenre(categories, tags);
+      tags = tags.filter((t) => {return t != sub_category})
+
+      return this.cleanObject({
+        title: page.qsf("meta[property='og:title']")?.attributes.content.value,
+        duration_minutes: this.lengthOfBookInMinutes(info.duration),
+        language: info.language,
+        release_date: this.dateString(info.releaseDate),
+        release_timestamp: new Date(info.releaseDate).getTime(),
+        publisher: info.publisher.name,
+        publisher_summary: publisher_summary,
+        audible_oginal: /^Audible Original/.test(info.publisher.name),
+        book: /Book (\d+)/i.exec(info.series?.[0].part)?.[1],
+        category_type: category_type,
+        main_category: main_category,
+        sub_category: this.getSubgenre(categories, tags),
+        categories: tags,
+        rating: this.tryFloat(Number(info.rating.value).toFixed(1)),
+        num_ratings: info.rating.count,
+      });
+    },
+
+
     parseBookDetails: function(doc) {
       page = new Element(doc);
       let runtime = page.gcf(classes.runtime);
@@ -552,7 +815,7 @@ Exporter = function() {
       tags = tags.filter((t) => {return t != sub_category})
 
       return this.cleanObject({
-        title: page.qsf(".hero-content h1.bc-heading")?.innerHTML,
+        title: page.qsf("meta[property='og:title']")?.attributes.content.value,
         duration_minutes: (
           runtime ?
           this.lengthOfBookInMinutes(runtime.innerHTML?.replace(/length:/i, ""))
