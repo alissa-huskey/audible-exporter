@@ -1,3 +1,121 @@
+function hr(...msg) {
+  console.log("****************************************", ...msg)
+}
+
+function log(...msg) {
+  console.log("--->", ...msg);
+}
+
+Element = class {
+  constructor(elm=null) {
+    this.element = elm;
+
+    if (!elm) {
+      return
+    }
+
+    for (let k in elm.__proto__) {
+      if (Object.hasOwnProperty(k)) { continue }
+
+      Object.defineProperty(this, k, {
+        get: function() { return this.element[k]; },
+        set: function(v) { this.element[k] = v },
+      });
+    }
+  }
+
+  static from_html(text, attrs={}) {
+    let html = document.createElement("html");
+    html.innerHTML = text;
+
+    let elm = new Element(html);
+    elm.set(attrs)
+    return elm;
+  }
+
+  static gc (name) {
+    return new List(document.getElementsByClassName(name));
+  }
+
+  static gi (name) {
+    let node = document.getElementById(name)
+    return new Element(node);
+  }
+
+  static gt (name) {
+    return new List(document.getElementsByTagName(name));
+  }
+
+  static qs(query) {
+    let res = document.querySelector(query);
+    return new Element(res);
+  }
+
+  static qsa(query) {
+    let res = document.querySelectorAll(query);
+    return new List(res);
+  }
+
+  gc(name) {
+    if (!this.element) {
+      return []
+    }
+
+    let res = this.element.getElementsByClassName(name);
+    return new List(res);
+  }
+
+  gi(name) {
+    return Element.gi(name);
+  }
+
+  gt(name) {
+    if (!this.element) {
+      return []
+    }
+
+    let res = this.element.getElementsByTagName(name);
+    return new List(res);
+  }
+
+  gcf(name) { return this.gc(name)[0] }
+  gtf(name) { return this.gt(name)[0] }
+
+  qs(query) {
+    let res = this.element.querySelector(query);
+    return new Element(res);
+  }
+
+  qsa(query) {
+    let res = this.element.querySelectorAll(query);
+    return new List(res);
+  }
+
+  set(attrs, value=null) {
+    if (typeof attrs == "string") {
+      let key = attrs;
+      attrs = {};
+      attrs[key] = value;
+    }
+
+    for (let [k, v] of Object.entries(attrs)) {
+      this.element.setAttribute(k, v);
+    }
+  }
+}
+
+List = class extends Array {
+  constructor(items) {
+    items = Array.from(items);
+    let elements = items.map((item) => new Element(item));
+    super(...elements);
+  }
+
+  first() {
+    return this[0];
+  }
+}
+
 Exporter = function() {
   const all_cats = [
     { category: "Architecture", type: "nonfiction" },
@@ -281,6 +399,11 @@ Exporter = function() {
       all_cats.filter((r) => r.category === subcat)[0].type;
     },
 
+    filterByInnerHTML: function(collection, pattern) {
+      results = Array.from(collection).filter((i) => pattern.test(i.innerHTML));
+      return results;
+    },
+
     /* formatting functions
      * --------------------------------------------------------------------------------
      */
@@ -385,164 +508,20 @@ Exporter = function() {
       this.downloadr(output_, named_file);
     },
 
-
-    /* parsing functions
-     * --------------------------------------------------------------------------------
-     */
-
-    parseLibraryPage: function(doc) {
-      return this.cn(doc, "adbl-library-content-row").length
-        ? Array.from(this.cn(doc, "adbl-library-content-row")).map((card) => {
-            let ul = this.cn(card, classes.ul_card)[0];
-            let author = this.cn(ul, classes.author)[0];
-            let narrator = this.cn(ul, classes.narrator)[0];
-            let series = this.cn(ul, classes.series)[0];
-            return {
-              url:
-                this.cn(ul, classes.title)[0] && this.cn(ul, classes.title)[0].parentElement
-                  ? this.cn(ul, classes.title)[0].parentElement.href?.replace(/\?.+/, "")
-                  : "",
-              title: this.cn(ul, classes.title)[0]
-                ? this.cn(ul, classes.title)[0].innerText.trim()
-                : "",
-              author:
-                author && this.cn(author, "bc-color-base")[0]
-                  ? this.cn(author, "bc-color-base")[0].innerText.trim()
-                  : "",
-              narrator:
-                narrator && this.cn(narrator, "bc-color-base")[0]
-                  ? this.cn(narrator, "bc-color-base")[0].innerText.trim()
-                  : "",
-              series:
-                series && this.tn(series, "a")[0]
-                  ? this.tn(series, "a")[0].innerText.trim()
-                  : "",
-            };
-          })
-        : [];
-    },
-
-    parseBookDetails: function(doc) {
-      let publisher_summary = this.cn(doc, classes.summary)[0]
-        ?.innerText?.trim()
-        ?.replace(/Publisher's Summary\s*/, "")
-        ?.replace(/([\n\r\s]+|)©.+/, "")
-        ?.replace(/[\n\r]+(\s+|)/g, "<br>")
-        ?.replace(/\t/g, " ")
-        ?.replace(/"/g, "'");
-
-      let audible_og = Array.from(doc.querySelectorAll("h2"))
-        .filter((i) => /About This Audible Original/i.test(i.innerHTML))?.[0]
-        ?.parentElement.innerText?.trim()
-        ?.replace(/About This Audible Original\s*/, "")
-        ?.replace(/([\n\r\s]+|)©.+/, "")
-        ?.replace(/[\n\r]+(\s+|)/g, "<br>")
-        ?.replace(/\t/g, " ")
-        ?.replace(/"/g, "'");
-
-      var categories =
-        this.cn(doc, classes.categories)[0] &&
-        Array.from(this.tn(this.cn(doc, classes.categories)[0], "a")).length
-          ? Array.from(this.tn(this.cn(doc, classes.categories)[0], "a")).map((a) =>
-              a.innerText.trim()
-            )
-          : [];
-
-      var date = this.cn(doc, classes.release_date)[0]
-        ? this.dateString(
-            this.cn(doc, classes.release_date)[0]
-              .innerText.replace(/.+date:/i, "")
-              .trim()
-          )
-        : "";
-
-      let extra_cats = Array.from(this.cn(doc, "bc-chip-text"))?.map((i) =>
-        i.getAttribute("data-text")
-      );
-
-      var audible_og_cats = Array.from(
-        this.tn(this.cn(doc, "categoriesLabel")?.[0], "a")
-      ).map((i) => i.innerText);
-
-      return this.cleanObject({
-        main_category: categories?.[0] || audible_og_cats?.[0],
-        sub_category: categories?.at(-1) || audible_og_cats?.at(-1),
-        categories: [...categories, ...extra_cats, ...audible_og_cats],
-        duration_minutes: this.cn(doc, classes.runtime)[0]
-          ? this.lengthOfBookInMinutes(
-              this.cn(doc, classes.runtime)[0]
-                .innerText.replace(/length:/i, "")
-                .trim()
-            )
-          : "",
-        language: this.cn(doc, classes.language)?.[0]
-          ?.innerText?.replace(/[\s\n\r]*language:[\s\n\r]+/gi, "")
-          ?.trim(),
-        release_date: date,
-        release_timestamp: date ? new Date(date).getTime() : "",
-        publisher: this.cn(doc, classes.publisher)[0]
-          ? this.cn(doc, classes.publisher)[0]
-              .innerText.replace(/Publisher:/i, "")
-              .trim()
-          : "",
-        category_type: this.getCatType(categories[categories.length - 1]),
-        publisher_summary: publisher_summary || audible_og,
-        audible_oginal: audible_og ? true : false,
-        book: /, book (\d+)/i.exec(this.cn(doc, classes.series)?.[0]?.innerText)?.[1],
-        rating: this.tryFloat(
-          /[\d\.]+/.exec(
-            this.cn(this.cn(doc, "ratingsLabel")?.[0], "bc-pub-offscreen")?.[0]?.innerText
-          )?.[0]
-        ),
-        num_ratings: this.tryFloat(
-          /[\d,]+/
-            .exec(
-              this.cn(this.cn(doc, "ratingsLabel")?.[0], "bc-color-link")?.[0]?.innerText
-            )?.[0]
-            ?.replace(/\D+/)
-        ),
-        critic_summary: this.cn(doc, "productCriticsSummary")?.[0]
-          ?.innerText?.trim()
-          ?.replace(/Critic Reviews\s*/, "")
-          ?.replace(/([\n\r\s]+|)©.+/, "")
-          ?.replace(/[\n\r]+(\s+|)/g, "<br>")
-          ?.replace(/\t/g, " ")
-          ?.replace(/"/g, "'"),
-      });
-    },
-
-    parseURIasJSON: function(url, obj) {
-      if (url.match(/(?<=\?|\&)\S+?(?=\&|$)/g))
-        url
-          .match(/(?<=\?|\&)\S+?(?=\&|$)/g)
-          .map((r) => (r ? r.split(/\=/) : [[]]))
-          .forEach((r) => (obj[r[0]] = r[1]));
-      return obj;
-    },
-
-    lengthOfBookInMinutes: function(s) {
-      var mins = this.reg(/\d+(?=\smin)/.exec(s), 0)
-        ? parseInt(this.reg(/\d+(?=\smin)/.exec(s), 0))
-        : 0;
-      var hours = this.reg(/\d+(?=\shrs)/.exec(s), 0)
-        ? parseInt(this.reg(/\d+(?=\shrs)/.exec(s), 0)) * 60
-        : 0;
-      return hours + mins;
-    },
-
     /* DOM functions
      * --------------------------------------------------------------------------------
      */
 
-    cn: (o, s) => (o ? o.getElementsByClassName(s) : ""),
+    // cn: (o, s) => (o ? o.getElementsByClassName(s) : ""),
+    // tn: (o, s) => (o ? o.getElementsByTagName(s) : ""),
+    // gi: (o, s) => ( o ? o.getElementById(s) : ""),
+    cn: (s) => document.body.getElementsByClassName(s),
     tn: (o, s) => (o ? o.getElementsByTagName(s) : ""),
     gi: (o, s) => ( o ? o.getElementById(s) : ""),
+
     ele: (t) => document.createElement(t),
     attr: (o, k, v) => o.setAttribute(k, v),
-    a: function(l, r) { r.forEach(a => this.attr(l, a[0], a[1])) },
-    setStatus: function(text) {
-      this.gi(document, "downloading_percentage_txt").innerText = text;
-    },
+    a: function(o, attrs) { attrs.forEach(attr => this.attr(o, attr[0], attr[1])) },
 
     createDownloadHTML: function() {
       if (this.gi(document, "downloading_notifier"))
@@ -580,6 +559,151 @@ Exporter = function() {
       ]);
       perc.appendChild(txt);
       txt.innerText = "initiating download...";
+    },
+
+    setStatus: function(text) {
+      this.gi(document, "downloading_percentage_txt").innerText = text;
+    },
+
+
+    /* parsing functions
+     * --------------------------------------------------------------------------------
+     */
+
+    parseLibraryPage: function(doc) {
+      doc = Element.from_html(doc)
+      let rows = Element.gc("adbl-library-content-row");
+      if (!rows.length) { return [] };
+
+      let books = Array.from(rows).map((card) => {
+        let ul = card.gc(classes.ul_card)[0];
+
+        return {
+          url:
+            (
+              ul.gcf(classes.title)?.parentElement
+              ?.attributes["href"]?.value
+              ?.replace(/\?.+/, "")
+            ) || "",
+          title: ul.gcf(classes.title)?.innerHTML?.trim() || "",
+          author: 
+            ul.gcf(classes.author)?.gcf("bc-color-base")?.innerHTML?.trim() || "",
+          narrator:
+            ul.gcf(classes.narrator)?.gcf("bc-color-base")?.innerHTML?.trim() || "",
+          series:
+            ul.gcf(classes.series)?.gtf("a")?.innerHTML?.trim() || "",
+        };
+      });
+
+      return books;
+    },
+
+    parseBookDetails: function(doc) {
+      let publisher = this.tn(
+        this.cn(doc, classes.publisher)[0],
+        "a"
+      )[0]?.innerHTML?.trim() || "";
+
+      let publisher_summary = this.cn(
+        this.cn(
+          this.gi(doc, "center-1"),
+          "bc-container"
+        )[1],
+        "bc-text"
+      )?.[0]
+      ?.innerHTML?.trim()
+      ?.replace(/Publisher's Summary\s*/, "")
+      ?.replace(/([\n\r\s]+|)©.+/, "")
+      ?.replace(/[\n\r]+(\s+|)/g, "<br>")
+      ?.replace(/\t/g, " ")
+      ?.replace(/"/g, "'");
+
+      let audible_og = /^Audible Original/.test(publisher);
+
+      var categories =
+        this.cn(doc, classes.categories)[0] &&
+        Array.from(this.tn(this.cn(doc, classes.categories)[0], "a")).length
+          ? Array.from(this.tn(this.cn(doc, classes.categories)[0], "a")).map((a) =>
+              a.innerText.trim()
+            )
+          : [];
+
+      var date = this.cn(doc, classes.release_date)[0]
+        ? this.dateString(
+            this.cn(doc, classes.release_date)[0]
+              .innerHTML?.replace(/.+date:/i, "")
+              .trim()
+          )
+        : "";
+
+      let extra_cats = Array.from(this.cn(doc, "bc-chip-text"))?.map((i) =>
+        i.getAttribute("data-text")
+      );
+
+      var audible_og_cats = Array.from(
+        this.tn(this.cn(doc, "categoriesLabel")?.[0], "a")
+      ).map((i) => i.innerHTML);
+
+      return this.cleanObject({
+        title: this.tn(doc, "h1")[0].innerHTML,
+        main_category: categories?.[0] || audible_og_cats?.[0],
+        sub_category: categories?.at(-1) || audible_og_cats?.at(-1),
+        categories: [...categories, ...extra_cats, ...audible_og_cats],
+        duration_minutes: this.cn(doc, classes.runtime)[0]
+          ? this.lengthOfBookInMinutes(
+              this.cn(doc, classes.runtime)[0]
+                .innerHTML?.replace(/length:/i, "")
+                .trim()
+            )
+          : "",
+        language: this.cn(doc, classes.language)?.[0]
+          ?.innerHTML?.replace(/[\s\n\r]*language:[\s\n\r]+/gi, "")
+          ?.trim(),
+        release_date: date,
+        release_timestamp: date ? new Date(date).getTime() : "",
+        publisher: publisher,
+        category_type: this.getCatType(categories[categories.length - 1]),
+        publisher_summary: publisher_summary,
+        audible_oginal: audible_og ? true : false,
+        book: /, Book (\d+)/i.exec(this.cn(doc, classes.series)?.[0]?.innerHTML)?.[1],
+        rating: this.tryFloat(
+          /[\d\.]+/.exec(
+            this.cn(this.cn(doc, "ratingsLabel")?.[0], "bc-pub-offscreen")?.[0]?.innerHTML
+          )?.[0]
+        ),
+        num_ratings: this.tryFloat(
+          /[\d,]+/.exec(
+              this.cn(this.cn(doc, "ratingsLabel")?.[0], "bc-color-link")?.[0]?.innerHTML
+            )?.[0]
+            ?.replace(/\D/, "")
+        ),
+        critic_summary: this.cn(doc, "productCriticsSummary")?.[0]
+          ?.innerText?.trim()
+          ?.replace(/Critic Reviews\s*/, "")
+          ?.replace(/([\n\r\s]+|)©.+/, "")
+          ?.replace(/[\n\r]+(\s+|)/g, "<br>")
+          ?.replace(/\t/g, " ")
+          ?.replace(/"/g, "'"),
+      });
+    },
+
+    parseURIasJSON: function(url, obj) {
+      if (url.match(/(?<=\?|\&)\S+?(?=\&|$)/g))
+        url
+          .match(/(?<=\?|\&)\S+?(?=\&|$)/g)
+          .map((r) => (r ? r.split(/\=/) : [[]]))
+          .forEach((r) => (obj[r[0]] = r[1]));
+      return obj;
+    },
+
+    lengthOfBookInMinutes: function(s) {
+      var mins = this.reg(/\d+(?=\smin)/.exec(s), 0)
+        ? parseInt(this.reg(/\d+(?=\smin)/.exec(s), 0))
+        : 0;
+      var hours = this.reg(/\d+(?=\shrs)/.exec(s), 0)
+        ? parseInt(this.reg(/\d+(?=\shrs)/.exec(s), 0)) * 60
+        : 0;
+      return hours + mins;
     },
 
 
@@ -674,7 +798,6 @@ Exporter = function() {
     },
 
     enrichLibraryInformation: async function(order_information) {
-      this.createDownloadHTML();
       var library = await this.loopThroughtAudibleLibrary();
       var contain_arr = [];
 
@@ -748,8 +871,7 @@ Exporter = function() {
     },
 
     getAllOrders: async function() {
-      this.createDownloadHTML();
-      this.setStatus("Retrieving last year's purchases...");
+      this.setStatus("Retrieving this year's purchases...");
 
       var first_page = await this.getOrderPageByDate("last_365_days", 1);
       var titles = first_page.titles;
@@ -839,6 +961,7 @@ Exporter = function() {
 
     run: async function() {
       try {
+        this.createDownloadHTML();
         var order_information = await this.getAllOrders();
         this.enrichLibraryInformation(order_information);
       } catch (err) {
