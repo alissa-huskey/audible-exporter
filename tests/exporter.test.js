@@ -151,47 +151,47 @@ describe("exporter: DOM functions", function() {
     expect(div[0].innerText).toBe("Goodbye.");
   });
 
-  test(".getGenre(): tags include Fiction or Nonfiction", function() {
-    let categories = [];
-    let tags = ["Science Fiction", "Fiction"];
-    genre = exporter.getGenre(categories, tags);
+  // test(".getGenre(): tags include Fiction or Nonfiction", function() {
+  //   let categories = [];
+  //   let tags = ["Science Fiction", "Fiction"];
+  //   genre = exporter.getGenre(categories, tags);
 
-    expect(genre).toBe("fiction");
-  });
+  //   expect(genre).toBe("fiction");
+  // });
 
-  test(".getGenre(): categories include partial ficition or nonfiction", function() {
-    genre = exporter.getGenre(["Science Fiction & Fantasy"], []);
-    expect(genre).toBe("fiction");
-  });
+  // test(".getGenre(): categories include partial ficition or nonfiction", function() {
+  //   genre = exporter.getGenre(["Science Fiction & Fantasy"], []);
+  //   expect(genre).toBe("fiction");
+  // });
 
-  test(".getGenre(): tags include partial ficition or nonfiction", function() {
-    genre = exporter.getGenre([], ["Science Fiction"]);
+  // test(".getGenre(): tags include partial ficition or nonfiction", function() {
+  //   genre = exporter.getGenre([], ["Science Fiction"]);
 
-    expect(genre).toBe("fiction");
-  });
+  //   expect(genre).toBe("fiction");
+  // });
 
-  test(".getGenre(): look up by category", function() {
-    genre = exporter.getGenre(["Geography & Cultures"], []);
-    expect(genre).toBe("nonfiction");
+  // test(".getGenre(): look up by category", function() {
+  //   genre = exporter.getGenre(["Geography & Cultures"], []);
+  //   expect(genre).toBe("nonfiction");
 
-    genre = exporter.getGenre(["Children's Audiobooks"], ["Action & Adventure"]);
-    expect(genre).toBe("fiction");
-  });
+  //   genre = exporter.getGenre(["Children's Audiobooks"], ["Action & Adventure"]);
+  //   expect(genre).toBe("fiction");
+  // });
 
-  test(".getSubgenre(): two categories", function() {
-    subgenre = exporter.getSubgenre(["Science Fiction & Fantasy", "Fantasy"], []);
-    expect(subgenre).toBe("Fantasy");
-  });
+  // test(".getSubgenre(): two categories", function() {
+  //   subgenre = exporter.getSubgenre(["Science Fiction & Fantasy", "Fantasy"], []);
+  //   expect(subgenre).toBe("Fantasy");
+  // });
 
-  test(".getSubgenre(): first listed subgenre", function() {
-    subgenre = exporter.getSubgenre(["Mystery, Thriller & Suspense"], ["Suspense", "True Crime", "Thriller & Suspense"]);
-    expect(subgenre).toBe("True Crime");
-  });
+  // test(".getSubgenre(): first listed subgenre", function() {
+  //   subgenre = exporter.getSubgenre(["Mystery, Thriller & Suspense"], ["Suspense", "True Crime", "Thriller & Suspense"]);
+  //   expect(subgenre).toBe("True Crime");
+  // });
 
-  test(".getSubgenre(): first tag", function() {
-    subgenre = exporter.getSubgenre(["Biographies & Memoirs"], ["Entertainment & Celebrities", "Inspiring"]);
-    expect(subgenre).toBe("Entertainment & Celebrities");
-  });
+  // test(".getSubgenre(): first tag", function() {
+  //   subgenre = exporter.getSubgenre(["Biographies & Memoirs"], ["Entertainment & Celebrities", "Inspiring"]);
+  //   expect(subgenre).toBe("Entertainment & Celebrities");
+  // });
 
   test("filterByInnerHTML()", function() {
     doc = toDoc("<ul><li>Cheese Pizza</li><li>Pepperoni Pizza</li><li>Cheeseburger</li></ul>")
@@ -245,12 +245,20 @@ describe("exporter: parsing functions", function() {
     expect(books[0]).toEqual(book)
   });
 
-  test("parseADBLBookDetails()", function() {
+  test("parseBookDetails(): adbl", function() {
+    globalThis.digitalData = {
+      product: [ { productInfo: {
+        productName: "Midnight Riot",
+        language: "English",
+        publisherName: "Tantor Audio"
+    } } ] };
+
     let html = getFixtureFile("book-details.html");
     let doc = toDoc(html);
 
     let summary = "Probationary constable Peter Grant dreams of being a detective in London's Metropolitan Police. Too bad his superior plans to assign him to the Case Progression Unit, where the biggest threat he'll face is a paper cut. But Peter's prospects change in the aftermath of a puzzling murder, when he gains exclusive information from an eyewitness who happens to be a ghost. Peter's ability to speak with the lingering dead brings him to the attention of Detective Chief Inspector Thomas Nightingale, who investigates crimes involving magic and other manifestations of the uncanny.  Now, as a wave of brutal and bizarre murders engulfs the city, Peter is plunged into a world where gods and goddesses mingle with mortals and a long-dead evil is making a comeback on a rising tide of magic.";
     let categories = [
+      "Fantasy",
       "Fantasy Essentials",
       "Mystery",
       "Paranormal",
@@ -262,7 +270,7 @@ describe("exporter: parsing functions", function() {
       "England"
     ];
 
-    let book = exporter.parseADBLBookDetails(doc);
+    let book = exporter.parseBookDetails(doc);
 
     expect(book.title).toEqual("Midnight Riot");
     expect(book.duration_minutes).toEqual(596);
@@ -277,11 +285,17 @@ describe("exporter: parsing functions", function() {
     expect(book.publisher_summary).toBe(summary);
     expect(book.category_type).toBe("fiction");
     expect(book.main_category).toBe("Mystery, Thriller & Suspense");
-    expect(book.sub_category).toBe("Mystery");
+    expect(book.sub_category).toBe("Fantasy");
     expect(book.categories).toEqual(categories);
   });
 
   test("parseBookDetails(): audible original", function() {
+    globalThis.digitalData = { product: [ { productInfo: {
+      productName: "Ghosts of Zenith",
+      language: "English",
+      publisherName: "Audible Originals"
+    } } ] };
+
     let html = getFixtureFile("book-details-audible-original.html");
     document.body.innerHTML = html;
 

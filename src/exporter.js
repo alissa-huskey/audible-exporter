@@ -18,6 +18,10 @@ tryFloat = function(d) {
   }
 }
 
+entityDecode = function(text) {
+  return text.replace("&amp;", "&");
+}
+
 dateString = function(d) {
   if (!d) {
     return ""
@@ -207,6 +211,81 @@ List = class extends Array {
 
 BookPageParser = class {
 
+  #category_types = ["Fiction", "Nonfiction"];
+
+  #category_genres = {
+    'Arts & Entertainment': "nonfiction",
+    'Biographies & Memoirs': "nonfiction",
+    'Business & Careers': "nonfiction",
+    'Children\'s Audiobooks': null,
+    'Action & Adventure': "fiction", // children's audiobooks
+    'Activities & Hobbies': "nonfiction", // children's audiobooks
+    'Animals & Nature': "nonfiction", // children's audiobooks
+    'Education & Learning': "nonfiction",
+    'Fairy Tales, Folk Tales & Myths': "fiction",
+    'Geography & Cultures': "nonfiction",
+    'Comedy & Humor': null,
+    'Performing Arts': "nonfiction", // comedy & humor
+    'Computers & Technology': "nonfiction",
+    'Education & Learning': "nonfiction",
+    'Erotica': null,
+    'Sex Instruction': "nonfiction", // erotica
+    'Health & Wellness': "nonfiction",
+    'History': "nonfiction",
+    'Home & Garden': "nonfiction",
+    'LGBTQ+': "null",
+    'LGBTQ+ Studies': "nonfiction",
+    'Parenting & Families': "nonfiction",
+    'Literature & Fiction': "fiction",
+    'Money & Finance': "nonfiction",
+    'Mystery, Thriller & Suspense': null,
+    'True Crime': "nonfiction", // mystery, thriller & suspense
+    'Mystery': "fiction", // mystery, thriller & suspense
+    'Thriller & Suspense': "fiction", // mystery, thriller & suspense
+    'Crime Fiction': "fiction", // mystery, thriller & suspense
+    'Politics & Social Sciences': "nonfiction",
+    'Politics, Society & Current Events': "nonfiction",
+    'Relationships, Parenting & Personal Development': "nonfiction",
+    'Religion & Spirituality': "nonfiction",
+    'Romance': "fiction",
+    'Science & Engineering': "nonfiction",
+    'Sports & Outdoors': "nonfiction",
+    'Teen & Young Adult': null,
+    'Health, Lifestyle & Relationships': "nonfiction", // teen & young adult
+    'History & Culture': "nonfiction", // teen & young adult
+    'Travel & Tourism': "nonfiction",
+  }
+
+  #sub_categories = [
+    "Science Fiction",
+    "Fantasy",
+    "LitRPG",
+    "True Crime",
+    "Mystery",
+    "Horror",
+    "Epic Fantasy",
+    "Satire",
+    "Paranormal Romance",
+    "Contemporary Romance",
+    "Sex Instruction",
+    "Romantic Suspense",
+    "History & Criticism", // Arts & Entertainment
+    "Instruction & Technique", // Arts & Entertainment
+    "Historical Fiction",
+    "Literary Fiction",
+    "Personal Development",
+    "Classics",
+    "Fairy Tales",
+    "Crime Fiction",
+    "Fairy Tales, Folk Tales & Myths", // Children's Audiobooks
+    "Education & Learning", // Children's Audiobooks
+    "Essays", // biographies & Memoiirs
+    "Historical", // biographies & Memoiirs
+    "Young Adult",
+    "Thriller & Suspense",
+  ]
+
+
   #fields = [
     "title",
     "duration_minutes",
@@ -225,9 +304,27 @@ BookPageParser = class {
     "num_ratings",
   ]
 
+  #tags = []
+
   constructor(doc=null, digitalData={}) {
     this.doc = new Element(doc);
     this.digitalData = digitalData;
+  }
+
+  getSubgenre(categories, tags) {
+    // return the second category if there is one
+    if (categories.length == 2) {
+      return categories[1];
+    }
+
+    // find the first subgenre listed in tags
+    let listed_subgenres = [...(new Set(tags)).intersection(new Set(subgenres))];
+    if (listed_subgenres.length >= 1) {
+      return listed_subgenres[0];
+    }
+
+    // return the first tag
+    return tags[0]
   }
 
   /* Convert duration string to minutes int.
@@ -250,7 +347,7 @@ BookPageParser = class {
   }
 
   get details() {
-    return this.digitalData?.product[0]?.productInfo || {};
+    return this.digitalData?.product?.[0]?.productInfo || {};
   }
 
   get release_date() {
@@ -301,6 +398,73 @@ BookPageParser = class {
     }
     return titleCase(lang);
   }
+
+  get categories_list() {
+    return [];
+  }
+
+  get tags_list() {
+    return [];
+  }
+
+  get category_type() {
+    // check if the fiction tag is listed in the tags
+    for (var genre of this.#category_types) {
+      let idx = this.tags_list?.indexOf(genre);
+      if (idx && idx >= 0) {
+        return genre.toLowerCase();
+      }
+    }
+
+    let all = [...this.categories_list, ...this.tags_list];
+    for (var genre of this.#category_types) {
+      if (all.some( (c) => { return c.toLowerCase().includes(genre.toLowerCase()) } )) {
+        return genre.toLowerCase();
+      }
+    }
+
+    for (var label of all) {
+      genre = this.#category_genres[label];
+      if (genre) {
+        return genre.toLowerCase();
+      }
+    }
+  }
+
+  get tags() {
+    if (!this.#tags.length && this.tags_list) {
+      let exclude = [...this.#category_types];
+      if (this.main_category) {
+        exclude.push(this.main_category);
+      }
+      this.#tags = this.tags_list?.filter((t) => {return !exclude.includes(t)});
+    }
+    return this.#tags;
+  }
+
+  get main_category() {
+    return this.categories_list?.[0];
+  }
+
+  get sub_category() {
+      // return the second category if there is one
+      if (this.categories_list && this.categories_list.length == 2) {
+        return this.categories_list[1];
+      }
+
+      // find the first subgenre listed in tags
+      let listed_subgenres = [...(new Set(this.tags)).intersection(new Set(this.#sub_categories))];
+      if (listed_subgenres.length >= 1) {
+        return listed_subgenres[0];
+      }
+
+      // return the first tag
+      return this.tags[0]
+  }
+
+  get categories() {
+    return this.tags.filter((c) => !this.categories_list.includes(c));
+  }
 }
 
 ADBLBookPageParser = class extends BookPageParser {
@@ -320,6 +484,10 @@ ADBLBookPageParser = class extends BookPageParser {
     return tryFloat(Number(this.info.rating.value).toFixed(1));
   }
 
+  get date() {
+    return this.info.releaseDate;
+  }
+
   get num_ratings() {
     return this.info.rating.count;
   }
@@ -331,10 +499,22 @@ ADBLBookPageParser = class extends BookPageParser {
   get summary() {
     return this.doc.qsf("adbl-text-block[slot='summary']").textContent;
   }
+
+  get categories_list() {
+    return this.info.categories.map((c) => c.name);
+  }
+
+  get tags_list() {
+    return this.doc.qs("adbl-chip-group.product-topictag-impression adbl-chip").map((c) => c.innerHTML)
+  }
 }
 
-
 NormalBookPageParser = class extends BookPageParser {
+  get date() {
+    let li = this.doc.gcf("releaseDateLabel");
+    return li?.innerHTML?.replace(/Releae date:/, "").trim();
+  }
+
   get duration_minutes() {
     let text = this.doc.gcf("runtimeLabel").innerHTML?.replace(/length:/i, "");
     return this.toMinutes(text);
@@ -368,95 +548,17 @@ NormalBookPageParser = class extends BookPageParser {
         ?.replace(/"/g, "'")
     );
   }
+
+  get tags_list() {
+    return this.doc.gc("bc-chip-text").map((c) => { return c.attributes["data-text"]?.value });
+  }
+
+  get categories_list() {
+    return this.doc.qs(".categoriesLabel a").map((c) => { return entityDecode(c.innerHTML) || "" }) || [];
+  }
 }
 
 Exporter = function() {
-
-  const genres = ["Fiction", "Nonfiction"];
-
-  const subgenres = [
-    "Science Fiction",
-    "Fantasy",
-    "LitRPG",
-    "True Crime",
-    "Mystery",
-    "Horror",
-    "Epic Fantasy",
-    "Satire",
-    "Paranormal Romance",
-    "Contemporary Romance",
-    "Sex Instruction",
-    "Romantic Suspense",
-    "History & Criticism", // Arts & Entertainment
-    "Instruction & Technique", // Arts & Entertainment
-    "Historical Fiction",
-    "Literary Fiction",
-    "Personal Development",
-    "Classics",
-    "Fairy Tales",
-    "Crime Fiction",
-    "Fairy Tales, Folk Tales & Myths", // Children's Audiobooks
-    "Education & Learning", // Children's Audiobooks
-    "Essays", // biographies & Memoiirs
-    "Historical", // biographies & Memoiirs
-    "Young Adult",
-    "Thriller & Suspense",
-    "Adventure",
-    // "Adventurers, Explorers & Survival", // Biographies & Memoirs
-    // "Cultural & Regional", // biographies & Memoiirs
-    // "Business", // biographies & Memoiirs
-    // "Entertainment & Celebrities", // biographies & Memoiirs
-    // "Law", // biographies & Memoiirs
-    // "Politics & Government", // biographies & Memoiirs
-    // "Memoirs, Diaries & Correspondence", // biographies & Memoiirs, literature & fiction
-    // "Cyberpunk",  // science fiction & fantasy
-    // "Dystopian"
-    // "Post-Apocalyptic",
-    // "Alternate History",
-  ]
-
-  const category_genres = {
-    'Arts & Entertainment': "nonfiction",
-    'Biographies & Memoirs': "nonfiction",
-    'Business & Careers': "nonfiction",
-    'Children\'s Audiobooks': null,
-    'Action & Adventure': "fiction", // children's audiobooks
-    'Activities & Hobbies': "nonfiction", // children's audiobooks
-    'Animals & Nature': "nonfiction", // children's audiobooks
-    'Education & Learning': "nonfiction",
-    'Fairy Tales, Folk Tales & Myths': "fiction",
-    'Geography & Cultures': "nonfiction",
-    'Comedy & Humor': null,
-    'Performing Arts': "nonfiction", // comedy & humor
-    'Computers & Technology': "nonfiction",
-    'Education & Learning': "nonfiction",
-    'Erotica': null,
-    'Sex Instruction': "nonfiction", // erotica
-    'Health & Wellness': "nonfiction",
-    'History': "nonfiction",
-    'Home & Garden': "nonfiction",
-    'LGBTQ+': "null",
-    'LGBTQ+ Studies': "nonfiction",
-    'Parenting & Families': "nonfiction",
-    'Literature & Fiction': "fiction",
-    'Money & Finance': "nonfiction",
-    'Mystery, Thriller & Suspense': null,
-    'True Crime': "nonfiction", // mystery, thriller & suspense
-    'Mystery': "fiction", // mystery, thriller & suspense
-    'Thriller & Suspense': "fiction", // mystery, thriller & suspense
-    'Crime Fiction': "fiction", // mystery, thriller & suspense
-    'Politics & Social Sciences': "nonfiction",
-    'Politics, Society & Current Events': "nonfiction",
-    'Relationships, Parenting & Personal Development': "nonfiction",
-    'Religion & Spirituality': "nonfiction",
-    'Romance': "fiction",
-    'Science & Engineering': "nonfiction",
-    'Sports & Outdoors': "nonfiction",
-    'Teen & Young Adult': null,
-    'Health, Lifestyle & Relationships': "nonfiction", // teen & young adult
-    'History & Culture': "nonfiction", // teen & young adult
-    'Travel & Tourism': "nonfiction",
-  }
 
   var classes = {
     notifier: "downloading_notifier",
@@ -496,46 +598,6 @@ Exporter = function() {
         }
       }
       return q;
-    },
-
-    getGenre: (categories, tags) => {
-      // check if the fiction tag is listed in the tags
-      for (var genre of genres) {
-        let idx = tags.indexOf(genre);
-        if (idx >= 0) {
-          return genre.toLowerCase();
-        }
-      }
-
-      let all = [...categories, ...tags];
-      for (var genre of genres) {
-        if (all.some( (c) => { return c.toLowerCase().includes(genre.toLowerCase()) } )) {
-          return genre.toLowerCase();
-        }
-      }
-
-      for (var label of all) {
-        genre = category_genres[label];
-        if (genre) {
-          return genre.toLowerCase();
-        }
-      }
-    },
-
-    getSubgenre: function(categories, tags) {
-      // return the second category if there is one
-      if (categories.length == 2) {
-        return categories[1];
-      }
-
-      // find the first subgenre listed in tags
-      let listed_subgenres = [...(new Set(tags)).intersection(new Set(subgenres))];
-      if (listed_subgenres.length >= 1) {
-        return listed_subgenres[0];
-      }
-
-      // return the first tag
-      return tags[0]
     },
 
     filterByInnerHTML: function(collection, pattern) {
@@ -746,113 +808,17 @@ Exporter = function() {
       return books;
     },
 
-    parseADBLBookDetails: function(doc) {
-      page = new Element(doc);
-      let adbl = page.qs("adbl-product-metadata script");
-      let info = Object.assign({}, ...adbl.map((e) => {return JSON.parse(e.textContent)}));
-
-      let publisher_summary = (
-        page.qsf("adbl-text-block[slot='summary']")
-        ?.textContent?.trim()
-        ?.replace(/([\n\r\s]+|)©.+/, "")
-        ?.replace(/\t/g, " ")
-      );
-
-      let categories = info.categories.map((c) => {return c.name});
-      let tags = page.qs("adbl-chip-group.product-topictag-impression adbl-chip").map((t) => {return t.textContent})
-      let main_category = categories[0] || "";
-      tags = [...(new Set(tags).difference(new Set(categories)))]
-      let category_type = this.getGenre(categories, tags);
-      let exclude = [main_category, ...genres]
-      tags = tags.filter((t) => {return !exclude.includes(t)})
-      let sub_category = this.getSubgenre(categories, tags);
-      tags = tags.filter((t) => {return t != sub_category})
-
-      return this.cleanObject({
-        title: page.qsf("meta[property='og:title']")?.attributes.content.value,
-        duration_minutes: this.lengthOfBookInMinutes(info.duration),
-        language: info.language,
-        release_date: this.dateString(info.releaseDate),
-        release_timestamp: new Date(info.releaseDate).getTime(),
-        publisher: info.publisher.name,
-        publisher_summary: publisher_summary,
-        audible_oginal: /^Audible Original/.test(info.publisher.name),
-        book: /Book (\d+)/i.exec(info.series?.[0].part)?.[1],
-        category_type: category_type,
-        main_category: main_category,
-        sub_category: this.getSubgenre(categories, tags),
-        categories: tags,
-        rating: this.tryFloat(Number(info.rating.value).toFixed(1)),
-        num_ratings: info.rating.count,
-      });
-    },
-
 
     parseBookDetails: function(doc) {
       page = new Element(doc);
-      let runtime = page.gcf(classes.runtime);
-      let publisher = page.qsf(`li.${classes.publisher} a`)?.innerHTML?.trim();
-      let date = page.gcf(classes.release_date)?.innerHTML.replace(/.+date:/i, "").trim();
+      
+      if (page.gt("adbl-product-metadata").length > 0) {
+        parser = new ADBLBookPageParser(doc, digitalData);
+      } else {
+        parser = new NormalBookPageParser(doc, digitalData);
+      }
 
-      let publisher_summary = (
-        page.qs("#center-1 .bc-container")[1]?.gcf("bc-text")
-        ?.innerHTML?.trim()
-        ?.replace(/Publisher's Summary\s*/, "")
-        ?.replace(/([\n\r\s]+|)©.+/, "")
-        ?.replace(/[\n\r]+(\s+|)/g, "<br>")
-        ?.replace(/\t/g, " ")
-        ?.replace(/"/g, "'")
-      );
-
-      let categories = page.qs(".categoriesLabel a").map((c) => { return this.entityDecode(c.innerHTML) || "" });
-      let tags = page.gc("bc-chip-text").map((c) => { return c.attributes["data-text"]?.value || "" });
-      let main_category = categories[0] || "";
-      tags = [...(new Set(tags).difference(new Set(categories)))]
-      let category_type = this.getGenre(categories, tags);
-      let exclude = [main_category, ...genres]
-      tags = tags.filter((t) => {return !exclude.includes(t)})
-      let sub_category = this.getSubgenre(categories, tags);
-      tags = tags.filter((t) => {return t != sub_category})
-
-      return this.cleanObject({
-        title: page.qsf("meta[property='og:title']")?.attributes.content.value,
-        duration_minutes: (
-          runtime ?
-          this.lengthOfBookInMinutes(runtime.innerHTML?.replace(/length:/i, ""))
-          : ""
-        ),
-        language: page.gcf(classes.language)
-          ?.innerHTML?.replace(/[\s\n\r]*language:[\s\n\r]+/gi, "")
-          ?.trim(),
-        release_date: this.dateString(date),
-        release_timestamp: date ? new Date(date).getTime() : "",
-        publisher: publisher,
-        publisher_summary: publisher_summary,
-        audible_oginal: /^Audible Original/.test(publisher),
-        book: /, Book (\d+)/i.exec(this.cn(doc, classes.series)?.[0]?.innerHTML)?.[1],
-        category_type: category_type,
-        main_category: main_category,
-        sub_category: this.getSubgenre(categories, tags),
-        categories: tags,
-        rating: this.tryFloat(
-          /[\d\.]+/.exec(
-            this.cn(this.cn(doc, "ratingsLabel")?.[0], "bc-pub-offscreen")?.[0]?.innerHTML
-          )?.[0]
-        ),
-        num_ratings: this.tryFloat(
-          /[\d,]+/.exec(
-              this.cn(this.cn(doc, "ratingsLabel")?.[0], "bc-color-link")?.[0]?.innerHTML
-            )?.[0]
-            ?.replace(/\D/, "")
-        ),
-        critic_summary: this.cn(doc, "productCriticsSummary")?.[0]
-          ?.innerText?.trim()
-          ?.replace(/Critic Reviews\s*/, "")
-          ?.replace(/([\n\r\s]+|)©.+/, "")
-          ?.replace(/[\n\r]+(\s+|)/g, "<br>")
-          ?.replace(/\t/g, " ")
-          ?.replace(/"/g, "'"),
-      });
+      return parser.data()
     },
 
     parseURIasJSON: function(url, obj) {

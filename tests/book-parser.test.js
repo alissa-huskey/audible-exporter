@@ -105,6 +105,52 @@ describe("NormalBookPageParser", function() {
     expect(page.publisher_summary).toBe(summary);
   });
 
+  test(".categories_list", function() {
+    let categories = ["Science Fiction & Fantasy", "Science Fiction"];
+    expect(page.categories_list).toEqual(categories);
+  });
+
+  test(".main_category", function() {
+    expect(page.main_category).toEqual("Science Fiction & Fantasy");
+  });
+
+  test(".tags_list", function() {
+    let tags = [
+      "Science Fiction",
+      "Fiction",
+      "Funny",
+      "Scary",
+      "Detective",
+      "Solar System",
+    ];
+    expect(page.tags_list).toEqual(tags);
+  });
+
+  test(".tags", function() {
+    let tags = [
+      "Science Fiction",
+      "Funny",
+      "Scary",
+      "Detective",
+      "Solar System",
+    ];
+
+    expect(page.tags).toEqual(tags);
+  });
+
+  test(".sub_category", function() {
+
+    expect(page.tags).toEqual([
+      "Science Fiction",
+      "Funny",
+      "Scary",
+      "Detective",
+      "Solar System",
+    ]);
+
+    expect(page.sub_category).toBe("Science Fiction");
+  });
+
 });
 
 describe("ADBLBookPageParser", function() {
