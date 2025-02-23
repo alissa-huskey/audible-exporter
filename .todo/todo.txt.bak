@@ -1,18 +1,21 @@
-2025-02-14 Log the amount of time the script took to run.
-2025-02-14 Instead of opening a save dialog, allow the user to click a button to download.
-2025-02-14 Add an option to download as CSV/TSV/JSON.
-2025-02-14 For TSV/CSV, detect newlines in critic/publisher summary and remove or change.
-2025-02-14 Add series information.
-2025-02-14 Add my review if it exists.
-2025-02-14 add option to download goodreads CSV importable file
-2025-02-14 add ASIN
-2025-02-14 change date format and/or use timestamp
-2025-02-14 fix progress bar, says 100% when not yet complete
-2025-02-14 fix TSV linebreaks
-2025-02-14 add stop button
-2025-02-14 Modify status message to say title instead of author.
-2025-02-14 get account name
-
-2025-02-15 use jquery instead of exporter.cn/tn/gi
-2025-02-17 Parse podcast page: https://www.audible.com/podcast/Crime-Junkie/B08JJMQPN4?qid=1739803996&sr=1-1&ref_pageloadid=ueCYRnHMqKz8Fhrh&pf_rd_p=83218cca-c308-412f-bfcf-90198b687a2f&pf_rd_r=KK4VK8R67XV6A0K7KWJE&plink=vrTUC8MEkmliwSKT&pageLoadId=0NMtsgka5Pb31UHa&creativeId=0d6f6720-f41c-457e-a42b-8c8dceb62f2c&ref=a_search_c3_lProduct_1_1
-2025-02-17 parse anthologies from book details
+2025-02-14 @feature Log the amount of time the script took to run.
+2025-02-14 @feature Instead of opening a save dialog, allow the user to click a button to download.
+2025-02-14 @feature Add an option to download as CSV/TSV/JSON.
+2025-02-14 @ux For TSV/CSV, detect newlines in critic/publisher summary and remove or change.
+2025-02-14 @feature Add series information.
+2025-02-14 @feature Add my review if it exists.
+2025-02-14 @feature add option to download goodreads CSV importable file
+2025-02-14 @feature add ASIN
+2025-02-14 @ux change date format and/or use timestamp
+2025-02-14 @bug fix progress bar, says 100% when not yet complete
+2025-02-14 @bug fix TSV linebreaks
+2025-02-14 @feature add stop button
+2025-02-14 @ux Modify status message to say title instead of author.
+2025-02-14 @feature get account name
+2025-02-17 @feature Parse podcast page: https://www.audible.com/podcast/Crime-Junkie/B08JJMQPN4?qid=1739803996&sr=1-1&ref_pageloadid=ueCYRnHMqKz8Fhrh&pf_rd_p=83218cca-c308-412f-bfcf-90198b687a2f&pf_rd_r=KK4VK8R67XV6A0K7KWJE&plink=vrTUC8MEkmliwSKT&pageLoadId=0NMtsgka5Pb31UHa&creativeId=0d6f6720-f41c-457e-a42b-8c8dceb62f2c&ref=a_search_c3_lProduct_1_1
+2025-02-17 @feature parse anthologies from book details
+x 2025-02-22 2025-02-17 @qa refactor parse*BookDetails to use a common method for categories/tags
+2025-02-21 @feature get finished/not-finished status
+2025-02-22 @bug fix purchase_date
+2025-02-22 @feature Add my_review
+2025-02-22 @feature Add my_rating

@@ -2,7 +2,9 @@
  * @jest-environment jsdom
  */
 
-require("../src/exporter.js");
+require("../src/dev.js");
+require("../src/element.js");
+require("../src/list.js");
 
 
 describe("List", function() {

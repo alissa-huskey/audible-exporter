@@ -6,7 +6,10 @@ const $ = require("jquery");
 const fs = require("fs")
 const path = require("path");
 
-require("../src/exporter.js");
+require("../src/dev.js");
+require("../src/util.js");
+require("../src/list.js");
+require("../src/element.js");
 
 
 describe("Element", function() {

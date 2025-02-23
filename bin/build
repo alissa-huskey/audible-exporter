@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+main() {
+  local file
+
+  cat src/{dev,util,element,list,book-page-parser,exporter,runner}.js > src/audible-exporter.js
+}
+
+main

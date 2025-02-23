@@ -8,12 +8,3 @@ global.getFixtureFile = function(name) {
 global.toDoc = function(text) {
   return new DOMParser().parseFromString(text, "text/html")
 }
-
-global.log = function(...msg) {
-  console.log("===>", ...msg);
-}
-
-global.hr = function(...msg) {
-  console.log("****************************************", ...msg)
-}
-

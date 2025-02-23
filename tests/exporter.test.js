@@ -6,25 +6,36 @@ const $ = require("jquery");
 const fs = require("fs")
 const path = require("path");
 
+require("../src/dev.js");
+require("../src/util.js");
+require("../src/element.js");
+require("../src/list.js");
+require("../src/book-page-parser.js");
 require("../src/exporter.js");
 
 
 describe("exporter", function() {
   exporter = Exporter();
 
-  test("run() function", function() {
-    expect(exporter.run).toBeDefined();
-  });
-
+  // TODO: move to util.test.js
   test("rando() function", function() {
     expect(exporter.rando(10)).toBeGreaterThanOrEqual(0);
   });
 
+  // TODO: move to util.test.js
   test("reg() function", function() {
     expect(exporter.reg(/\d+/.exec("abc 53"), 0)).toBe("53");
     expect(exporter.reg(/\d+/.exec("abc"), 0)).toBe("");
   });
 
+  // TODO: move to util.test.js
+  test("str() function", function() {
+    expect(exporter.str(1)).toBe(1)
+    expect(exporter.str({a: 1, b: "B"}))
+      .toBe('{\\\"a\\\":1,\\\"b\\\":\\\"B\\\"}');
+  });
+
+  // TODO: move to util.test.js
   test("cleanObject() function", function() {
     let includedTypes = {
       a: true,
@@ -40,30 +51,12 @@ describe("exporter", function() {
     expect(exporter.cleanObject(includedTypes)).toEqual(includedTypes)
   });
 
-  test("str() function", function() {
-    expect(exporter.str(1)).toBe(1)
-    expect(exporter.str({a: 1, b: "B"}))
-      .toBe('{\\\"a\\\":1,\\\"b\\\":\\\"B\\\"}');
-  });
-
-  test(".entityDecode()", function() {
-    expect(exporter.entityDecode("Science Fiction &amp; Fantasy")).toBe("Science Fiction & Fantasy")
-  });
-
   test("attr() function", function() {
     expect(exporter.attr).toBeDefined();
   });
 
   test("fetchDoc() function", function() {
     expect(exporter.fetchDoc).toBeDefined();
-  });
-
-  test("tryFloat()", function() {
-    expect(exporter.tryFloat("1.2")).toBe(1.2);
-  });
-
-  test("dateString()", function() {
-    expect(exporter.dateString("01-21-2025")).toBe("2025 Jan 21");
   });
 
   test("tsvReady()", function() {

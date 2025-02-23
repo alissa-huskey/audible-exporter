@@ -4,7 +4,8 @@
   "description": "Javascript to export a TSV or JSON file of your audible library.",
   "main": "src/exporter.js",
   "scripts": {
-    "test": "jest"
+    "test": "bin/build && jest",
+    "build": "bin/build"
   },
   "type": "module",
   "repository": {
@@ -26,6 +27,7 @@
   "jest": {
     "setupFiles": ["./tests/helper.js"],
     "testEnvironment": "jsdom",
-    "testMatch": ["<rootDir>/tests/*.test.js"]
+    "testMatch": ["<rootDir>/tests/*.test.js"],
+    "bail": 1
   }
 }
