@@ -11,6 +11,7 @@ require("../src/util.js");
 require("../src/element.js");
 require("../src/list.js");
 require("../src/book-page-parser.js");
+require("../src/library-page-parser.js");
 require("../src/exporter.js");
 
 
@@ -175,7 +176,6 @@ describe("exporter: parsing functions", function() {
 
   test("parseLibraryPage()", function() {
     let html = getFixtureFile("library.html");
-    document.body.innerHTML = html;
     let doc = new toDoc(html);
 
     let books = exporter.parseLibraryPage(doc);

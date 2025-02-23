@@ -9,6 +9,12 @@ titleCase = function(text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
+str = function(o) {
+  return typeof o == "object"
+    ? this.tsvReady(JSON.stringify(o))
+    : o
+}
+
 tryFloat = function(d) {
   try {
     return parseFloat(d);
@@ -42,6 +48,44 @@ dateString = function(d) {
   var date = new Date(d);
   return `${date.getFullYear()} ${months[date.getMonth()]} ${date.getDate()}`;
 }
+
+cleanObject = function(ob) {
+  return Object.entries(ob).reduce((r, [k, v]) => {
+    if (
+      v != null &&
+      v != undefined &&
+      v !== "" &&
+      (typeof v == "boolean" ||
+        typeof v == "string" ||
+        typeof v == "symbol" ||
+        typeof v == "number" ||
+        typeof v == "function" ||
+        (typeof v == "object" &&
+          ((Array.isArray(v) && v.length) || Array.isArray(v) != true)))
+    ) {
+      r[k] = v;
+      return r;
+    } else {
+      return r;
+    }
+  }, {});
+}
+
+rando = (n) => Math.round(Math.random() * n)
+
+tsvReady = (s) => (
+  s
+    ? s
+        .replace(/\t|\v|\f|\u0009/g, " ")
+        .replace(/\r|\n/g, "↵")
+        .replace(/\0/g, "")
+        .replace(/\\/g, "\\\\")
+        .replace(/\'/g, "\\'")
+        .replace(/\"/g, '\\"')
+    : s
+)
+
+reg = (o, n) => (o ? o[n] : "")
 
 cleanObject = function(ob) {
   return Object.entries(ob).reduce((r, [k, v]) => {
@@ -553,6 +597,39 @@ NormalBookPageParser = class extends BookPageParser {
     return this.doc.qs(".categoriesLabel a").map((c) => { return entityDecode(c.innerHTML) || "" }) || [];
   }
 }
+LibraryPageParser = class {
+  constructor(doc=null) {
+    this.doc = new Element(doc);
+  }
+
+  get rows() {
+    log("doc:", this.doc);
+    let rows = this.doc.gc("adbl-library-content-row");
+    if (!rows.length) {
+      return [];
+    }
+    return rows;
+  }
+
+  get books() {
+    return this.rows.map((row) => {
+        let ul = row.gcf("bc-list bc-list-nostyle");
+
+      return {
+        url: (
+          ul.gcf("bc-size-headline3")?.parentElement
+          ?.attributes["href"]?.value
+          ?.replace(/\?.+/, "")
+        ) || "",
+        title: ul.gcf("bc-size-headline3")?.innerHTML?.trim() || "",
+        author: ul.gcf("authorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
+        narrator: ul.gcf("narratorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
+        series: ul.gcf("seriesLabel")?.gtf("a")?.innerHTML?.trim() || "",
+      }
+    });
+  }
+}
+
 Exporter = function() {
 
   var classes = {
@@ -579,7 +656,6 @@ Exporter = function() {
      * --------------------------------------------------------------------------------
      */
 
-    rando: (n) => Math.round(Math.random() * n),
     unq: (arr) => arr.filter((e, p, a) => a.indexOf(e) == p),
     unqHsh: (a, o) => (a.filter(i => o.hasOwnProperty(i) ? false : (o[i] = true))),
 
@@ -603,82 +679,6 @@ Exporter = function() {
     /* formatting functions
      * --------------------------------------------------------------------------------
      */
-
-    reg: (o, n) => (o ? o[n] : ""),
-
-    entityDecode: function(text) {
-      return text.replace("&amp;", "&");
-    },
-
-    str: function(o) {
-      return typeof o == "object"
-        ? this.tsvReady(JSON.stringify(o))
-        : o
-    },
-
-    tryFloat: function(d) {
-      try {
-        return parseFloat(d);
-      } catch (err) {
-        return d;
-      }
-    },
-
-    dateString: function(d) {
-      if (!d) {
-        return ""
-      }
-      var months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
-      var date = new Date(d);
-      return `${date.getFullYear()} ${months[date.getMonth()]} ${date.getDate()}`;
-    },
-
-    cleanObject: function(ob) {
-      return Object.entries(ob).reduce((r, [k, v]) => {
-        if (
-          v != null &&
-          v != undefined &&
-          v !== "" &&
-          (typeof v == "boolean" ||
-            typeof v == "string" ||
-            typeof v == "symbol" ||
-            typeof v == "number" ||
-            typeof v == "function" ||
-            (typeof v == "object" &&
-              ((Array.isArray(v) && v.length) || Array.isArray(v) != true)))
-        ) {
-          r[k] = v;
-          return r;
-        } else {
-          return r;
-        }
-      }, {});
-    },
-
-    tsvReady: (s) => (
-      s
-        ? s
-            .replace(/\t|\v|\f|\u0009/g, " ")
-            .replace(/\r|\n/g, "↵")
-            .replace(/\0/g, "")
-            .replace(/\\/g, "\\\\")
-            .replace(/\'/g, "\\'")
-            .replace(/\"/g, '\\"')
-        : s
-    ),
 
     convert2TsvAndDownload: function(records, named_file) {
       const fileArray = records;
@@ -707,7 +707,7 @@ Exporter = function() {
         }
         table.push(row);
       }
-      var output_ = table.map((el) => el.map((itm) => this.str(itm)));
+      var output_ = table.map((el) => el.map((itm) => str(itm)));
       this.downloadr(output_, named_file);
     },
 
@@ -776,33 +776,10 @@ Exporter = function() {
      */
 
     parseLibraryPage: function(doc) {
-      doc = Element.from_html(doc)
-      let rows = Element.gc("adbl-library-content-row");
-      if (!rows.length) { return [] };
-
-      let books = Array.from(rows).map((card) => {
-        let ul = card.gc(classes.ul_card)[0];
-
-        return {
-          url:
-            (
-              ul.gcf(classes.title)?.parentElement
-              ?.attributes["href"]?.value
-              ?.replace(/\?.+/, "")
-            ) || "",
-          title: ul.gcf(classes.title)?.innerHTML?.trim() || "",
-          author: 
-            ul.gcf(classes.author)?.gcf("bc-color-base")?.innerHTML?.trim() || "",
-          narrator:
-            ul.gcf(classes.narrator)?.gcf("bc-color-base")?.innerHTML?.trim() || "",
-          series:
-            ul.gcf(classes.series)?.gtf("a")?.innerHTML?.trim() || "",
-        };
-      });
-
-      return books;
+      // doc = new Element(doc);
+      let page = new LibraryPageParser(doc);
+      return page.books;
     },
-
 
     parseBookDetails: function(doc) {
       page = new Element(doc);
@@ -826,11 +803,11 @@ Exporter = function() {
     },
 
     lengthOfBookInMinutes: function(s) {
-      var mins = this.reg(/\d+(?=\smin)/.exec(s), 0)
-        ? parseInt(this.reg(/\d+(?=\smin)/.exec(s), 0))
+      var mins = reg(/\d+(?=\smin)/.exec(s), 0)
+        ? parseInt(reg(/\d+(?=\smin)/.exec(s), 0))
         : 0;
-      var hours = this.reg(/\d+(?=\shrs)/.exec(s), 0)
-        ? parseInt(this.reg(/\d+(?=\shrs)/.exec(s), 0)) * 60
+      var hours = reg(/\d+(?=\shrs)/.exec(s), 0)
+        ? parseInt(reg(/\d+(?=\shrs)/.exec(s), 0)) * 60
         : 0;
       return hours + mins;
     },
@@ -934,10 +911,10 @@ Exporter = function() {
       const total_results = library.length;
       for (let i = 0; i < total_results; i++) {
         let details = await this.getBookDetails(library[i].url);
-        let merge = this.cleanObject({ ...library[i], ...details });
+        let merge = cleanObject({ ...library[i], ...details });
         contain_arr.push(merge);
         if (i == 2) console.log(contain_arr);
-        await this.delay(this.rando(1111) + 1111);
+        await this.delay(rando(1111) + 1111);
         this.gi(document, "downloading_percentage_bar").style.width = `${
           this.download_bar_width * (i / total_results)
         }px`;
@@ -1023,7 +1000,7 @@ Exporter = function() {
         first_page.order_date_sel.indexOf(last_year.toString()),
         20
       );
-      await this.delay(this.rando(333) + 666);
+      await this.delay(rando(333) + 666);
 
       for (let y = 0; y < years_loop.length; y++) {
         let page = await this.getOrderPageByDate(years_loop[y], 1);
@@ -1039,7 +1016,7 @@ Exporter = function() {
           next_page?.titles?.forEach((title) => titles.push(title));
           this.setStatus(`Retrieving ${years_loop[i]} purchases... page: ${page.pages[i]}`);
         }
-        await this.delay(this.rando(333) + 666);
+        await this.delay(rando(333) + 666);
       }
       return this.unqKey(titles, "url");
     },
@@ -1073,7 +1050,7 @@ Exporter = function() {
               this.cn(tr, "ui-it-purchasehistory-item-title")?.[0]?.innerText
             )?.[0],
             purchase_date: purchase_date
-              ? this.dateString(purchase_date)
+              ? dateString(purchase_date)
               : purchase_date,
           };
         })

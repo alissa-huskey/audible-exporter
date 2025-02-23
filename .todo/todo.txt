@@ -1,7 +1,7 @@
 2025-02-14 @feature Log the amount of time the script took to run.
 2025-02-14 @feature Instead of opening a save dialog, allow the user to click a button to download.
 2025-02-14 @feature Add an option to download as CSV/TSV/JSON.
-2025-02-14 @ux For TSV/CSV, detect newlines in critic/publisher summary and remove or change.
+(B) 2025-02-14 @ux For TSV/CSV, detect newlines in critic/publisher summary and remove or change.
 2025-02-14 @feature Add series information.
 2025-02-14 @feature Add my review if it exists.
 2025-02-14 @feature add option to download goodreads CSV importable file
@@ -15,6 +15,14 @@
 2025-02-17 @feature Parse podcast page: https://www.audible.com/podcast/Crime-Junkie/B08JJMQPN4?qid=1739803996&sr=1-1&ref_pageloadid=ueCYRnHMqKz8Fhrh&pf_rd_p=83218cca-c308-412f-bfcf-90198b687a2f&pf_rd_r=KK4VK8R67XV6A0K7KWJE&plink=vrTUC8MEkmliwSKT&pageLoadId=0NMtsgka5Pb31UHa&creativeId=0d6f6720-f41c-457e-a42b-8c8dceb62f2c&ref=a_search_c3_lProduct_1_1
 2025-02-17 @feature parse anthologies from book details
 2025-02-21 @feature get finished/not-finished status
-2025-02-22 @bug fix purchase_date
+(B) 2025-02-22 @bug fix purchase_date
 2025-02-22 @feature Add my_review
 2025-02-22 @feature Add my_rating
+(A) 2025-02-22 @task @qa refactor loopThroughAudibleLibrary()
+(A) 2025-02-22 @task @qa refactor enrichLibraryInformation()
+(A) 2025-02-22 @task @qa refactor getAllOrders()
+(A) 2025-02-22 @task @qa refactor getOrderPageByDate()
+(A) 2025-02-22 @qa Make sure book page fixtures are named correctly.
+(B) 2025-02-22 @qa set variables for css class names in appropriate places.
+(A) 2025-02-23 refactor Exporter to be a class.
+(A) 2025-02-23 @qa rename *PageParser -> *Page

@@ -144,33 +144,9 @@ Exporter = function() {
      */
 
     parseLibraryPage: function(doc) {
-      doc = Element.from_html(doc)
-      let rows = Element.gc("adbl-library-content-row");
-      if (!rows.length) { return [] };
-
-      let books = Array.from(rows).map((card) => {
-        let ul = card.gc(classes.ul_card)[0];
-
-        return {
-          url:
-            (
-              ul.gcf(classes.title)?.parentElement
-              ?.attributes["href"]?.value
-              ?.replace(/\?.+/, "")
-            ) || "",
-          title: ul.gcf(classes.title)?.innerHTML?.trim() || "",
-          author: 
-            ul.gcf(classes.author)?.gcf("bc-color-base")?.innerHTML?.trim() || "",
-          narrator:
-            ul.gcf(classes.narrator)?.gcf("bc-color-base")?.innerHTML?.trim() || "",
-          series:
-            ul.gcf(classes.series)?.gtf("a")?.innerHTML?.trim() || "",
-        };
-      });
-
-      return books;
+      let page = new LibraryPageParser(doc);
+      return page.books;
     },
-
 
     parseBookDetails: function(doc) {
       page = new Element(doc);
