@@ -237,18 +237,18 @@ Exporter = function() {
       const page_size = parseInt(
         Array.from(
           doc.getElementsByName("pageSize")[0].getElementsByTagName("option")
-        ).filter((r) => r && r.selected)[0].value
+        ).filter((r) => r && r.selected)[0]?.value || 20
       );
       const num_pages = Math.max(
         ...Array.from(doc.getElementsByClassName("pageNumberElement"))
-          .map((p) => p.innerText.trim())
+          .map((p) => p.innerHTML.trim())
           .filter((r) => r && /^\d+$/.test(r))
           .map((n) => parseInt(n))
       );
       const num_titles = page_size * num_pages;
       const total_results = Math.ceil(num_titles / 50);
       const contain_arr = [];
-      for (let i = 0; i < total_results; i++) {
+      for (let i = 0; i <= total_results; i++) {
         const cards = await this.getAudibleLibraryPage(i);
         await this.delay(111);
         if (cards) {

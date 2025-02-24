@@ -18,7 +18,6 @@
 (B) 2025-02-22 @bug fix purchase_date
 2025-02-22 @feature Add my_review
 2025-02-22 @feature Add my_rating
-x 2025-02-23 2025-02-22 @task @qa refactor parseLibraryPage()
 (A) 2025-02-22 @task @qa refactor loopThroughAudibleLibrary()
 (A) 2025-02-22 @task @qa refactor enrichLibraryInformation()
 (A) 2025-02-22 @task @qa refactor getAllOrders()

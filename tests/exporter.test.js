@@ -272,4 +272,28 @@ describe("exporter: parsing functions", function() {
     expect(book.categories).toEqual(categories);
   });
 
+  test("loopThroughtAudibleLibrary", async function() {
+    let docs = ["3", "2", "1", "1"].map((i) => 
+      toDoc(getFixtureFile(`library-page-${i}-of-3.html`))
+    );
+
+    let mockFetchDoc = function() {
+      return jest.fn().mockImplementation((i) =>
+        Promise.resolve(docs.pop()),
+      );
+    };
+
+    let exporter = Exporter();
+    exporter.fetchDoc = mockFetchDoc();
+    exporter.createDownloadHTML();
+
+    let books = await exporter.loopThroughtAudibleLibrary();
+
+    let titles = books.map((b) => b.title);
+    expect(books.length).toBe(60);
+
+    expect(books[0].title).toBe("Scorpion Shards: Star Shards Chronicles Series, Book 1");
+    expect(books[59].title).toBe("Skysworn");
+  });
+
 });

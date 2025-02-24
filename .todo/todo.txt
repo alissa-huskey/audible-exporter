@@ -26,3 +26,4 @@
 (B) 2025-02-22 @qa set variables for css class names in appropriate places.
 (A) 2025-02-23 refactor Exporter to be a class.
 (A) 2025-02-23 @qa rename *PageParser -> *Page
+(A) 2025-02-23 have *Page inherit from Page class and add a url attr and fetch() method.

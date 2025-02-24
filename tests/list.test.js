@@ -24,7 +24,10 @@ describe("List", function() {
   });
 
   test("first", function() {
-    e = items.first()
-    expect(items.first().innerHTML).toBe("a");
+    expect(items.first.innerHTML).toBe("a");
+  });
+
+  test("last", function() {
+    expect(items.last.innerHTML).toBe("c");
   });
 });

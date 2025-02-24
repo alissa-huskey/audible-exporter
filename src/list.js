@@ -5,7 +5,11 @@ List = class extends Array {
     super(...elements);
   }
 
-  first() {
+  get first() {
     return this[0];
+  }
+
+  get last() {
+    return this.slice(-1)[0];
   }
 }

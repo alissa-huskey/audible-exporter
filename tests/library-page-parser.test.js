@@ -40,4 +40,34 @@ describe("LibraryPageParser", function() {
     expect(page.books[0]).toEqual(book);
   });
 
+  test(".books (last page)", function() {
+    let html = getFixtureFile("library-page-last.html");
+    let doc = toDoc(html);
+    let page = new LibraryPageParser(doc);
+
+    expect(page.books.some((book) => book.title == "Your First Listen")).toBe(false);
+  });
+
+  test(".page_size (default)", function() {
+    expect(page.page_size).toBe(20);
+  });
+
+  test(".page_num", function() {
+    let html = getFixtureFile("library-page-2.html");
+    let doc = toDoc(html);
+    let page = new LibraryPageParser(doc);
+    expect(page.page_num).toBe(2);
+  });
+
+  test(".page_size (selected)", function() {
+    let html = getFixtureFile("library.html");
+    let doc = toDoc(html);
+    let page = new LibraryPageParser(doc);
+    expect(page.page_size).toBe(50);
+  });
+
+  test(".page_count", function() {
+    expect(page.page_count).toBe(65);
+  });
+
 });
