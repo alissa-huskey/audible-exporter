@@ -20,7 +20,6 @@
 2025-02-22 @feature Add my_rating
 (A) 2025-02-22 @task @qa refactor enrichLibraryInformation()
 (A) 2025-02-22 @task @qa refactor getAllOrders()
-(A) 2025-02-22 @task @qa refactor getOrderPageByDate()
 (A) 2025-02-22 @qa Make sure book page fixtures are named correctly.
 (B) 2025-02-22 @qa set variables for css class names in appropriate places.
 (A) 2025-02-23 refactor Exporter to be a class.
@@ -43,4 +42,3 @@
 2025-02-23 @feature Add date downloaded to JSON
 2025-02-23 @feature Some way to indicate last download, to avoid downloading everything
 2025-02-24 @qa consolidate library page fixtures
-

@@ -11,9 +11,10 @@ require("../src/util.js");
 require("../src/element.js");
 require("../src/list.js");
 require("../src/book-page.js");
-require("../src/library-page.js");
 require("../src/page.js");
+require("../src/library-page.js");
 require("../src/library.js");
+require("../src/order-page.js");
 require("../src/exporter.js");
 
 
@@ -290,6 +291,24 @@ describe("exporter: parsing functions", function() {
 
     expect(books[0].title).toBe("Scorpion Shards: Star Shards Chronicles Series, Book 1");
     expect(books[59].title).toBe("Skysworn");
+  });
+
+  test("getOrderPageByDate", async function() {
+    let years = [
+      "2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018",
+      "2017", "2016", "2015", "2014", "2013", "2012", "2011", "2010",
+    ];
+
+    OrderPage.prototype.fetchDoc = mockFetchDoc("order-page-1.html");
+    let exporter = Exporter();
+    exporter.fetchDoc = mockFetchDoc("order-page-1.html");
+
+    let page = await exporter.getOrderPageByDate(2025, 1);
+
+    expect(page.page_count).toEqual(5);
+    expect(page.years).toEqual(years);
+    expect(Object.keys(page.items).length).toEqual(44);
+    expect(page.items[0].title).toBe("The Lives of Saints");
   });
 
 });

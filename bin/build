@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
+#
+# generate src/audible-export.js
 
 main() {
-  local file
+  local outfile="src/audible-exporter.js" names files
 
-  cat src/{dev,util,element,list,page,book-page,library-page,library,exporter,runner}.js > src/audible-exporter.js
+  # NOTE: the list of files must be manually maintained to retain the correct order
+  names=(dev util element list page book-page library-page library order-page exporter runner)
+
+  read -r files < <(IFS=,; echo "src/{${names[*]}}.js")
+
+  eval cat "${files}" > "${outfile}"
 }
 
 main

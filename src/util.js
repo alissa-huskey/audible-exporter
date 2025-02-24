@@ -1,3 +1,12 @@
+var CONSOLE_OUTPUT = false;
+
+info = function(...msg) {
+  if (!CONSOLE_OUTPUT) {
+    return;
+  }
+  console.log("[audible-exporter]", ...msg);
+}
+
 titleCase = function(text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }

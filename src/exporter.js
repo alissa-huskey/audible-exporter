@@ -260,7 +260,6 @@ Exporter = function() {
         let details = await this.getBookDetails(library[i].url);
         let merge = cleanObject({ ...library[i], ...details });
         contain_arr.push(merge);
-        if (i == 2) console.log(contain_arr);
         await this.delay(rando(1111) + 1111);
         this.gi(document, "downloading_percentage_bar").style.width = `${
           this.download_bar_width * (i / total_results)
@@ -282,7 +281,6 @@ Exporter = function() {
         "downloading_percentage_bar"
       ).style.width = `${this.download_bar_width}px`;
       this.setStatus("100% complete");
-      console.log(contain_arr);
       let merged_with_orders = contain_arr.map((r) => {
         let order = order_information.filter((i) => i.url == r.url);
         return {
@@ -314,8 +312,7 @@ Exporter = function() {
           const doc = await this.fetchDoc(url);
           return this.parseBookDetails(doc);
         } catch (err) {
-          console.log("failed");
-          console.log(err);
+          console.error("failed", err);
           return {};
         }
       } else {
@@ -368,48 +365,17 @@ Exporter = function() {
       return this.unqKey(titles, "url");
     },
 
-    getOrderPageByDate: async function (df, p) {
-      console.log("getOrderPageByDate()", df, p);
-      var doc = await this.fetchDoc(
-        `https://www.audible.com/account/purchase-history?ref=&tf=orders&df=${df}&ps=40&pn=${p}`
-      );
-
-      var order_date_sel = Array.from(
-        this.tn(this.gi(doc, "ui-it-purchase-history-date-filter"), "option")
-      ).map((t) => t.value);
-
-      var wrapper = this.cn(doc, "purchase-history-pagination-wrapper");
-      var links = this.tn(wrapper?.[0], "a");
-      var pages = Array.from(links)?.map((r) => /&pn=(\d+)/.exec(r.href)?.[1]);
-
-      var titles = Array.from(this.tn(this.tn(doc, "tbody")?.[0], "tr"))
-        .map((tr) => {
-          let purchase_date = this.cn(
-            tr,
-            "ui-it-purchasehistory-item-purchasedate"
-          )?.[0]?.innerText?.trim();
-          return {
-            url: /.+?(?=\?)/.exec(this.tn(tr, "a")?.[0]?.href)?.[0],
-            title: /.+(?=[\s\n]+By:)/.exec(
-              this.cn(tr, "ui-it-purchasehistory-item-title")?.[0]?.innerText
-            )?.[0],
-            author: /(?<=[\s\n]+By: ).+/.exec(
-              this.cn(tr, "ui-it-purchasehistory-item-title")?.[0]?.innerText
-            )?.[0],
-            purchase_date: purchase_date
-              ? dateString(purchase_date)
-              : purchase_date,
-          };
-        })
-        .filter((r) => r.title && r.author);
-
-      page = {
-        titles: titles,
-        order_date_sel: order_date_sel,
-        pages: pages?.length ? this.unqHsh(pages, {}) : [],
-      };
-
+    getOrderPageByDate: async function (year, num) {
+      info("getOrderPageByDate()", year, num);
+      page = new OrderPage(year, num);
+      page.get();
       return page;
+
+      // page = {
+      //   titles: titles,
+      //   order_date_sel: order_date_sel,
+      //   pages: pages?.length ? this.unqHsh(pages, {}) : [],
+      // };
     },
 
     run: async function() {
@@ -418,7 +384,7 @@ Exporter = function() {
         var order_information = await this.getAllOrders();
         this.enrichLibraryInformation(order_information);
       } catch (err) {
-        console.log("Fatal error:", err, err.name, err.message);
+        console.error("Fatal error:", err, err.name, err.message);
       }
     }
   };

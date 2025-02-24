@@ -110,12 +110,17 @@ OrderPage = class extends Page {
 
   get items() {
     if (this.doc && isEmpty(this.#items)) {
-      this.#items = Object.values(this.purchases).map((p) => ({
-        url: `/pd/${p.id}`,
-        title: p.title,
-        author: p.author,
-        purchase_date: this.orders[p.order_id].date,
-      }));
+      this.#items = Object.values(this.purchases).reduce((arr, p) => {
+        if (p.title && p.author) {
+          arr.push({
+            url: `http://www.audible.com/pd/${p.id}`,
+            title: p.title,
+            author: p.author,
+            purchase_date: this.orders[p.order_id].date,
+          });
+        }
+        return arr;
+      }, []);
     }
     return this.#items;
   }

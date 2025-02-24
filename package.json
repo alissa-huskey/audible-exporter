@@ -4,7 +4,7 @@
   "description": "Javascript to export a TSV or JSON file of your audible library.",
   "main": "src/exporter.js",
   "scripts": {
-    "test": "bin/build && jest",
+    "test": "jest",
     "build": "bin/build"
   },
   "type": "module",

@@ -5,6 +5,15 @@ hr = function(...msg) {
 log = function(...msg) {
   console.log("--->", ...msg);
 }
+var CONSOLE_OUTPUT = false;
+
+info = function(...msg) {
+  if (!CONSOLE_OUTPUT) {
+    return;
+  }
+  console.log("[audible-exporter]", ...msg);
+}
+
 titleCase = function(text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
@@ -769,6 +778,133 @@ Library = class extends Page {
   }
 }
 
+OrderPage = class extends Page {
+  base_url = "https://www.audible.com/account/purchase-history?tf=orders";
+
+  #purchases_attrs = {
+    id: "data-order-item-asin",
+    order_id: "data-order-id",
+    amount: "data-order-item-cost",
+    credits: "data-order-item-credit-cost",
+    title: "data-order-item-name",
+    author: "data-order-item-author",
+  };
+
+  #orders = {};
+  #purchases = {};
+  #items = [];
+  #page_num = null;
+  #year = null;
+
+  constructor(year_or_doc=null, page_num=null) {
+    super();
+    this.doc = null;
+    if (typeof year_or_doc == "number" && typeof page_num == "number") {
+      this.year = year_or_doc;
+      this.page_num = page_num;
+    } else if (year_or_doc) {
+      this.doc = year_or_doc;
+    }
+  }
+
+  async get() {
+    let url = `${this.base_url}&df=${this.year}&pn=${this.page_num}`;
+    this.doc = await this.fetchDoc(url);
+    return this.doc;
+  }
+
+  get year() {
+    if (!this.#year && this.doc) {
+      this.#year = this.doc.qsf("#ui-it-purchase-history-date-filter option:checked")?.value;
+    }
+    return tryInt(this.#year);
+  }
+
+  set year(value) {
+    this.#year = value;
+  }
+
+  get page_num() {
+    if (!this.#page_num && this.doc) {
+      this.#page_num = this.doc.qsf("span.purchase-history-pagination-button")?.innerHTML?.trim();
+    }
+    return tryInt(this.#page_num);
+  }
+
+  set page_num(value) {
+    this.#page_num = value;
+  }
+
+  get page_count() {
+    let link = this.doc.qs("a.purchase-history-pagination-button").last
+    return parseInt(link.innerHTML.trim());
+  }
+
+  get years() {
+    let options = this.doc.qs("#ui-it-purchase-history-date-filter option");
+    let years = options.reduce((arr, option) => {
+      let year = option.value;
+      if (/^\d+$/.test(year)) {
+        arr.push(year);
+      }
+      return arr;
+    }, []);
+    return years;
+  }
+
+  get orders() {
+    if (this.doc && isEmpty(this.#orders)) {
+      let rows = this.doc.qs("tr:has(a[href^='/account/order-details'])");
+
+      let orders = rows.map((row) => {
+        let url = row.qsf("a[href^='/account/order-details']").href;
+        let id = url.match(/orderId=([^&]+)&/)[1];
+        let date = row.qsf(".ui-it-purchasehistory-item-purchasedate").innerHTML?.trim();
+        let total = row.qsf(".ui-it-purchasehistory-item-total div").innerHTML;
+
+        return [id, { id: id, date: date, total: total }];
+      });
+
+      this.#orders = Object.fromEntries(orders);
+    }
+    return this.#orders;
+  }
+
+  get purchases() {
+    if (this.doc && isEmpty(this.#purchases)) {
+      let links = this.doc.qs("a[data-order-item-id]");
+      let purchases = links.map((a) => 
+        [
+          a.attributes["data-order-item-asin"].value,
+          Object.fromEntries(
+            Object.entries(this.#purchases_attrs).map(([key, attr]) => [key, a.attributes[attr].value])
+          ),
+        ]
+      );
+
+      this.#purchases = Object.fromEntries(purchases);
+    }
+
+    return this.#purchases;
+  }
+
+  get items() {
+    if (this.doc && isEmpty(this.#items)) {
+      this.#items = Object.values(this.purchases).reduce((arr, p) => {
+        if (p.title && p.author) {
+          arr.push({
+            url: `http://www.audible.com/pd/${p.id}`,
+            title: p.title,
+            author: p.author,
+            purchase_date: this.orders[p.order_id].date,
+          });
+        }
+        return arr;
+      }, []);
+    }
+    return this.#items;
+  }
+}
 Exporter = function() {
 
   var classes = {
@@ -1031,7 +1167,6 @@ Exporter = function() {
         let details = await this.getBookDetails(library[i].url);
         let merge = cleanObject({ ...library[i], ...details });
         contain_arr.push(merge);
-        if (i == 2) console.log(contain_arr);
         await this.delay(rando(1111) + 1111);
         this.gi(document, "downloading_percentage_bar").style.width = `${
           this.download_bar_width * (i / total_results)
@@ -1053,7 +1188,6 @@ Exporter = function() {
         "downloading_percentage_bar"
       ).style.width = `${this.download_bar_width}px`;
       this.setStatus("100% complete");
-      console.log(contain_arr);
       let merged_with_orders = contain_arr.map((r) => {
         let order = order_information.filter((i) => i.url == r.url);
         return {
@@ -1085,8 +1219,7 @@ Exporter = function() {
           const doc = await this.fetchDoc(url);
           return this.parseBookDetails(doc);
         } catch (err) {
-          console.log("failed");
-          console.log(err);
+          console.error("failed", err);
           return {};
         }
       } else {
@@ -1139,48 +1272,17 @@ Exporter = function() {
       return this.unqKey(titles, "url");
     },
 
-    getOrderPageByDate: async function (df, p) {
-      console.log("getOrderPageByDate()", df, p);
-      var doc = await this.fetchDoc(
-        `https://www.audible.com/account/purchase-history?ref=&tf=orders&df=${df}&ps=40&pn=${p}`
-      );
-
-      var order_date_sel = Array.from(
-        this.tn(this.gi(doc, "ui-it-purchase-history-date-filter"), "option")
-      ).map((t) => t.value);
-
-      var wrapper = this.cn(doc, "purchase-history-pagination-wrapper");
-      var links = this.tn(wrapper?.[0], "a");
-      var pages = Array.from(links)?.map((r) => /&pn=(\d+)/.exec(r.href)?.[1]);
-
-      var titles = Array.from(this.tn(this.tn(doc, "tbody")?.[0], "tr"))
-        .map((tr) => {
-          let purchase_date = this.cn(
-            tr,
-            "ui-it-purchasehistory-item-purchasedate"
-          )?.[0]?.innerText?.trim();
-          return {
-            url: /.+?(?=\?)/.exec(this.tn(tr, "a")?.[0]?.href)?.[0],
-            title: /.+(?=[\s\n]+By:)/.exec(
-              this.cn(tr, "ui-it-purchasehistory-item-title")?.[0]?.innerText
-            )?.[0],
-            author: /(?<=[\s\n]+By: ).+/.exec(
-              this.cn(tr, "ui-it-purchasehistory-item-title")?.[0]?.innerText
-            )?.[0],
-            purchase_date: purchase_date
-              ? dateString(purchase_date)
-              : purchase_date,
-          };
-        })
-        .filter((r) => r.title && r.author);
-
-      page = {
-        titles: titles,
-        order_date_sel: order_date_sel,
-        pages: pages?.length ? this.unqHsh(pages, {}) : [],
-      };
-
+    getOrderPageByDate: async function (year, num) {
+      info("getOrderPageByDate()", year, num);
+      page = new OrderPage(year, num);
+      page.get();
       return page;
+
+      // page = {
+      //   titles: titles,
+      //   order_date_sel: order_date_sel,
+      //   pages: pages?.length ? this.unqHsh(pages, {}) : [],
+      // };
     },
 
     run: async function() {
@@ -1189,11 +1291,10 @@ Exporter = function() {
         var order_information = await this.getAllOrders();
         this.enrichLibraryInformation(order_information);
       } catch (err) {
-        console.log("Fatal error:", err, err.name, err.message);
+        console.error("Fatal error:", err, err.name, err.message);
       }
     }
   };
 }
-if (typeof process === "undefined" || process.env.JEST_WORKER_ID === undefined) {
-  Exporter().run();
-}
+CONSOLE_OUTPUT = true;
+Exporter().run();
