@@ -1,0 +1,8 @@
+TypeError: Cannot read properties of undefined (reading 'innerHTML')
+    at get book (<anonymous>:593:60)
+    at <anonymous>:399:22
+    at Array.map (<anonymous>)
+    at NormalBookPageParser.data (<anonymous>:398:48)
+    at Object.parseBookDetails (<anonymous>:905:21)
+    at Object.getBookDetails (<anonymous>:1049:23)
+    at async Object.enrichLibraryInformation (<anonymous>:994:23)

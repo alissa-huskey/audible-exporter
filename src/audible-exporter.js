@@ -245,9 +245,25 @@ List = class extends Array {
     super(...elements);
   }
 
-  first() {
+  get first() {
     return this[0];
   }
+
+  get last() {
+    return this.slice(-1)[0];
+  }
+}
+Page = class {
+    async fetchDoc(url) {
+      let res = await fetch(url);
+
+      if (!res.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+
+      let text = await res.text();
+      return new DOMParser().parseFromString(text, "text/html");
+    }
 }
 BookPageParser = class {
 
@@ -598,12 +614,29 @@ NormalBookPageParser = class extends BookPageParser {
   }
 }
 LibraryPageParser = class {
+  #default_page_size = 20;
+
   constructor(doc=null) {
     this.doc = new Element(doc);
   }
 
+  get page_size() {
+    let size = this.doc.qsf("select[name='pageSize'] option:checked")?.value || this.#default_page_size;
+    return parseInt(size);
+  }
+
+  get page_num() {
+    let num = this.doc.qsf("span.pageNumberElement")?.innerHTML || 1;
+    return parseInt(num);
+  }
+
+  get page_count() {
+    let links = this.doc.qs("a.pageNumberElement");
+    let count = links.last?.innerHTML || 1;
+    return parseInt(count);
+  }
+
   get rows() {
-    log("doc:", this.doc);
     let rows = this.doc.gc("adbl-library-content-row");
     if (!rows.length) {
       return [];
@@ -612,21 +645,90 @@ LibraryPageParser = class {
   }
 
   get books() {
-    return this.rows.map((row) => {
-        let ul = row.gcf("bc-list bc-list-nostyle");
+    let books = this.rows.reduce((arr, row) => {
+      let ul = row.gcf("bc-list bc-list-nostyle");
+      let title = ul.gcf("bc-size-headline3")?.innerHTML?.trim() || "";
 
-      return {
+      if (title == "Your First Listen") {
+        return arr;
+      }
+
+      arr.push({
         url: (
           ul.gcf("bc-size-headline3")?.parentElement
           ?.attributes["href"]?.value
           ?.replace(/\?.+/, "")
         ) || "",
-        title: ul.gcf("bc-size-headline3")?.innerHTML?.trim() || "",
+        title: entityDecode(title),
         author: ul.gcf("authorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
         narrator: ul.gcf("narratorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
         series: ul.gcf("seriesLabel")?.gtf("a")?.innerHTML?.trim() || "",
+      });
+
+      return arr;
+    }, []);
+    return books;
+  }
+}
+
+Library = class extends Page {
+  page_size = 50;
+  base_url = "https://www.audible.com/library/titles";
+
+  constructor() {
+    super();
+    this.pages = [];
+  }
+
+  async fetchPage(i) {
+    let url = `${this.base_url}?pageSize=${this.page_size}&page=${i}`;
+    let doc = await this.fetchDoc(url);
+    return new LibraryPageParser(doc);
+  }
+
+  async populate(progress_callback=null) {
+    let i = 0;
+    do {
+      let page = await this.fetchPage(i + 1);
+      this.pages.push(page);
+
+      if (progress_callback) {
+        progress_callback(i, i/this.page_count);
       }
-    });
+
+      i++;
+    } while (i <= this.page_count);
+
+    return this.pages;
+  }
+
+  get book_count() {
+    if (!this.pages) {
+      return;
+    }
+    let page = this.pages[0];
+    return page.page_size * page.page_count;
+  }
+
+  get page_count() {
+    return Math.ceil(this.book_count / this.page_size);
+  }
+
+  get books() {
+    if (!this.pages) {
+      return [];
+    }
+
+    let books = this.pages.reduce((arr, page) => {
+        return arr.concat(
+          // map books by URL to avoid duplicates
+          page.books.map((book) => [book.url, book])
+        );
+      },
+      [],
+    );
+
+    return Object.values(Object.fromEntries(books));
   }
 }
 
@@ -770,13 +872,23 @@ Exporter = function() {
       this.gi(document, classes.status_text).innerText = text;
     },
 
+    updateProgress: function(percent, i=null) {
+      let bar = this.gi(document, "downloading_percentage_bar");
+      let width = this.download_bar_width * percent;
+      bar.style.width = `${width}px`;
+
+      if (i != null) {
+        let color = i % 2 == 0 ? "#07ba5b" : "#3de367";
+        bar.style.background = color;
+      }
+    },
+
 
     /* parsing functions
      * --------------------------------------------------------------------------------
      */
 
     parseLibraryPage: function(doc) {
-      // doc = new Element(doc);
       let page = new LibraryPageParser(doc);
       return page.books;
     },
@@ -864,43 +976,12 @@ Exporter = function() {
 
     loopThroughtAudibleLibrary: async function() {
       this.setStatus("Retrieving titles...");
-      const doc = await this.fetchDoc(
-        `https://www.audible.com/library/titles?ref=a_library_t_c6_pageNum_0&pageSize=50&page=1`
-      );
-      const page_size = parseInt(
-        Array.from(
-          doc.getElementsByName("pageSize")[0].getElementsByTagName("option")
-        ).filter((r) => r && r.selected)[0].value
-      );
-      const num_pages = Math.max(
-        ...Array.from(doc.getElementsByClassName("pageNumberElement"))
-          .map((p) => p.innerText.trim())
-          .filter((r) => r && /^\d+$/.test(r))
-          .map((n) => parseInt(n))
-      );
-      const num_titles = page_size * num_pages;
-      const total_results = Math.ceil(num_titles / 50);
-      const contain_arr = [];
-      for (let i = 0; i < total_results; i++) {
-        const cards = await this.getAudibleLibraryPage(i);
-        await this.delay(111);
-        if (cards) {
-          cards.forEach((card) => {
-            if (contain_arr.every((itm) => itm.url != card.url))
-              contain_arr.push(card);
-          });
-          if (cards.some((card) => card.title == "Your First Listen")) break;
-        }
-        this.gi(document, "downloading_percentage_bar").style.width = `${
-          this.download_bar_width * (i / total_results)
-        }px`;
-        this.gi(document, "downloading_percentage_bar").style.background =
-          i % 2 == 0 ? "#07ba5b" : "#3de367";
-          this.setStatus(
-            `Retrieving titles... ${Math.ceil((i / total_results) * 100)}% complete`
-          );
-      }
-      return contain_arr;
+      let library = new Library();
+      await library.populate((i, percent) => {
+        this.updateProgress(percent, i);
+        this.setStatus(`Retrieving titles... ${Math.ceil(percent * 100)}% complete`);
+      });
+      return library.books;
     },
 
     enrichLibraryInformation: async function(order_information) {

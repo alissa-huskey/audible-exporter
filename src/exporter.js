@@ -138,6 +138,17 @@ Exporter = function() {
       this.gi(document, classes.status_text).innerText = text;
     },
 
+    updateProgress: function(percent, i=null) {
+      let bar = this.gi(document, "downloading_percentage_bar");
+      let width = this.download_bar_width * percent;
+      bar.style.width = `${width}px`;
+
+      if (i != null) {
+        let color = i % 2 == 0 ? "#07ba5b" : "#3de367";
+        bar.style.background = color;
+      }
+    },
+
 
     /* parsing functions
      * --------------------------------------------------------------------------------
@@ -231,43 +242,12 @@ Exporter = function() {
 
     loopThroughtAudibleLibrary: async function() {
       this.setStatus("Retrieving titles...");
-      const doc = await this.fetchDoc(
-        `https://www.audible.com/library/titles?ref=a_library_t_c6_pageNum_0&pageSize=50&page=1`
-      );
-      const page_size = parseInt(
-        Array.from(
-          doc.getElementsByName("pageSize")[0].getElementsByTagName("option")
-        ).filter((r) => r && r.selected)[0]?.value || 20
-      );
-      const num_pages = Math.max(
-        ...Array.from(doc.getElementsByClassName("pageNumberElement"))
-          .map((p) => p.innerHTML.trim())
-          .filter((r) => r && /^\d+$/.test(r))
-          .map((n) => parseInt(n))
-      );
-      const num_titles = page_size * num_pages;
-      const total_results = Math.ceil(num_titles / 50);
-      const contain_arr = [];
-      for (let i = 0; i <= total_results; i++) {
-        const cards = await this.getAudibleLibraryPage(i);
-        await this.delay(111);
-        if (cards) {
-          cards.forEach((card) => {
-            if (contain_arr.every((itm) => itm.url != card.url))
-              contain_arr.push(card);
-          });
-          if (cards.some((card) => card.title == "Your First Listen")) break;
-        }
-        this.gi(document, "downloading_percentage_bar").style.width = `${
-          this.download_bar_width * (i / total_results)
-        }px`;
-        this.gi(document, "downloading_percentage_bar").style.background =
-          i % 2 == 0 ? "#07ba5b" : "#3de367";
-          this.setStatus(
-            `Retrieving titles... ${Math.ceil((i / total_results) * 100)}% complete`
-          );
-      }
-      return contain_arr;
+      let library = new Library();
+      await library.populate((i, percent) => {
+        this.updateProgress(percent, i);
+        this.setStatus(`Retrieving titles... ${Math.ceil(percent * 100)}% complete`);
+      });
+      return library.books;
     },
 
     enrichLibraryInformation: async function(order_information) {

@@ -149,8 +149,8 @@ describe("Library", function() {
 
     expect(library.pages.length).toBe(3);
     expect(library.pages[0].books[0].title).toBe("Scorpion Shards: Star Shards Chronicles Series, Book 1");
-    expect(library.pages[1].books[0].title).toBe("Ghosts of Zenith: Lost Planet Homicide");
-    expect(library.pages[2].books[0].title).toBe("Sunreach: Skyward Flight: Novella 1");
+    expect(library.pages[1].books[0].title).toBe("Stephen Leeds: Death & Faxes: Legion");
+    expect(library.pages[2].books[0].title).toBe("Talon of the Silver Hawk: Conclave of Shadows, Book 1");
   });
 
 });

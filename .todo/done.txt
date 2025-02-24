@@ -1,2 +1,3 @@
 x 2025-02-22 2025-02-17 @qa refactor parse*BookDetails to use a common method for categories/tags
 x 2025-02-23 2025-02-22 @task @qa refactor parseLibraryPage()
+x 2025-02-23 2025-02-22 @task @qa refactor loopThroughAudibleLibrary()

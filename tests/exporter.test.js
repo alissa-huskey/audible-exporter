@@ -12,6 +12,8 @@ require("../src/element.js");
 require("../src/list.js");
 require("../src/book-page-parser.js");
 require("../src/library-page-parser.js");
+require("../src/page.js");
+require("../src/library.js");
 require("../src/exporter.js");
 
 
@@ -273,7 +275,7 @@ describe("exporter: parsing functions", function() {
   });
 
   test("loopThroughtAudibleLibrary", async function() {
-    let docs = ["3", "2", "1", "1"].map((i) => 
+    let docs = ["3", "2", "1"].map((i) => 
       toDoc(getFixtureFile(`library-page-${i}-of-3.html`))
     );
 
@@ -283,8 +285,8 @@ describe("exporter: parsing functions", function() {
       );
     };
 
+    Library.prototype.fetchDoc = mockFetchDoc();
     let exporter = Exporter();
-    exporter.fetchDoc = mockFetchDoc();
     exporter.createDownloadHTML();
 
     let books = await exporter.loopThroughtAudibleLibrary();

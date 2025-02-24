@@ -1,0 +1,8 @@
+TypeError: Cannot read properties of undefined (reading 'value')
+    at get rating (<anonymous>:540:45)
+    at <anonymous>:399:22
+    at Array.map (<anonymous>)
+    at ADBLBookPageParser.data (<anonymous>:398:48)
+    at Object.parseBookDetails (<anonymous>:905:21)
+    at Object.getBookDetails (<anonymous>:1049:23)
+    at async Object.enrichLibraryInformation (<anonymous>:994:23)

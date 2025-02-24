@@ -18,7 +18,6 @@
 (B) 2025-02-22 @bug fix purchase_date
 2025-02-22 @feature Add my_review
 2025-02-22 @feature Add my_rating
-(A) 2025-02-22 @task @qa refactor loopThroughAudibleLibrary()
 (A) 2025-02-22 @task @qa refactor enrichLibraryInformation()
 (A) 2025-02-22 @task @qa refactor getAllOrders()
 (A) 2025-02-22 @task @qa refactor getOrderPageByDate()
@@ -27,3 +26,10 @@
 (A) 2025-02-23 refactor Exporter to be a class.
 (A) 2025-02-23 @qa rename *PageParser -> *Page
 (A) 2025-02-23 have *Page inherit from Page class and add a url attr and fetch() method.
+(B) 2025-02-23 @ux Fix progress_callback to update every title, not every page.
+2025-02-23 @ux @feature Add 'Step x of y' to status bar.
+2025-02-23 @qa Refactor LibraryPageParser to take a page number and add a .fetch() method to set .doc @maybe
+(A) 2025-02-23 @bug Fix bug-1
+(A) 2025-02-23 @bug Fix bug-2
+(A) 2025-02-23 add error catching so the URL or other details can be logged.
+(A) 2025-02-23 @bug Fix bug-3

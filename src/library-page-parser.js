@@ -44,7 +44,7 @@ LibraryPageParser = class {
           ?.attributes["href"]?.value
           ?.replace(/\?.+/, "")
         ) || "",
-        title: title,
+        title: entityDecode(title),
         author: ul.gcf("authorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
         narrator: ul.gcf("narratorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
         series: ul.gcf("seriesLabel")?.gtf("a")?.innerHTML?.trim() || "",
