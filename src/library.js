@@ -10,7 +10,7 @@ Library = class extends Page {
   async fetchPage(i) {
     let url = `${this.base_url}?pageSize=${this.page_size}&page=${i}`;
     let doc = await this.fetchDoc(url);
-    return new LibraryPageParser(doc);
+    return new LibraryPage(doc);
   }
 
   async populate(progress_callback=null) {

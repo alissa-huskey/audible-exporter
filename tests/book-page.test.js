@@ -8,11 +8,11 @@ require("../src/dev.js");
 require("../src/util.js");
 require("../src/list.js");
 require("../src/element.js");
-require("../src/book-page-parser.js");
+require("../src/book-page.js");
 
-describe("BookPageParser", function() {
+describe("BookPage", function() {
 
-  let page = new BookPageParser();
+  let page = new BookPage();
 
   var digitalData = {product: [{productInfo: {
     "isAvailable":true,
@@ -38,7 +38,7 @@ describe("BookPageParser", function() {
   });
 
   test(".title", function() {
-    page = new BookPageParser(null, digitalData);
+    page = new BookPage(null, digitalData);
     expect(page.title).toBe("Midnight Riot");
   });
 
@@ -80,11 +80,11 @@ describe("BookPageParser", function() {
 
 });
 
-describe("NormalBookPageParser", function() {
+describe("NormalBookPage", function() {
 
   let html = getFixtureFile("book-details-audible-original.html");
   let doc = toDoc(html);
-  let page = new NormalBookPageParser(doc);
+  let page = new NormalBookPage(doc);
 
   test(".duration_minutes", function() {
     expect(page.duration_minutes).toBe(145);
@@ -155,11 +155,11 @@ describe("NormalBookPageParser", function() {
 
 });
 
-describe("ADBLBookPageParser", function() {
+describe("ADBLBookPage", function() {
 
   let html = getFixtureFile("book-details.html");
   let doc = toDoc(html);
-  let page = new ADBLBookPageParser(doc);
+  let page = new ADBLBookPage(doc);
 
   test(".duration_minutes", function() {
     expect(page.duration_minutes).toBe(596);

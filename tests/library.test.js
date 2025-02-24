@@ -9,7 +9,7 @@ require("../src/util.js");
 require("../src/element.js");
 require("../src/list.js");
 require("../src/page.js");
-require("../src/library-page-parser.js");
+require("../src/library-page.js");
 require("../src/library.js");
 
 describe("Library", function() {
@@ -48,7 +48,7 @@ describe("Library", function() {
     let library = new Library();
     let page = await library.fetchPage(1);
 
-    expect(page.constructor.name).toBe("LibraryPageParser");
+    expect(page.constructor.name).toBe("LibraryPage");
     expect(page.page_num).toBe(2);
   });
 
@@ -133,7 +133,7 @@ describe("Library", function() {
 
   test(".populate() (parsed pages)", async function() {
     let pages = ["1", "2", "3"].map((i) => 
-      new LibraryPageParser(toDoc(getFixtureFile(`library-page-${i}-of-3.html`)))
+      new LibraryPage(toDoc(getFixtureFile(`library-page-${i}-of-3.html`)))
     );
 
     let mockFetchPage = function() {

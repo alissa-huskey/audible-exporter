@@ -265,7 +265,7 @@ Page = class {
       return new DOMParser().parseFromString(text, "text/html");
     }
 }
-BookPageParser = class {
+BookPage = class {
 
   #category_types = ["Fiction", "Nonfiction"];
 
@@ -523,7 +523,7 @@ BookPageParser = class {
   }
 }
 
-ADBLBookPageParser = class extends BookPageParser {
+ADBLBookPage = class extends BookPage {
   get adbl() {
     return this.doc.qs("adbl-product-metadata script");
   }
@@ -565,7 +565,7 @@ ADBLBookPageParser = class extends BookPageParser {
   }
 }
 
-NormalBookPageParser = class extends BookPageParser {
+NormalBookPage = class extends BookPage {
   get date() {
     let li = this.doc.gcf("releaseDateLabel");
     return li?.innerHTML?.replace(/Releae date:/, "").trim();
@@ -613,7 +613,7 @@ NormalBookPageParser = class extends BookPageParser {
     return this.doc.qs(".categoriesLabel a").map((c) => { return entityDecode(c.innerHTML) || "" }) || [];
   }
 }
-LibraryPageParser = class {
+LibraryPage = class {
   #default_page_size = 20;
 
   constructor(doc=null) {
@@ -683,7 +683,7 @@ Library = class extends Page {
   async fetchPage(i) {
     let url = `${this.base_url}?pageSize=${this.page_size}&page=${i}`;
     let doc = await this.fetchDoc(url);
-    return new LibraryPageParser(doc);
+    return new LibraryPage(doc);
   }
 
   async populate(progress_callback=null) {
@@ -889,7 +889,7 @@ Exporter = function() {
      */
 
     parseLibraryPage: function(doc) {
-      let page = new LibraryPageParser(doc);
+      let page = new LibraryPage(doc);
       return page.books;
     },
 
@@ -897,9 +897,9 @@ Exporter = function() {
       page = new Element(doc);
       
       if (page.gt("adbl-product-metadata").length > 0) {
-        parser = new ADBLBookPageParser(doc, digitalData);
+        parser = new ADBLBookPage(doc, digitalData);
       } else {
-        parser = new NormalBookPageParser(doc, digitalData);
+        parser = new NormalBookPage(doc, digitalData);
       }
 
       return parser.data()

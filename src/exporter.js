@@ -155,7 +155,7 @@ Exporter = function() {
      */
 
     parseLibraryPage: function(doc) {
-      let page = new LibraryPageParser(doc);
+      let page = new LibraryPage(doc);
       return page.books;
     },
 
@@ -163,9 +163,9 @@ Exporter = function() {
       page = new Element(doc);
       
       if (page.gt("adbl-product-metadata").length > 0) {
-        parser = new ADBLBookPageParser(doc, digitalData);
+        parser = new ADBLBookPage(doc, digitalData);
       } else {
-        parser = new NormalBookPageParser(doc, digitalData);
+        parser = new NormalBookPage(doc, digitalData);
       }
 
       return parser.data()

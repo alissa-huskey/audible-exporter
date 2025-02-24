@@ -3,7 +3,7 @@
 main() {
   local file
 
-  cat src/{dev,util,element,list,page,book-page-parser,library-page-parser,library,exporter,runner}.js > src/audible-exporter.js
+  cat src/{dev,util,element,list,page,book-page,library-page,library,exporter,runner}.js > src/audible-exporter.js
 }
 
 main

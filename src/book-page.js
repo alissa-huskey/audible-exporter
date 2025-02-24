@@ -1,4 +1,4 @@
-BookPageParser = class {
+BookPage = class {
 
   #category_types = ["Fiction", "Nonfiction"];
 
@@ -256,7 +256,7 @@ BookPageParser = class {
   }
 }
 
-ADBLBookPageParser = class extends BookPageParser {
+ADBLBookPage = class extends BookPage {
   get adbl() {
     return this.doc.qs("adbl-product-metadata script");
   }
@@ -298,7 +298,7 @@ ADBLBookPageParser = class extends BookPageParser {
   }
 }
 
-NormalBookPageParser = class extends BookPageParser {
+NormalBookPage = class extends BookPage {
   get date() {
     let li = this.doc.gcf("releaseDateLabel");
     return li?.innerHTML?.replace(/Releae date:/, "").trim();

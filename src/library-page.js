@@ -1,4 +1,4 @@
-LibraryPageParser = class {
+LibraryPage = class {
   #default_page_size = 20;
 
   constructor(doc=null) {
