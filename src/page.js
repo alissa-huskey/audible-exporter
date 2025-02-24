@@ -1,12 +1,24 @@
 Page = class {
-    async fetchDoc(url) {
-      let res = await fetch(url);
+  #doc = null;
 
-      if (!res.ok) {
-        throw new Error(`Response status: ${response.status}`);
-      }
+  async fetchDoc(url) {
+    let res = await fetch(url);
 
-      let text = await res.text();
-      return new DOMParser().parseFromString(text, "text/html");
+    if (!res.ok) {
+      throw new Error(`Response status: ${response.status}`);
     }
+
+    let text = await res.text();
+    return new DOMParser().parseFromString(text, "text/html");
+  }
+
+  get doc() {
+    return this.#doc;
+  }
+
+  set doc(value) {
+    if (value) {
+      this.#doc = new Element(value);
+    }
+  }
 }

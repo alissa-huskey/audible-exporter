@@ -279,13 +279,7 @@ describe("exporter: parsing functions", function() {
       toDoc(getFixtureFile(`library-page-${i}-of-3.html`))
     );
 
-    let mockFetchDoc = function() {
-      return jest.fn().mockImplementation((i) =>
-        Promise.resolve(docs.pop()),
-      );
-    };
-
-    Library.prototype.fetchDoc = mockFetchDoc();
+    Library.prototype.fetchDoc = mockFetchDocs(docs);
     let exporter = Exporter();
     exporter.createDownloadHTML();
 

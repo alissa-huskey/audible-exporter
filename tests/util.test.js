@@ -3,6 +3,13 @@ require("../src/util.js");
 
 describe("util", function() {
 
+  test("isEmpty()", function() {
+    expect(isEmpty({})).toBe(true);
+    expect(isEmpty({a: 1})).toBe(false);
+    expect(isEmpty([])).toBe(true);
+    expect(isEmpty([1])).toBe(false);
+  });
+
   test("str() function", function() {
     expect(str(1)).toBe(1)
     expect(str({a: 1, b: "B"}))
@@ -13,7 +20,14 @@ describe("util", function() {
     expect(entityDecode("Science Fiction &amp; Fantasy")).toBe("Science Fiction & Fantasy")
   });
 
+  test("tryInt()", function() {
+    expect(tryInt("a")).toBe("a");
+    expect(tryInt("1.2")).toBe("1.2");
+    expect(tryInt("1")).toBe(1);
+  });
+
   test("tryFloat()", function() {
+    expect(tryFloat("a")).toBe("a");
     expect(tryFloat("1.2")).toBe(1.2);
   });
 

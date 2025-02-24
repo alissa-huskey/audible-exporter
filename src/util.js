@@ -8,11 +8,36 @@ str = function(o) {
     : o
 }
 
-tryFloat = function(d) {
+const EMPTIES = {"Object": "{}", "Array": "[]"};
+isEmpty = function(o) {
+  if (!o) {
+    return true;
+  }
+
+  let type = o.constructor.name;
+  if (!(type in EMPTIES)) {
+    throw new Error(`isEmpty() does not support type: ${type} (value: ${o}).`);
+  }
+
+  return JSON.stringify(o) == EMPTIES[type];
+}
+
+tryFloat = function(o) {
   try {
-    return parseFloat(d);
+    f = parseFloat(o);
+    return isNaN(f) ? o : f;
+
   } catch (err) {
-    return d;
+    return o;
+  }
+}
+
+tryInt = function(f) {
+  try {
+    let i = parseInt(f);
+    return i == f ? i : f
+  } catch (err) {
+    return f;
   }
 }
 

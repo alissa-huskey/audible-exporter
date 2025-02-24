@@ -37,13 +37,7 @@ describe("Library", function() {
   });
 
   test(".fetchPage()", async function() {
-    let mockFetchDoc = function() {
-      return jest.fn().mockImplementation(() =>
-        Promise.resolve(new DOMParser().parseFromString(getFixtureFile(`library-page-2.html`), "text/html")),
-      );
-    };
-
-    Library.prototype.fetchDoc = mockFetchDoc();
+    Library.prototype.fetchDoc = mockFetchDoc("library-page-2.html");
 
     let library = new Library();
     let page = await library.fetchPage(1);

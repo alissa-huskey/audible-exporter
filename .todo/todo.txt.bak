@@ -24,7 +24,6 @@
 (A) 2025-02-22 @qa Make sure book page fixtures are named correctly.
 (B) 2025-02-22 @qa set variables for css class names in appropriate places.
 (A) 2025-02-23 refactor Exporter to be a class.
-x 2025-02-24 2025-02-23 @qa rename *PageParser -> *Page
 (A) 2025-02-23 have *Page inherit from Page class and add a url attr and fetch() method.
 (B) 2025-02-23 @ux Fix progress_callback to update every title, not every page.
 2025-02-23 @ux @feature Add 'Step x of y' to status bar.
@@ -43,3 +42,5 @@ x 2025-02-24 2025-02-23 @qa rename *PageParser -> *Page
 2025-02-23 @feature Get a list of authors you follow
 2025-02-23 @feature Add date downloaded to JSON
 2025-02-23 @feature Some way to indicate last download, to avoid downloading everything
+2025-02-24 @qa consolidate library page fixtures
+2025-02-24 @qa consolidate library page fixtures

@@ -42,3 +42,5 @@
 2025-02-23 @feature Get a list of authors you follow
 2025-02-23 @feature Add date downloaded to JSON
 2025-02-23 @feature Some way to indicate last download, to avoid downloading everything
+2025-02-24 @qa consolidate library page fixtures
+
