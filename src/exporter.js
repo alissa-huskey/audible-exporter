@@ -16,31 +16,12 @@ Exporter = function() {
 
   return {
     notifier: new StatusNotifier(),
-    download_bar_width: document.body.getBoundingClientRect().width * 0.8,
 
     /* misc functions
      * --------------------------------------------------------------------------------
      */
 
-    unq: (arr) => arr.filter((e, p, a) => a.indexOf(e) == p),
     unqHsh: (a, o) => (a.filter(i => o.hasOwnProperty(i) ? false : (o[i] = true))),
-
-    unqKey: function(array, key) {
-      var q = [];
-      var map = new Map();
-      for (const item of array) {
-        if (!map.has(item[key])) {
-          map.set(item[key], true);
-          q.push(item);
-        }
-      }
-      return q;
-    },
-
-    filterByInnerHTML: function(collection, pattern) {
-      results = Array.from(collection).filter((i) => pattern.test(i.innerHTML));
-      return results;
-    },
 
     /* formatting functions
      * --------------------------------------------------------------------------------
@@ -81,14 +62,6 @@ Exporter = function() {
      * --------------------------------------------------------------------------------
      */
 
-    cn: (o, s) => (o ? o.getElementsByClassName(s) : ""),
-    tn: (o, s) => (o ? o.getElementsByTagName(s) : ""),
-    gi: (o, s) => document.getElementById(s),
-
-    ele: (t) => document.createElement(t),
-    attr: (o, k, v) => o.setAttribute(k, v),
-    a: function(o, attrs) { attrs.forEach(attr => this.attr(o, attr[0], attr[1])) },
-
     createDownloadHTML: function() {
       this.notifier.create();
       this.notifier.text = "initiating download...";
@@ -114,26 +87,6 @@ Exporter = function() {
 
       return parser.data()
     },
-
-    parseURIasJSON: function(url, obj) {
-      if (url.match(/(?<=\?|\&)\S+?(?=\&|$)/g))
-        url
-          .match(/(?<=\?|\&)\S+?(?=\&|$)/g)
-          .map((r) => (r ? r.split(/\=/) : [[]]))
-          .forEach((r) => (obj[r[0]] = r[1]));
-      return obj;
-    },
-
-    lengthOfBookInMinutes: function(s) {
-      var mins = reg(/\d+(?=\smin)/.exec(s), 0)
-        ? parseInt(reg(/\d+(?=\smin)/.exec(s), 0))
-        : 0;
-      var hours = reg(/\d+(?=\shrs)/.exec(s), 0)
-        ? parseInt(reg(/\d+(?=\shrs)/.exec(s), 0)) * 60
-        : 0;
-      return hours + mins;
-    },
-
 
     /* interaction functions
      * --------------------------------------------------------------------------------
@@ -272,12 +225,6 @@ Exporter = function() {
       page = new OrderPage(year, num);
       await page.get();
       return page;
-
-      // page = {
-      //   titles: titles,
-      //   order_date_sel: order_date_sel,
-      //   pages: pages?.length ? this.unqHsh(pages, {}) : [],
-      // };
     },
 
     run: async function() {

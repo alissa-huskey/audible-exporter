@@ -41,3 +41,5 @@
 (Z) 2025-02-25 @feature @notifier Add cancel button.
 (D) 2025-02-25 @tools Look into replacing make with gulp.
 (B) 2025-02-26 @qa @notifier Look into event listeners to update progress.
+(D) 2025-02-26 @qa Refactor Orders class to have prepare method/stage that will fetch all years and page numbers to get a total page count.
+(A) 2025-02-26 @task refactor convert2TsvAndDownload
