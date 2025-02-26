@@ -6,18 +6,24 @@ rootdir := $(rootdir:/=)
 builddir = ${rootdir}/build
 srcdir  = ${rootdir}/src
 
-a = dev util element
-b = $(a:%=src/%.js)
+notifier_deps   = dev util element status-notifier
+deps            = list page book-page library-page library order-page orders exporter runner
 
-c = list page book-page library-page library order-page orders exporter runner
-d = $(c:%=src/%.js)
+clean:
+	@rm -f $(builddir)/*
 
-$(builddir)/audible-exporter.js: $(builddir)/status-notifier.js $(d)
+rebuild: clean build
+
+build: builddir | $(builddir)/audible-exporter.js
+
+$(builddir)/audible-exporter.js: $(builddir)/status-notifier.js $(deps:%=src/%.js)
 	cat $^ > build/audible-exporter.js
  
-$(builddir)/notifier.js: builddir
-	cat $(b) > build/status-notifier.js
-	@sed  -e '/CSS_MARKER/r src/status-notifier.css' -e 'x;$$G' -e '/CSS_MARKER/d' src/status-notifier.js >> build/status-notifier.js
+$(builddir)/status-notifier.js: builddir
+	cat $(notifier_deps:%=src/%.js) | sed  -e '/CSS_MARKER/r src/notifier.css' -e 'x;$$G' -e '/CSS_MARKER/d' > build/status-notifier.js
 
 builddir:
 	mkdir -p ${builddir}
+
+.PHONY: build clean rebuild
+.DEFAULT_GOAL := rebuild

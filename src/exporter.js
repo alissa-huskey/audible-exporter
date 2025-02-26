@@ -178,6 +178,8 @@ Exporter = function() {
         };
       });
 
+      info("Your audible books:");
+      console.log(merged_with_orders);
       this.convert2TsvAndDownload(
         merged_with_orders,
         "audible_export_" + new Date().getTime() + ".tsv"
