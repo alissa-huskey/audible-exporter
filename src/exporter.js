@@ -139,7 +139,7 @@ Exporter = function() {
 
     loopThroughtAudibleLibrary: async function() {
       this.notifier.text = "Retrieving titles...";
-      let library = new Library();
+      let library = new LibraryFetcher();
       await library.populate((i, percent) => {
         this.notifier.updateProgress(percent, i);
         this.notifier.text = "Retrieving titles...";
@@ -213,7 +213,7 @@ Exporter = function() {
     getAllOrders: async function() {
       this.notifier.text = "Retrieving purchases...";
 
-      orders = new Orders();
+      orders = new OrdersFetcher();
       await orders.init()
       await orders.populate((year, page, page_count, percent) => {
         this.notifier.updateProgress(percent, page);

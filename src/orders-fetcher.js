@@ -1,4 +1,4 @@
-Orders = class {
+OrdersFetcher = class {
   #items = [];
 
   async init() {

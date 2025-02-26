@@ -1,13 +1,13 @@
 PACKAGE = audible-exporter
 
-rootdir := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
-rootdir := $(rootdir:/=)
+rootdir      := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
+rootdir      := $(rootdir:/=)
 
-builddir = ${rootdir}/build
-srcdir  = ${rootdir}/src
+builddir      = ${rootdir}/build
+srcdir        = ${rootdir}/src
 
-notifier_deps   = dev util element status-notifier
-deps            = list page book-page library-page library order-page orders exporter runner
+notifier_deps = dev util element status-notifier
+deps          = list page book-page library-page library-fetcher order-page orders-fetcher exporter runner
 
 clean:
 	@rm -f $(builddir)/*

@@ -1,7 +1,7 @@
 (Z) 2025-02-14 @feature Log the amount of time the script took to run.
 (Z) 2025-02-14 @feature Instead of opening a save dialog, allow the user to click a button to download.
 (Z) 2025-02-14 @feature Add an option to download as CSV/TSV/JSON.
-(B) 2025-02-14 @ux For TSV/CSV, detect newlines in critic/publisher summary and remove or change.
+(D) 2025-02-14 @ux For TSV/CSV, detect newlines in critic/publisher summary and remove or change.
 (Z) 2025-02-14 @feature Add my review if it exists.
 (Z) 2025-02-14 @feature add option to download goodreads CSV importable file
 (Z) 2025-02-14 @ux change date format and/or use timestamp
@@ -45,3 +45,6 @@
 (A) 2025-02-26 @task refactor convert2TsvAndDownload
 (A) 2025-02-26 @task refactor downloadr
 (D) 2025-02-26 @feature Add limit selector to only download a certain number of order/library pages.
+(Z) 2025-02-26 @feature When finished, add a download button instead of just launching the download immediately.
+(B) 2025-02-26 @qa Handle failed requests.
+(Z) 2025-02-26 Implement some sort of pause/resume.

@@ -13,7 +13,7 @@ require("../src/list.js");
 require("../src/book-page.js");
 require("../src/page.js");
 require("../src/library-page.js");
-require("../src/library.js");
+require("../src/library-fetcher.js");
 require("../src/order-page.js");
 require("../src/status-notifier.js");
 require("../src/exporter.js");
@@ -132,7 +132,7 @@ describe("exporter: parsing functions", function() {
       toDoc(getFixtureFile(`library-page-${i}-of-3.html`))
     );
 
-    Library.prototype.fetchDoc = mockFetchDocs(docs);
+    LibraryFetcher.prototype.fetchDoc = mockFetchDocs(docs);
     let exporter = Exporter();
     exporter.createDownloadHTML();
 

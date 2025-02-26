@@ -10,15 +10,15 @@ require("../src/element.js");
 require("../src/list.js");
 require("../src/page.js");
 require("../src/order-page.js");
-require("../src/orders.js");
+require("../src/orders-fetcher.js");
 
-describe("Orders", function() {
+describe("OrdersFetcher", function() {
 
   let base_url = new OrderPage().base_url;
 
-  test("new Orders()", function() {
-    orders = new Orders();
-    expect(orders.constructor.name).toBe("Orders");
+  test("new OrdersFetcher()", function() {
+    orders = new OrdersFetcher();
+    expect(orders.constructor.name).toBe("OrdersFetcher");
   });
 
 
@@ -29,7 +29,7 @@ describe("Orders", function() {
       (i) => ({year: (i + 2010), page_count: null, pages: []})
     );
 
-    orders = new Orders();
+    orders = new OrdersFetcher();
     await orders.init();
 
     expect(Page.prototype.fetchDoc).toHaveBeenCalledWith(`${base_url}&df=last_90_days&pn=1&ps=20`)
@@ -57,7 +57,7 @@ describe("Orders", function() {
       {year: 2023, page_count: null, pages: []},
     ];
 
-    orders = new Orders();
+    orders = new OrdersFetcher();
     orders.years = years;
     await orders.populate();
 
@@ -95,7 +95,7 @@ describe("Orders", function() {
       ]}]},
     ];
 
-    orders = new Orders();
+    orders = new OrdersFetcher();
     orders.years = years;
 
     expect(orders.items.length).toBe(6);

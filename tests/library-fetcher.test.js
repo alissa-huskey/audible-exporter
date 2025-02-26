@@ -10,14 +10,14 @@ require("../src/element.js");
 require("../src/list.js");
 require("../src/page.js");
 require("../src/library-page.js");
-require("../src/library.js");
+require("../src/library-fetcher.js");
 
-describe("Library", function() {
+describe("LibraryFetcher", function() {
 
-  let library = new Library();
+  let library = new LibraryFetcher();
 
-  test("Library", function() {
-    expect(library.constructor.name).toBe("Library");
+  test("LibraryFetcher", function() {
+    expect(library.constructor.name).toBe("LibraryFetcher");
   });
 
   test(".pages", function() {
@@ -37,9 +37,9 @@ describe("Library", function() {
   });
 
   test(".fetchPage()", async function() {
-    Library.prototype.fetchDoc = mockFetchDoc("library-page-2.html");
+    LibraryFetcher.prototype.fetchDoc = mockFetchDoc("library-page-2.html");
 
-    let library = new Library();
+    let library = new LibraryFetcher();
     let page = await library.fetchPage(1);
 
     expect(page.constructor.name).toBe("LibraryPage");
@@ -53,9 +53,9 @@ describe("Library", function() {
       );
     };
 
-    Library.prototype.fetchPage = mockFetchPage();
+    LibraryFetcher.prototype.fetchPage = mockFetchPage();
 
-    let library = new Library()
+    let library = new LibraryFetcher()
     await library.populate();
 
     expect(library.pages.length).toBe(2);
@@ -87,7 +87,7 @@ describe("Library", function() {
       {url: "f", title: "f"},
     ];
 
-    let library = new Library()
+    let library = new LibraryFetcher()
     library.pages = pages;
 
     expect(library.books).toEqual(books);
@@ -119,7 +119,7 @@ describe("Library", function() {
       {url: "e", title: "e"},
     ];
 
-    let library = new Library()
+    let library = new LibraryFetcher()
     library.pages = pages;
 
     expect(library.books).toEqual(books);
@@ -136,9 +136,9 @@ describe("Library", function() {
       );
     };
 
-    Library.prototype.fetchPage = mockFetchPage();
+    LibraryFetcher.prototype.fetchPage = mockFetchPage();
 
-    let library = new Library()
+    let library = new LibraryFetcher()
     await library.populate();
 
     expect(library.pages.length).toBe(3);
