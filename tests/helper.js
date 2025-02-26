@@ -10,7 +10,9 @@ global.toDoc = function(text) {
 }
 
 global.fixtureDoc = function(name) {
-  return toDoc(getFixtureFile(name));
+  let doc = toDoc(getFixtureFile(name));
+  doc.name = name;
+  return doc;
 }
 
 global.mockFetchDoc = function(fixture) {
@@ -20,6 +22,7 @@ global.mockFetchDoc = function(fixture) {
 };
 
 global.mockFetchDocs = function(docs) {
+  docs = docs.slice().reverse();
   return jest.fn().mockImplementation((i) =>
     Promise.resolve(docs.pop()),
   );

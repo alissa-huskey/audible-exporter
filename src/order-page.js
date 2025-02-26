@@ -1,6 +1,7 @@
 OrderPage = class extends Page {
   base_url = "https://www.audible.com/account/purchase-history?tf=orders";
 
+  #default_per_page = 40;
   #purchases_attrs = {
     id: "data-order-item-asin",
     order_id: "data-order-id",
@@ -9,6 +10,7 @@ OrderPage = class extends Page {
     title: "data-order-item-name",
     author: "data-order-item-author",
   };
+  #valid_date_ranges = ["last_90_days", "last_180_days", "last_365_days"]
 
   #orders = {};
   #purchases = {};
@@ -16,19 +18,21 @@ OrderPage = class extends Page {
   #page_num = null;
   #year = null;
 
-  constructor(year_or_doc=null, page_num=null) {
+  constructor(year_or_doc=null, page_num=null, per_page=null) {
     super();
     this.doc = null;
-    if (typeof year_or_doc == "number" && typeof page_num == "number") {
+    if ((typeof year_or_doc == "number" || this.#valid_date_ranges.includes(year_or_doc)) && typeof page_num == "number") {
       this.year = year_or_doc;
       this.page_num = page_num;
     } else if (year_or_doc) {
       this.doc = year_or_doc;
     }
+
+    this.per_page = per_page || this.#default_per_page;
   }
 
   async get() {
-    let url = `${this.base_url}&df=${this.year}&pn=${this.page_num}`;
+    let url = `${this.base_url}&df=${this.year}&pn=${this.page_num}&ps=${this.per_page}`;
     this.doc = await this.fetchDoc(url);
     return this.doc;
   }
@@ -57,7 +61,8 @@ OrderPage = class extends Page {
 
   get page_count() {
     let link = this.doc.qs("a.purchase-history-pagination-button").last
-    return parseInt(link.innerHTML.trim());
+    let count = link?.innerHTML.trim() || 1;
+    return parseInt(count);
   }
 
   get years() {
@@ -92,17 +97,14 @@ OrderPage = class extends Page {
 
   get purchases() {
     if (this.doc && isEmpty(this.#purchases)) {
-      let links = this.doc.qs("a[data-order-item-id]");
+      let links = (this.doc.qs("a[data-order-item-id]"));
       let purchases = links.map((a) => 
-        [
-          a.attributes["data-order-item-asin"].value,
-          Object.fromEntries(
-            Object.entries(this.#purchases_attrs).map(([key, attr]) => [key, a.attributes[attr].value])
-          ),
-        ]
+        Object.fromEntries(
+          Object.entries(this.#purchases_attrs).map(([key, attr]) => [key, a.attributes[attr].value])
+        ),
       );
 
-      this.#purchases = Object.fromEntries(purchases);
+      this.#purchases = purchases;
     }
 
     return this.#purchases;
@@ -110,8 +112,10 @@ OrderPage = class extends Page {
 
   get items() {
     if (this.doc && isEmpty(this.#items)) {
-      this.#items = Object.values(this.purchases).reduce((arr, p) => {
-        if (p.title && p.author) {
+      let seen = {};
+      this.#items = this.purchases.reduce((arr, p) => {
+        if (p.title && p.author && !seen[p.id]) {
+          seen[p.id] = true;
           arr.push({
             url: `http://www.audible.com/pd/${p.id}`,
             title: p.title,

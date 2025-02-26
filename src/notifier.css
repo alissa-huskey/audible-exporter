@@ -1,0 +1,36 @@
+#ae-notifier {
+  position: fixed;
+  top: 100px;
+  border-radius: 0.2em;
+  border-width: 1px;
+  border-style: solid;
+  font-family: system-ui;
+}
+
+#ae-bar {
+  width: 0;
+  height: 50px;
+  border-bottom-right-radius: 0.2em;
+  border-top-right-radius: 0.2em;
+  transition: all 1s;
+  border-width: 1px;
+  border-style: solid;
+}
+
+#ae-messages {
+  padding: 14px;
+  color: #fff;
+}
+
+#ae-status-text {
+  text-wrap: nowrap;
+}
+
+#ae-percent-text {
+}
+
+.row {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}

@@ -270,7 +270,7 @@ ADBLBookPage = class extends BookPage {
   }
 
   get rating() {
-    return tryFloat(Number(this.info.rating.value).toFixed(1));
+    return tryFloat(Number(this.info.rating?.value).toFixed(1));
   }
 
   get date() {
@@ -278,11 +278,12 @@ ADBLBookPage = class extends BookPage {
   }
 
   get num_ratings() {
-    return this.info.rating.count;
+    return this.info.rating?.count || "";
   }
 
+  // book number
   get book() {
-    return /Book (\d+)/i.exec(this.info.series?.[0].part)?.[1];
+    return /Book (\d+)/i.exec(this.info.series?.[0].part)?.[1] || "";
   }
 
   get summary() {
@@ -290,7 +291,7 @@ ADBLBookPage = class extends BookPage {
   }
 
   get categories_list() {
-    return this.info.categories.map((c) => c.name);
+    return this.info.categories?.map((c) => c.name) || [];
   }
 
   get tags_list() {
@@ -322,8 +323,9 @@ NormalBookPage = class extends BookPage {
     return tryFloat(num);
   }
 
+  // book number
   get book() {
-    return /, Book (\d+)/i.exec(this.doc.gcf("seriesLabel").innerHTML)?.[1];
+    return /, Book (\d+)/i.exec(this.doc.gcf("seriesLabel")?.innerHTML)?.[1] || "";
   }
 
   get summary() {

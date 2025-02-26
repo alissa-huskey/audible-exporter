@@ -1,9 +1,6 @@
 Exporter = function() {
 
   var classes = {
-    notifier: "downloading_notifier",
-    bar: "downloading_percentage_bar",
-    status_text: "downloading_percentage_txt",
     ul_card: "bc-list bc-list-nostyle",
     title: "bc-size-headline3",
     narrator: "narratorLabel",
@@ -18,6 +15,7 @@ Exporter = function() {
   };
 
   return {
+    notifier: new StatusNotifier(),
     download_bar_width: document.body.getBoundingClientRect().width * 0.8,
 
     /* misc functions
@@ -92,63 +90,9 @@ Exporter = function() {
     a: function(o, attrs) { attrs.forEach(attr => this.attr(o, attr[0], attr[1])) },
 
     createDownloadHTML: function() {
-      if (this.gi(document, classes.notifier))
-        this.gi(document, classes.notifier).outerHTML = "";
-
-      const body_width = document.body.getBoundingClientRect().width;
-
-      let div = Element.create("div", {id: classes.notifier, style: {
-        width: `${this.download_bar_width}px`,
-        position: "fixed",
-        top: "100px",
-        left: `${(body_width - this.download_bar_width) / 2}px`,
-        background: "#121212",
-        border: "1px solid #3de367",
-        'border-radius': "0.2em",
-        'z-index': new Date().getTime(),
-      }})
-
-      let bar = Element.create("div", {id: classes.bar, style: {
-        width: "0px",
-        height: "50px",
-        background: "#3de367",
-        border: "1px solid #3de367",
-        'border-bottom-right-radius': "0.2em",
-        'border-top-right-radius': "0.2em",
-        transition: "all 1s",
-      }});
-
-      let text = Element.create("div", {id: classes.status_text, style: {
-        float: "left",
-        padding: "14px",
-        color: "#fff",
-        width: `${this.download_bar_width - 50}px`,
-      }});
-
-      bar.element.appendChild(text.element);
-      div.element.appendChild(bar.element);
-      document.body.appendChild(div.element);
-
-      this.setStatus("initiating download...");
-
-      return div.element;
+      this.notifier.create();
+      this.notifier.text = "initiating download...";
     },
-
-    setStatus: function(text) {
-      this.gi(document, classes.status_text).innerText = text;
-    },
-
-    updateProgress: function(percent, i=null) {
-      let bar = this.gi(document, "downloading_percentage_bar");
-      let width = this.download_bar_width * percent;
-      bar.style.width = `${width}px`;
-
-      if (i != null) {
-        let color = i % 2 == 0 ? "#07ba5b" : "#3de367";
-        bar.style.background = color;
-      }
-    },
-
 
     /* parsing functions
      * --------------------------------------------------------------------------------
@@ -241,11 +185,11 @@ Exporter = function() {
     },
 
     loopThroughtAudibleLibrary: async function() {
-      this.setStatus("Retrieving titles...");
+      this.notifier.text = "Retrieving titles...";
       let library = new Library();
       await library.populate((i, percent) => {
-        this.updateProgress(percent, i);
-        this.setStatus(`Retrieving titles... ${Math.ceil(percent * 100)}% complete`);
+        this.notifier.updateProgress(percent, i);
+        this.notifier.text = "Retrieving titles...";
       });
       return library.books;
     },
@@ -254,33 +198,25 @@ Exporter = function() {
       var library = await this.loopThroughtAudibleLibrary();
       var contain_arr = [];
 
-      this.setStatus("Retrieving addtional information on titles...");
+      this.notifier.text = "Retrieving addtional information on titles...";
       const total_results = library.length;
       for (let i = 0; i < total_results; i++) {
         let details = await this.getBookDetails(library[i].url);
         let merge = cleanObject({ ...library[i], ...details });
         contain_arr.push(merge);
         await this.delay(rando(1111) + 1111);
-        this.gi(document, "downloading_percentage_bar").style.width = `${
-          this.download_bar_width * (i / total_results)
-        }px`;
-        this.gi(document, "downloading_percentage_bar").style.background =
-          i % 2 == 0 ? "#07ba5b" : "#3de367";
-        this.setStatus(
-          `${
+        this.notifier.updateProgress(i/total_results, i);
+        this.notifier.text = `${
             merge.author
           } - ${Math.ceil(
             (i / total_results) * 100
           )}% complete -- approx ${Math.round(
             ((((total_results - i) / 100) * 1.9) / 60) * 100
-          )} minutes remaining`
-        );
+          )} minutes remaining
+        `;
       }
-      this.gi(
-        document,
-        "downloading_percentage_bar"
-      ).style.width = `${this.download_bar_width}px`;
-      this.setStatus("100% complete");
+      this.notifier.percent = 1;
+      this.notifier.test = "Finished."
       let merged_with_orders = contain_arr.map((r) => {
         let order = order_information.filter((i) => i.url == r.url);
         return {
@@ -293,8 +229,7 @@ Exporter = function() {
         merged_with_orders,
         "audible_export_" + new Date().getTime() + ".tsv"
       );
-      if (this.gi(document, "downloading_notifier"))
-        this.gi(document, "downloading_notifier").outerHTML = "";
+      this.notifier.wrapper.outerHTML = "";
     },
 
     getAudibleLibraryPage: async function(page) {
@@ -321,54 +256,21 @@ Exporter = function() {
     },
 
     getAllOrders: async function() {
-      this.setStatus("Retrieving this year's purchases...");
+      this.notifier.text = "Retrieving purchases...";
 
-      var first_page = await this.getOrderPageByDate("last_365_days", 1);
-      var titles = first_page.titles;
-
-      for (let i = 0; i < first_page.pages.length; i++) {
-        let next_page = await this.getOrderPageByDate(
-          "last_365_days",
-          first_page.pages[i]
-        );
-        next_page?.titles?.forEach((title) => titles.push(title));
-      }
-      let last_year = Math.min(
-        ...titles
-          .map((t) => /^\d{4}/.exec(t.purchase_date)?.[0])
-          .filter((t) => t)
-          .map((t) => parseInt(t))
-      );
-
-      let years_loop = first_page.order_date_sel.slice(
-        first_page.order_date_sel.indexOf(last_year.toString()),
-        20
-      );
-      await this.delay(rando(333) + 666);
-
-      for (let y = 0; y < years_loop.length; y++) {
-        let page = await this.getOrderPageByDate(years_loop[y], 1);
-        page?.titles?.forEach((title) => titles.push(title));
-        this.gi(document, "downloading_percentage_bar").style.width = `${
-          this.download_bar_width * (y / years_loop.length)
-        }px`;
-        this.gi(document, "downloading_percentage_bar").style.background =
-          y % 2 == 0 ? "#07ba5b" : "#3de367";
-        this.setStatus(`Retrieving ${years_loop[y]} purchases...`);
-        for (let i = 0; i < page.pages.length; i++) {
-          let next_page = await this.getOrderPageByDate(years_loop[y], page.pages[i]);
-          next_page?.titles?.forEach((title) => titles.push(title));
-          this.setStatus(`Retrieving ${years_loop[i]} purchases... page: ${page.pages[i]}`);
-        }
-        await this.delay(rando(333) + 666);
-      }
-      return this.unqKey(titles, "url");
+      orders = new Orders();
+      await orders.init()
+      await orders.populate((year, page, page_count, percent) => {
+        this.notifier.updateProgress(percent, page);
+        this.notifier.text = `Retrieving ${year} purchases: page ${page} of ${page_count}`;
+      });
+      return orders.items;
     },
 
     getOrderPageByDate: async function (year, num) {
       info("getOrderPageByDate()", year, num);
       page = new OrderPage(year, num);
-      page.get();
+      await page.get();
       return page;
 
       // page = {

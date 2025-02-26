@@ -1,9 +1,14 @@
-TypeError: Cannot read properties of undefined (reading 'map')
-    at get categories_list (<anonymous>:560:33)
-    at get category_type (<anonymous>:475:24)
-    at <anonymous>:399:22
+failed TypeError: Cannot read properties of undefined (reading 'map')
+    at get categories_list (<anonymous>:820:33)
+    at get category_type (<anonymous>:735:24)
+    at <anonymous>:659:22
     at Array.map (<anonymous>)
-    at ADBLBookPageParser.data (<anonymous>:398:48)
-    at Object.parseBookDetails (<anonymous>:905:21)
-    at Object.getBookDetails (<anonymous>:1049:23)
-    at async Object.enrichLibraryInformation (<anonymous>:994:23)
+    at ADBLBookPage.data (<anonymous>:658:48)
+    at Object.parseBookDetails (<anonymous>:1290:21)
+    at Object.getBookDetails (<anonymous>:1423:23)
+    at async Object.enrichLibraryInformation (<anonymous>:1379:23)
+getBookDetails	@	VM22189:1425
+await in getBookDetails		
+enrichLibraryInformation	@	VM22189:1379
+await in enrichLibraryInformation		
+run	@	VM22189:1462

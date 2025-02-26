@@ -31,6 +31,11 @@ isEmpty = function(o) {
   }
 
   let type = o.constructor.name;
+
+  if (type == "List") {
+    return o.length == 0;
+  }
+
   if (!(type in EMPTIES)) {
     throw new Error(`isEmpty() does not support type: ${type} (value: ${o}).`);
   }
@@ -270,6 +275,856 @@ Element = class {
     for (let [k, v] of Object.entries(attrs)) {
       this.element.setAttribute(k, v);
     }
+  }
+}
+
+const css = `
+#ae-notifier {
+  position: fixed;
+  top: 100px;
+  border-radius: 0.2em;
+  border-width: 1px;
+  border-style: solid;
+  font-family: system-ui;
+}
+
+#ae-bar {
+  width: 0;
+  height: 50px;
+  border-bottom-right-radius: 0.2em;
+  border-top-right-radius: 0.2em;
+  transition: all 1s;
+  border-width: 1px;
+  border-style: solid;
+}
+
+#ae-messages {
+  padding: 14px;
+  color: #fff;
+}
+
+#ae-status-text {
+  text-wrap: nowrap;
+}
+
+#ae-percent-text {
+}
+
+.row {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+  // 
+`;
+
+StatusNotifier = class {
+  #wrapper = null;
+  #bar = null;
+  #status = null;
+  #percentage = null;
+  #messages = null;
+  #css = null
+
+  #colors = {
+    darkGreen: "#07ba5b",
+    lightGreen: "#3de367",
+    nearBlack: "#121212",
+    white: "#fff",
+    rasin: "#19191F",
+    darkGray: "#232530",
+    offWhite: "#abaab3",
+    lightGray: "#9a99a1",
+  }
+  #pulse_colors = {true: "#07ba5b", false: "#3de367"}
+
+  selectors = {
+    notifier: "ae-notifier",
+    bar: "ae-bar",
+    messages: "ae-messages",
+    status: "ae-status-text",
+    percentage: "ae-percent-text",
+  };
+
+  get body_width() {
+    return document.body.getBoundingClientRect().width;
+  }
+
+  get bar_width() {
+    return this.body_width * 0.8;
+  }
+
+  get css() {
+    if (!this.#css) {
+      this.#css = Element.create("style", {id: "ae-css", type: "text/css"});
+
+      if (this.#css.element.styleSheet) {
+        // Support for IE
+        this.#css.element.styleSheet.cssText = css;
+      } else {
+        // Support for the rest
+        let node = document.createTextNode(css);
+        this.#css.element.appendChild(node);
+      }
+    }
+    return this.#css;
+  }
+
+  // Construct notifier wrapper div, append all child elements, and return
+  get wrapper() {
+    if (!this.#wrapper) {
+      this.#wrapper = Element.create("div", {id: this.selectors.notifier, style: {
+        width: `${this.bar_width}px`,
+        left: `${(this.body_width - this.bar_width) / 2}px`,
+        background: this.#colors.nearBlack,
+        'border-color': this.#colors.lightGreen,
+        'z-index': new Date().getTime(),
+      }})
+
+      this.wrapper.element.appendChild(this.bar.element);
+      this.bar.element.appendChild(this.messages.element);
+      this.messages.element.appendChild(this.status.element);
+      this.messages.element.appendChild(this.percentage.element);
+    }
+    return this.#wrapper;
+  }
+
+  // progress bar element
+  get bar() {
+    if (!this.#bar) {
+      this.#bar = Element.create("div", {id: this.selectors.bar, style: {
+        background: this.#colors.darkGreen,
+        'border-color': this.#colors.lightGreen,
+      }});
+    }
+    return this.#bar;
+  }
+
+  get messages() {
+    if (!this.#messages) {
+      this.#messages = Element.create("div", {id: this.selectors.messages, class: "row", style: {
+        width: `${this.bar_width}px`,
+        // color: "#112A46",
+        // color: "#0c1b1d",
+        // color: "#283747",
+      }});
+    }
+    return this.#messages;
+  }
+
+  // status text element
+  get status() {
+    if (!this.#status) {
+      this.#status = Element.create("div", {id: this.selectors.status, style: {
+        // color: "#112A46",
+        // color: "#0c1b1d",
+        // color: "#283747",
+      }});
+    }
+    return this.#status;
+  }
+
+  // percent text element
+  get percentage() {
+    if (!this.#percentage) {
+      this.#percentage = Element.create("span", {id: this.selectors.percentage, style: {
+        color: "#87ff65", // bright green
+        color: "#0aff99", // bright green
+        // color: "#00ff80", // bright green
+        // color: "#00ff9f", // bright green
+        // color: "#0dffae", // bright green
+      }});
+    }
+    return this.#percentage;
+  }
+
+  // set the status text
+  set text(message) {
+    this.status.innerText = message;
+  }
+
+  // set the percentage text and progress bar width
+  set percent(decimal) {
+    let amount = Math.ceil(decimal * 100);
+    this.percentage.innerText = `${amount}%`;
+
+    let width = this.bar_width * decimal;
+    this.bar.style.width = `${width}px`;
+  }
+
+  // set the percent text, progress bar width, and pulse the background color
+  // on alternating odd/even increments
+  updateProgress(percent, i=null) {
+    this.percent = percent;
+    if (i != null) {
+      let color = this.#pulse_colors[i % 2 == 0]
+      this.bar.background = color;
+    }
+  }
+
+  // add the status notifier to the DOM
+  create() {
+    info("Creating notifier DOM Elements.")
+    let notifier = Element.gi(this.selectors.notifier);
+    if (notifier)
+      notifier.outerHTML = "";
+
+    document.head.appendChild(this.css.element);
+    document.body.appendChild(this.wrapper.element);
+  }
+
+  reset() {
+    this.text = "";
+    this.percent = 0;
+    this.bar.style.background = this.#colors.darkGreen;
+    this.percentage.innerText = "";
+  }
+
+  // remove the elements from the DOM
+  delete() {
+    this.wrapper.element.remove();
+
+    this.#wrapper = null;
+    this.#bar = null;
+    this.#status = null;
+    this.#percentage = null;
+  }
+}
+
+#ae-notifier {
+  position: fixed;
+  top: 100px;
+  border-radius: 0.2em;
+  border-width: 1px;
+  border-style: solid;
+  font-family: system-ui;
+}
+
+#ae-bar {
+  width: 0;
+  height: 50px;
+  border-bottom-right-radius: 0.2em;
+  border-top-right-radius: 0.2em;
+  transition: all 1s;
+  border-width: 1px;
+  border-style: solid;
+}
+
+#ae-messages {
+  padding: 14px;
+  color: #fff;
+}
+
+#ae-status-text {
+  text-wrap: nowrap;
+}
+
+#ae-percent-text {
+}
+
+.row {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+const css = `
+`;
+
+StatusNotifier = class {
+  #wrapper = null;
+  #bar = null;
+  #status = null;
+  #percentage = null;
+  #messages = null;
+  #css = null
+
+  #colors = {
+    darkGreen: "#07ba5b",
+    lightGreen: "#3de367",
+    nearBlack: "#121212",
+    white: "#fff",
+    rasin: "#19191F",
+    darkGray: "#232530",
+    offWhite: "#abaab3",
+    lightGray: "#9a99a1",
+  }
+  #pulse_colors = {true: "#07ba5b", false: "#3de367"}
+
+  selectors = {
+    notifier: "ae-notifier",
+    bar: "ae-bar",
+    messages: "ae-messages",
+    status: "ae-status-text",
+    percentage: "ae-percent-text",
+  };
+
+  get body_width() {
+    return document.body.getBoundingClientRect().width;
+  }
+
+  get bar_width() {
+    return this.body_width * 0.8;
+  }
+
+  get css() {
+    if (!this.#css) {
+      this.#css = Element.create("style", {id: "ae-css", type: "text/css"});
+
+      if (this.#css.element.styleSheet) {
+        // Support for IE
+        this.#css.element.styleSheet.cssText = css;
+      } else {
+        // Support for the rest
+        let node = document.createTextNode(css);
+        this.#css.element.appendChild(node);
+      }
+    }
+    return this.#css;
+  }
+
+  // Construct notifier wrapper div, append all child elements, and return
+  get wrapper() {
+    if (!this.#wrapper) {
+      this.#wrapper = Element.create("div", {id: this.selectors.notifier, style: {
+        width: `${this.bar_width}px`,
+        left: `${(this.body_width - this.bar_width) / 2}px`,
+        background: this.#colors.nearBlack,
+        'border-color': this.#colors.lightGreen,
+        'z-index': new Date().getTime(),
+      }})
+
+      this.wrapper.element.appendChild(this.bar.element);
+      this.bar.element.appendChild(this.messages.element);
+      this.messages.element.appendChild(this.status.element);
+      this.messages.element.appendChild(this.percentage.element);
+    }
+    return this.#wrapper;
+  }
+
+  // progress bar element
+  get bar() {
+    if (!this.#bar) {
+      this.#bar = Element.create("div", {id: this.selectors.bar, style: {
+        background: this.#colors.darkGreen,
+        'border-color': this.#colors.lightGreen,
+      }});
+    }
+    return this.#bar;
+  }
+
+  get messages() {
+    if (!this.#messages) {
+      this.#messages = Element.create("div", {id: this.selectors.messages, class: "row", style: {
+        width: `${this.bar_width}px`,
+        // color: "#112A46",
+        // color: "#0c1b1d",
+        // color: "#283747",
+      }});
+    }
+    return this.#messages;
+  }
+
+  // status text element
+  get status() {
+    if (!this.#status) {
+      this.#status = Element.create("div", {id: this.selectors.status, style: {
+        // color: "#112A46",
+        // color: "#0c1b1d",
+        // color: "#283747",
+      }});
+    }
+    return this.#status;
+  }
+
+  // percent text element
+  get percentage() {
+    if (!this.#percentage) {
+      this.#percentage = Element.create("span", {id: this.selectors.percentage, style: {
+        color: "#87ff65", // bright green
+        color: "#0aff99", // bright green
+        // color: "#00ff80", // bright green
+        // color: "#00ff9f", // bright green
+        // color: "#0dffae", // bright green
+      }});
+    }
+    return this.#percentage;
+  }
+
+  // set the status text
+  set text(message) {
+    this.status.innerText = message;
+  }
+
+  // set the percentage text and progress bar width
+  set percent(decimal) {
+    let amount = Math.ceil(decimal * 100);
+    this.percentage.innerText = `${amount}%`;
+
+    let width = this.bar_width * decimal;
+    this.bar.style.width = `${width}px`;
+  }
+
+  // set the percent text, progress bar width, and pulse the background color
+  // on alternating odd/even increments
+  updateProgress(percent, i=null) {
+    this.percent = percent;
+    if (i != null) {
+      let color = this.#pulse_colors[i % 2 == 0]
+      this.bar.background = color;
+    }
+  }
+
+  // add the status notifier to the DOM
+  create() {
+    info("Creating notifier DOM Elements.")
+    let notifier = Element.gi(this.selectors.notifier);
+    if (notifier)
+      notifier.outerHTML = "";
+
+    document.head.appendChild(this.css.element);
+    document.body.appendChild(this.wrapper.element);
+  }
+
+  reset() {
+    this.text = "";
+    this.percent = 0;
+    this.bar.style.background = this.#colors.darkGreen;
+    this.percentage.innerText = "";
+  }
+
+  // remove the elements from the DOM
+  delete() {
+    this.wrapper.element.remove();
+
+    this.#wrapper = null;
+    this.#bar = null;
+    this.#status = null;
+    this.#percentage = null;
+  }
+}
+
+const css = `
+#ae-notifier {
+  position: fixed;
+  top: 100px;
+  border-radius: 0.2em;
+  border-width: 1px;
+  border-style: solid;
+  font-family: system-ui;
+}
+
+#ae-bar {
+  width: 0;
+  height: 50px;
+  border-bottom-right-radius: 0.2em;
+  border-top-right-radius: 0.2em;
+  transition: all 1s;
+  border-width: 1px;
+  border-style: solid;
+}
+
+#ae-messages {
+  padding: 14px;
+  color: #fff;
+}
+
+#ae-status-text {
+  text-wrap: nowrap;
+}
+
+#ae-percent-text {
+}
+
+.row {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+  // CSS_MARKER
+`;
+
+StatusNotifier = class {
+  #wrapper = null;
+  #bar = null;
+  #status = null;
+  #percentage = null;
+  #messages = null;
+  #css = null
+
+  #colors = {
+    darkGreen: "#07ba5b",
+    lightGreen: "#3de367",
+    nearBlack: "#121212",
+    white: "#fff",
+    rasin: "#19191F",
+    darkGray: "#232530",
+    offWhite: "#abaab3",
+    lightGray: "#9a99a1",
+  }
+  #pulse_colors = {true: "#07ba5b", false: "#3de367"}
+
+  selectors = {
+    notifier: "ae-notifier",
+    bar: "ae-bar",
+    messages: "ae-messages",
+    status: "ae-status-text",
+    percentage: "ae-percent-text",
+  };
+
+  get body_width() {
+    return document.body.getBoundingClientRect().width;
+  }
+
+  get bar_width() {
+    return this.body_width * 0.8;
+  }
+
+  get css() {
+    if (!this.#css) {
+      this.#css = Element.create("style", {id: "ae-css", type: "text/css"});
+
+      if (this.#css.element.styleSheet) {
+        // Support for IE
+        this.#css.element.styleSheet.cssText = css;
+      } else {
+        // Support for the rest
+        let node = document.createTextNode(css);
+        this.#css.element.appendChild(node);
+      }
+    }
+    return this.#css;
+  }
+
+  // Construct notifier wrapper div, append all child elements, and return
+  get wrapper() {
+    if (!this.#wrapper) {
+      this.#wrapper = Element.create("div", {id: this.selectors.notifier, style: {
+        width: `${this.bar_width}px`,
+        left: `${(this.body_width - this.bar_width) / 2}px`,
+        background: this.#colors.nearBlack,
+        'border-color': this.#colors.lightGreen,
+        'z-index': new Date().getTime(),
+      }})
+
+      this.wrapper.element.appendChild(this.bar.element);
+      this.bar.element.appendChild(this.messages.element);
+      this.messages.element.appendChild(this.status.element);
+      this.messages.element.appendChild(this.percentage.element);
+    }
+    return this.#wrapper;
+  }
+
+  // progress bar element
+  get bar() {
+    if (!this.#bar) {
+      this.#bar = Element.create("div", {id: this.selectors.bar, style: {
+        background: this.#colors.darkGreen,
+        'border-color': this.#colors.lightGreen,
+      }});
+    }
+    return this.#bar;
+  }
+
+  get messages() {
+    if (!this.#messages) {
+      this.#messages = Element.create("div", {id: this.selectors.messages, class: "row", style: {
+        width: `${this.bar_width}px`,
+        // color: "#112A46",
+        // color: "#0c1b1d",
+        // color: "#283747",
+      }});
+    }
+    return this.#messages;
+  }
+
+  // status text element
+  get status() {
+    if (!this.#status) {
+      this.#status = Element.create("div", {id: this.selectors.status, style: {
+        // color: "#112A46",
+        // color: "#0c1b1d",
+        // color: "#283747",
+      }});
+    }
+    return this.#status;
+  }
+
+  // percent text element
+  get percentage() {
+    if (!this.#percentage) {
+      this.#percentage = Element.create("span", {id: this.selectors.percentage, style: {
+        color: "#87ff65", // bright green
+        color: "#0aff99", // bright green
+        // color: "#00ff80", // bright green
+        // color: "#00ff9f", // bright green
+        // color: "#0dffae", // bright green
+      }});
+    }
+    return this.#percentage;
+  }
+
+  // set the status text
+  set text(message) {
+    this.status.innerText = message;
+  }
+
+  // set the percentage text and progress bar width
+  set percent(decimal) {
+    let amount = Math.ceil(decimal * 100);
+    this.percentage.innerText = `${amount}%`;
+
+    let width = this.bar_width * decimal;
+    this.bar.style.width = `${width}px`;
+  }
+
+  // set the percent text, progress bar width, and pulse the background color
+  // on alternating odd/even increments
+  updateProgress(percent, i=null) {
+    this.percent = percent;
+    if (i != null) {
+      let color = this.#pulse_colors[i % 2 == 0]
+      this.bar.background = color;
+    }
+  }
+
+  // add the status notifier to the DOM
+  create() {
+    info("Creating notifier DOM Elements.")
+    let notifier = Element.gi(this.selectors.notifier);
+    if (notifier)
+      notifier.outerHTML = "";
+
+    document.head.appendChild(this.css.element);
+    document.body.appendChild(this.wrapper.element);
+  }
+
+  reset() {
+    this.text = "";
+    this.percent = 0;
+    this.bar.style.background = this.#colors.darkGreen;
+    this.percentage.innerText = "";
+  }
+
+  // remove the elements from the DOM
+  delete() {
+    this.wrapper.element.remove();
+
+    this.#wrapper = null;
+    this.#bar = null;
+    this.#status = null;
+    this.#percentage = null;
+  }
+}
+
+const css = `
+#ae-notifier {
+  position: fixed;
+  top: 100px;
+  border-radius: 0.2em;
+  border-width: 1px;
+  border-style: solid;
+  font-family: system-ui;
+}
+
+#ae-bar {
+  width: 0;
+  height: 50px;
+  border-bottom-right-radius: 0.2em;
+  border-top-right-radius: 0.2em;
+  transition: all 1s;
+  border-width: 1px;
+  border-style: solid;
+}
+
+#ae-messages {
+  padding: 14px;
+  color: #fff;
+}
+
+#ae-status-text {
+  text-wrap: nowrap;
+}
+
+#ae-percent-text {
+}
+
+.row {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+`;
+
+StatusNotifier = class {
+  #wrapper = null;
+  #bar = null;
+  #status = null;
+  #percentage = null;
+  #messages = null;
+  #css = null
+
+  #colors = {
+    darkGreen: "#07ba5b",
+    lightGreen: "#3de367",
+    nearBlack: "#121212",
+    white: "#fff",
+    rasin: "#19191F",
+    darkGray: "#232530",
+    offWhite: "#abaab3",
+    lightGray: "#9a99a1",
+  }
+  #pulse_colors = {true: "#07ba5b", false: "#3de367"}
+
+  selectors = {
+    notifier: "ae-notifier",
+    bar: "ae-bar",
+    messages: "ae-messages",
+    status: "ae-status-text",
+    percentage: "ae-percent-text",
+  };
+
+  get body_width() {
+    return document.body.getBoundingClientRect().width;
+  }
+
+  get bar_width() {
+    return this.body_width * 0.8;
+  }
+
+  get css() {
+    if (!this.#css) {
+      this.#css = Element.create("style", {id: "ae-css", type: "text/css"});
+
+      if (this.#css.element.styleSheet) {
+        // Support for IE
+        this.#css.element.styleSheet.cssText = css;
+      } else {
+        // Support for the rest
+        let node = document.createTextNode(css);
+        this.#css.element.appendChild(node);
+      }
+    }
+    return this.#css;
+  }
+
+  // Construct notifier wrapper div, append all child elements, and return
+  get wrapper() {
+    if (!this.#wrapper) {
+      this.#wrapper = Element.create("div", {id: this.selectors.notifier, style: {
+        width: `${this.bar_width}px`,
+        left: `${(this.body_width - this.bar_width) / 2}px`,
+        background: this.#colors.nearBlack,
+        'border-color': this.#colors.lightGreen,
+        'z-index': new Date().getTime(),
+      }})
+
+      this.wrapper.element.appendChild(this.bar.element);
+      this.bar.element.appendChild(this.messages.element);
+      this.messages.element.appendChild(this.status.element);
+      this.messages.element.appendChild(this.percentage.element);
+    }
+    return this.#wrapper;
+  }
+
+  // progress bar element
+  get bar() {
+    if (!this.#bar) {
+      this.#bar = Element.create("div", {id: this.selectors.bar, style: {
+        background: this.#colors.darkGreen,
+        'border-color': this.#colors.lightGreen,
+      }});
+    }
+    return this.#bar;
+  }
+
+  get messages() {
+    if (!this.#messages) {
+      this.#messages = Element.create("div", {id: this.selectors.messages, class: "row", style: {
+        width: `${this.bar_width}px`,
+        // color: "#112A46",
+        // color: "#0c1b1d",
+        // color: "#283747",
+      }});
+    }
+    return this.#messages;
+  }
+
+  // status text element
+  get status() {
+    if (!this.#status) {
+      this.#status = Element.create("div", {id: this.selectors.status, style: {
+        // color: "#112A46",
+        // color: "#0c1b1d",
+        // color: "#283747",
+      }});
+    }
+    return this.#status;
+  }
+
+  // percent text element
+  get percentage() {
+    if (!this.#percentage) {
+      this.#percentage = Element.create("span", {id: this.selectors.percentage, style: {
+        color: "#87ff65", // bright green
+        color: "#0aff99", // bright green
+        // color: "#00ff80", // bright green
+        // color: "#00ff9f", // bright green
+        // color: "#0dffae", // bright green
+      }});
+    }
+    return this.#percentage;
+  }
+
+  // set the status text
+  set text(message) {
+    this.status.innerText = message;
+  }
+
+  // set the percentage text and progress bar width
+  set percent(decimal) {
+    let amount = Math.ceil(decimal * 100);
+    this.percentage.innerText = `${amount}%`;
+
+    let width = this.bar_width * decimal;
+    this.bar.style.width = `${width}px`;
+  }
+
+  // set the percent text, progress bar width, and pulse the background color
+  // on alternating odd/even increments
+  updateProgress(percent, i=null) {
+    this.percent = percent;
+    if (i != null) {
+      let color = this.#pulse_colors[i % 2 == 0]
+      this.bar.background = color;
+    }
+  }
+
+  // add the status notifier to the DOM
+  create() {
+    info("Creating notifier DOM Elements.")
+    let notifier = Element.gi(this.selectors.notifier);
+    if (notifier)
+      notifier.outerHTML = "";
+
+    document.head.appendChild(this.css.element);
+    document.body.appendChild(this.wrapper.element);
+  }
+
+  reset() {
+    this.text = "";
+    this.percent = 0;
+    this.bar.style.background = this.#colors.darkGreen;
+    this.percentage.innerText = "";
+  }
+
+  // remove the elements from the DOM
+  delete() {
+    this.wrapper.element.remove();
+
+    this.#wrapper = null;
+    this.#bar = null;
+    this.#status = null;
+    this.#percentage = null;
   }
 }
 List = class extends Array {
@@ -583,7 +1438,7 @@ ADBLBookPage = class extends BookPage {
   }
 
   get rating() {
-    return tryFloat(Number(this.info.rating.value).toFixed(1));
+    return tryFloat(Number(this.info.rating?.value).toFixed(1));
   }
 
   get date() {
@@ -591,11 +1446,12 @@ ADBLBookPage = class extends BookPage {
   }
 
   get num_ratings() {
-    return this.info.rating.count;
+    return this.info.rating?.count || "";
   }
 
+  // book number
   get book() {
-    return /Book (\d+)/i.exec(this.info.series?.[0].part)?.[1];
+    return /Book (\d+)/i.exec(this.info.series?.[0].part)?.[1] || "";
   }
 
   get summary() {
@@ -603,7 +1459,7 @@ ADBLBookPage = class extends BookPage {
   }
 
   get categories_list() {
-    return this.info.categories.map((c) => c.name);
+    return this.info.categories?.map((c) => c.name) || [];
   }
 
   get tags_list() {
@@ -635,8 +1491,9 @@ NormalBookPage = class extends BookPage {
     return tryFloat(num);
   }
 
+  // book number
   get book() {
-    return /, Book (\d+)/i.exec(this.doc.gcf("seriesLabel").innerHTML)?.[1];
+    return /, Book (\d+)/i.exec(this.doc.gcf("seriesLabel")?.innerHTML)?.[1] || "";
   }
 
   get summary() {
@@ -781,6 +1638,7 @@ Library = class extends Page {
 OrderPage = class extends Page {
   base_url = "https://www.audible.com/account/purchase-history?tf=orders";
 
+  #default_per_page = 40;
   #purchases_attrs = {
     id: "data-order-item-asin",
     order_id: "data-order-id",
@@ -789,6 +1647,7 @@ OrderPage = class extends Page {
     title: "data-order-item-name",
     author: "data-order-item-author",
   };
+  #valid_date_ranges = ["last_90_days", "last_180_days", "last_365_days"]
 
   #orders = {};
   #purchases = {};
@@ -796,19 +1655,21 @@ OrderPage = class extends Page {
   #page_num = null;
   #year = null;
 
-  constructor(year_or_doc=null, page_num=null) {
+  constructor(year_or_doc=null, page_num=null, per_page=null) {
     super();
     this.doc = null;
-    if (typeof year_or_doc == "number" && typeof page_num == "number") {
+    if ((typeof year_or_doc == "number" || this.#valid_date_ranges.includes(year_or_doc)) && typeof page_num == "number") {
       this.year = year_or_doc;
       this.page_num = page_num;
     } else if (year_or_doc) {
       this.doc = year_or_doc;
     }
+
+    this.per_page = per_page || this.#default_per_page;
   }
 
   async get() {
-    let url = `${this.base_url}&df=${this.year}&pn=${this.page_num}`;
+    let url = `${this.base_url}&df=${this.year}&pn=${this.page_num}&ps=${this.per_page}`;
     this.doc = await this.fetchDoc(url);
     return this.doc;
   }
@@ -837,7 +1698,8 @@ OrderPage = class extends Page {
 
   get page_count() {
     let link = this.doc.qs("a.purchase-history-pagination-button").last
-    return parseInt(link.innerHTML.trim());
+    let count = link?.innerHTML.trim() || 1;
+    return parseInt(count);
   }
 
   get years() {
@@ -872,17 +1734,14 @@ OrderPage = class extends Page {
 
   get purchases() {
     if (this.doc && isEmpty(this.#purchases)) {
-      let links = this.doc.qs("a[data-order-item-id]");
+      let links = (this.doc.qs("a[data-order-item-id]"));
       let purchases = links.map((a) => 
-        [
-          a.attributes["data-order-item-asin"].value,
-          Object.fromEntries(
-            Object.entries(this.#purchases_attrs).map(([key, attr]) => [key, a.attributes[attr].value])
-          ),
-        ]
+        Object.fromEntries(
+          Object.entries(this.#purchases_attrs).map(([key, attr]) => [key, a.attributes[attr].value])
+        ),
       );
 
-      this.#purchases = Object.fromEntries(purchases);
+      this.#purchases = purchases;
     }
 
     return this.#purchases;
@@ -890,8 +1749,10 @@ OrderPage = class extends Page {
 
   get items() {
     if (this.doc && isEmpty(this.#items)) {
-      this.#items = Object.values(this.purchases).reduce((arr, p) => {
-        if (p.title && p.author) {
+      let seen = {};
+      this.#items = this.purchases.reduce((arr, p) => {
+        if (p.title && p.author && !seen[p.id]) {
+          seen[p.id] = true;
           arr.push({
             url: `http://www.audible.com/pd/${p.id}`,
             title: p.title,
@@ -905,12 +1766,58 @@ OrderPage = class extends Page {
     return this.#items;
   }
 }
+Orders = class {
+  #items = [];
+
+  async init() {
+    let page = new OrderPage("last_90_days", 1, 20);
+    await page.get();
+    this.years = page.years.map((year) => ({year: tryInt(year), page_count: null, pages: []}));
+  }
+
+  async populate(progress_callback=null) {
+    let i, page, page_num, percent;
+    let y = 0;
+    let year_count = this.years.length;
+
+    for (var data of this.years)  {
+      y++;
+      i = 0;
+      do {
+        page_num = i + 1;
+        page = new OrderPage(data.year, page_num);
+        await page.get();
+        if (!data.page_count) {
+          data.page_count = page.page_count;
+        }
+        data.pages.push(page);
+
+        if (progress_callback) {
+          percent = y / year_count;
+          progress_callback(data.year, page_num, data.page_count, percent);
+        }
+
+        i++;
+      } while (i < data.page_count);
+    }
+  }
+
+  get items() {
+    if (isEmpty(this.#items)) {
+      let items = [];
+      this.#items = this.years.reduce((arr, year) => {
+        items = year.pages.reduce((subarr, page) => {
+          return subarr.concat(page.items);
+        }, []);
+        return arr.concat(items);
+      }, []);
+    }
+    return this.#items;
+  }
+}
 Exporter = function() {
 
   var classes = {
-    notifier: "downloading_notifier",
-    bar: "downloading_percentage_bar",
-    status_text: "downloading_percentage_txt",
     ul_card: "bc-list bc-list-nostyle",
     title: "bc-size-headline3",
     narrator: "narratorLabel",
@@ -925,6 +1832,7 @@ Exporter = function() {
   };
 
   return {
+    notifier: new StatusNotifier(),
     download_bar_width: document.body.getBoundingClientRect().width * 0.8,
 
     /* misc functions
@@ -999,63 +1907,9 @@ Exporter = function() {
     a: function(o, attrs) { attrs.forEach(attr => this.attr(o, attr[0], attr[1])) },
 
     createDownloadHTML: function() {
-      if (this.gi(document, classes.notifier))
-        this.gi(document, classes.notifier).outerHTML = "";
-
-      const body_width = document.body.getBoundingClientRect().width;
-
-      let div = Element.create("div", {id: classes.notifier, style: {
-        width: `${this.download_bar_width}px`,
-        position: "fixed",
-        top: "100px",
-        left: `${(body_width - this.download_bar_width) / 2}px`,
-        background: "#121212",
-        border: "1px solid #3de367",
-        'border-radius': "0.2em",
-        'z-index': new Date().getTime(),
-      }})
-
-      let bar = Element.create("div", {id: classes.bar, style: {
-        width: "0px",
-        height: "50px",
-        background: "#3de367",
-        border: "1px solid #3de367",
-        'border-bottom-right-radius': "0.2em",
-        'border-top-right-radius': "0.2em",
-        transition: "all 1s",
-      }});
-
-      let text = Element.create("div", {id: classes.status_text, style: {
-        float: "left",
-        padding: "14px",
-        color: "#fff",
-        width: `${this.download_bar_width - 50}px`,
-      }});
-
-      bar.element.appendChild(text.element);
-      div.element.appendChild(bar.element);
-      document.body.appendChild(div.element);
-
-      this.setStatus("initiating download...");
-
-      return div.element;
+      this.notifier.create();
+      this.notifier.text = "initiating download...";
     },
-
-    setStatus: function(text) {
-      this.gi(document, classes.status_text).innerText = text;
-    },
-
-    updateProgress: function(percent, i=null) {
-      let bar = this.gi(document, "downloading_percentage_bar");
-      let width = this.download_bar_width * percent;
-      bar.style.width = `${width}px`;
-
-      if (i != null) {
-        let color = i % 2 == 0 ? "#07ba5b" : "#3de367";
-        bar.style.background = color;
-      }
-    },
-
 
     /* parsing functions
      * --------------------------------------------------------------------------------
@@ -1148,11 +2002,11 @@ Exporter = function() {
     },
 
     loopThroughtAudibleLibrary: async function() {
-      this.setStatus("Retrieving titles...");
+      this.notifier.text = "Retrieving titles...";
       let library = new Library();
       await library.populate((i, percent) => {
-        this.updateProgress(percent, i);
-        this.setStatus(`Retrieving titles... ${Math.ceil(percent * 100)}% complete`);
+        this.notifier.updateProgress(percent, i);
+        this.notifier.text = "Retrieving titles...";
       });
       return library.books;
     },
@@ -1161,33 +2015,25 @@ Exporter = function() {
       var library = await this.loopThroughtAudibleLibrary();
       var contain_arr = [];
 
-      this.setStatus("Retrieving addtional information on titles...");
+      this.notifier.text = "Retrieving addtional information on titles...";
       const total_results = library.length;
       for (let i = 0; i < total_results; i++) {
         let details = await this.getBookDetails(library[i].url);
         let merge = cleanObject({ ...library[i], ...details });
         contain_arr.push(merge);
         await this.delay(rando(1111) + 1111);
-        this.gi(document, "downloading_percentage_bar").style.width = `${
-          this.download_bar_width * (i / total_results)
-        }px`;
-        this.gi(document, "downloading_percentage_bar").style.background =
-          i % 2 == 0 ? "#07ba5b" : "#3de367";
-        this.setStatus(
-          `${
+        this.notifier.updateProgress(i/total_results, i);
+        this.notifier.text = `${
             merge.author
           } - ${Math.ceil(
             (i / total_results) * 100
           )}% complete -- approx ${Math.round(
             ((((total_results - i) / 100) * 1.9) / 60) * 100
-          )} minutes remaining`
-        );
+          )} minutes remaining
+        `;
       }
-      this.gi(
-        document,
-        "downloading_percentage_bar"
-      ).style.width = `${this.download_bar_width}px`;
-      this.setStatus("100% complete");
+      this.notifier.percent = 1;
+      this.notifier.test = "Finished."
       let merged_with_orders = contain_arr.map((r) => {
         let order = order_information.filter((i) => i.url == r.url);
         return {
@@ -1200,8 +2046,7 @@ Exporter = function() {
         merged_with_orders,
         "audible_export_" + new Date().getTime() + ".tsv"
       );
-      if (this.gi(document, "downloading_notifier"))
-        this.gi(document, "downloading_notifier").outerHTML = "";
+      this.notifier.wrapper.outerHTML = "";
     },
 
     getAudibleLibraryPage: async function(page) {
@@ -1228,54 +2073,21 @@ Exporter = function() {
     },
 
     getAllOrders: async function() {
-      this.setStatus("Retrieving this year's purchases...");
+      this.notifier.text = "Retrieving purchases...";
 
-      var first_page = await this.getOrderPageByDate("last_365_days", 1);
-      var titles = first_page.titles;
-
-      for (let i = 0; i < first_page.pages.length; i++) {
-        let next_page = await this.getOrderPageByDate(
-          "last_365_days",
-          first_page.pages[i]
-        );
-        next_page?.titles?.forEach((title) => titles.push(title));
-      }
-      let last_year = Math.min(
-        ...titles
-          .map((t) => /^\d{4}/.exec(t.purchase_date)?.[0])
-          .filter((t) => t)
-          .map((t) => parseInt(t))
-      );
-
-      let years_loop = first_page.order_date_sel.slice(
-        first_page.order_date_sel.indexOf(last_year.toString()),
-        20
-      );
-      await this.delay(rando(333) + 666);
-
-      for (let y = 0; y < years_loop.length; y++) {
-        let page = await this.getOrderPageByDate(years_loop[y], 1);
-        page?.titles?.forEach((title) => titles.push(title));
-        this.gi(document, "downloading_percentage_bar").style.width = `${
-          this.download_bar_width * (y / years_loop.length)
-        }px`;
-        this.gi(document, "downloading_percentage_bar").style.background =
-          y % 2 == 0 ? "#07ba5b" : "#3de367";
-        this.setStatus(`Retrieving ${years_loop[y]} purchases...`);
-        for (let i = 0; i < page.pages.length; i++) {
-          let next_page = await this.getOrderPageByDate(years_loop[y], page.pages[i]);
-          next_page?.titles?.forEach((title) => titles.push(title));
-          this.setStatus(`Retrieving ${years_loop[i]} purchases... page: ${page.pages[i]}`);
-        }
-        await this.delay(rando(333) + 666);
-      }
-      return this.unqKey(titles, "url");
+      orders = new Orders();
+      await orders.init()
+      await orders.populate((year, page, page_count, percent) => {
+        this.notifier.updateProgress(percent, page);
+        this.notifier.text = `Retrieving ${year} purchases: page ${page} of ${page_count}`;
+      });
+      return orders.items;
     },
 
     getOrderPageByDate: async function (year, num) {
       info("getOrderPageByDate()", year, num);
       page = new OrderPage(year, num);
-      page.get();
+      await page.get();
       return page;
 
       // page = {

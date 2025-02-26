@@ -15,6 +15,7 @@ require("../src/page.js");
 require("../src/library-page.js");
 require("../src/library.js");
 require("../src/order-page.js");
+require("../src/status-notifier.js");
 require("../src/exporter.js");
 
 
@@ -93,14 +94,6 @@ describe("exporter: DOM functions", function() {
     expect(div.attributes["style"].value).toBe("width: 100px")
   });
 
-  test("setStatus()", function() {
-    document.body.innerHTML = "<html><body><div id='downloading_percentage_txt'>Hello.</div></body></html>";
-    exporter.setStatus("Goodbye.");
-
-    div = $("#downloading_percentage_txt");
-    expect(div[0].innerText).toBe("Goodbye.");
-  });
-
   // test(".getGenre(): tags include Fiction or Nonfiction", function() {
   //   let categories = [];
   //   let tags = ["Science Fiction", "Fiction"];
@@ -150,28 +143,6 @@ describe("exporter: DOM functions", function() {
     expect(items.length).toBe(2)
     expect(items[0].innerHTML).toBe("Cheese Pizza")
     expect(items[1].innerHTML).toBe("Pepperoni Pizza")
-  });
-
-  test("createDownloadHTML()", function() {
-    document.body.innerHTML = "<html><body><p>Hello.</p></body></html>";
-
-    exporter.createDownloadHTML();
-    let div = Element.gi("downloading_notifier");
-    let bar = div.gi("downloading_percentage_bar");
-    let txt = div.gi("downloading_percentage_txt");
-
-    expect(div.attributes["id"].value).toBe("downloading_notifier")
-    expect(div.style.width).toBe("0px");
-    expect(div.style.position).toBe("fixed");
-    expect(div.style.top).toBe("100px");
-    expect(div.style.left).toBe("0px");
-    expect(div.style.border).toBe("1px solid #3de367");
-    expect(div.style["border-radius"]).toBe("0.2em");
-    expect(div.style.background).toMatch(/^rgb\(\d+, \d+, \d+\)$/);
-
-    expect(bar.id).toBe("downloading_percentage_bar");
-    expect(txt.id).toBe("downloading_percentage_txt");
-    expect(txt.element.innerText).toBe("initiating download...");
   });
 });
 
@@ -276,7 +247,7 @@ describe("exporter: parsing functions", function() {
   });
 
   test("loopThroughtAudibleLibrary", async function() {
-    let docs = ["3", "2", "1"].map((i) => 
+    let docs = ["1", "2", "3"].map((i) => 
       toDoc(getFixtureFile(`library-page-${i}-of-3.html`))
     );
 
@@ -299,16 +270,16 @@ describe("exporter: parsing functions", function() {
       "2017", "2016", "2015", "2014", "2013", "2012", "2011", "2010",
     ];
 
-    OrderPage.prototype.fetchDoc = mockFetchDoc("order-page-1.html");
+    OrderPage.prototype.fetchDoc = mockFetchDoc("order-page.html");
     let exporter = Exporter();
-    exporter.fetchDoc = mockFetchDoc("order-page-1.html");
+    exporter.fetchDoc = mockFetchDoc("order-page.html");
 
     let page = await exporter.getOrderPageByDate(2025, 1);
 
     expect(page.page_count).toEqual(5);
     expect(page.years).toEqual(years);
     expect(Object.keys(page.items).length).toEqual(44);
-    expect(page.items[0].title).toBe("The Lives of Saints");
+    expect(page.items[0].title).toBe("Wind and Truth");
   });
 
 });

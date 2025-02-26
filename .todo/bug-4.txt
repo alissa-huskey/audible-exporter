@@ -1,0 +1,13 @@
+failed TypeError: Cannot read properties of undefined (reading 'count')
+    at get num_ratings (<anonymous>:808:29)
+    at <anonymous>:659:22
+    at Array.map (<anonymous>)
+    at ADBLBookPage.data (<anonymous>:658:48)
+    at Object.parseBookDetails (<anonymous>:1291:21)
+    at Object.getBookDetails (<anonymous>:1424:23)
+    at async Object.enrichLibraryInformation (<anonymous>:1380:23)
+getBookDetails	@	VM23143:1426
+await in getBookDetails		
+enrichLibraryInformation	@	VM23143:1380
+await in enrichLibraryInformation		
+run	@	VM23143:1463

@@ -24,6 +24,11 @@ isEmpty = function(o) {
   }
 
   let type = o.constructor.name;
+
+  if (type == "List") {
+    return o.length == 0;
+  }
+
   if (!(type in EMPTIES)) {
     throw new Error(`isEmpty() does not support type: ${type} (value: ${o}).`);
   }
