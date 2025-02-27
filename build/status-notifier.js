@@ -5,6 +5,7 @@ log = function(...msg) {
 hr = function(...msg) {
   console.log("****************************************", ...msg)
 }
+
 var CONSOLE_OUTPUT = false;
 const LOG_PREFIX = "[audible-exporter]";
 
@@ -31,12 +32,6 @@ log_table = function(label, data) {
 
 titleCase = function(text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
-}
-
-str = function(o) {
-  return typeof o == "object"
-    ? this.tsvReady(JSON.stringify(o))
-    : o
 }
 
 first = function(arr) {
@@ -141,18 +136,6 @@ stripHTML = function(html) {
 
 rando = (n) => Math.round(Math.random() * n)
 
-tsvReady = (s) => (
-  s
-    ? s
-        .replace(/\t|\v|\f|\u0009/g, " ")
-        .replace(/\r|\n/g, "↵")
-        .replace(/\0/g, "")
-        .replace(/\\/g, "\\\\")
-        .replace(/\'/g, "\\'")
-        .replace(/\"/g, '\\"')
-    : s
-)
-
 reg = (o, n) => (o ? o[n] : "")
 
 cleanObject = function(ob) {
@@ -176,6 +159,7 @@ cleanObject = function(ob) {
     }
   }, {});
 }
+
 Element = class {
   constructor(elm=null) {
     this.element = elm;
@@ -306,6 +290,7 @@ Element = class {
     }
   }
 }
+
 DOM = class {
   #style = null;
   #css = null;

@@ -18,3 +18,9 @@ Modals
 
 * [Considerations for Styling a Modal](https://css-tricks.com/considerations-styling-modal/)
 
+
+Colors
+------
+
+* [](https://www.digitalocean.com/community/tutorials/getting-started-with-data-visualization-using-javascript-and-the-d3-library)
+  A nice color scheme in the code examples.

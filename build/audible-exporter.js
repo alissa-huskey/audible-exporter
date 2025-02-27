@@ -26,12 +26,6 @@ titleCase = function(text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-str = function(o) {
-  return typeof o == "object"
-    ? this.tsvReady(JSON.stringify(o))
-    : o
-}
-
 first = function(arr) {
   let v;
   for (v of arr) {
@@ -133,18 +127,6 @@ stripHTML = function(html) {
 }
 
 rando = (n) => Math.round(Math.random() * n)
-
-tsvReady = (s) => (
-  s
-    ? s
-        .replace(/\t|\v|\f|\u0009/g, " ")
-        .replace(/\r|\n/g, "↵")
-        .replace(/\0/g, "")
-        .replace(/\\/g, "\\\\")
-        .replace(/\'/g, "\\'")
-        .replace(/\"/g, '\\"')
-    : s
-)
 
 reg = (o, n) => (o ? o[n] : "")
 
@@ -1148,6 +1130,75 @@ DOM = class {
     document.body.appendChild(this.wrapper.element);
   }
 }
+File = class {
+  mimetype = null;
+
+  constructor(records=null) {
+    this.records = records;
+  }
+
+  get blob() {
+    return new Blob([this.contents], {type: this.mimetype});
+  }
+
+  get url() {
+    return URL.createObjectURL(this.blob);
+  }
+
+  get filename() {
+    let ts = new Date().getTime();
+    return `audible_${ts}.${this.extension}`;
+  }
+}
+TSVFile = class extends File {
+  #headers = null;
+  #rows = null;
+
+  mimetype = "text/tsv";
+  extension = "tsv";
+
+  get headers() {
+    if (!this.records || isEmpty(this.records))
+      return;
+    if (!this.#headers) {
+      this.#headers = Object.keys(this.records[0]).map((h) => this.sanitize(h));
+    }
+    return this.#headers;
+  }
+
+  get rows() {
+    if (!this.records || isEmpty(this.records))
+      return;
+    if (!this.#rows) {
+      this.#rows = this.records.map((row) => Object.values(row).map((v) => this.sanitize(v)));
+    }
+    return this.#rows;
+  }
+
+  get contents() {
+    if (!this.records || isEmpty(this.records))
+      return;
+
+    let lines = [this.headers, ...this.rows];
+    let text = lines.map((l) => l.join("\t")).join("\n") + "\n";
+    return text;
+  }
+
+  sanitize(text) {
+    text = text || "";
+    text = String(text);
+
+    return text
+        .replace(/\t|\v|\f|\u0009/g, " ")
+        .replace(/\r|\n/g, " ")
+        .replace(/\0/g, "")
+        .replace(/\\/g, "\\\\")
+        .replace(/\'/g, "\\'")
+        .replace(/\"/g, '\\"')
+  }
+
+
+}
 
 Modal = class extends DOM {
   #css = null;
@@ -1620,47 +1671,10 @@ Exporter = function() {
      * --------------------------------------------------------------------------------
      */
 
-    unqHsh: (a, o) => (a.filter(i => o.hasOwnProperty(i) ? false : (o[i] = true))),
-
     timeLeft: function(remaining) {
       let per_book = 1.9;
 
       return Math.round((remaining * per_book) / 60);
-    },
-
-    /* formatting functions
-     * --------------------------------------------------------------------------------
-     */
-
-    convert2TsvAndDownload: function(records, named_file) {
-      const fileArray = records;
-      var firstLevel = fileArray.map((el) => Object.entries(el));
-      var header = this.unqHsh(
-        firstLevel.map((el) => el.map((itm) => itm[0])).flat(),
-        {}
-      );
-      var table = [header];
-      for (var i = 0; i < firstLevel.length; i++) {
-        var arr = [];
-        var row = [];
-        var record = firstLevel[i];
-        for (var s = 0; s < record.length; s++) {
-          var record_kv = record[s];
-          var col_key = record_kv[0];
-          var place = header.indexOf(col_key);
-          arr[place] = record_kv[1];
-        }
-        for (var a = 0; a < arr.length; a++) {
-          if (arr[a]) {
-            row.push(arr[a]);
-          } else {
-            row.push("");
-          }
-        }
-        table.push(row);
-      }
-      var output_ = table.map((el) => el.map((itm) => str(itm)));
-      this.downloadr(output_, named_file);
     },
 
     /* parsing functions
@@ -1684,28 +1698,6 @@ Exporter = function() {
       return parser.data()
     },
 
-    /* interaction functions
-     * --------------------------------------------------------------------------------
-     */
-
-    delay: (ms) => new Promise((res) => setTimeout(res, ms)),
-
-    downloadr: function(arr2D, filename) {
-      var data = /\.json$|.js$/.test(filename)
-        ? JSON.stringify(arr2D)
-        : arr2D
-            .map((el) => el.reduce((a, b) => a + "\t" + b))
-            .reduce((a, b) => a + "\r" + b);
-      var type = /\.json$|.js$/.test(filename)
-        ? "data:application/json;charset=utf-8,"
-        : "data:text/plain;charset=utf-8,";
-      var file = new Blob([data], {
-        type: type,
-      });
-      let url = URL.createObjectURL(file);
-      this.modal.file = [url, filename];
-      this.modal.show()
-    },
 
     /* request functions
      * --------------------------------------------------------------------------------
@@ -1768,10 +1760,10 @@ Exporter = function() {
     },
 
     downloadTSV: function(books) {
-      this.convert2TsvAndDownload(
-        books,
-        "audible_export_" + new Date().getTime() + ".tsv"
-      );
+      let file = new TSVFile(books);
+      this.modal.file = [file.url, file.filename];
+      this.notifier.delete();
+      this.modal.show()
     },
 
     getAudibleLibraryPage: async function(page) {

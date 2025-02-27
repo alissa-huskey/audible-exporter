@@ -18,3 +18,7 @@ x 2025-02-27 2025-02-26 @feature When finished, add a download button instead of
 x 2025-02-27 2025-02-27 @qa Move downloadr() functionality to Modal class.
 x 2025-02-27 2025-02-27 Try logging various results using console.table
 x 2025-02-27 2025-02-27 Try using console.group to log final results.
+x 2025-02-27 2025-02-26 @task refactor convert2TsvAndDownload
+x 2025-02-27 2025-02-26 @task refactor downloadr
+x 2025-02-27 2025-02-14 @bug fix TSV linebreaks
+x 2025-02-27 2025-02-14 @ux For TSV/CSV, detect newlines in critic/publisher summary and remove or change.

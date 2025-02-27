@@ -16,7 +16,7 @@ Modal = class extends DOM {
   get css() {
     if (!this.#css) {
       this.#css = `
-        /* CSS_MARKER */
+        /* CSS_MARKER modal */
       `;
     }
     return this.#css;

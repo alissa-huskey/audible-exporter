@@ -22,47 +22,10 @@ Exporter = function() {
      * --------------------------------------------------------------------------------
      */
 
-    unqHsh: (a, o) => (a.filter(i => o.hasOwnProperty(i) ? false : (o[i] = true))),
-
     timeLeft: function(remaining) {
       let per_book = 1.9;
 
       return Math.round((remaining * per_book) / 60);
-    },
-
-    /* formatting functions
-     * --------------------------------------------------------------------------------
-     */
-
-    convert2TsvAndDownload: function(records, named_file) {
-      const fileArray = records;
-      var firstLevel = fileArray.map((el) => Object.entries(el));
-      var header = this.unqHsh(
-        firstLevel.map((el) => el.map((itm) => itm[0])).flat(),
-        {}
-      );
-      var table = [header];
-      for (var i = 0; i < firstLevel.length; i++) {
-        var arr = [];
-        var row = [];
-        var record = firstLevel[i];
-        for (var s = 0; s < record.length; s++) {
-          var record_kv = record[s];
-          var col_key = record_kv[0];
-          var place = header.indexOf(col_key);
-          arr[place] = record_kv[1];
-        }
-        for (var a = 0; a < arr.length; a++) {
-          if (arr[a]) {
-            row.push(arr[a]);
-          } else {
-            row.push("");
-          }
-        }
-        table.push(row);
-      }
-      var output_ = table.map((el) => el.map((itm) => str(itm)));
-      this.downloadr(output_, named_file);
     },
 
     /* parsing functions
@@ -86,28 +49,6 @@ Exporter = function() {
       return parser.data()
     },
 
-    /* interaction functions
-     * --------------------------------------------------------------------------------
-     */
-
-    delay: (ms) => new Promise((res) => setTimeout(res, ms)),
-
-    downloadr: function(arr2D, filename) {
-      var data = /\.json$|.js$/.test(filename)
-        ? JSON.stringify(arr2D)
-        : arr2D
-            .map((el) => el.reduce((a, b) => a + "\t" + b))
-            .reduce((a, b) => a + "\r" + b);
-      var type = /\.json$|.js$/.test(filename)
-        ? "data:application/json;charset=utf-8,"
-        : "data:text/plain;charset=utf-8,";
-      var file = new Blob([data], {
-        type: type,
-      });
-      let url = URL.createObjectURL(file);
-      this.modal.file = [url, filename];
-      this.modal.show()
-    },
 
     /* request functions
      * --------------------------------------------------------------------------------
@@ -170,10 +111,10 @@ Exporter = function() {
     },
 
     downloadTSV: function(books) {
-      this.convert2TsvAndDownload(
-        books,
-        "audible_export_" + new Date().getTime() + ".tsv"
-      );
+      let file = new TSVFile(books);
+      this.modal.file = [file.url, file.filename];
+      this.notifier.delete();
+      this.modal.show()
     },
 
     getAudibleLibraryPage: async function(page) {

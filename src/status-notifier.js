@@ -1,5 +1,5 @@
 const css = `
-  // CSS_MARKER
+  /* CSS_MARKER notifier */
 `;
 
 StatusNotifier = class {
