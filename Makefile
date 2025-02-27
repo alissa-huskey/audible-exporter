@@ -7,7 +7,7 @@ builddir      = ${rootdir}/build
 srcdir        = ${rootdir}/src
 
 notifier_deps = dev util element status-notifier
-deps          = list page book-page library-page library-fetcher order-page orders-fetcher exporter runner
+deps          = list page book-page library-page library-fetcher order-page orders-fetcher details-fetcher exporter runner
 
 clean:
 	@rm -f $(builddir)/*

@@ -1,18 +1,30 @@
 
-hr = function(...msg) {
-  console.log("****************************************", ...msg)
-}
-
 log = function(...msg) {
   console.log("--->", ...msg);
 }
+
+hr = function(...msg) {
+  console.log("****************************************", ...msg)
+}
 var CONSOLE_OUTPUT = false;
+const LOG_PREFIX = "[audible-exporter]";
 
 info = function(...msg) {
   if (!CONSOLE_OUTPUT) {
     return;
   }
-  console.log("[audible-exporter]", ...msg);
+  console.log(LOG_PREFIX, ...msg);
+}
+
+error = function(...msg) {
+  console.error(LOG_PREFIX, ...msg);
+}
+
+log_table = function(label, data) {
+  let name = `${LOG_PREFIX} ${label}`;
+  console.groupCollapsed(name);
+  console.table(data);
+  console.groupEnd(name);
 }
 
 titleCase = function(text) {
@@ -23,6 +35,13 @@ str = function(o) {
   return typeof o == "object"
     ? this.tsvReady(JSON.stringify(o))
     : o
+}
+
+first = function(arr) {
+  let v;
+  for (v of arr) {
+    if (v) return v
+  }
 }
 
 const EMPTIES = {"Object": "{}", "Array": "[]"};
@@ -67,8 +86,8 @@ entityDecode = function(text) {
   return text.replace("&amp;", "&");
 }
 
-dateString = function(d) {
-  if (!d) {
+dateString = function(date) {
+  if (!date) {
     return ""
   }
   var months = [
@@ -85,7 +104,9 @@ dateString = function(d) {
     "Nov",
     "Dec",
   ];
-  var date = new Date(d);
+  if (date.constructor.name != "Date") {
+    date = new Date(date);
+  }
   return `${date.getFullYear()} ${months[date.getMonth()]} ${date.getDate()}`;
 }
 
@@ -109,6 +130,11 @@ cleanObject = function(ob) {
       return r;
     }
   }, {});
+}
+
+stripHTML = function(html) {
+   let doc = new DOMParser().parseFromString(html, 'text/html');
+   return doc.body.textContent || "";
 }
 
 rando = (n) => Math.round(Math.random() * n)
@@ -463,7 +489,6 @@ StatusNotifier = class {
 
   // add the status notifier to the DOM
   create() {
-    info("Creating notifier DOM Elements.")
     let notifier = Element.gi(this.selectors.notifier);
     if (notifier)
       notifier.outerHTML = "";

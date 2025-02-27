@@ -148,7 +148,6 @@ StatusNotifier = class {
 
   // add the status notifier to the DOM
   create() {
-    info("Creating notifier DOM Elements.")
     let notifier = Element.gi(this.selectors.notifier);
     if (notifier)
       notifier.outerHTML = "";

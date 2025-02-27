@@ -16,7 +16,6 @@
 (D) 2025-02-22 @bug fix purchase_date
 (Z) 2025-02-22 @feature Add my_review
 (Z) 2025-02-22 @feature Add my_rating
-(A) 2025-02-22 @task @qa refactor enrichLibraryInformation()
 (A) 2025-02-22 @qa Make sure book page fixtures are named correctly.
 (B) 2025-02-22 @qa set variables for css class names in appropriate places.
 (B) 2025-02-23 @qa refactor Exporter to be a class.
@@ -37,7 +36,6 @@
 (Z) 2025-02-23 @feature Some way to indicate last download, to avoid downloading everything
 (D) 2025-02-24 @qa consolidate library page fixtures
 (B) 2025-02-24 @qa Add a Year class under OrderPage
-(A) 2025-02-25 @ux Log JSON results to console again.
 (Z) 2025-02-25 @feature @notifier Add cancel button.
 (D) 2025-02-25 @tools Look into replacing make with gulp.
 (B) 2025-02-26 @qa @notifier Look into event listeners to update progress.
@@ -48,3 +46,21 @@
 (Z) 2025-02-26 @feature When finished, add a download button instead of just launching the download immediately.
 (B) 2025-02-26 @qa Handle failed requests.
 (Z) 2025-02-26 Implement some sort of pause/resume.
+(B) 2025-02-26 @qa document functions, classes and methods https://developer.wordpress.org/coding-standards/inline-documentation-standards/javascript/
+(B) 2025-02-26 @qa @library Parse more from the library page to avoid looking up book details if possible.
+(B) 2025-02-26 @ux Calculate the time each request takes, use value to estimate time remaining. https://www.geeksforgeeks.org/how-to-measure-time-taken-by-a-function-to-execute-using-javascript/
+(D) 2025-02-26 @qa @book-details Parse author from json_details instead of HTML.
+(Z) 2025-02-27 @ux Add notice to not navigate away from page or close browser window while running.
+(B) 2025-02-27 @qa Rename *Fetcher.populate() -> *Fetcher.get()
+(A) 2025-02-27 @qa Change http to https for all requests in Page.fetchDoc()
+(Z) 2025-02-27 @ux Display error message dialog on fatal error.
+(D) 2025-02-27 @ux @notifier Add time remaining to bottom context bar.
+(B) 2025-02-27 @qa Add AudibleLibraryRow parser or something.
+(Z) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
+(B) 2025-02-27 Make API of *Page classes the same, with #fields and data().
+x 2025-02-27 2025-02-27 @bug fix bug-5
+(D) 2025-02-27 Add to readme https://developer.chrome.com/docs/devtools/console/log
+(D) 2025-02-27 Try logging various results using console.table
+(D) 2025-02-27 Try using console.group to log final results.
+(D) 2025-02-27 @qa Subclass StatusNotifier to make a notifier for each step (orders, library, details)
+(B) 2025-02-27 @qa Have Page.fetchDoc() set this.url = url

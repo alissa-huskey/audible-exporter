@@ -8,28 +8,12 @@ require("../src/dev.js");
 require("../src/util.js");
 require("../src/list.js");
 require("../src/element.js");
+require("../src/page.js");
 require("../src/book-page.js");
 
 describe("BookPage", function() {
 
   let page = new BookPage();
-
-  var digitalData = {product: [{productInfo: {
-    "isAvailable":true,
-    "productID":"B009CZNUGU",
-    "isInWishlist":false,
-    "language":"english",
-    "productName":"Midnight Riot",
-    "narrationAccent":"None",
-    "contentDeliveryType":"MultiPartBook",
-    "isFree":false,
-    "publisherName":"Tantor Audio",
-    "isPreorderable":false,
-    "sku":"BK_TANT_002706",
-    "isAdultProduct":false,
-    "authors":[{"fullName":"Ben Aaronovitch","id":"B000AP1TJQ"}],
-    "narrators":["Kobna Holdbrook-Smith"],
-  }}]};
 
   test(".toMinutes()", function() {
     expect(page.toMinutes("62 hrs and 48 mins")).toBe(3768);
@@ -37,45 +21,17 @@ describe("BookPage", function() {
     expect(page.toMinutes("50 mins")).toBe(50);
   });
 
-  test(".title", function() {
-    page = new BookPage(null, digitalData);
-    expect(page.title).toBe("Midnight Riot");
-  });
+  test("BookPage.get()", async function() {
+    Page.prototype.fetchDoc = mockFetchDocs([
+      fixtureDoc("book-details-audible-original.html"),
+      fixtureDoc("book-details.html"),
+    ]);
 
-  test(".release_date", function() {
-    page.date = "09-28-12";
-    expect(page.release_date).toBe("2012 Sep 28");
-  });
+    let page = await BookPage.get("https://www.audible.com/pd/0062978810")
+    expect(page.constructor.name).toBe("NormalBookPage");
 
-  test(".release_timestamp", function() {
-    page.date = "09-28-12";
-    expect(page.release_timestamp).toBe(1348812000000);
-  });
-
-  test(".publisher", function() {
-    expect(page.publisher).toBe("Tantor Audio");
-  });
-
-  test(".language", function() {
-    expect(page.language).toBe("English");
-  });
-
-  test(".audible_oginal", function() {
-    expect(page.audible_oginal).toBe(false);
-  });
-
-  test(".data()", function() {
-    let data = {
-      title: 'Midnight Riot',
-      language: 'English',
-      release_date: '2012 Sep 28',
-      release_timestamp: 1348812000000,
-      publisher: 'Tantor Audio',
-      audible_oginal: false
-    }
-
-    let result = page.data();
-    expect(result).toEqual(data);
+    page = await BookPage.get("https://www.audible.com/pd/0062978810")
+    expect(page.constructor.name).toBe("ADBLBookPage");
   });
 
 });
@@ -85,6 +41,29 @@ describe("NormalBookPage", function() {
   let html = getFixtureFile("book-details-audible-original.html");
   let doc = toDoc(html);
   let page = new NormalBookPage(doc);
+
+  test("json_audiobook", function() {
+    expect(page.json_audiobook).toBeTruthy();
+    expect(page.json_audiobook["@type"]).toBe("Audiobook");
+  });
+
+  test("json_product", function() {
+    expect(page.json_product).toBeTruthy();
+    expect(page.json_product["@type"]).toBe("Product");
+  });
+
+  test(".id", function() {
+    expect(page.id).toBe("B0BL84CBLZ");
+  });
+
+  test(".title", function() {
+    expect(page.title).toBe("Ghosts of Zenith");
+  });
+
+  test(".date", function() {
+    page.date = "09-28-12";
+    expect(page.release_date).toBe("2023 Jan 12");
+  });
 
   test(".duration_minutes", function() {
     expect(page.duration_minutes).toBe(145);
@@ -103,8 +82,44 @@ describe("NormalBookPage", function() {
   });
 
   test(".publisher_summary", function() {
-    let summary = "<b>On a nightmare world a thousand light years from Earth, one honest cop won’t rest until he solves the mystery of why his colony was condemned there, in this Audible Original story from best-selling author Larry Correia. </b><p>On a planet where life is cheap, in a city built on corruption, very few things are considered holy. The Landing Site is one of them. The remains of the century-old habitat pod—which delivered the colonists to the only barely habitable place on the cruel world of Croatoan—has become a monument to the hardscrabble people who somehow survived the unsurvivable.</p><p>So when blood is shed on that sacred ground, it’s seen as an attack against the entire colony. With a fanatical terrorist group holding hostages inside the monument, DCI Lutero Cade and the Zenith PD have to end the crisis and put the bad guys down.</p><p>Only there’s far more to this case than meets the eye. The lander may have been carrying a hidden cargo. And a shadowy figure with his own drone army will do anything to make sure the mission’s secrets stay buried—no matter how many nosy detectives he has to kill to do it.</p><p><br></p>";
+    let summary = "On a nightmare world a thousand light years from Earth, one honest cop won’t rest until he solves the mystery of why his colony was condemned there, in this Audible Original story from best-selling author Larry Correia. On a planet where life is cheap, in a city built on corruption, very few things are considered holy. The Landing Site is one of them. The remains of the century-old habitat pod—which delivered the colonists to the only barely habitable place on the cruel world of Croatoan—has become a monument to the hardscrabble people who somehow survived the unsurvivable. So when blood is shed on that sacred ground, it’s seen as an attack against the entire colony. With a fanatical terrorist group holding hostages inside the monument, DCI Lutero Cade and the Zenith PD have to end the crisis and put the bad guys down. Only there’s far more to this case than meets the eye. The lander may have been carrying a hidden cargo. And a shadowy figure with his own drone army will do anything to make sure the mission’s secrets stay buried—no matter how many nosy detectives he has to kill to do it.";
     expect(page.publisher_summary).toBe(summary);
+  });
+
+  test(".publisher", function() {
+    expect(page.publisher).toBe("Audible Originals");
+  });
+
+  test(".language", function() {
+    expect(page.language).toBe("English");
+  });
+
+  test(".audible_oginal", function() {
+    expect(page.audible_oginal).toBe(true);
+  });
+
+  test(".data()", function() {
+    let data = {
+      id: "B0BL84CBLZ",
+      title: "Ghosts of Zenith",
+      duration_minutes: 145,
+      language: "English",
+      release_date: "2023 Jan 12",
+      release_timestamp: 1673506801000,
+      publisher: "Audible Originals",
+      publisher_summary: "On a nightmare world a thousand light years from Earth, one honest cop won’t rest until he solves the mystery of why his colony was condemned there, in this Audible Original story from best-selling author Larry Correia. On a planet where life is cheap, in a city built on corruption, very few things are considered holy. The Landing Site is one of them. The remains of the century-old habitat pod—which delivered the colonists to the only barely habitable place on the cruel world of Croatoan—has become a monument to the hardscrabble people who somehow survived the unsurvivable. So when blood is shed on that sacred ground, it’s seen as an attack against the entire colony. With a fanatical terrorist group holding hostages inside the monument, DCI Lutero Cade and the Zenith PD have to end the crisis and put the bad guys down. Only there’s far more to this case than meets the eye. The lander may have been carrying a hidden cargo. And a shadowy figure with his own drone army will do anything to make sure the mission’s secrets stay buried—no matter how many nosy detectives he has to kill to do it.",
+      audible_oginal: true,
+      book: "2",
+      category_type: "fiction",
+      main_category: "Science Fiction & Fantasy",
+      sub_category: "Science Fiction",
+      categories: [ "Funny", "Scary", "Detective", "Solar System" ],
+      rating: 4.6,
+      num_ratings: 1719
+    }
+
+    let result = page.data();
+    expect(result).toEqual(data);
   });
 
   test(".categories_list", function() {
@@ -161,6 +176,18 @@ describe("ADBLBookPage", function() {
   let doc = toDoc(html);
   let page = new ADBLBookPage(doc);
 
+  test(".id", function() {
+    expect(page.id).toBe("B009CZNUGU");
+  });
+
+  test(".title", function() {
+    expect(page.title).toBe("Midnight Riot");
+  });
+
+  test(".date", function() {
+    expect(page.date).toEqual(new Date("09-28-12 00:00:01"));
+  });
+
   test(".duration_minutes", function() {
     expect(page.duration_minutes).toBe(596);
   });
@@ -182,4 +209,61 @@ describe("ADBLBookPage", function() {
     expect(page.publisher_summary).toBe(summary);
   });
 
+  test(".publisher", function() {
+    expect(page.publisher).toBe("Tantor Audio");
+  });
+
+  test(".language", function() {
+    expect(page.language).toBe("English");
+  });
+
+  test(".audible_oginal", function() {
+    expect(page.audible_oginal).toBe(false);
+  });
+
+  test(".data", function() {
+    expect(page.audible_oginal).toBe(false);
+  });
+
+  test(".categories_list", function() {
+    expect(page.categories_list).toEqual(["Mystery, Thriller & Suspense"]);
+  });
+
+  test(".main_category", function() {
+    expect(page.main_category).toBe("Mystery, Thriller & Suspense");
+  });
+
+  test(".tags_list", function() {
+    expect(page.tags).toEqual([
+      "Fantasy",
+      "Fantasy Essentials",
+      "Mystery",
+      "Paranormal",
+      "Police Procedural",
+      "Urban",
+      "City",
+      "Witty",
+      "Suspenseful",
+      "England",
+    ]);
+  });
+
+  test(".tags", function() {
+    expect(page.tags).toEqual([
+      "Fantasy",
+      "Fantasy Essentials",
+      "Mystery",
+      "Paranormal",
+      "Police Procedural",
+      "Urban",
+      "City",
+      "Witty",
+      "Suspenseful",
+      "England",
+    ]);
+  });
+
+  test(".sub_category", function() {
+    expect(page.sub_category).toBe("Fantasy");
+  });
 });

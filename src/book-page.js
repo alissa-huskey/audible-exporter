@@ -1,4 +1,9 @@
-BookPage = class {
+/**
+ * Book page.
+ *
+ * Parse the book details from the audible book page.
+ */
+BookPage = class extends Page {
 
   #category_types = ["Fiction", "Nonfiction"];
 
@@ -74,8 +79,8 @@ BookPage = class {
     "Thriller & Suspense",
   ]
 
-
   #fields = [
+    "id",
     "title",
     "duration_minutes",
     "language",
@@ -94,10 +99,27 @@ BookPage = class {
   ]
 
   #tags = []
+  #json_audiobook = null;
+  #json_product = null;
 
-  constructor(doc=null, digitalData={}) {
-    this.doc = new Element(doc);
-    this.digitalData = digitalData;
+  static async get(url) {
+    let page = new Page()
+    let doc = await page.fetchDoc(url);
+    doc = new Element(doc);
+
+    if (doc.gt("adbl-product-details").length) {
+      page = new ADBLBookPage(doc);
+    } else {
+      page = new NormalBookPage(doc);
+    }
+
+    page.url = url;
+    return page;
+  }
+
+  constructor(doc=null) {
+    super();
+    this.doc = doc;
   }
 
   getSubgenre(categories, tags) {
@@ -128,15 +150,68 @@ BookPage = class {
   }
 
   data() {
-    let data = Object.fromEntries(this.#fields.map((f) => {
-      return [f, this[f]]
-    }));
+    let data;
 
-    return cleanObject(data)
+    try {
+      data = Object.fromEntries(this.#fields.map((f) => {
+        return [f, this[f]]
+      }));
+      return cleanObject(data)
+    } catch (err) {
+      error(`Parse failure, url: "${this.url}".`, err);
+    }
   }
 
-  get details() {
-    return this.digitalData?.product?.[0]?.productInfo || {};
+  get json_audiobook() {
+    if (!this.#json_audiobook) {
+      let scripts = this.doc.qs("script[type='application/ld+json']");
+      let s;
+
+      for (s of scripts) {
+        let json = JSON.parse(s.innerHTML);
+        if (json?.[0]?.["@type"] == "Audiobook") {
+          this.#json_audiobook = json[0];
+          break;
+        }
+      }
+    }
+    return this.#json_audiobook;
+  }
+
+  get json_product() {
+    if (!this.#json_product) {
+      let scripts = this.doc.qs("script[type='application/ld+json']");
+      let s;
+
+      for (s of scripts) {
+        let json = JSON.parse(s.innerHTML);
+        if (json?.[0]?.["@type"] == "Product") {
+          this.#json_product = json[0];
+          break;
+        }
+      }
+    }
+    return this.#json_product;
+  }
+
+  get rating() {
+    let rating = tryFloat(this.json_audiobook?.aggregateRating?.ratingValue);
+    return rating ? +rating.toFixed(1) : ""
+  }
+
+  get num_ratings() {
+    return tryInt(this.json_audiobook?.aggregateRating?.ratingCount);
+  }
+
+  get id() {
+    return this.json_product?.productID;
+  }
+
+  get date() {
+    let date = this.json_audiobook?.datePublished;
+    if (!date)
+      return
+    return new Date(`${date}:00:00:01`)
   }
 
   get release_date() {
@@ -147,30 +222,26 @@ BookPage = class {
   }
 
   get release_timestamp() {
-    if (!this.date) {
-      return;
-    }
-    return new Date(this.date).getTime();
+    return this.date?.getTime();
   }
 
   get title() {
-    return this.details.productName;
+    let values = [
+      this.json_audiobook?.name,
+      this.doc.qsf("meta[property='og:title']")?.content,
+    ];
+    return first(values);
   }
 
   get publisher() {
-    return this.details.publisherName;
+    return this.json_audiobook?.publisher;
   }
 
   get publisher_summary() {
-    if (!this.summary) {
-      return;
-    }
-    return (
-      this.summary
-        ?.trim()
-        ?.replace(/([\n\r\s]+|)©.+/, "")
-        ?.replace(/\t/g, " ")
-    );
+    let text = this.json_audiobook?.description;
+    if (!text)
+      return
+    return stripHTML(text)
   }
 
   get audible_oginal () {
@@ -181,7 +252,7 @@ BookPage = class {
   }
 
   get language() {
-    let lang = this.details.language;
+    let lang = this.json_audiobook?.inLanguage;
     if (!lang) {
       return;
     }
@@ -256,6 +327,13 @@ BookPage = class {
   }
 }
 
+/* Book pages which use custom <adbl-*> tags.
+ *
+ * (Note: Not audible-original books.)
+ *
+ * @link https://www.audible.com/pd/Ghosts-of-Zenith-Audiobook/B0BL84CBLZ
+ *
+ */
 ADBLBookPage = class extends BookPage {
   get adbl() {
     return this.doc.qs("adbl-product-metadata script");
@@ -269,26 +347,26 @@ ADBLBookPage = class extends BookPage {
     return this.toMinutes(this.info.duration);
   }
 
-  get rating() {
-    return tryFloat(Number(this.info.rating?.value).toFixed(1));
-  }
+  // get rating() {
+  //   return tryFloat(Number(this.info.rating?.value).toFixed(1));
+  // }
 
-  get date() {
-    return this.info.releaseDate;
-  }
+  // get date() {
+  //   return this.info.releaseDate;
+  // }
 
-  get num_ratings() {
-    return this.info.rating?.count || "";
-  }
+  // get num_ratings() {
+  //   return this.info.rating?.count || "";
+  // }
 
   // book number
   get book() {
     return /Book (\d+)/i.exec(this.info.series?.[0].part)?.[1] || "";
   }
 
-  get summary() {
-    return this.doc.qsf("adbl-text-block[slot='summary']").textContent;
-  }
+  // get summary() {
+  //   return this.doc.qsf("adbl-text-block[slot='summary']").textContent;
+  // }
 
   get categories_list() {
     return this.info.categories?.map((c) => c.name) || [];
@@ -299,46 +377,53 @@ ADBLBookPage = class extends BookPage {
   }
 }
 
+/* Book pages which do not use custom <adbl-*> tags.
+ *
+ * (Note: Possibly only Audible originals books.)
+ *
+ * @link https://www.audible.com/pd/Midnight-Riot-Audiobook//B009CZNUGU
+ *
+ */
 NormalBookPage = class extends BookPage {
-  get date() {
-    let li = this.doc.gcf("releaseDateLabel");
-    return li?.innerHTML?.replace(/Releae date:/, "").trim();
-  }
+  // get date() {
+  //   let li = this.doc.gcf("releaseDateLabel");
+  //   return li?.innerHTML?.replace(/Releae date:/, "").trim();
+  // }
 
   get duration_minutes() {
-    let text = this.doc.gcf("runtimeLabel").innerHTML?.replace(/length:/i, "");
+    let text = this.doc.gcf("runtimeLabel")?.innerHTML?.replace(/length:/i, "");
     return this.toMinutes(text);
   }
 
-  get rating() {
-    let elm = this.doc.qsf(".ratingsLabel .bc-pub-offscreen").innerHTML;
-    let score = /[\d\.]+/.exec(elm)?.[0]
-    return tryFloat(score);
-  }
+  // get rating() {
+  //   let elm = this.doc.qsf(".ratingsLabel .bc-pub-offscreen").innerHTML;
+  //   let score = /[\d\.]+/.exec(elm)?.[0]
+  //   return tryFloat(score);
+  // }
 
-  get num_ratings() {
-    let elm = this.doc.qsf(".ratingsLabel .bc-color-link");
-    let text = elm.innerHTML?.trim()
-    let num = /[\d,]+/.exec(text)[0]?.replace(/\D/, "");
-    return tryFloat(num);
-  }
+  // get num_ratings() {
+  //   let elm = this.doc.qsf(".ratingsLabel .bc-color-link");
+  //   let text = elm.innerHTML?.trim()
+  //   let num = /[\d,]+/.exec(text)[0]?.replace(/\D/, "");
+  //   return tryFloat(num);
+  // }
 
   // book number
   get book() {
     return /, Book (\d+)/i.exec(this.doc.gcf("seriesLabel")?.innerHTML)?.[1] || "";
   }
 
-  get summary() {
-    let elm = this.doc.qs("#center-1 .bc-container")[1]?.gcf("bc-text")
+  // get summary() {
+  //   let elm = this.doc.qs("#center-1 .bc-container")[1]?.gcf("bc-text")
 
-    return (
-      elm.innerHTML
-        ?.replace(/([\n\r\s]+|)©.+/, "")
-        ?.replace(/[\n\r]+(\s+|)/g, "<br>")
-        ?.replace(/\t/g, " ")
-        ?.replace(/"/g, "'")
-    );
-  }
+  //   return (
+  //     elm.innerHTML
+  //       ?.replace(/([\n\r\s]+|)©.+/, "")
+  //       ?.replace(/[\n\r]+(\s+|)/g, "<br>")
+  //       ?.replace(/\t/g, " ")
+  //       ?.replace(/"/g, "'")
+  //   );
+  // }
 
   get tags_list() {
     return this.doc.gc("bc-chip-text").map((c) => { return c.attributes["data-text"]?.value });

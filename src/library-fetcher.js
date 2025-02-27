@@ -20,7 +20,7 @@ LibraryFetcher = class extends Page {
       this.pages.push(page);
 
       if (progress_callback) {
-        progress_callback(i, i/this.page_count);
+        progress_callback(i, this.page_count);
       }
 
       i++;

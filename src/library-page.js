@@ -1,8 +1,9 @@
-LibraryPage = class {
+LibraryPage = class extends Page {
   #default_page_size = 20;
 
   constructor(doc=null) {
-    this.doc = new Element(doc);
+    super();
+    this.doc = doc;
   }
 
   get page_size() {
@@ -39,6 +40,7 @@ LibraryPage = class {
       }
 
       arr.push({
+        id: row.id?.replace("adbl-library-content-row-", ""),
         url: (
           ul.gcf("bc-size-headline3")?.parentElement
           ?.attributes["href"]?.value

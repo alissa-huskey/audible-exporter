@@ -23,6 +23,12 @@ Exporter = function() {
 
     unqHsh: (a, o) => (a.filter(i => o.hasOwnProperty(i) ? false : (o[i] = true))),
 
+    timeLeft: function(remaining) {
+      let per_book = 1.9;
+
+      return Math.round((remaining * per_book) / 60);
+    },
+
     /* formatting functions
      * --------------------------------------------------------------------------------
      */
@@ -64,7 +70,7 @@ Exporter = function() {
 
     createDownloadHTML: function() {
       this.notifier.create();
-      this.notifier.text = "initiating download...";
+      this.notifier.text = "Initiating download...";
     },
 
     /* parsing functions
@@ -80,9 +86,9 @@ Exporter = function() {
       page = new Element(doc);
       
       if (page.gt("adbl-product-metadata").length > 0) {
-        parser = new ADBLBookPage(doc, digitalData);
+        parser = new ADBLBookPage(doc);
       } else {
-        parser = new NormalBookPage(doc, digitalData);
+        parser = new NormalBookPage(doc);
       }
 
       return parser.data()
@@ -138,53 +144,55 @@ Exporter = function() {
     },
 
     loopThroughtAudibleLibrary: async function() {
-      this.notifier.text = "Retrieving titles...";
+      this.notifier.reset();
+      this.notifier.text = "Retrieving library...";
       let library = new LibraryFetcher();
-      await library.populate((i, percent) => {
+      await library.populate((i, page_count) => {
+        let page = i + 1;
+        let percent = page/page_count;
         this.notifier.updateProgress(percent, i);
-        this.notifier.text = "Retrieving titles...";
+        this.notifier.text = `Retrieving library: page ${page} of ${page_count}`;
       });
+      log_table("library", library.books);
       return library.books;
     },
 
-    enrichLibraryInformation: async function(order_information) {
-      var library = await this.loopThroughtAudibleLibrary();
-      var contain_arr = [];
+    enrichLibraryInformation: async function(orders, library) {
+      let library_info, order_info, book_info, info;
+      let results = [];
 
-      this.notifier.text = "Retrieving addtional information on titles...";
-      const total_results = library.length;
-      for (let i = 0; i < total_results; i++) {
-        let details = await this.getBookDetails(library[i].url);
-        let merge = cleanObject({ ...library[i], ...details });
-        contain_arr.push(merge);
-        await this.delay(rando(1111) + 1111);
-        this.notifier.updateProgress(i/total_results, i);
-        this.notifier.text = `${
-            merge.author
-          } - ${Math.ceil(
-            (i / total_results) * 100
-          )}% complete -- approx ${Math.round(
-            ((((total_results - i) / 100) * 1.9) / 60) * 100
-          )} minutes remaining
-        `;
-      }
-      this.notifier.percent = 1;
-      this.notifier.test = "Finished."
-      let merged_with_orders = contain_arr.map((r) => {
-        let order = order_information.filter((i) => i.url == r.url);
-        return {
-          ...r,
-          ...(order?.[0] ? order?.[0] : {}),
-        };
+      let total_results = library.length;
+
+      this.notifier.reset();
+      this.notifier.text = "Retrieving additional information on titles...";
+
+      let fetcher = new DetailsFetcher(library);
+      await fetcher.populate((i, total, data) => {
+        let percent = i/total;
+        let remaining = total - i;
+
+        this.notifier.updateProgress(percent, i);
+        this.notifier.text = `
+          Retrieving book ${(i+1).toLocaleString()} of ${total.toLocaleString()} (approx ${this.timeLeft(remaining)} minutes remaining)
+        `.trim();
       });
 
-      info("Your audible books:");
-      console.log(merged_with_orders);
+      log_table("details", fetcher.books);
+
+      for (library_info of library) {
+        book_info = fetcher.books[library_info.id],
+        order_info = orders.filter((i) => i.url == r.url) || {};
+        info = cleanObject({...library_info, ...book_info, order_info});
+        results.push(info);
+      }
+      return results;
+    },
+
+    downloadTSV: function(books) {
       this.convert2TsvAndDownload(
-        merged_with_orders,
+        books,
         "audible_export_" + new Date().getTime() + ".tsv"
       );
-      this.notifier.wrapper.outerHTML = "";
     },
 
     getAudibleLibraryPage: async function(page) {
@@ -211,6 +219,7 @@ Exporter = function() {
     },
 
     getAllOrders: async function() {
+      this.notifier.reset();
       this.notifier.text = "Retrieving purchases...";
 
       orders = new OrdersFetcher();
@@ -219,6 +228,7 @@ Exporter = function() {
         this.notifier.updateProgress(percent, page);
         this.notifier.text = `Retrieving ${year} purchases: page ${page} of ${page_count}`;
       });
+      log_table("purchases", orders.items);
       return orders.items;
     },
 
@@ -231,11 +241,32 @@ Exporter = function() {
 
     run: async function() {
       try {
+        let before = new Date().getTime();
+
         this.createDownloadHTML();
-        var order_information = await this.getAllOrders();
-        this.enrichLibraryInformation(order_information);
+
+        let orders = await this.getAllOrders();
+        let library = await this.loopThroughtAudibleLibrary();
+        let books = await this.enrichLibraryInformation(orders, library);
+
+        if (!books) {
+          error("Failed to download books.")
+          this.notifier.reset();
+          this.notifier.text = "Failed."
+          return;
+        }
+
+        let after = new Date().getTime();
+        let elapsed = (after - before) / 1000 / 60;
+        info(`Done. (${books.length} books, ${elapsed.toFixed(2)} minutes)`);
+        this.notifier.percent = 1;
+        this.notifier.text = "Done."
+
+        log_table("Your audible data", books);
+        this.downloadTSV(books);
+
       } catch (err) {
-        console.error("Fatal error:", err, err.name, err.message);
+        error("Fatal error:", err, err.name, err.message);
       }
     }
   };

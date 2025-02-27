@@ -10,3 +10,6 @@ x 2025-02-25 2025-02-25 @bug fix bug-4
 x 2025-02-25 2025-02-25 Rename notifier.js -> status-notifier.js.
 x 2025-02-25 2025-02-25 @qa @build remove CSS_MARKER line
 x 2025-02-26 2025-02-22 @task @qa refactor getAllOrders()
+x 2025-02-27 2025-02-22 @task @qa refactor enrichLibraryInformation()
+x 2025-02-27 2025-02-25 @ux Log JSON results to console again.
+x 2025-02-27 2025-02-27 @bug fix bug-5

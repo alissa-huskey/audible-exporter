@@ -1,18 +1,30 @@
 
-hr = function(...msg) {
-  console.log("****************************************", ...msg)
-}
-
 log = function(...msg) {
   console.log("--->", ...msg);
 }
+
+hr = function(...msg) {
+  console.log("****************************************", ...msg)
+}
 var CONSOLE_OUTPUT = false;
+const LOG_PREFIX = "[audible-exporter]";
 
 info = function(...msg) {
   if (!CONSOLE_OUTPUT) {
     return;
   }
-  console.log("[audible-exporter]", ...msg);
+  console.log(LOG_PREFIX, ...msg);
+}
+
+error = function(...msg) {
+  console.error(LOG_PREFIX, ...msg);
+}
+
+log_table = function(label, data) {
+  let name = `${LOG_PREFIX} ${label}`;
+  console.groupCollapsed(name);
+  console.table(data);
+  console.groupEnd(name);
 }
 
 titleCase = function(text) {
@@ -23,6 +35,13 @@ str = function(o) {
   return typeof o == "object"
     ? this.tsvReady(JSON.stringify(o))
     : o
+}
+
+first = function(arr) {
+  let v;
+  for (v of arr) {
+    if (v) return v
+  }
 }
 
 const EMPTIES = {"Object": "{}", "Array": "[]"};
@@ -67,8 +86,8 @@ entityDecode = function(text) {
   return text.replace("&amp;", "&");
 }
 
-dateString = function(d) {
-  if (!d) {
+dateString = function(date) {
+  if (!date) {
     return ""
   }
   var months = [
@@ -85,7 +104,9 @@ dateString = function(d) {
     "Nov",
     "Dec",
   ];
-  var date = new Date(d);
+  if (date.constructor.name != "Date") {
+    date = new Date(date);
+  }
   return `${date.getFullYear()} ${months[date.getMonth()]} ${date.getDate()}`;
 }
 
@@ -109,6 +130,11 @@ cleanObject = function(ob) {
       return r;
     }
   }, {});
+}
+
+stripHTML = function(html) {
+   let doc = new DOMParser().parseFromString(html, 'text/html');
+   return doc.body.textContent || "";
 }
 
 rando = (n) => Math.round(Math.random() * n)
@@ -463,7 +489,6 @@ StatusNotifier = class {
 
   // add the status notifier to the DOM
   create() {
-    info("Creating notifier DOM Elements.")
     let notifier = Element.gi(this.selectors.notifier);
     if (notifier)
       notifier.outerHTML = "";
@@ -508,7 +533,12 @@ Page = class {
   #doc = null;
 
   async fetchDoc(url) {
-    let res = await fetch(url);
+    let res;
+    try {
+      res = await fetch(url);
+    } catch {
+      throw new Error(`Failed to fetch URL: ${url}.`);
+    }
 
     if (!res.ok) {
       throw new Error(`Response status: ${response.status}`);
@@ -524,11 +554,23 @@ Page = class {
 
   set doc(value) {
     if (value) {
-      this.#doc = new Element(value);
+      if (!value)
+        return;
+
+      if (value.constructor.name != "Element") {
+        value = new Element(value);
+      }
+
+      this.#doc = value;
     }
   }
 }
-BookPage = class {
+/**
+ * Book page.
+ *
+ * Parse the book details from the audible book page.
+ */
+BookPage = class extends Page {
 
   #category_types = ["Fiction", "Nonfiction"];
 
@@ -604,8 +646,8 @@ BookPage = class {
     "Thriller & Suspense",
   ]
 
-
   #fields = [
+    "id",
     "title",
     "duration_minutes",
     "language",
@@ -624,10 +666,27 @@ BookPage = class {
   ]
 
   #tags = []
+  #json_audiobook = null;
+  #json_product = null;
 
-  constructor(doc=null, digitalData={}) {
-    this.doc = new Element(doc);
-    this.digitalData = digitalData;
+  static async get(url) {
+    let page = new Page()
+    let doc = await page.fetchDoc(url);
+    doc = new Element(doc);
+
+    if (doc.gt("adbl-product-details").length) {
+      page = new ADBLBookPage(doc);
+    } else {
+      page = new NormalBookPage(doc);
+    }
+
+    page.url = url;
+    return page;
+  }
+
+  constructor(doc=null) {
+    super();
+    this.doc = doc;
   }
 
   getSubgenre(categories, tags) {
@@ -658,15 +717,68 @@ BookPage = class {
   }
 
   data() {
-    let data = Object.fromEntries(this.#fields.map((f) => {
-      return [f, this[f]]
-    }));
+    let data;
 
-    return cleanObject(data)
+    try {
+      data = Object.fromEntries(this.#fields.map((f) => {
+        return [f, this[f]]
+      }));
+      return cleanObject(data)
+    } catch (err) {
+      error(`Parse failure, url: "${this.url}".`, err);
+    }
   }
 
-  get details() {
-    return this.digitalData?.product?.[0]?.productInfo || {};
+  get json_audiobook() {
+    if (!this.#json_audiobook) {
+      let scripts = this.doc.qs("script[type='application/ld+json']");
+      let s;
+
+      for (s of scripts) {
+        let json = JSON.parse(s.innerHTML);
+        if (json?.[0]?.["@type"] == "Audiobook") {
+          this.#json_audiobook = json[0];
+          break;
+        }
+      }
+    }
+    return this.#json_audiobook;
+  }
+
+  get json_product() {
+    if (!this.#json_product) {
+      let scripts = this.doc.qs("script[type='application/ld+json']");
+      let s;
+
+      for (s of scripts) {
+        let json = JSON.parse(s.innerHTML);
+        if (json?.[0]?.["@type"] == "Product") {
+          this.#json_product = json[0];
+          break;
+        }
+      }
+    }
+    return this.#json_product;
+  }
+
+  get rating() {
+    let rating = tryFloat(this.json_audiobook?.aggregateRating?.ratingValue);
+    return rating ? +rating.toFixed(1) : ""
+  }
+
+  get num_ratings() {
+    return tryInt(this.json_audiobook?.aggregateRating?.ratingCount);
+  }
+
+  get id() {
+    return this.json_product?.productID;
+  }
+
+  get date() {
+    let date = this.json_audiobook?.datePublished;
+    if (!date)
+      return
+    return new Date(`${date}:00:00:01`)
   }
 
   get release_date() {
@@ -677,30 +789,26 @@ BookPage = class {
   }
 
   get release_timestamp() {
-    if (!this.date) {
-      return;
-    }
-    return new Date(this.date).getTime();
+    return this.date?.getTime();
   }
 
   get title() {
-    return this.details.productName;
+    let values = [
+      this.json_audiobook?.name,
+      this.doc.qsf("meta[property='og:title']")?.content,
+    ];
+    return first(values);
   }
 
   get publisher() {
-    return this.details.publisherName;
+    return this.json_audiobook?.publisher;
   }
 
   get publisher_summary() {
-    if (!this.summary) {
-      return;
-    }
-    return (
-      this.summary
-        ?.trim()
-        ?.replace(/([\n\r\s]+|)©.+/, "")
-        ?.replace(/\t/g, " ")
-    );
+    let text = this.json_audiobook?.description;
+    if (!text)
+      return
+    return stripHTML(text)
   }
 
   get audible_oginal () {
@@ -711,7 +819,7 @@ BookPage = class {
   }
 
   get language() {
-    let lang = this.details.language;
+    let lang = this.json_audiobook?.inLanguage;
     if (!lang) {
       return;
     }
@@ -786,6 +894,13 @@ BookPage = class {
   }
 }
 
+/* Book pages which use custom <adbl-*> tags.
+ *
+ * (Note: Not audible-original books.)
+ *
+ * @link https://www.audible.com/pd/Ghosts-of-Zenith-Audiobook/B0BL84CBLZ
+ *
+ */
 ADBLBookPage = class extends BookPage {
   get adbl() {
     return this.doc.qs("adbl-product-metadata script");
@@ -799,26 +914,26 @@ ADBLBookPage = class extends BookPage {
     return this.toMinutes(this.info.duration);
   }
 
-  get rating() {
-    return tryFloat(Number(this.info.rating?.value).toFixed(1));
-  }
+  // get rating() {
+  //   return tryFloat(Number(this.info.rating?.value).toFixed(1));
+  // }
 
-  get date() {
-    return this.info.releaseDate;
-  }
+  // get date() {
+  //   return this.info.releaseDate;
+  // }
 
-  get num_ratings() {
-    return this.info.rating?.count || "";
-  }
+  // get num_ratings() {
+  //   return this.info.rating?.count || "";
+  // }
 
   // book number
   get book() {
     return /Book (\d+)/i.exec(this.info.series?.[0].part)?.[1] || "";
   }
 
-  get summary() {
-    return this.doc.qsf("adbl-text-block[slot='summary']").textContent;
-  }
+  // get summary() {
+  //   return this.doc.qsf("adbl-text-block[slot='summary']").textContent;
+  // }
 
   get categories_list() {
     return this.info.categories?.map((c) => c.name) || [];
@@ -829,46 +944,53 @@ ADBLBookPage = class extends BookPage {
   }
 }
 
+/* Book pages which do not use custom <adbl-*> tags.
+ *
+ * (Note: Possibly only Audible originals books.)
+ *
+ * @link https://www.audible.com/pd/Midnight-Riot-Audiobook//B009CZNUGU
+ *
+ */
 NormalBookPage = class extends BookPage {
-  get date() {
-    let li = this.doc.gcf("releaseDateLabel");
-    return li?.innerHTML?.replace(/Releae date:/, "").trim();
-  }
+  // get date() {
+  //   let li = this.doc.gcf("releaseDateLabel");
+  //   return li?.innerHTML?.replace(/Releae date:/, "").trim();
+  // }
 
   get duration_minutes() {
-    let text = this.doc.gcf("runtimeLabel").innerHTML?.replace(/length:/i, "");
+    let text = this.doc.gcf("runtimeLabel")?.innerHTML?.replace(/length:/i, "");
     return this.toMinutes(text);
   }
 
-  get rating() {
-    let elm = this.doc.qsf(".ratingsLabel .bc-pub-offscreen").innerHTML;
-    let score = /[\d\.]+/.exec(elm)?.[0]
-    return tryFloat(score);
-  }
+  // get rating() {
+  //   let elm = this.doc.qsf(".ratingsLabel .bc-pub-offscreen").innerHTML;
+  //   let score = /[\d\.]+/.exec(elm)?.[0]
+  //   return tryFloat(score);
+  // }
 
-  get num_ratings() {
-    let elm = this.doc.qsf(".ratingsLabel .bc-color-link");
-    let text = elm.innerHTML?.trim()
-    let num = /[\d,]+/.exec(text)[0]?.replace(/\D/, "");
-    return tryFloat(num);
-  }
+  // get num_ratings() {
+  //   let elm = this.doc.qsf(".ratingsLabel .bc-color-link");
+  //   let text = elm.innerHTML?.trim()
+  //   let num = /[\d,]+/.exec(text)[0]?.replace(/\D/, "");
+  //   return tryFloat(num);
+  // }
 
   // book number
   get book() {
     return /, Book (\d+)/i.exec(this.doc.gcf("seriesLabel")?.innerHTML)?.[1] || "";
   }
 
-  get summary() {
-    let elm = this.doc.qs("#center-1 .bc-container")[1]?.gcf("bc-text")
+  // get summary() {
+  //   let elm = this.doc.qs("#center-1 .bc-container")[1]?.gcf("bc-text")
 
-    return (
-      elm.innerHTML
-        ?.replace(/([\n\r\s]+|)©.+/, "")
-        ?.replace(/[\n\r]+(\s+|)/g, "<br>")
-        ?.replace(/\t/g, " ")
-        ?.replace(/"/g, "'")
-    );
-  }
+  //   return (
+  //     elm.innerHTML
+  //       ?.replace(/([\n\r\s]+|)©.+/, "")
+  //       ?.replace(/[\n\r]+(\s+|)/g, "<br>")
+  //       ?.replace(/\t/g, " ")
+  //       ?.replace(/"/g, "'")
+  //   );
+  // }
 
   get tags_list() {
     return this.doc.gc("bc-chip-text").map((c) => { return c.attributes["data-text"]?.value });
@@ -878,11 +1000,12 @@ NormalBookPage = class extends BookPage {
     return this.doc.qs(".categoriesLabel a").map((c) => { return entityDecode(c.innerHTML) || "" }) || [];
   }
 }
-LibraryPage = class {
+LibraryPage = class extends Page {
   #default_page_size = 20;
 
   constructor(doc=null) {
-    this.doc = new Element(doc);
+    super();
+    this.doc = doc;
   }
 
   get page_size() {
@@ -919,6 +1042,7 @@ LibraryPage = class {
       }
 
       arr.push({
+        id: row.id?.replace("adbl-library-content-row-", ""),
         url: (
           ul.gcf("bc-size-headline3")?.parentElement
           ?.attributes["href"]?.value
@@ -936,7 +1060,7 @@ LibraryPage = class {
   }
 }
 
-Library = class extends Page {
+LibraryFetcher = class extends Page {
   page_size = 50;
   base_url = "https://www.audible.com/library/titles";
 
@@ -958,7 +1082,7 @@ Library = class extends Page {
       this.pages.push(page);
 
       if (progress_callback) {
-        progress_callback(i, i/this.page_count);
+        progress_callback(i, this.page_count);
       }
 
       i++;
@@ -1128,7 +1252,7 @@ OrderPage = class extends Page {
     return this.#items;
   }
 }
-Orders = class {
+OrdersFetcher = class {
   #items = [];
 
   async init() {
@@ -1177,6 +1301,38 @@ Orders = class {
     return this.#items;
   }
 }
+DetailsFetcher = class {
+  constructor(library=null) {
+    this.library = library;
+    this.books = {};
+  }
+
+  async populate(progress_callback=null) {
+    let book, remaining
+    let i = 0
+    let total = this.library.length;
+
+    for (book of this.library) {
+      let page = await BookPage.get(book.url.replace("http", "https"));
+      page.url = book.url;
+      try {
+        let data = page.data();
+        if (!data) 
+          continue
+
+        this.books[data.id] = data;
+        if (progress_callback) {
+          progress_callback(i, total, data);
+        }
+      } catch {
+
+      }
+
+      i++;
+    }
+  }
+}
+
 Exporter = function() {
 
   var classes = {
@@ -1201,6 +1357,12 @@ Exporter = function() {
      */
 
     unqHsh: (a, o) => (a.filter(i => o.hasOwnProperty(i) ? false : (o[i] = true))),
+
+    timeLeft: function(remaining) {
+      let per_book = 1.9;
+
+      return Math.round((remaining * per_book) / 60);
+    },
 
     /* formatting functions
      * --------------------------------------------------------------------------------
@@ -1243,7 +1405,7 @@ Exporter = function() {
 
     createDownloadHTML: function() {
       this.notifier.create();
-      this.notifier.text = "initiating download...";
+      this.notifier.text = "Initiating download...";
     },
 
     /* parsing functions
@@ -1259,9 +1421,9 @@ Exporter = function() {
       page = new Element(doc);
       
       if (page.gt("adbl-product-metadata").length > 0) {
-        parser = new ADBLBookPage(doc, digitalData);
+        parser = new ADBLBookPage(doc);
       } else {
-        parser = new NormalBookPage(doc, digitalData);
+        parser = new NormalBookPage(doc);
       }
 
       return parser.data()
@@ -1317,53 +1479,55 @@ Exporter = function() {
     },
 
     loopThroughtAudibleLibrary: async function() {
-      this.notifier.text = "Retrieving titles...";
-      let library = new Library();
-      await library.populate((i, percent) => {
+      this.notifier.reset();
+      this.notifier.text = "Retrieving library...";
+      let library = new LibraryFetcher();
+      await library.populate((i, page_count) => {
+        let page = i + 1;
+        let percent = page/page_count;
         this.notifier.updateProgress(percent, i);
-        this.notifier.text = "Retrieving titles...";
+        this.notifier.text = `Retrieving library: page ${page} of ${page_count}`;
       });
+      log_table("library", library.books);
       return library.books;
     },
 
-    enrichLibraryInformation: async function(order_information) {
-      var library = await this.loopThroughtAudibleLibrary();
-      var contain_arr = [];
+    enrichLibraryInformation: async function(orders, library) {
+      let library_info, order_info, book_info, info;
+      let results = [];
 
-      this.notifier.text = "Retrieving addtional information on titles...";
-      const total_results = library.length;
-      for (let i = 0; i < total_results; i++) {
-        let details = await this.getBookDetails(library[i].url);
-        let merge = cleanObject({ ...library[i], ...details });
-        contain_arr.push(merge);
-        await this.delay(rando(1111) + 1111);
-        this.notifier.updateProgress(i/total_results, i);
-        this.notifier.text = `${
-            merge.author
-          } - ${Math.ceil(
-            (i / total_results) * 100
-          )}% complete -- approx ${Math.round(
-            ((((total_results - i) / 100) * 1.9) / 60) * 100
-          )} minutes remaining
-        `;
-      }
-      this.notifier.percent = 1;
-      this.notifier.test = "Finished."
-      let merged_with_orders = contain_arr.map((r) => {
-        let order = order_information.filter((i) => i.url == r.url);
-        return {
-          ...r,
-          ...(order?.[0] ? order?.[0] : {}),
-        };
+      let total_results = library.length;
+
+      this.notifier.reset();
+      this.notifier.text = "Retrieving additional information on titles...";
+
+      let fetcher = new DetailsFetcher(library);
+      await fetcher.populate((i, total, data) => {
+        let percent = i/total;
+        let remaining = total - i;
+
+        this.notifier.updateProgress(percent, i);
+        this.notifier.text = `
+          Retrieving book ${(i+1).toLocaleString()} of ${total.toLocaleString()} (approx ${this.timeLeft(remaining)} minutes remaining)
+        `.trim();
       });
 
-      info("Your audible books:");
-      console.log(merged_with_orders);
+      log_table("details", fetcher.books);
+
+      for (library_info of library) {
+        book_info = fetcher.books[library_info.id],
+        order_info = orders.filter((i) => i.url == r.url) || {};
+        info = cleanObject({...library_info, ...book_info, order_info});
+        results.push(info);
+      }
+      return results;
+    },
+
+    downloadTSV: function(books) {
       this.convert2TsvAndDownload(
-        merged_with_orders,
+        books,
         "audible_export_" + new Date().getTime() + ".tsv"
       );
-      this.notifier.wrapper.outerHTML = "";
     },
 
     getAudibleLibraryPage: async function(page) {
@@ -1390,14 +1554,16 @@ Exporter = function() {
     },
 
     getAllOrders: async function() {
+      this.notifier.reset();
       this.notifier.text = "Retrieving purchases...";
 
-      orders = new Orders();
+      orders = new OrdersFetcher();
       await orders.init()
       await orders.populate((year, page, page_count, percent) => {
         this.notifier.updateProgress(percent, page);
         this.notifier.text = `Retrieving ${year} purchases: page ${page} of ${page_count}`;
       });
+      log_table("purchases", orders.items);
       return orders.items;
     },
 
@@ -1410,14 +1576,36 @@ Exporter = function() {
 
     run: async function() {
       try {
+        let before = new Date().getTime();
+
         this.createDownloadHTML();
-        var order_information = await this.getAllOrders();
-        this.enrichLibraryInformation(order_information);
+
+        let orders = await this.getAllOrders();
+        let library = await this.loopThroughtAudibleLibrary();
+        let books = await this.enrichLibraryInformation(orders, library);
+
+        if (!books) {
+          error("Failed to download books.")
+          this.notifier.reset();
+          this.notifier.text = "Failed."
+          return;
+        }
+
+        let after = new Date().getTime();
+        let elapsed = (after - before) / 1000 / 60;
+        info(`Done. (${books.length} books, ${elapsed.toFixed(2)} minutes)`);
+        this.notifier.percent = 1;
+        this.notifier.text = "Done."
+
+        log_table("Your audible data", books);
+        this.downloadTSV(books);
+
       } catch (err) {
-        console.error("Fatal error:", err, err.name, err.message);
+        error("Fatal error:", err, err.name, err.message);
       }
     }
   };
 }
 CONSOLE_OUTPUT = true;
-Exporter().run();
+exporter = Exporter();
+await exporter.run();

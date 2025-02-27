@@ -1,2 +1,3 @@
 CONSOLE_OUTPUT = true;
-Exporter().run();
+exporter = Exporter();
+await exporter.run();

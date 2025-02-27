@@ -2,7 +2,12 @@ Page = class {
   #doc = null;
 
   async fetchDoc(url) {
-    let res = await fetch(url);
+    let res;
+    try {
+      res = await fetch(url);
+    } catch {
+      throw new Error(`Failed to fetch URL: ${url}.`);
+    }
 
     if (!res.ok) {
       throw new Error(`Response status: ${response.status}`);
@@ -18,7 +23,14 @@ Page = class {
 
   set doc(value) {
     if (value) {
-      this.#doc = new Element(value);
+      if (!value)
+        return;
+
+      if (value.constructor.name != "Element") {
+        value = new Element(value);
+      }
+
+      this.#doc = value;
     }
   }
 }

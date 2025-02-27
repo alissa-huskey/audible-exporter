@@ -10,10 +10,12 @@ require("../src/dev.js");
 require("../src/util.js");
 require("../src/element.js");
 require("../src/list.js");
+require("../src/page.js");
 require("../src/book-page.js");
 require("../src/page.js");
 require("../src/library-page.js");
 require("../src/library-fetcher.js");
+require("../src/details-fetcher.js");
 require("../src/order-page.js");
 require("../src/status-notifier.js");
 require("../src/exporter.js");
@@ -36,6 +38,7 @@ describe("exporter: parsing functions", function() {
     let books = exporter.parseLibraryPage(doc);
 
     let book = {
+        id: "B0BL84CBLZ",
         url: "/pd/Ghosts-of-Zenith-Audiobook/B0BL84CBLZ",
         title: "Ghosts of Zenith: Lost Planet Homicide",
         author: "Larry Correia",
@@ -47,13 +50,6 @@ describe("exporter: parsing functions", function() {
   });
 
   test("parseBookDetails(): adbl", function() {
-    globalThis.digitalData = {
-      product: [ { productInfo: {
-        productName: "Midnight Riot",
-        language: "English",
-        publisherName: "Tantor Audio"
-    } } ] };
-
     let html = getFixtureFile("book-details.html");
     let doc = toDoc(html);
 
@@ -77,7 +73,7 @@ describe("exporter: parsing functions", function() {
     expect(book.duration_minutes).toEqual(596);
     expect(book.language).toEqual("English");
     expect(book.release_date).toEqual("2012 Sep 28");
-    expect(book.release_timestamp).toEqual(1348812000000);
+    expect(book.release_timestamp).toEqual(1348812001000);
     expect(book.publisher).toEqual("Tantor Audio");
     expect(book.audible_oginal).toBe(false);
     expect(book.rating).toBe(4.3);
@@ -91,16 +87,10 @@ describe("exporter: parsing functions", function() {
   });
 
   test("parseBookDetails(): audible original", function() {
-    globalThis.digitalData = { product: [ { productInfo: {
-      productName: "Ghosts of Zenith",
-      language: "English",
-      publisherName: "Audible Originals"
-    } } ] };
-
     let html = getFixtureFile("book-details-audible-original.html");
     document.body.innerHTML = html;
 
-    let summary = "<b>On a nightmare world a thousand light years from Earth, one honest cop won’t rest until he solves the mystery of why his colony was condemned there, in this Audible Original story from best-selling author Larry Correia. </b><p>On a planet where life is cheap, in a city built on corruption, very few things are considered holy. The Landing Site is one of them. The remains of the century-old habitat pod—which delivered the colonists to the only barely habitable place on the cruel world of Croatoan—has become a monument to the hardscrabble people who somehow survived the unsurvivable.</p><p>So when blood is shed on that sacred ground, it’s seen as an attack against the entire colony. With a fanatical terrorist group holding hostages inside the monument, DCI Lutero Cade and the Zenith PD have to end the crisis and put the bad guys down.</p><p>Only there’s far more to this case than meets the eye. The lander may have been carrying a hidden cargo. And a shadowy figure with his own drone army will do anything to make sure the mission’s secrets stay buried—no matter how many nosy detectives he has to kill to do it.</p><p><br></p>";
+    let summary = "On a nightmare world a thousand light years from Earth, one honest cop won’t rest until he solves the mystery of why his colony was condemned there, in this Audible Original story from best-selling author Larry Correia. On a planet where life is cheap, in a city built on corruption, very few things are considered holy. The Landing Site is one of them. The remains of the century-old habitat pod—which delivered the colonists to the only barely habitable place on the cruel world of Croatoan—has become a monument to the hardscrabble people who somehow survived the unsurvivable. So when blood is shed on that sacred ground, it’s seen as an attack against the entire colony. With a fanatical terrorist group holding hostages inside the monument, DCI Lutero Cade and the Zenith PD have to end the crisis and put the bad guys down. Only there’s far more to this case than meets the eye. The lander may have been carrying a hidden cargo. And a shadowy figure with his own drone army will do anything to make sure the mission’s secrets stay buried—no matter how many nosy detectives he has to kill to do it.";
     let categories = [
       "Funny",
       "Scary",
@@ -114,7 +104,7 @@ describe("exporter: parsing functions", function() {
     expect(book.duration_minutes).toEqual(145);
     expect(book.language).toEqual("English");
     expect(book.release_date).toEqual("2023 Jan 12");
-    expect(book.release_timestamp).toEqual(1673506800000);
+    expect(book.release_timestamp).toEqual(1673506801000);
     expect(book.publisher).toEqual("Audible Originals");
     expect(book.audible_oginal).toBe(true);
     expect(book.rating).toBe(4.6);
@@ -163,4 +153,9 @@ describe("exporter: parsing functions", function() {
     expect(page.items[0].title).toBe("Wind and Truth");
   });
 
+  // this more or less just checks for syntax errors
+  test("enrichLibraryInformation", async function() {
+    let exporter = Exporter();
+    let results = await exporter.enrichLibraryInformation([], []);
+  });
 });

@@ -8,6 +8,7 @@ require("../src/dev.js");
 require("../src/util.js");
 require("../src/element.js");
 require("../src/list.js");
+require("../src/page.js");
 require("../src/library-page.js");
 require("../src/exporter.js");
 
@@ -29,6 +30,7 @@ describe("LibraryPage", function() {
 
   test(".books", function() {
     let book = {
+      id: "1705240569",
       url: "/pd/Scorpion-Shards-Audiobook/1705240569",
       title: "Scorpion Shards: Star Shards Chronicles Series, Book 1",
       author: "Neal Shusterman",

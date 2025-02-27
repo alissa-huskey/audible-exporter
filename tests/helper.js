@@ -15,6 +15,12 @@ global.fixtureDoc = function(name) {
   return doc;
 }
 
+global.mockFn = function(rv) {
+  return jest.fn().mockImplementation(() =>
+    Promise.resolve(rv),
+  );
+};
+
 global.mockFetchDoc = function(fixture) {
   return jest.fn().mockImplementation(() =>
     Promise.resolve(fixtureDoc(fixture)),
@@ -27,4 +33,3 @@ global.mockFetchDocs = function(docs) {
     Promise.resolve(docs.pop()),
   );
 };
-

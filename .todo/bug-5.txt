@@ -1,0 +1,13 @@
+VM53138:19 [audible-exporter] Fatal error: TypeError: Cannot read properties of undefined (reading 'innerHTML')
+    at get duration_minutes (<anonymous>:947:44)
+    at <anonymous>:712:22
+    at Array.map (<anonymous>)
+    at NormalBookPage.data (<anonymous>:711:48)
+    at DetailsFetcher.populate (<anonymous>:1305:23)
+    at async Object.enrichLibraryInformation (<anonymous>:1483:7)
+    at async Object.run (<anonymous>:1565:17)
+    at async <anonymous>:1591:1 TypeError Cannot read properties of undefined (reading 'innerHTML')
+error	@	VM53138:19
+run	@	VM53138:1585
+await in run		
+(anonymous)	@	VM53138:1591

@@ -24,8 +24,9 @@ Usage
    It will take anywhere from a few minutes to an hour or more to run. For my
    library with just over 1,000 titles, it took about an hour.
 1. When it is finished, a dialog will pop to save the exported TSV file.
-1. If you prefer JSON, right click on the response in the console and select
-   "Copy object" then paste it into a new `.json` file.
+1. If you prefer JSON, look for the line in the console under "Your audible
+   data:", right click and select "Copy object" then paste it into a new
+   `.json` file.
 
 Credits
 -------
