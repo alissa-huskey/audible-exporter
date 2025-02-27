@@ -63,3 +63,4 @@
 (D) 2025-02-27 Try using console.group to log final results.
 (D) 2025-02-27 @qa Subclass StatusNotifier to make a notifier for each step (orders, library, details)
 (B) 2025-02-27 @qa Have Page.fetchDoc() set this.url = url
+(A) 2025-02-27 Refactor StatusNotifier to inherit from DOM.

@@ -13,6 +13,9 @@ error = function(...msg) {
 }
 
 log_table = function(label, data) {
+  if (!CONSOLE_OUTPUT) {
+    return;
+  }
   let name = `${LOG_PREFIX} ${label}`;
   console.groupCollapsed(name);
   console.table(data);

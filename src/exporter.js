@@ -16,6 +16,7 @@ Exporter = function() {
 
   return {
     notifier: new StatusNotifier(),
+    modal: new Modal(),
 
     /* misc functions
      * --------------------------------------------------------------------------------

@@ -17,6 +17,8 @@ require("../src/library-page.js");
 require("../src/library-fetcher.js");
 require("../src/details-fetcher.js");
 require("../src/order-page.js");
+require("../src/dom.js");
+require("../src/modal.js");
 require("../src/status-notifier.js");
 require("../src/exporter.js");
 

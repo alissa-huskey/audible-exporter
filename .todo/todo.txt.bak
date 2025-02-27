@@ -58,7 +58,6 @@
 (B) 2025-02-27 @qa Add AudibleLibraryRow parser or something.
 (Z) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
 (B) 2025-02-27 Make API of *Page classes the same, with #fields and data().
-x 2025-02-27 2025-02-27 @bug fix bug-5
 (D) 2025-02-27 Add to readme https://developer.chrome.com/docs/devtools/console/log
 (D) 2025-02-27 Try logging various results using console.table
 (D) 2025-02-27 Try using console.group to log final results.

@@ -337,213 +337,135 @@ DOM = class {
     document.body.appendChild(this.wrapper.element);
   }
 }
-const css = `
-#ae-notifier {
-  position: fixed;
-  top: 100px;
-  border-radius: 0.2em;
-  border-width: 1px;
-  border-style: solid;
-  font-family: system-ui;
-}
-
-#ae-bar {
-  width: 0;
-  height: 50px;
-  border-bottom-right-radius: 0.2em;
-  border-top-right-radius: 0.2em;
-  transition: all 1s;
-  border-width: 1px;
-  border-style: solid;
-}
-
-#ae-messages {
-  padding: 14px;
-  color: #fff;
-}
-
-#ae-status-text {
-  text-wrap: nowrap;
-}
-
-#ae-percent-text {
-}
-
-.row {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-}
-`;
-
-StatusNotifier = class {
+Modal = class extends DOM {
+  #css = null;
   #wrapper = null;
-  #bar = null;
-  #status = null;
-  #percentage = null;
-  #messages = null;
-  #css = null
-
-  #colors = {
-    darkGreen: "#07ba5b",
-    lightGreen: "#3de367",
-    nearBlack: "#121212",
-    white: "#fff",
-    rasin: "#19191F",
-    darkGray: "#232530",
-    offWhite: "#abaab3",
-    lightGray: "#9a99a1",
-  }
-  #pulse_colors = {true: "#07ba5b", false: "#3de367"}
+  #close_btn = null
+  #dl_btn = null;
 
   selectors = {
-    notifier: "ae-notifier",
-    bar: "ae-bar",
-    messages: "ae-messages",
-    status: "ae-status-text",
-    percentage: "ae-percent-text",
+    style: "ae-modal-css",
+    wrapper: "ae-modal",
+    content: "ae-content",
+    head: "ae-head",
+    close_btn: "ae-close-btn",
   };
-
-  get body_width() {
-    return document.body.getBoundingClientRect().width;
-  }
-
-  get bar_width() {
-    return this.body_width * 0.8;
-  }
 
   get css() {
     if (!this.#css) {
-      this.#css = Element.create("style", {id: "ae-css", type: "text/css"});
+      this.#css = `
+.ae-modal {
+  box-sizing: border-box;
+  position: fixed;
+  font-family: "Cantarell", sans-serif;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  display: none;
+}
 
-      if (this.#css.element.styleSheet) {
-        // Support for IE
-        this.#css.element.styleSheet.cssText = css;
-      } else {
-        // Support for the rest
-        let node = document.createTextNode(css);
-        this.#css.element.appendChild(node);
-      }
+.ae-modal .ae-content {
+  position: absolute;
+  width: 50%;
+  height: 300px;
+  max-height: 50%;
+  top: 15%;
+  left: 15%;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 3px 15px -2px #222;
+  padding: 20px;
+  color: #6b7280;
+}
+
+.ae-modal .ae-head {
+  background-color: #eee;
+  padding: 10px;
+  /* top-left  top-right bottom-right bottom-left */
+  border-radius: 10px 10px 0px 0px;
+  border-bottom: 1px solid #ddd;
+}
+
+.ae-modal h1 {
+  color: #111827;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: normal;
+  margin: 0;
+  padding-bottom: 10px;
+  text-transform: uppercase;
+}
+
+#ae-close-btn {
+  color: #999;
+  font-size: 28px;
+  font-weight: bold;
+  text-decoration: none;
+  margin: 0;
+  margin-top: -10px;
+  align-self: flex-end;
+  float: right;
+}
+
+#ae-close-btn:hover,
+#ae-close-btn:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+      `;
     }
     return this.#css;
   }
 
-  // Construct notifier wrapper div, append all child elements, and return
+  // Construct wrapper div, append all child elements, and return
   get wrapper() {
     if (!this.#wrapper) {
-      this.#wrapper = Element.create("div", {id: this.selectors.notifier, style: {
-        width: `${this.bar_width}px`,
-        left: `${(this.body_width - this.bar_width) / 2}px`,
-        background: this.#colors.nearBlack,
-        'border-color': this.#colors.lightGreen,
-        'z-index': new Date().getTime(),
-      }})
+      this.#wrapper = Element.create("div", {class: this.selectors.wrapper });
+      let content = Element.create("div", {class: this.selectors.content});
+      let head = Element.create("div", {class: this.selectors.head});
+      let h1 = Element.create("h1");
+      let p = Element.create("p");
 
-      this.wrapper.element.appendChild(this.bar.element);
-      this.bar.element.appendChild(this.messages.element);
-      this.messages.element.appendChild(this.status.element);
-      this.messages.element.appendChild(this.percentage.element);
+      h1.innerHTML = "Download";
+      p.innerHTML = "Your export is ready!";
+
+      this.wrapper.element.appendChild(content.element);
+      content.element.appendChild(head.element);
+      content.element.appendChild(p.element);
+      content.element.appendChild(this.dl_btn.element)
+      head.element.appendChild(this.close_btn.element)
+      head.element.appendChild(h1.element)
     }
     return this.#wrapper;
   }
 
-  // progress bar element
-  get bar() {
-    if (!this.#bar) {
-      this.#bar = Element.create("div", {id: this.selectors.bar, style: {
-        background: this.#colors.darkGreen,
-        'border-color': this.#colors.lightGreen,
-      }});
+  get close_btn() {
+    if (!this.#close_btn) {
+        this.#close_btn = Element.create("a", {id: this.selectors.close_btn});
+        this.#close_btn.innerHTML = "&times;";
+        this.#close_btn.attributes.href = "#";
+        this.#close_btn.element.addEventListener("click", () => {
+          this.hide();
+        }, false);
     }
-    return this.#bar;
+    return this.#close_btn;
   }
 
-  get messages() {
-    if (!this.#messages) {
-      this.#messages = Element.create("div", {id: this.selectors.messages, class: "row", style: {
-        width: `${this.bar_width}px`,
-        // color: "#112A46",
-        // color: "#0c1b1d",
-        // color: "#283747",
-      }});
+  get dl_btn() {
+    if (!this.#dl_btn) {
+      this.#dl_btn = Element.create("button", {id: this.selectors.dl_btn});
+      this.#dl_btn.innerHTML = "Download";;
     }
-    return this.#messages;
+    return this.#dl_btn;
   }
 
-  // status text element
-  get status() {
-    if (!this.#status) {
-      this.#status = Element.create("div", {id: this.selectors.status, style: {
-        // color: "#112A46",
-        // color: "#0c1b1d",
-        // color: "#283747",
-      }});
-    }
-    return this.#status;
+  show() {
+    this.#wrapper.style.display = "block";
   }
 
-  // percent text element
-  get percentage() {
-    if (!this.#percentage) {
-      this.#percentage = Element.create("span", {id: this.selectors.percentage, style: {
-        color: "#87ff65", // bright green
-        color: "#0aff99", // bright green
-        // color: "#00ff80", // bright green
-        // color: "#00ff9f", // bright green
-        // color: "#0dffae", // bright green
-      }});
-    }
-    return this.#percentage;
-  }
-
-  // set the status text
-  set text(message) {
-    this.status.innerText = message;
-  }
-
-  // set the percentage text and progress bar width
-  set percent(decimal) {
-    let amount = Math.ceil(decimal * 100);
-    this.percentage.innerText = `${amount}%`;
-
-    let width = this.bar_width * decimal;
-    this.bar.style.width = `${width}px`;
-  }
-
-  // set the percent text, progress bar width, and pulse the background color
-  // on alternating odd/even increments
-  updateProgress(percent, i=null) {
-    this.percent = percent;
-    if (i != null) {
-      let color = this.#pulse_colors[i % 2 == 0]
-      this.bar.background = color;
-    }
-  }
-
-  // add the status notifier to the DOM
-  create() {
-    let notifier = Element.gi(this.selectors.notifier);
-    if (notifier)
-      notifier.outerHTML = "";
-
-    document.head.appendChild(this.css.element);
-    document.body.appendChild(this.wrapper.element);
-  }
-
-  reset() {
-    this.text = "";
-    this.percent = 0;
-    this.bar.style.background = this.#colors.darkGreen;
-    this.percentage.innerText = "";
-  }
-
-  // remove the elements from the DOM
-  delete() {
-    this.wrapper.element.remove();
-
-    this.#wrapper = null;
-    this.#bar = null;
-    this.#status = null;
-    this.#percentage = null;
+  hide() {
+    this.#wrapper.style.display = "none";
   }
 }
