@@ -126,7 +126,7 @@ describe("exporter: parsing functions", function() {
 
     LibraryFetcher.prototype.fetchDoc = mockFetchDocs(docs);
     let exporter = Exporter();
-    exporter.createDownloadHTML();
+    exporter.notifier.create()
 
     let books = await exporter.loopThroughtAudibleLibrary();
 

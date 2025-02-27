@@ -1,5 +1,4 @@
 (Z) 2025-02-14 @feature Log the amount of time the script took to run.
-(Z) 2025-02-14 @feature Instead of opening a save dialog, allow the user to click a button to download.
 (Z) 2025-02-14 @feature Add an option to download as CSV/TSV/JSON.
 (D) 2025-02-14 @ux For TSV/CSV, detect newlines in critic/publisher summary and remove or change.
 (Z) 2025-02-14 @feature Add my review if it exists.
@@ -43,7 +42,6 @@
 (A) 2025-02-26 @task refactor convert2TsvAndDownload
 (A) 2025-02-26 @task refactor downloadr
 (D) 2025-02-26 @feature Add limit selector to only download a certain number of order/library pages.
-(Z) 2025-02-26 @feature When finished, add a download button instead of just launching the download immediately.
 (B) 2025-02-26 @qa Handle failed requests.
 (Z) 2025-02-26 Implement some sort of pause/resume.
 (B) 2025-02-26 @qa document functions, classes and methods https://developer.wordpress.org/coding-standards/inline-documentation-standards/javascript/
@@ -63,3 +61,5 @@
 (D) 2025-02-27 Try using console.group to log final results.
 (D) 2025-02-27 @qa Subclass StatusNotifier to make a notifier for each step (orders, library, details)
 (B) 2025-02-27 @qa Have Page.fetchDoc() set this.url = url
+(A) 2025-02-27 Refactor StatusNotifier to inherit from DOM.
+(D) 2025-02-27 @ux Make the colors between the notifier and modal consistent.

@@ -1,4 +1,3 @@
-
 log = function(...msg) {
   console.log("--->", ...msg);
 }
@@ -337,6 +336,7 @@ DOM = class {
     document.body.appendChild(this.wrapper.element);
   }
 }
+
 Modal = class extends DOM {
   #css = null;
   #wrapper = null;
@@ -349,6 +349,7 @@ Modal = class extends DOM {
     content: "ae-content",
     head: "ae-head",
     close_btn: "ae-close-btn",
+    dl_btn: "ae-download-btn",
   };
 
   get css() {
@@ -366,29 +367,32 @@ Modal = class extends DOM {
 }
 
 .ae-modal .ae-content {
-  position: absolute;
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
   width: 50%;
   height: 300px;
-  max-height: 50%;
-  top: 15%;
-  left: 15%;
-  background: #fff;
+
   border-radius: 15px;
   box-shadow: 0 3px 15px -2px #222;
   padding: 20px;
-  color: #6b7280;
+  background: color(srgb 0.14549 0.140392 0.163529);
+  color: white;
+  /* color: #6b7280; */
 }
 
 .ae-modal .ae-head {
-  background-color: #eee;
+  background-color: color(srgb 0.100549 0.0985098 0.107765);
   padding: 10px;
   /* top-left  top-right bottom-right bottom-left */
   border-radius: 10px 10px 0px 0px;
-  border-bottom: 1px solid #ddd;
+  /* border-bottom: 1px solid #ddd; */
 }
 
 .ae-modal h1 {
-  color: #111827;
+  color: #dce6ef;
   font-size: 1.1rem;
   font-weight: 600;
   line-height: normal;
@@ -397,7 +401,7 @@ Modal = class extends DOM {
   text-transform: uppercase;
 }
 
-#ae-close-btn {
+.ae-modal #ae-close-btn {
   color: #999;
   font-size: 28px;
   font-weight: bold;
@@ -413,6 +417,91 @@ Modal = class extends DOM {
   color: #000;
   text-decoration: none;
   cursor: pointer;
+}
+
+a#ae-download-btn {
+  /* background-color: #4CC713; */
+  background-color: #43c26d;
+  color: #000;
+  cursor: pointer;
+  
+  text-decoration: none;
+  font-family: sans-serif;
+  text-align: center;
+  font-size: 0.9em;
+  
+  display: inline-block;
+  padding: 10px 25px;
+  text-indent: 15px;
+}
+
+a#ae-download-btn:hover {
+  background-color: #333;
+  color: white;
+}
+
+a#ae-download-btn:before, a#ae-download-btn:after {
+  content: ' ';
+  display: block;
+  position: absolute;
+  left: 33px;
+  top: 45%;
+}
+
+/* Download box shape  */
+a#ae-download-btn:before {
+  width: 10px;
+  height: 2px;
+  border-style: solid;
+  border-width: 0 2px 2px;
+}
+
+/* Download arrow shape */
+a#ae-download-btn:after {
+  width: 0;
+  height: 0;
+  margin-left: 1px;
+  margin-top: -7px;
+  
+  border-style: solid;
+  border-width: 4px 4px 0 4px;
+  border-color: transparent;
+  border-top-color: inherit;
+  
+  animation: downloadArrow 2s linear infinite;
+  animation-play-state: paused;
+}
+
+a#ae-download-btn:hover:before {
+  border-color: #43c26d;
+}
+
+a#ae-download-btn:hover:after {
+  border-top-color: #43c26d;
+  animation-play-state: running;
+}
+
+/* keyframes for the download icon anim */
+@keyframes downloadArrow {
+  /* 0% and 0.001% keyframes used as a hackish way of having the button frozen on a nice looking frame by default */
+  0% {
+    margin-top: -7px;
+    opacity: 1;
+  }
+  
+  0.001% {
+    margin-top: -15px;
+    opacity: 0;
+  }
+  
+  50% {
+    opacity: 1;
+  }
+  
+  100% {
+    margin-top: 0;
+    opacity: 0;
+  }
 }
       `;
     }
@@ -437,6 +526,8 @@ Modal = class extends DOM {
       content.element.appendChild(this.dl_btn.element)
       head.element.appendChild(this.close_btn.element)
       head.element.appendChild(h1.element)
+
+      this.#wrapper.style["z-index"] = new Date().getTime();
     }
     return this.#wrapper;
   }
@@ -455,7 +546,8 @@ Modal = class extends DOM {
 
   get dl_btn() {
     if (!this.#dl_btn) {
-      this.#dl_btn = Element.create("button", {id: this.selectors.dl_btn});
+      this.#dl_btn = Element.create("a", {id: this.selectors.dl_btn});
+        this.#dl_btn.attributes.href = "#";
       this.#dl_btn.innerHTML = "Download";;
     }
     return this.#dl_btn;

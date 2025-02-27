@@ -1,11 +1,3 @@
-
-log = function(...msg) {
-  console.log("--->", ...msg);
-}
-
-hr = function(...msg) {
-  console.log("****************************************", ...msg)
-}
 var CONSOLE_OUTPUT = false;
 const LOG_PREFIX = "[audible-exporter]";
 
@@ -305,717 +297,6 @@ Element = class {
     for (let [k, v] of Object.entries(attrs)) {
       this.element.setAttribute(k, v);
     }
-  }
-}
-DOM = class {
-  #style = null;
-  #css = null;
-
-  get style() {
-    if (!this.#style) {
-      this.#style = Element.create("style", {id: this.selectors.style, type: "text/css"});
-
-      if (this.#style.element.styleSheet) {
-        // Support for IE
-        this.#style.element.styleSheet.cssText = this.css;
-      } else {
-        // Support for the rest
-        let node = document.createTextNode(this.css);
-        this.#style.element.appendChild(node);
-      }
-    }
-    return this.#style;
-  }
-
-  // add the element to the DOM
-  create() {
-    let el = Element.gi(this.selectors.wrapper);
-    if (el)
-      el.outerHTML = "";
-
-    document.head.appendChild(this.style.element);
-    document.body.appendChild(this.wrapper.element);
-  }
-}
-Modal = class extends DOM {
-  #css = null;
-  #wrapper = null;
-  #close_btn = null
-  #dl_btn = null;
-
-  selectors = {
-    style: "ae-modal-css",
-    wrapper: "ae-modal",
-    content: "ae-content",
-    head: "ae-head",
-    close_btn: "ae-close-btn",
-  };
-
-  get css() {
-    if (!this.#css) {
-      this.#css = `
-.ae-modal {
-  box-sizing: border-box;
-  position: fixed;
-  font-family: "Cantarell", sans-serif;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-  display: none;
-}
-
-.ae-modal .ae-content {
-  position: absolute;
-  width: 50%;
-  height: 300px;
-  max-height: 50%;
-  top: 15%;
-  left: 15%;
-  background: #fff;
-  border-radius: 15px;
-  box-shadow: 0 3px 15px -2px #222;
-  padding: 20px;
-  color: #6b7280;
-}
-
-.ae-modal .ae-head {
-  background-color: #eee;
-  padding: 10px;
-  /* top-left  top-right bottom-right bottom-left */
-  border-radius: 10px 10px 0px 0px;
-  border-bottom: 1px solid #ddd;
-}
-
-.ae-modal h1 {
-  color: #111827;
-  font-size: 1.1rem;
-  font-weight: 600;
-  line-height: normal;
-  margin: 0;
-  padding-bottom: 10px;
-  text-transform: uppercase;
-}
-
-#ae-close-btn {
-  color: #999;
-  font-size: 28px;
-  font-weight: bold;
-  text-decoration: none;
-  margin: 0;
-  margin-top: -10px;
-  align-self: flex-end;
-  float: right;
-}
-
-#ae-close-btn:hover,
-#ae-close-btn:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
-}
-      `;
-    }
-    return this.#css;
-  }
-
-  // Construct wrapper div, append all child elements, and return
-  get wrapper() {
-    if (!this.#wrapper) {
-      this.#wrapper = Element.create("div", {class: this.selectors.wrapper });
-      let content = Element.create("div", {class: this.selectors.content});
-      let head = Element.create("div", {class: this.selectors.head});
-      let h1 = Element.create("h1");
-      let p = Element.create("p");
-
-      h1.innerHTML = "Download";
-      p.innerHTML = "Your export is ready!";
-
-      this.wrapper.element.appendChild(content.element);
-      content.element.appendChild(head.element);
-      content.element.appendChild(p.element);
-      content.element.appendChild(this.dl_btn.element)
-      head.element.appendChild(this.close_btn.element)
-      head.element.appendChild(h1.element)
-    }
-    return this.#wrapper;
-  }
-
-  get close_btn() {
-    if (!this.#close_btn) {
-        this.#close_btn = Element.create("a", {id: this.selectors.close_btn});
-        this.#close_btn.innerHTML = "&times;";
-        this.#close_btn.attributes.href = "#";
-        this.#close_btn.element.addEventListener("click", () => {
-          this.hide();
-        }, false);
-    }
-    return this.#close_btn;
-  }
-
-  get dl_btn() {
-    if (!this.#dl_btn) {
-      this.#dl_btn = Element.create("button", {id: this.selectors.dl_btn});
-      this.#dl_btn.innerHTML = "Download";;
-    }
-    return this.#dl_btn;
-  }
-
-  show() {
-    this.#wrapper.style.display = "block";
-  }
-
-  hide() {
-    this.#wrapper.style.display = "none";
-  }
-}
-
-log = function(...msg) {
-  console.log("--->", ...msg);
-}
-
-hr = function(...msg) {
-  console.log("****************************************", ...msg)
-}
-var CONSOLE_OUTPUT = false;
-const LOG_PREFIX = "[audible-exporter]";
-
-info = function(...msg) {
-  if (!CONSOLE_OUTPUT) {
-    return;
-  }
-  console.log(LOG_PREFIX, ...msg);
-}
-
-error = function(...msg) {
-  console.error(LOG_PREFIX, ...msg);
-}
-
-log_table = function(label, data) {
-  if (!CONSOLE_OUTPUT) {
-    return;
-  }
-  let name = `${LOG_PREFIX} ${label}`;
-  console.groupCollapsed(name);
-  console.table(data);
-  console.groupEnd(name);
-}
-
-titleCase = function(text) {
-  return text.charAt(0).toUpperCase() + text.slice(1);
-}
-
-str = function(o) {
-  return typeof o == "object"
-    ? this.tsvReady(JSON.stringify(o))
-    : o
-}
-
-first = function(arr) {
-  let v;
-  for (v of arr) {
-    if (v) return v
-  }
-}
-
-const EMPTIES = {"Object": "{}", "Array": "[]"};
-isEmpty = function(o) {
-  if (!o) {
-    return true;
-  }
-
-  let type = o.constructor.name;
-
-  if (type == "List") {
-    return o.length == 0;
-  }
-
-  if (!(type in EMPTIES)) {
-    throw new Error(`isEmpty() does not support type: ${type} (value: ${o}).`);
-  }
-
-  return JSON.stringify(o) == EMPTIES[type];
-}
-
-tryFloat = function(o) {
-  try {
-    f = parseFloat(o);
-    return isNaN(f) ? o : f;
-
-  } catch (err) {
-    return o;
-  }
-}
-
-tryInt = function(f) {
-  try {
-    let i = parseInt(f);
-    return i == f ? i : f
-  } catch (err) {
-    return f;
-  }
-}
-
-entityDecode = function(text) {
-  return text.replace("&amp;", "&");
-}
-
-dateString = function(date) {
-  if (!date) {
-    return ""
-  }
-  var months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-  if (date.constructor.name != "Date") {
-    date = new Date(date);
-  }
-  return `${date.getFullYear()} ${months[date.getMonth()]} ${date.getDate()}`;
-}
-
-cleanObject = function(ob) {
-  return Object.entries(ob).reduce((r, [k, v]) => {
-    if (
-      v != null &&
-      v != undefined &&
-      v !== "" &&
-      (typeof v == "boolean" ||
-        typeof v == "string" ||
-        typeof v == "symbol" ||
-        typeof v == "number" ||
-        typeof v == "function" ||
-        (typeof v == "object" &&
-          ((Array.isArray(v) && v.length) || Array.isArray(v) != true)))
-    ) {
-      r[k] = v;
-      return r;
-    } else {
-      return r;
-    }
-  }, {});
-}
-
-stripHTML = function(html) {
-   let doc = new DOMParser().parseFromString(html, 'text/html');
-   return doc.body.textContent || "";
-}
-
-rando = (n) => Math.round(Math.random() * n)
-
-tsvReady = (s) => (
-  s
-    ? s
-        .replace(/\t|\v|\f|\u0009/g, " ")
-        .replace(/\r|\n/g, "↵")
-        .replace(/\0/g, "")
-        .replace(/\\/g, "\\\\")
-        .replace(/\'/g, "\\'")
-        .replace(/\"/g, '\\"')
-    : s
-)
-
-reg = (o, n) => (o ? o[n] : "")
-
-cleanObject = function(ob) {
-  return Object.entries(ob).reduce((r, [k, v]) => {
-    if (
-      v != null &&
-      v != undefined &&
-      v !== "" &&
-      (typeof v == "boolean" ||
-        typeof v == "string" ||
-        typeof v == "symbol" ||
-        typeof v == "number" ||
-        typeof v == "function" ||
-        (typeof v == "object" &&
-          ((Array.isArray(v) && v.length) || Array.isArray(v) != true)))
-    ) {
-      r[k] = v;
-      return r;
-    } else {
-      return r;
-    }
-  }, {});
-}
-Element = class {
-  constructor(elm=null) {
-    this.element = elm;
-
-    if (!elm) {
-      return
-    }
-
-    for (let k in elm.__proto__) {
-      if (Object.hasOwnProperty(k)) { continue }
-
-      Object.defineProperty(this, k, {
-        get: function() { return this.element[k]; },
-        set: function(v) { this.element[k] = v },
-      });
-    }
-  }
-
-  static from_html(text) {
-    let html = document.createElement("html");
-    html.innerHTML = text;
-
-    let elm = new Element(html);
-    return elm;
-  }
-
-  /**
-   * Create HTML Element.
-   *
-   * @param {str}    html     Tag name or HTML string.
-   * @param {object} [attrs]  Attributes to set on element.
-   *
-   * @return {Element}
-   *
-   * @example
-   * let elm = Element.create("div", {id: "container"});
-   * let elm = Element.create("<p>hello</p>");
-   */
-  static create(html, attrs={}) {
-    let dom;
-    if (html.includes("<")) {
-      let doc = document.createElement("body");
-      doc.innerHTML = html;
-      dom = doc.lastChild;
-    } else if (html) {
-      dom = document.createElement(html);
-    }
-
-    if (attrs.style && typeof attrs.style == "object") {
-      for (let [k, v] of Object.entries(attrs.style)) {
-        dom.style[k] = v;
-      }
-      delete attrs.style;
-    }
-
-    let element = new Element(dom);
-    element.set(attrs)
-    return element;
-  }
-
-  static gc (name) {
-    return new List(document.getElementsByClassName(name));
-  }
-
-  static gi (name) {
-    let node = document.getElementById(name)
-    return new Element(node);
-  }
-
-  static gt (name) {
-    return new List(document.getElementsByTagName(name));
-  }
-
-  static qs(query) {
-    let res = document.querySelector(query);
-    return new Element(res);
-  }
-
-  static qsa(query) {
-    let res = document.querySelectorAll(query);
-    return new List(res);
-  }
-
-  gc(name) {
-    if (!this.element) {
-      return []
-    }
-
-    let res = this.element.getElementsByClassName(name);
-    return new List(res);
-  }
-
-  gi(name) {
-    return Element.gi(name);
-  }
-
-  gt(name) {
-    if (!this.element) {
-      return []
-    }
-
-    let res = this.element.getElementsByTagName(name);
-    return new List(res);
-  }
-
-  gcf(name) { return this.gc(name)[0] }
-  gtf(name) { return this.gt(name)[0] }
-
-  qs(query) {
-    let res = this.element.querySelectorAll(query);
-    return new List(res);
-  }
-
-  qsf(query) {
-    let res = this.element.querySelector(query);
-    return new Element(res);
-  }
-
-  set(attrs, value=null) {
-    if (typeof attrs == "string") {
-      let key = attrs;
-      attrs = {};
-      attrs[key] = value;
-    }
-
-    for (let [k, v] of Object.entries(attrs)) {
-      this.element.setAttribute(k, v);
-    }
-  }
-}
-DOM = class {
-  #style = null;
-  #css = null;
-
-  get style() {
-    if (!this.#style) {
-      this.#style = Element.create("style", {id: this.selectors.style, type: "text/css"});
-
-      if (this.#style.element.styleSheet) {
-        // Support for IE
-        this.#style.element.styleSheet.cssText = this.css;
-      } else {
-        // Support for the rest
-        let node = document.createTextNode(this.css);
-        this.#style.element.appendChild(node);
-      }
-    }
-    return this.#style;
-  }
-
-  // add the element to the DOM
-  create() {
-    let el = Element.gi(this.selectors.wrapper);
-    if (el)
-      el.outerHTML = "";
-
-    document.head.appendChild(this.style.element);
-    document.body.appendChild(this.wrapper.element);
-  }
-}
-const css = `
-#ae-notifier {
-  position: fixed;
-  top: 100px;
-  border-radius: 0.2em;
-  border-width: 1px;
-  border-style: solid;
-  font-family: system-ui;
-}
-
-#ae-bar {
-  width: 0;
-  height: 50px;
-  border-bottom-right-radius: 0.2em;
-  border-top-right-radius: 0.2em;
-  transition: all 1s;
-  border-width: 1px;
-  border-style: solid;
-}
-
-#ae-messages {
-  padding: 14px;
-  color: #fff;
-}
-
-#ae-status-text {
-  text-wrap: nowrap;
-}
-
-#ae-percent-text {
-}
-
-.row {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-}
-`;
-
-StatusNotifier = class {
-  #wrapper = null;
-  #bar = null;
-  #status = null;
-  #percentage = null;
-  #messages = null;
-  #css = null
-
-  #colors = {
-    darkGreen: "#07ba5b",
-    lightGreen: "#3de367",
-    nearBlack: "#121212",
-    white: "#fff",
-    rasin: "#19191F",
-    darkGray: "#232530",
-    offWhite: "#abaab3",
-    lightGray: "#9a99a1",
-  }
-  #pulse_colors = {true: "#07ba5b", false: "#3de367"}
-
-  selectors = {
-    notifier: "ae-notifier",
-    bar: "ae-bar",
-    messages: "ae-messages",
-    status: "ae-status-text",
-    percentage: "ae-percent-text",
-  };
-
-  get body_width() {
-    return document.body.getBoundingClientRect().width;
-  }
-
-  get bar_width() {
-    return this.body_width * 0.8;
-  }
-
-  get css() {
-    if (!this.#css) {
-      this.#css = Element.create("style", {id: "ae-css", type: "text/css"});
-
-      if (this.#css.element.styleSheet) {
-        // Support for IE
-        this.#css.element.styleSheet.cssText = css;
-      } else {
-        // Support for the rest
-        let node = document.createTextNode(css);
-        this.#css.element.appendChild(node);
-      }
-    }
-    return this.#css;
-  }
-
-  // Construct notifier wrapper div, append all child elements, and return
-  get wrapper() {
-    if (!this.#wrapper) {
-      this.#wrapper = Element.create("div", {id: this.selectors.notifier, style: {
-        width: `${this.bar_width}px`,
-        left: `${(this.body_width - this.bar_width) / 2}px`,
-        background: this.#colors.nearBlack,
-        'border-color': this.#colors.lightGreen,
-        'z-index': new Date().getTime(),
-      }})
-
-      this.wrapper.element.appendChild(this.bar.element);
-      this.bar.element.appendChild(this.messages.element);
-      this.messages.element.appendChild(this.status.element);
-      this.messages.element.appendChild(this.percentage.element);
-    }
-    return this.#wrapper;
-  }
-
-  // progress bar element
-  get bar() {
-    if (!this.#bar) {
-      this.#bar = Element.create("div", {id: this.selectors.bar, style: {
-        background: this.#colors.darkGreen,
-        'border-color': this.#colors.lightGreen,
-      }});
-    }
-    return this.#bar;
-  }
-
-  get messages() {
-    if (!this.#messages) {
-      this.#messages = Element.create("div", {id: this.selectors.messages, class: "row", style: {
-        width: `${this.bar_width}px`,
-        // color: "#112A46",
-        // color: "#0c1b1d",
-        // color: "#283747",
-      }});
-    }
-    return this.#messages;
-  }
-
-  // status text element
-  get status() {
-    if (!this.#status) {
-      this.#status = Element.create("div", {id: this.selectors.status, style: {
-        // color: "#112A46",
-        // color: "#0c1b1d",
-        // color: "#283747",
-      }});
-    }
-    return this.#status;
-  }
-
-  // percent text element
-  get percentage() {
-    if (!this.#percentage) {
-      this.#percentage = Element.create("span", {id: this.selectors.percentage, style: {
-        color: "#87ff65", // bright green
-        color: "#0aff99", // bright green
-        // color: "#00ff80", // bright green
-        // color: "#00ff9f", // bright green
-        // color: "#0dffae", // bright green
-      }});
-    }
-    return this.#percentage;
-  }
-
-  // set the status text
-  set text(message) {
-    this.status.innerText = message;
-  }
-
-  // set the percentage text and progress bar width
-  set percent(decimal) {
-    let amount = Math.ceil(decimal * 100);
-    this.percentage.innerText = `${amount}%`;
-
-    let width = this.bar_width * decimal;
-    this.bar.style.width = `${width}px`;
-  }
-
-  // set the percent text, progress bar width, and pulse the background color
-  // on alternating odd/even increments
-  updateProgress(percent, i=null) {
-    this.percent = percent;
-    if (i != null) {
-      let color = this.#pulse_colors[i % 2 == 0]
-      this.bar.background = color;
-    }
-  }
-
-  // add the status notifier to the DOM
-  create() {
-    let notifier = Element.gi(this.selectors.notifier);
-    if (notifier)
-      notifier.outerHTML = "";
-
-    document.head.appendChild(this.css.element);
-    document.body.appendChild(this.wrapper.element);
-  }
-
-  reset() {
-    this.text = "";
-    this.percent = 0;
-    this.bar.style.background = this.#colors.darkGreen;
-    this.percentage.innerText = "";
-  }
-
-  // remove the elements from the DOM
-  delete() {
-    this.wrapper.element.remove();
-
-    this.#wrapper = null;
-    this.#bar = null;
-    this.#status = null;
-    this.#percentage = null;
   }
 }
 List = class extends Array {
@@ -1837,6 +1118,472 @@ DetailsFetcher = class {
   }
 }
 
+DOM = class {
+  #style = null;
+  #css = null;
+
+  get style() {
+    if (!this.#style) {
+      this.#style = Element.create("style", {id: this.selectors.style, type: "text/css"});
+
+      if (this.#style.element.styleSheet) {
+        // Support for IE
+        this.#style.element.styleSheet.cssText = this.css;
+      } else {
+        // Support for the rest
+        let node = document.createTextNode(this.css);
+        this.#style.element.appendChild(node);
+      }
+    }
+    return this.#style;
+  }
+
+  // add the element to the DOM
+  create() {
+    let el = Element.gi(this.selectors.wrapper);
+    if (el)
+      el.outerHTML = "";
+
+    document.head.appendChild(this.style.element);
+    document.body.appendChild(this.wrapper.element);
+  }
+}
+
+Modal = class extends DOM {
+  #css = null;
+  #wrapper = null;
+  #close_btn = null
+  #dl_btn = null;
+
+  selectors = {
+    style: "ae-modal-css",
+    wrapper: "ae-modal",
+    content: "ae-content",
+    head: "ae-head",
+    close_btn: "ae-close-btn",
+    dl_btn: "ae-download-btn",
+  };
+
+  get css() {
+    if (!this.#css) {
+      this.#css = `
+.ae-modal {
+  box-sizing: border-box;
+  position: fixed;
+  font-family: "Cantarell", sans-serif;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  display: none;
+}
+
+.ae-modal .ae-content {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 50%;
+  height: 300px;
+
+  border-radius: 15px;
+  box-shadow: 0 3px 15px -2px #222;
+  padding: 20px;
+  background: color(srgb 0.14549 0.140392 0.163529);
+  color: white;
+  /* color: #6b7280; */
+}
+
+.ae-modal .ae-head {
+  background-color: color(srgb 0.100549 0.0985098 0.107765);
+  padding: 10px;
+  /* top-left  top-right bottom-right bottom-left */
+  border-radius: 10px 10px 0px 0px;
+  /* border-bottom: 1px solid #ddd; */
+}
+
+.ae-modal h1 {
+  color: #dce6ef;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: normal;
+  margin: 0;
+  padding-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.ae-modal #ae-close-btn {
+  color: #999;
+  font-size: 28px;
+  font-weight: bold;
+  text-decoration: none;
+  margin: 0;
+  margin-top: -10px;
+  align-self: flex-end;
+  float: right;
+}
+
+#ae-close-btn:hover,
+#ae-close-btn:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+a#ae-download-btn {
+  /* background-color: #4CC713; */
+  background-color: #43c26d;
+  color: #000;
+  cursor: pointer;
+  
+  text-decoration: none;
+  font-family: sans-serif;
+  text-align: center;
+  font-size: 0.9em;
+  
+  display: inline-block;
+  padding: 10px 25px;
+  text-indent: 15px;
+}
+
+a#ae-download-btn:hover {
+  background-color: #333;
+  color: white;
+}
+
+a#ae-download-btn:before, a#ae-download-btn:after {
+  content: ' ';
+  display: block;
+  position: absolute;
+  left: 33px;
+  top: 45%;
+}
+
+/* Download box shape  */
+a#ae-download-btn:before {
+  width: 10px;
+  height: 2px;
+  border-style: solid;
+  border-width: 0 2px 2px;
+}
+
+/* Download arrow shape */
+a#ae-download-btn:after {
+  width: 0;
+  height: 0;
+  margin-left: 1px;
+  margin-top: -7px;
+  
+  border-style: solid;
+  border-width: 4px 4px 0 4px;
+  border-color: transparent;
+  border-top-color: inherit;
+  
+  animation: downloadArrow 2s linear infinite;
+  animation-play-state: paused;
+}
+
+a#ae-download-btn:hover:before {
+  border-color: #43c26d;
+}
+
+a#ae-download-btn:hover:after {
+  border-top-color: #43c26d;
+  animation-play-state: running;
+}
+
+/* keyframes for the download icon anim */
+@keyframes downloadArrow {
+  /* 0% and 0.001% keyframes used as a hackish way of having the button frozen on a nice looking frame by default */
+  0% {
+    margin-top: -7px;
+    opacity: 1;
+  }
+  
+  0.001% {
+    margin-top: -15px;
+    opacity: 0;
+  }
+  
+  50% {
+    opacity: 1;
+  }
+  
+  100% {
+    margin-top: 0;
+    opacity: 0;
+  }
+}
+      `;
+    }
+    return this.#css;
+  }
+
+  // Construct wrapper div, append all child elements, and return
+  get wrapper() {
+    if (!this.#wrapper) {
+      this.#wrapper = Element.create("div", {class: this.selectors.wrapper });
+      let content = Element.create("div", {class: this.selectors.content});
+      let head = Element.create("div", {class: this.selectors.head});
+      let h1 = Element.create("h1");
+      let p = Element.create("p");
+
+      h1.innerHTML = "Download";
+      p.innerHTML = "Your export is ready!";
+
+      this.wrapper.element.appendChild(content.element);
+      content.element.appendChild(head.element);
+      content.element.appendChild(p.element);
+      content.element.appendChild(this.dl_btn.element)
+      head.element.appendChild(this.close_btn.element)
+      head.element.appendChild(h1.element)
+
+      this.#wrapper.style["z-index"] = new Date().getTime();
+    }
+    return this.#wrapper;
+  }
+
+  get close_btn() {
+    if (!this.#close_btn) {
+        this.#close_btn = Element.create("a", {id: this.selectors.close_btn});
+        this.#close_btn.innerHTML = "&times;";
+        this.#close_btn.attributes.href = "#";
+        this.#close_btn.element.addEventListener("click", () => {
+          this.hide();
+        }, false);
+    }
+    return this.#close_btn;
+  }
+
+  get dl_btn() {
+    if (!this.#dl_btn) {
+      this.#dl_btn = Element.create("a", {id: this.selectors.dl_btn});
+        this.#dl_btn.attributes.href = "#";
+      this.#dl_btn.innerHTML = "Download";;
+    }
+    return this.#dl_btn;
+  }
+
+  show() {
+    this.#wrapper.style.display = "block";
+  }
+
+  hide() {
+    this.#wrapper.style.display = "none";
+  }
+}
+
+const css = `
+#ae-notifier {
+  position: fixed;
+  top: 100px;
+  border-radius: 0.2em;
+  border-width: 1px;
+  border-style: solid;
+  font-family: system-ui;
+}
+
+#ae-bar {
+  width: 0;
+  height: 50px;
+  border-bottom-right-radius: 0.2em;
+  border-top-right-radius: 0.2em;
+  transition: all 1s;
+  border-width: 1px;
+  border-style: solid;
+}
+
+#ae-messages {
+  padding: 14px;
+  color: #fff;
+}
+
+#ae-status-text {
+  text-wrap: nowrap;
+}
+
+#ae-percent-text {
+}
+
+.row {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+`;
+
+StatusNotifier = class {
+  #wrapper = null;
+  #bar = null;
+  #status = null;
+  #percentage = null;
+  #messages = null;
+  #css = null
+
+  #colors = {
+    darkGreen: "#07ba5b",
+    lightGreen: "#3de367",
+    nearBlack: "#121212",
+    white: "#fff",
+    rasin: "#19191F",
+    darkGray: "#232530",
+    offWhite: "#abaab3",
+    lightGray: "#9a99a1",
+  }
+  #pulse_colors = {true: "#07ba5b", false: "#3de367"}
+
+  selectors = {
+    notifier: "ae-notifier",
+    bar: "ae-bar",
+    messages: "ae-messages",
+    status: "ae-status-text",
+    percentage: "ae-percent-text",
+  };
+
+  get body_width() {
+    return document.body.getBoundingClientRect().width;
+  }
+
+  get bar_width() {
+    return this.body_width * 0.8;
+  }
+
+  get css() {
+    if (!this.#css) {
+      this.#css = Element.create("style", {id: "ae-css", type: "text/css"});
+
+      if (this.#css.element.styleSheet) {
+        // Support for IE
+        this.#css.element.styleSheet.cssText = css;
+      } else {
+        // Support for the rest
+        let node = document.createTextNode(css);
+        this.#css.element.appendChild(node);
+      }
+    }
+    return this.#css;
+  }
+
+  // Construct notifier wrapper div, append all child elements, and return
+  get wrapper() {
+    if (!this.#wrapper) {
+      this.#wrapper = Element.create("div", {id: this.selectors.notifier, style: {
+        width: `${this.bar_width}px`,
+        left: `${(this.body_width - this.bar_width) / 2}px`,
+        background: this.#colors.nearBlack,
+        'border-color': this.#colors.lightGreen,
+        'z-index': new Date().getTime(),
+      }})
+
+      this.wrapper.element.appendChild(this.bar.element);
+      this.bar.element.appendChild(this.messages.element);
+      this.messages.element.appendChild(this.status.element);
+      this.messages.element.appendChild(this.percentage.element);
+    }
+    return this.#wrapper;
+  }
+
+  // progress bar element
+  get bar() {
+    if (!this.#bar) {
+      this.#bar = Element.create("div", {id: this.selectors.bar, style: {
+        background: this.#colors.darkGreen,
+        'border-color': this.#colors.lightGreen,
+      }});
+    }
+    return this.#bar;
+  }
+
+  get messages() {
+    if (!this.#messages) {
+      this.#messages = Element.create("div", {id: this.selectors.messages, class: "row", style: {
+        width: `${this.bar_width}px`,
+        // color: "#112A46",
+        // color: "#0c1b1d",
+        // color: "#283747",
+      }});
+    }
+    return this.#messages;
+  }
+
+  // status text element
+  get status() {
+    if (!this.#status) {
+      this.#status = Element.create("div", {id: this.selectors.status, style: {
+        // color: "#112A46",
+        // color: "#0c1b1d",
+        // color: "#283747",
+      }});
+    }
+    return this.#status;
+  }
+
+  // percent text element
+  get percentage() {
+    if (!this.#percentage) {
+      this.#percentage = Element.create("span", {id: this.selectors.percentage, style: {
+        color: "#87ff65", // bright green
+        color: "#0aff99", // bright green
+        // color: "#00ff80", // bright green
+        // color: "#00ff9f", // bright green
+        // color: "#0dffae", // bright green
+      }});
+    }
+    return this.#percentage;
+  }
+
+  // set the status text
+  set text(message) {
+    this.status.innerText = message;
+  }
+
+  // set the percentage text and progress bar width
+  set percent(decimal) {
+    let amount = Math.ceil(decimal * 100);
+    this.percentage.innerText = `${amount}%`;
+
+    let width = this.bar_width * decimal;
+    this.bar.style.width = `${width}px`;
+  }
+
+  // set the percent text, progress bar width, and pulse the background color
+  // on alternating odd/even increments
+  updateProgress(percent, i=null) {
+    this.percent = percent;
+    if (i != null) {
+      let color = this.#pulse_colors[i % 2 == 0]
+      this.bar.background = color;
+    }
+  }
+
+  // add the status notifier to the DOM
+  create() {
+    let notifier = Element.gi(this.selectors.notifier);
+    if (notifier)
+      notifier.outerHTML = "";
+
+    document.head.appendChild(this.css.element);
+    document.body.appendChild(this.wrapper.element);
+  }
+
+  reset() {
+    this.text = "";
+    this.percent = 0;
+    this.bar.style.background = this.#colors.darkGreen;
+    this.percentage.innerText = "";
+  }
+
+  // remove the elements from the DOM
+  delete() {
+    this.wrapper.element.remove();
+
+    this.#wrapper = null;
+    this.#bar = null;
+    this.#status = null;
+    this.#percentage = null;
+  }
+}
 Exporter = function() {
 
   var classes = {
@@ -1904,15 +1651,6 @@ Exporter = function() {
       this.downloadr(output_, named_file);
     },
 
-    /* DOM functions
-     * --------------------------------------------------------------------------------
-     */
-
-    createDownloadHTML: function() {
-      this.notifier.create();
-      this.notifier.text = "Initiating download...";
-    },
-
     /* parsing functions
      * --------------------------------------------------------------------------------
      */
@@ -1952,20 +1690,15 @@ Exporter = function() {
       var file = new Blob([data], {
         type: type,
       });
-      if (window.navigator.msSaveOrOpenBlob) {
-        window.navigator.msSaveOrOpenBlob(file, filename);
-      } else {
-        var a = document.createElement("a"),
-          url = URL.createObjectURL(file);
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => {
-          document.body.removeChild(a);
-          window.URL.revokeObjectURL(url);
-        }, 10);
-      }
+      let url = URL.createObjectURL(file);
+      this.modal.dl_btn.element.href = url;
+      this.modal.dl_btn.element.download = filename;
+      this.modal.dl_btn.element.addEventListener("click", () => {
+          setTimeout(() => {
+            window.URL.revokeObjectURL(url);
+          }, 10);
+      });
+      this.modal.show()
     },
 
     /* request functions
@@ -2083,7 +1816,9 @@ Exporter = function() {
       try {
         let before = new Date().getTime();
 
-        this.createDownloadHTML();
+        this.modal.create();
+        this.notifier.create();
+        this.notifier.text = "Initiating download...";
 
         let orders = await this.getAllOrders();
         let library = await this.loopThroughtAudibleLibrary();
@@ -2112,5 +1847,5 @@ Exporter = function() {
   };
 }
 CONSOLE_OUTPUT = true;
-exporter = Exporter();
-await exporter.run();
+e = Exporter();
+await e.run();

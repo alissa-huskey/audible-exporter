@@ -1,4 +1,3 @@
-
 log = function(...msg) {
   console.log("--->", ...msg);
 }
@@ -337,6 +336,7 @@ DOM = class {
     document.body.appendChild(this.wrapper.element);
   }
 }
+
 const css = `
 #ae-notifier {
   position: fixed;

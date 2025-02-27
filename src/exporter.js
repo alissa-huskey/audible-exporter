@@ -65,15 +65,6 @@ Exporter = function() {
       this.downloadr(output_, named_file);
     },
 
-    /* DOM functions
-     * --------------------------------------------------------------------------------
-     */
-
-    createDownloadHTML: function() {
-      this.notifier.create();
-      this.notifier.text = "Initiating download...";
-    },
-
     /* parsing functions
      * --------------------------------------------------------------------------------
      */
@@ -113,20 +104,15 @@ Exporter = function() {
       var file = new Blob([data], {
         type: type,
       });
-      if (window.navigator.msSaveOrOpenBlob) {
-        window.navigator.msSaveOrOpenBlob(file, filename);
-      } else {
-        var a = document.createElement("a"),
-          url = URL.createObjectURL(file);
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => {
-          document.body.removeChild(a);
-          window.URL.revokeObjectURL(url);
-        }, 10);
-      }
+      let url = URL.createObjectURL(file);
+      this.modal.dl_btn.element.href = url;
+      this.modal.dl_btn.element.download = filename;
+      this.modal.dl_btn.element.addEventListener("click", () => {
+          setTimeout(() => {
+            window.URL.revokeObjectURL(url);
+          }, 10);
+      });
+      this.modal.show()
     },
 
     /* request functions
@@ -244,7 +230,9 @@ Exporter = function() {
       try {
         let before = new Date().getTime();
 
-        this.createDownloadHTML();
+        this.modal.create();
+        this.notifier.create();
+        this.notifier.text = "Initiating download...";
 
         let orders = await this.getAllOrders();
         let library = await this.loopThroughtAudibleLibrary();

@@ -13,3 +13,5 @@ x 2025-02-26 2025-02-22 @task @qa refactor getAllOrders()
 x 2025-02-27 2025-02-22 @task @qa refactor enrichLibraryInformation()
 x 2025-02-27 2025-02-25 @ux Log JSON results to console again.
 x 2025-02-27 2025-02-27 @bug fix bug-5
+x 2025-02-27 2025-02-14 @feature Instead of opening a save dialog, allow the user to click a button to download.
+x 2025-02-27 2025-02-26 @feature When finished, add a download button instead of just launching the download immediately.

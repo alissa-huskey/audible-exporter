@@ -10,6 +10,7 @@ Modal = class extends DOM {
     content: "ae-content",
     head: "ae-head",
     close_btn: "ae-close-btn",
+    dl_btn: "ae-download-btn",
   };
 
   get css() {
@@ -39,6 +40,8 @@ Modal = class extends DOM {
       content.element.appendChild(this.dl_btn.element)
       head.element.appendChild(this.close_btn.element)
       head.element.appendChild(h1.element)
+
+      this.#wrapper.style["z-index"] = new Date().getTime();
     }
     return this.#wrapper;
   }
@@ -57,7 +60,8 @@ Modal = class extends DOM {
 
   get dl_btn() {
     if (!this.#dl_btn) {
-      this.#dl_btn = Element.create("button", {id: this.selectors.dl_btn});
+      this.#dl_btn = Element.create("a", {id: this.selectors.dl_btn});
+        this.#dl_btn.attributes.href = "#";
       this.#dl_btn.innerHTML = "Download";;
     }
     return this.#dl_btn;
