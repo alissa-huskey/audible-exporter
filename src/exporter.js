@@ -105,13 +105,7 @@ Exporter = function() {
         type: type,
       });
       let url = URL.createObjectURL(file);
-      this.modal.dl_btn.element.href = url;
-      this.modal.dl_btn.element.download = filename;
-      this.modal.dl_btn.element.addEventListener("click", () => {
-          setTimeout(() => {
-            window.URL.revokeObjectURL(url);
-          }, 10);
-      });
+      this.modal.file = [url, filename];
       this.modal.show()
     },
 

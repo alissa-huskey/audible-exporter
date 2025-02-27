@@ -7,7 +7,6 @@
 (M) 2025-02-14 @bug fix progress bar, says 100% when not yet complete
 (M) 2025-02-14 @bug fix TSV linebreaks
 (Z) 2025-02-14 @feature add stop button
-(D) 2025-02-14 @ux Modify status message to say title instead of author.
 (Z) 2025-02-14 @feature get account name
 (Z) 2025-02-17 @feature Parse podcast page: https://www.audible.com/podcast/Crime-Junkie/B08JJMQPN4?qid=1739803996&sr=1-1&ref_pageloadid=ueCYRnHMqKz8Fhrh&pf_rd_p=83218cca-c308-412f-bfcf-90198b687a2f&pf_rd_r=KK4VK8R67XV6A0K7KWJE&plink=vrTUC8MEkmliwSKT&pageLoadId=0NMtsgka5Pb31UHa&creativeId=0d6f6720-f41c-457e-a42b-8c8dceb62f2c&ref=a_search_c3_lProduct_1_1
 (Z) 2025-02-17 @feature parse anthologies from book details
@@ -45,7 +44,6 @@
 (B) 2025-02-26 @qa Handle failed requests.
 (Z) 2025-02-26 Implement some sort of pause/resume.
 (B) 2025-02-26 @qa document functions, classes and methods https://developer.wordpress.org/coding-standards/inline-documentation-standards/javascript/
-(B) 2025-02-26 @qa @library Parse more from the library page to avoid looking up book details if possible.
 (B) 2025-02-26 @ux Calculate the time each request takes, use value to estimate time remaining. https://www.geeksforgeeks.org/how-to-measure-time-taken-by-a-function-to-execute-using-javascript/
 (D) 2025-02-26 @qa @book-details Parse author from json_details instead of HTML.
 (Z) 2025-02-27 @ux Add notice to not navigate away from page or close browser window while running.
@@ -57,10 +55,7 @@
 (Z) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
 (B) 2025-02-27 Make API of *Page classes the same, with #fields and data().
 (D) 2025-02-27 Add to readme https://developer.chrome.com/docs/devtools/console/log
-(D) 2025-02-27 Try logging various results using console.table
-(D) 2025-02-27 Try using console.group to log final results.
 (D) 2025-02-27 @qa Subclass StatusNotifier to make a notifier for each step (orders, library, details)
 (B) 2025-02-27 @qa Have Page.fetchDoc() set this.url = url
 (A) 2025-02-27 Refactor StatusNotifier to inherit from DOM.
 (D) 2025-02-27 @ux Make the colors between the notifier and modal consistent.
-(B) 2025-02-27 @qa Move downloadr() functionality to Modal class.

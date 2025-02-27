@@ -1236,12 +1236,12 @@ a#ae-download-btn {
   background-color: #43c26d;
   color: #000;
   cursor: pointer;
-  
+
   text-decoration: none;
   font-family: sans-serif;
   text-align: center;
   font-size: 0.9em;
-  
+
   display: inline-block;
   padding: 10px 25px;
   text-indent: 15px;
@@ -1274,12 +1274,12 @@ a#ae-download-btn:after {
   height: 0;
   margin-left: 1px;
   margin-top: -7px;
-  
+
   border-style: solid;
   border-width: 4px 4px 0 4px;
   border-color: transparent;
   border-top-color: inherit;
-  
+
   animation: downloadArrow 2s linear infinite;
   animation-play-state: paused;
 }
@@ -1300,16 +1300,16 @@ a#ae-download-btn:hover:after {
     margin-top: -7px;
     opacity: 1;
   }
-  
+
   0.001% {
     margin-top: -15px;
     opacity: 0;
   }
-  
+
   50% {
     opacity: 1;
   }
-  
+
   100% {
     margin-top: 0;
     opacity: 0;
@@ -1363,6 +1363,18 @@ a#ae-download-btn:hover:after {
       this.#dl_btn.innerHTML = "Download";;
     }
     return this.#dl_btn;
+  }
+
+  set file(args) {
+    let [url, filename] = args;
+    this.dl_btn.element.href = url;
+    this.dl_btn.element.download = filename;
+    this.dl_btn.element.addEventListener("click", () => {
+        setTimeout(() => {
+          window.URL.revokeObjectURL(url);
+        }, 10);
+    });
+
   }
 
   show() {
@@ -1691,13 +1703,7 @@ Exporter = function() {
         type: type,
       });
       let url = URL.createObjectURL(file);
-      this.modal.dl_btn.element.href = url;
-      this.modal.dl_btn.element.download = filename;
-      this.modal.dl_btn.element.addEventListener("click", () => {
-          setTimeout(() => {
-            window.URL.revokeObjectURL(url);
-          }, 10);
-      });
+      this.modal.file = [url, filename];
       this.modal.show()
     },
 

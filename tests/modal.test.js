@@ -42,4 +42,13 @@ describe("Modal", function() {
     expect(modal.wrapper.style.display).toBe("none");
   });
 
+  test(".file =", function() {
+    let a = modal.dl_btn.element;
+    let [url, name] = ["blob:https://www.audible.com/9f6b4e9f-cd4e-4a60-b302-e8dbd5a485ec", "export.json"];
+    modal.file = [url, name];
+
+    expect(a.href).toBe(url);
+    expect(a.download).toBe(name);
+  });
+
 });

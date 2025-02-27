@@ -67,6 +67,18 @@ Modal = class extends DOM {
     return this.#dl_btn;
   }
 
+  set file(args) {
+    let [url, filename] = args;
+    this.dl_btn.element.href = url;
+    this.dl_btn.element.download = filename;
+    this.dl_btn.element.addEventListener("click", () => {
+        setTimeout(() => {
+          window.URL.revokeObjectURL(url);
+        }, 10);
+    });
+
+  }
+
   show() {
     this.#wrapper.style.display = "block";
   }
