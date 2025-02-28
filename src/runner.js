@@ -1,3 +1,3 @@
 CONSOLE_OUTPUT = true;
-e = Exporter();
+e = new Exporter();
 await e.run();

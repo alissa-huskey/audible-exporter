@@ -5,7 +5,6 @@ log = function(...msg) {
 hr = function(...msg) {
   console.log("****************************************", ...msg)
 }
-
 var CONSOLE_OUTPUT = false;
 const LOG_PREFIX = "[audible-exporter]";
 
@@ -159,7 +158,6 @@ cleanObject = function(ob) {
     }
   }, {});
 }
-
 Element = class {
   constructor(elm=null) {
     this.element = elm;
@@ -290,7 +288,6 @@ Element = class {
     }
   }
 }
-
 DOM = class {
   #style = null;
   #css = null;

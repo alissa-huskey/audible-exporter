@@ -14,8 +14,6 @@
 (Z) 2025-02-22 @feature Add my_rating
 (A) 2025-02-22 @qa Make sure book page fixtures are named correctly.
 (B) 2025-02-22 @qa set variables for css class names in appropriate places.
-(B) 2025-02-23 @qa refactor Exporter to be a class.
-(A) 2025-02-23 @qa have *Page inherit from Page class and add a url attr and fetch() method.
 (B) 2025-02-23 @ux Fix progress_callback to update every title, not every page.
 (B) 2025-02-23 @ux @feature Add 'Step x of y' to status bar.
 (B) 2025-02-23 @qa Refactor LibraryPageParser to take a page number and add a .fetch() method to set .doc @maybe

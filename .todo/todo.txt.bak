@@ -14,8 +14,7 @@
 (Z) 2025-02-22 @feature Add my_rating
 (A) 2025-02-22 @qa Make sure book page fixtures are named correctly.
 (B) 2025-02-22 @qa set variables for css class names in appropriate places.
-(B) 2025-02-23 @qa refactor Exporter to be a class.
-(A) 2025-02-23 @qa have *Page inherit from Page class and add a url attr and fetch() method.
+x 2025-02-28 2025-02-23 @qa have *Page inherit from Page class and add a url attr and fetch() method.
 (B) 2025-02-23 @ux Fix progress_callback to update every title, not every page.
 (B) 2025-02-23 @ux @feature Add 'Step x of y' to status bar.
 (B) 2025-02-23 @qa Refactor LibraryPageParser to take a page number and add a .fetch() method to set .doc @maybe
@@ -57,3 +56,4 @@
 (D) 2025-02-27 @ux Make the colors between the notifier and modal consistent.
 (B) 2025-02-27 @qa On file download, make sure that all TSV rows have the same values in the same order.
 (B) 2025-02-27 @ux Move timeRemaining to notifier.
+(B) 2025-02-27 @qa Change Modal.file = to take a File object instead of a list with url and filename.
