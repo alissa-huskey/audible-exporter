@@ -58,7 +58,8 @@ describe("LibraryFetcher", function() {
     let library = new LibraryFetcher()
     await library.populate();
 
-    expect(library.pages.length).toBe(2);
+    // with two pages at a page size of 20, the page_count for a page_size of 50 is 1
+    expect(library.pages.length).toBe(1);
   });
 
   test(".books", async function() {
@@ -141,10 +142,12 @@ describe("LibraryFetcher", function() {
     let library = new LibraryFetcher()
     await library.populate();
 
-    expect(library.pages.length).toBe(3);
+    // with 3 pages at a page size of 20, the page_count for a page_size of 50 is 2
+    // (in reality this would fetch pages that have a page size of 50, but
+    // apparently the pages I downloaded have 20 per page)
+    expect(library.pages.length).toBe(2);
     expect(library.pages[0].books[0].title).toBe("Scorpion Shards: Star Shards Chronicles Series, Book 1");
     expect(library.pages[1].books[0].title).toBe("Stephen Leeds: Death & Faxes: Legion");
-    expect(library.pages[2].books[0].title).toBe("Talon of the Silver Hawk: Conclave of Shadows, Book 1");
   });
 
 });

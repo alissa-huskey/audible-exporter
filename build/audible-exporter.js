@@ -769,61 +769,75 @@ NormalBookPage = class extends BookPage {
 }
 LibraryPage = class extends Page {
   #default_page_size = 20;
+  #rows = null;
+  #books = null;
 
   constructor(doc=null) {
     super();
     this.doc = doc;
+    this.#rows = null;
+    this.#books = null;
   }
 
   get page_size() {
+    if (!this.doc)
+      return
     let size = this.doc.qsf("select[name='pageSize'] option:checked")?.value || this.#default_page_size;
     return parseInt(size);
   }
 
   get page_num() {
+    if (!this.doc)
+      return
     let num = this.doc.qsf("span.pageNumberElement")?.innerHTML || 1;
     return parseInt(num);
   }
 
   get page_count() {
+    if (!this.doc)
+      return
     let links = this.doc.qs("a.pageNumberElement");
     let count = links.last?.innerHTML || 1;
     return parseInt(count);
   }
 
   get rows() {
-    let rows = this.doc.gc("adbl-library-content-row");
-    if (!rows.length) {
-      return [];
+    if (!this.doc)
+      return
+    if (!this.#rows) {
+      let rows = this.doc.gc("adbl-library-content-row");
+      this.#rows = rows.length ? rows : [];
     }
-    return rows;
+    return this.#rows;
   }
 
   get books() {
-    let books = this.rows.reduce((arr, row) => {
-      let ul = row.gcf("bc-list bc-list-nostyle");
-      let title = ul.gcf("bc-size-headline3")?.innerHTML?.trim() || "";
+    if (!this.#books) {
+      this.#books = this.rows.reduce((arr, row) => {
+        let ul = row.gcf("bc-list bc-list-nostyle");
+        let title = ul.gcf("bc-size-headline3")?.innerHTML?.trim() || "";
 
-      if (title == "Your First Listen") {
+        if (title == "Your First Listen") {
+          return arr;
+        }
+
+        arr.push({
+          id: row.id?.replace("adbl-library-content-row-", ""),
+          url: (
+            ul.gcf("bc-size-headline3")?.parentElement
+            ?.attributes["href"]?.value
+            ?.replace(/\?.+/, "")
+          ) || "",
+          title: entityDecode(title),
+          author: ul.gcf("authorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
+          narrator: ul.gcf("narratorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
+          series: ul.gcf("seriesLabel")?.gtf("a")?.innerHTML?.trim() || "",
+        });
+
         return arr;
-      }
-
-      arr.push({
-        id: row.id?.replace("adbl-library-content-row-", ""),
-        url: (
-          ul.gcf("bc-size-headline3")?.parentElement
-          ?.attributes["href"]?.value
-          ?.replace(/\?.+/, "")
-        ) || "",
-        title: entityDecode(title),
-        author: ul.gcf("authorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
-        narrator: ul.gcf("narratorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
-        series: ul.gcf("seriesLabel")?.gtf("a")?.innerHTML?.trim() || "",
-      });
-
-      return arr;
-    }, []);
-    return books;
+      }, []);
+    }
+    return this.#books;
   }
 }
 
@@ -831,9 +845,12 @@ LibraryFetcher = class extends Page {
   page_size = 50;
   base_url = "https://www.audible.com/library/titles";
 
+  #books = [];
+
   constructor() {
     super();
     this.pages = [];
+    this.#books = null;
   }
 
   async fetchPage(i) {
@@ -853,7 +870,7 @@ LibraryFetcher = class extends Page {
       }
 
       i++;
-    } while (i <= this.page_count);
+    } while (i < this.page_count);
 
     return this.pages;
   }
@@ -871,20 +888,19 @@ LibraryFetcher = class extends Page {
   }
 
   get books() {
-    if (!this.pages) {
-      return [];
+    if (!this.#books) {
+      let books = this.pages.reduce((arr, page) => {
+          return arr.concat(
+            // map books by URL to avoid duplicates
+            page.books.map((book) => [book.url, book])
+          );
+        },
+        [],
+      );
+
+      this.#books = Object.values(Object.fromEntries(books));
     }
-
-    let books = this.pages.reduce((arr, page) => {
-        return arr.concat(
-          // map books by URL to avoid duplicates
-          page.books.map((book) => [book.url, book])
-        );
-      },
-      [],
-    );
-
-    return Object.values(Object.fromEntries(books));
+    return this.#books;
   }
 }
 
@@ -1007,6 +1023,7 @@ OrderPage = class extends Page {
         if (p.title && p.author && !seen[p.id]) {
           seen[p.id] = true;
           arr.push({
+            id: p.id,
             url: `http://www.audible.com/pd/${p.id}`,
             title: p.title,
             author: p.author,
@@ -1020,6 +1037,7 @@ OrderPage = class extends Page {
   }
 }
 OrdersFetcher = class {
+  #count = 0;
   #items = [];
 
   async init() {
@@ -1055,17 +1073,33 @@ OrdersFetcher = class {
     }
   }
 
+  get count() {
+    if(!this.#count) {
+      this.#count = this.years.reduce(
+        (sum, y) => sum + y.pages.reduce( (count, p) => count + p.items.length, 0),
+        0
+      )
+    }
+    return this.#count;
+  }
+
   get items() {
     if (isEmpty(this.#items)) {
-      let items = [];
-      this.#items = this.years.reduce((arr, year) => {
-        items = year.pages.reduce((subarr, page) => {
-          return subarr.concat(page.items);
-        }, []);
-        return arr.concat(items);
-      }, []);
+      let items = {};
+      for (let year of this.years) {
+        for (let page of year.pages) {
+          for (let item of page.items) {
+            items[item.id] = item;
+          }
+        }
+      }
+      this.#items = items;
     }
     return this.#items;
+  }
+
+  set items(value) {
+    this.#items = value;
   }
 }
 DetailsFetcher = class {
@@ -1649,10 +1683,13 @@ StatusNotifier = class {
 }
 Exporter = class {
 
-  notifier = new StatusNotifier();
-  modal = new Modal();
-  library = new LibraryFetcher();
-  orders = new OrdersFetcher();
+  constructor() {
+    this.notifier = new StatusNotifier();
+    this.modal = new Modal();
+    this.orders = new OrdersFetcher();
+    this.library = new LibraryFetcher();
+    this.details = new DetailsFetcher();
+  }
 
   timeLeft(remaining) {
     let per_book = 1.9;
@@ -1686,17 +1723,17 @@ Exporter = class {
     return this.library.books;
   }
 
-  async getBookDetails(orders, library) {
+  async getBookDetails() {
     let library_info, order_info, book_info, info;
     let results = [];
 
-    let total_results = library.length;
+    let total_results = this.library.length;
 
     this.notifier.reset();
     this.notifier.text = "Retrieving additional information on titles...";
 
-    let fetcher = new DetailsFetcher(library);
-    await fetcher.populate((i, total, data) => {
+    this.details.library = this.library.books;
+    await this.details.populate((i, total, data) => {
       let percent = i/total;
       let remaining = total - i;
 
@@ -1706,12 +1743,12 @@ Exporter = class {
       `.trim();
     });
 
-    log_table("details", fetcher.books);
+    log_table("details", this.details.books);
 
-    for (library_info of library) {
-      book_info = fetcher.books[library_info.id],
-      order_info = orders.filter((i) => i.url == r.url) || {};
-      info = cleanObject({...library_info, ...book_info, order_info});
+    for (library_info of this.library.books) {
+      book_info = this.details.books[library_info.id];
+      order_info = this.orders.items[library_info.id];
+      info = cleanObject({...library_info, ...book_info, ...order_info});
       results.push(info);
     }
     return results;
@@ -1734,7 +1771,7 @@ Exporter = class {
 
       let orders = await this.getOrders();
       let library = await this.getLibrary();
-      let books = await this.getBookDetails(orders, library);
+      let books = await this.getBookDetails();
 
       if (!books) {
         error("Failed to download books.")

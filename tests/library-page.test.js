@@ -14,7 +14,7 @@ require("../src/exporter.js");
 
 describe("LibraryPage", function() {
 
-  let html = getFixtureFile("library-page-1.html");
+  let html = getFixtureFile("library-page-1-of-3.html");
   let doc = toDoc(html);
   let page = new LibraryPage(doc);
 
@@ -62,14 +62,12 @@ describe("LibraryPage", function() {
   });
 
   test(".page_size (selected)", function() {
-    let html = getFixtureFile("library.html");
-    let doc = toDoc(html);
-    let page = new LibraryPage(doc);
-    expect(page.page_size).toBe(50);
+    let page = new LibraryPage(fixtureDoc("library-page-1-of-3.html"));
+    expect(page.page_size).toBe(20);
   });
 
   test(".page_count", function() {
-    expect(page.page_count).toBe(65);
+    expect(page.page_count).toBe(3);
   });
 
 });

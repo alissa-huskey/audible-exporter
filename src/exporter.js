@@ -1,9 +1,12 @@
 Exporter = class {
 
-  notifier = new StatusNotifier();
-  modal = new Modal();
-  library = new LibraryFetcher();
-  orders = new OrdersFetcher();
+  constructor() {
+    this.notifier = new StatusNotifier();
+    this.modal = new Modal();
+    this.orders = new OrdersFetcher();
+    this.library = new LibraryFetcher();
+    this.details = new DetailsFetcher();
+  }
 
   timeLeft(remaining) {
     let per_book = 1.9;
@@ -37,17 +40,17 @@ Exporter = class {
     return this.library.books;
   }
 
-  async getBookDetails(orders, library) {
+  async getBookDetails() {
     let library_info, order_info, book_info, info;
     let results = [];
 
-    let total_results = library.length;
+    let total_results = this.library.length;
 
     this.notifier.reset();
     this.notifier.text = "Retrieving additional information on titles...";
 
-    let fetcher = new DetailsFetcher(library);
-    await fetcher.populate((i, total, data) => {
+    this.details.library = this.library.books;
+    await this.details.populate((i, total, data) => {
       let percent = i/total;
       let remaining = total - i;
 
@@ -57,12 +60,12 @@ Exporter = class {
       `.trim();
     });
 
-    log_table("details", fetcher.books);
+    log_table("details", this.details.books);
 
-    for (library_info of library) {
-      book_info = fetcher.books[library_info.id],
-      order_info = orders.filter((i) => i.url == r.url) || {};
-      info = cleanObject({...library_info, ...book_info, order_info});
+    for (library_info of this.library.books) {
+      book_info = this.details.books[library_info.id];
+      order_info = this.orders.items[library_info.id];
+      info = cleanObject({...library_info, ...book_info, ...order_info});
       results.push(info);
     }
     return results;
@@ -85,7 +88,7 @@ Exporter = class {
 
       let orders = await this.getOrders();
       let library = await this.getLibrary();
-      let books = await this.getBookDetails(orders, library);
+      let books = await this.getBookDetails();
 
       if (!books) {
         error("Failed to download books.")

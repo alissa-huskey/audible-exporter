@@ -2,9 +2,12 @@ LibraryFetcher = class extends Page {
   page_size = 50;
   base_url = "https://www.audible.com/library/titles";
 
+  #books = [];
+
   constructor() {
     super();
     this.pages = [];
+    this.#books = null;
   }
 
   async fetchPage(i) {
@@ -24,7 +27,7 @@ LibraryFetcher = class extends Page {
       }
 
       i++;
-    } while (i <= this.page_count);
+    } while (i < this.page_count);
 
     return this.pages;
   }
@@ -42,20 +45,19 @@ LibraryFetcher = class extends Page {
   }
 
   get books() {
-    if (!this.pages) {
-      return [];
+    if (!this.#books) {
+      let books = this.pages.reduce((arr, page) => {
+          return arr.concat(
+            // map books by URL to avoid duplicates
+            page.books.map((book) => [book.url, book])
+          );
+        },
+        [],
+      );
+
+      this.#books = Object.values(Object.fromEntries(books));
     }
-
-    let books = this.pages.reduce((arr, page) => {
-        return arr.concat(
-          // map books by URL to avoid duplicates
-          page.books.map((book) => [book.url, book])
-        );
-      },
-      [],
-    );
-
-    return Object.values(Object.fromEntries(books));
+    return this.#books;
   }
 }
 

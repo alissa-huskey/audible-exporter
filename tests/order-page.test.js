@@ -13,12 +13,11 @@ require("../src/order-page.js");
 
 describe("OrderPage", function() {
 
-  let html = getFixtureFile("order-page.html");
-  let doc = toDoc(html);
+  let doc = fixtureDoc("order-page.html");
   let page = new OrderPage(doc);
 
   test("new OrderPage(year, page)", async function() {
-    OrderPage.prototype.fetchDoc = mockFetchDoc("order-page.html")
+    OrderPage.prototype.fetchDoc = mockFetchDoc("order-page-2025-1-of-1.html")
     let page = new OrderPage(2025, 1);
     await page.get();
 
@@ -33,11 +32,11 @@ describe("OrderPage", function() {
 
   test("new OrderPage(date_range_string, page)", async function() {
     OrderPage.prototype.fetchDoc = mockFetchDoc("order-page.html")
-    let page = new OrderPage("last_90_days", 2, 30);
+    let page = new OrderPage("last_90_days", 1, 20);
 
     expect(page.year).toBe("last_90_days");
-    expect(page.page_num).toBe(2);
-    expect(page.per_page).toBe(30);
+    expect(page.page_num).toBe(1);
+    expect(page.per_page).toBe(20);
   });
 
   test("new OrderPage(year, page, per_page)", async function() {
@@ -61,15 +60,16 @@ describe("OrderPage", function() {
   test(".get()", async function() {
     OrderPage.prototype.fetchDoc = mockFetchDoc("order-page.html");
 
-    let page = new OrderPage("last_90_days", 2, 30);
-    let doc = await page.get();
+    let page = new OrderPage("last_90_days", 1, 20);
+    let element = await page.get();
 
-    expect(OrderPage.prototype.fetchDoc).toHaveBeenCalledWith(`${page.base_url}&df=last_90_days&pn=2&ps=30`)
-    expect(doc.title).toBe("Purchase History | Audible.com");
+    expect(OrderPage.prototype.fetchDoc).toHaveBeenCalledWith(`${page.base_url}&df=last_90_days&pn=1&ps=20`)
+    expect(element.title).toBe("Purchase History | Audible.com");
   });
 
   test(".page_count", function() {
-    expect(page.page_count).toBe(5);
+    let page = new OrderPage(fixtureDoc("order-page-2025-1-of-1.html"));
+    expect(page.page_count).toBe(1);
   });
 
   test(".years", function() {
@@ -78,6 +78,7 @@ describe("OrderPage", function() {
       "2017", "2016", "2015", "2014", "2013", "2012", "2011", "2010",
     ];
 
+    page = new OrderPage(fixtureDoc("order-page-2025-1-of-1.html"));
     expect(page.years).toEqual(years);
   });
 
@@ -105,10 +106,12 @@ describe("OrderPage", function() {
       "D01-7076604-3849823": {id: "D01-7076604-3849823", date: "10-15-2024", total: "1 Credit"},
     };
 
+    let page = new OrderPage(fixtureDoc("order-page.html"));
     expect(page.orders).toEqual(orders);
   });
 
   test(".purchases", function() {
+    let page = new OrderPage(fixtureDoc("order-page.html"));
     let purchases = [
         { "id": "B0CQ3759C3", "order_id": "D01-7379715-3760239", "amount": "1 Credit", "credits": "1.0", "title": "Wind and Truth", "author": "Brandon Sanderson" },
         { "id": "B0BG96TCVH", "order_id": "D01-4905288-1517028", "amount": "$11.85", "credits": "0.0", "title": "Demons of Good and Evil", "author": "Kim Harrison" },
@@ -163,53 +166,54 @@ describe("OrderPage", function() {
 
   test(".items", function() {
     let items = [
-        { "url": "http://www.audible.com/pd/B0CQ3759C3", "title": "Wind and Truth", "author": "Brandon Sanderson", "purchase_date": "01-21-2025" },
-        { "url": "http://www.audible.com/pd/B0BG96TCVH", "title": "Demons of Good and Evil", "author": "Kim Harrison", "purchase_date": "12-03-2024" },
-        { "url": "http://www.audible.com/pd/1713569264", "title": "The Queen", "author": "Jennifer L. Armentrout", "purchase_date": "12-03-2024" },
-        { "url": "http://www.audible.com/pd/B07C63PS2B", "title": "Belle and the Pirate: An Adult Fairytale Romance", "author": "Vivienne Savage", "purchase_date": "12-03-2024" },
-        { "url": "http://www.audible.com/pd/B0CTNT9XWX", "title": "Demon's Bluff", "author": "Kim Harrison", "purchase_date": "12-03-2024" },
-        { "url": "http://www.audible.com/pd/B01MZG3QE8", "title": "Raptor", "author": "Lindsay Buroker", "purchase_date": "12-03-2024" },
-        { "url": "http://www.audible.com/pd/B0BXY5Z6FB", "title": "A Soul of Ash and Blood", "author": "Jennifer L. Armentrout", "purchase_date": "12-03-2024" },
-        { "url": "http://www.audible.com/pd/B01HDYBVN0", "title": "The Blade's Memory", "author": "Lindsay Buroker", "purchase_date": "12-03-2024" },
-        { "url": "http://www.audible.com/pd/1250819148", "title": "The Lives of Saints", "author": "Leigh Bardugo", "purchase_date": "12-03-2024" },
-        { "url": "http://www.audible.com/pd/B01AMIGU3K", "title": "Patterns in the Dark", "author": "Lindsay Buroker", "purchase_date": "12-03-2024" },
-        { "url": "http://www.audible.com/pd/B071NQ26W4", "title": "Soulblade", "author": "Lindsay Buroker", "purchase_date": "12-03-2024" },
-        { "url": "http://www.audible.com/pd/B09NQH714M", "title": "Demon in the Wood", "author": "Leigh Bardugo", "purchase_date": "12-03-2024" },
-        { "url": "http://www.audible.com/pd/B07DL95FPK", "title": "Oaths", "author": "Lindsay Buroker", "purchase_date": "12-03-2024" },
-        { "url": "http://www.audible.com/pd/B00WKNCP0I", "title": "Dragon Blood - Omnibus", "author": "Lindsay Buroker", "purchase_date": "12-03-2024" },
-        { "url": "http://www.audible.com/pd/B08QSM8ZD5", "title": "Students of the Order", "author": "Edward W. Robertson, Sam Lang", "purchase_date": "12-02-2024" },
-        { "url": "http://www.audible.com/pd/1977335020", "title": "Full Tilt", "author": "Neal Shusterman", "purchase_date": "12-02-2024" },
-        { "url": "http://www.audible.com/pd/B0CVQWX66S", "title": "The Shattered Path", "author": "Edward W. Robertson", "purchase_date": "12-02-2024" },
-        { "url": "http://www.audible.com/pd/B0D828ZG1Y", "title": "Drumindor", "author": "Michael J. Sullivan", "purchase_date": "12-02-2024" },
-        { "url": "http://www.audible.com/pd/B0BKR32DG4", "title": "The 13th God", "author": "Edward W. Robertson", "purchase_date": "12-02-2024" },
-        { "url": "http://www.audible.com/pd/B09ZLN963G", "title": "Stephen Leeds: Death & Faxes", "author": "Brandon Sanderson, Max Epstein, David Pace, Michael Harkins", "purchase_date": "12-02-2024" },
-        { "url": "http://www.audible.com/pd/1982556803", "title": "Souls of Fire and Steel", "author": "Jill Criswell", "purchase_date": "12-02-2024" },
-        { "url": "http://www.audible.com/pd/1549187538", "title": "How the King of Elfhame Learned to Hate Stories", "author": "Holly Black, Rovina Cai - illustrator", "purchase_date": "12-02-2024" },
-        { "url": "http://www.audible.com/pd/B0D1W1YF7R", "title": "The Cycle of Galand", "author": "Edward W. Robertson", "purchase_date": "12-02-2024" },
-        { "url": "http://www.audible.com/pd/B0B3LJ7JWH", "title": "The Stolen Heir", "author": "Holly Black", "purchase_date": "12-02-2024" },
-        { "url": "http://www.audible.com/pd/0062951602", "title": "King Bullet", "author": "Richard Kadrey", "purchase_date": "12-02-2024" },
-        { "url": "http://www.audible.com/pd/B00BQZ5JKY", "title": "Song of the Beast", "author": "Carol Berg", "purchase_date": "12-02-2024" },
-        { "url": "http://www.audible.com/pd/B00M8U0CJ4", "title": "The Sense of Style", "author": "Steven Pinker", "purchase_date": "12-02-2024" },
-        { "url": "http://www.audible.com/pd/B09D1DH6NX", "title": "Monster Hunter Bloodlines", "author": "Larry Correia", "purchase_date": "12-02-2024" },
-        { "url": "http://www.audible.com/pd/B00PHPT01I", "title": "Legion: Skin Deep", "author": "Brandon Sanderson", "purchase_date": "12-02-2024" },
-        { "url": "http://www.audible.com/pd/B0B29L7HZ8", "title": "House of Blades", "author": "Will Wight", "purchase_date": "12-01-2024" },
-        { "url": "http://www.audible.com/pd/B003NX2RFM", "title": "At the Gates of Darkness", "author": "Raymond E. Feist", "purchase_date": "11-04-2024" },
-        { "url": "http://www.audible.com/pd/B00425LNN2", "title": "Rides a Dread Legion", "author": "Raymond E. Feist", "purchase_date": "10-31-2024" },
-        { "url": "http://www.audible.com/pd/0062975404", "title": "Wrath of a Mad God", "author": "Raymond E. Feist", "purchase_date": "10-29-2024" },
-        { "url": "http://www.audible.com/pd/0062975374", "title": "Into a Dark Realm", "author": "Raymond E. Feist", "purchase_date": "10-28-2024" },
-        { "url": "http://www.audible.com/pd/0062975366", "title": "Flight of the Nighthawks", "author": "Raymond E. Feist", "purchase_date": "10-25-2024" },
-        { "url": "http://www.audible.com/pd/0062975560", "title": "Exile's Return", "author": "Raymond E. Feist", "purchase_date": "10-24-2024" },
-        { "url": "http://www.audible.com/pd/0062975544", "title": "King of Foxes", "author": "Raymond E. Feist", "purchase_date": "10-23-2024" },
-        { "url": "http://www.audible.com/pd/0062975307", "title": "Jimmy the Hand", "author": "Raymond E. Feist, S.M. Stirling", "purchase_date": "10-23-2024" },
-        { "url": "http://www.audible.com/pd/0062975528", "title": "Talon of the Silver Hawk", "author": "Raymond E. Feist", "purchase_date": "10-21-2024" },
-        { "url": "http://www.audible.com/pd/0062975323", "title": "Murder in LaMut", "author": "Joel Rosenberg, Raymond E. Feist", "purchase_date": "10-20-2024" },
-        { "url": "http://www.audible.com/pd/006297534X", "title": "Honored Enemy", "author": "Raymond E. Feist, William R. Forstchen", "purchase_date": "10-19-2024" },
-        { "url": "http://www.audible.com/pd/0062978845", "title": "Krondor: Tear of the Gods", "author": "Raymond E. Feist", "purchase_date": "10-19-2024" },
-        { "url": "http://www.audible.com/pd/0062975498", "title": "Krondor: The Assassins", "author": "Raymond E. Feist", "purchase_date": "10-16-2024" },
-        { "url": "http://www.audible.com/pd/0062978810", "title": "Krondor the Betrayal", "author": "Raymond E. Feist", "purchase_date": "10-15-2024" }
+        { "id": "B0CQ3759C3", "url": "http://www.audible.com/pd/B0CQ3759C3", "title": "Wind and Truth", "author": "Brandon Sanderson", "purchase_date": "01-21-2025" },
+        { "id": "B0BG96TCVH", "url": "http://www.audible.com/pd/B0BG96TCVH", "title": "Demons of Good and Evil", "author": "Kim Harrison", "purchase_date": "12-03-2024" },
+        { "id": "1713569264", "url": "http://www.audible.com/pd/1713569264", "title": "The Queen", "author": "Jennifer L. Armentrout", "purchase_date": "12-03-2024" },
+        { "id": "B07C63PS2B", "url": "http://www.audible.com/pd/B07C63PS2B", "title": "Belle and the Pirate: An Adult Fairytale Romance", "author": "Vivienne Savage", "purchase_date": "12-03-2024" },
+        { "id": "B0CTNT9XWX", "url": "http://www.audible.com/pd/B0CTNT9XWX", "title": "Demon's Bluff", "author": "Kim Harrison", "purchase_date": "12-03-2024" },
+        { "id": "B01MZG3QE8", "url": "http://www.audible.com/pd/B01MZG3QE8", "title": "Raptor", "author": "Lindsay Buroker", "purchase_date": "12-03-2024" },
+        { "id": "B0BXY5Z6FB", "url": "http://www.audible.com/pd/B0BXY5Z6FB", "title": "A Soul of Ash and Blood", "author": "Jennifer L. Armentrout", "purchase_date": "12-03-2024" },
+        { "id": "B01HDYBVN0", "url": "http://www.audible.com/pd/B01HDYBVN0", "title": "The Blade's Memory", "author": "Lindsay Buroker", "purchase_date": "12-03-2024" },
+        { "id": "1250819148", "url": "http://www.audible.com/pd/1250819148", "title": "The Lives of Saints", "author": "Leigh Bardugo", "purchase_date": "12-03-2024" },
+        { "id": "B01AMIGU3K", "url": "http://www.audible.com/pd/B01AMIGU3K", "title": "Patterns in the Dark", "author": "Lindsay Buroker", "purchase_date": "12-03-2024" },
+        { "id": "B071NQ26W4", "url": "http://www.audible.com/pd/B071NQ26W4", "title": "Soulblade", "author": "Lindsay Buroker", "purchase_date": "12-03-2024" },
+        { "id": "B09NQH714M", "url": "http://www.audible.com/pd/B09NQH714M", "title": "Demon in the Wood", "author": "Leigh Bardugo", "purchase_date": "12-03-2024" },
+        { "id": "B07DL95FPK", "url": "http://www.audible.com/pd/B07DL95FPK", "title": "Oaths", "author": "Lindsay Buroker", "purchase_date": "12-03-2024" },
+        { "id": "B00WKNCP0I", "url": "http://www.audible.com/pd/B00WKNCP0I", "title": "Dragon Blood - Omnibus", "author": "Lindsay Buroker", "purchase_date": "12-03-2024" },
+        { "id": "B08QSM8ZD5", "url": "http://www.audible.com/pd/B08QSM8ZD5", "title": "Students of the Order", "author": "Edward W. Robertson, Sam Lang", "purchase_date": "12-02-2024" },
+        { "id": "1977335020", "url": "http://www.audible.com/pd/1977335020", "title": "Full Tilt", "author": "Neal Shusterman", "purchase_date": "12-02-2024" },
+        { "id": "B0CVQWX66S", "url": "http://www.audible.com/pd/B0CVQWX66S", "title": "The Shattered Path", "author": "Edward W. Robertson", "purchase_date": "12-02-2024" },
+        { "id": "B0D828ZG1Y", "url": "http://www.audible.com/pd/B0D828ZG1Y", "title": "Drumindor", "author": "Michael J. Sullivan", "purchase_date": "12-02-2024" },
+        { "id": "B0BKR32DG4", "url": "http://www.audible.com/pd/B0BKR32DG4", "title": "The 13th God", "author": "Edward W. Robertson", "purchase_date": "12-02-2024" },
+        { "id": "B09ZLN963G", "url": "http://www.audible.com/pd/B09ZLN963G", "title": "Stephen Leeds: Death & Faxes", "author": "Brandon Sanderson, Max Epstein, David Pace, Michael Harkins", "purchase_date": "12-02-2024" },
+        { "id": "1982556803", "url": "http://www.audible.com/pd/1982556803", "title": "Souls of Fire and Steel", "author": "Jill Criswell", "purchase_date": "12-02-2024" },
+        { "id": "1549187538", "url": "http://www.audible.com/pd/1549187538", "title": "How the King of Elfhame Learned to Hate Stories", "author": "Holly Black, Rovina Cai - illustrator", "purchase_date": "12-02-2024" },
+        { "id": "B0D1W1YF7R", "url": "http://www.audible.com/pd/B0D1W1YF7R", "title": "The Cycle of Galand", "author": "Edward W. Robertson", "purchase_date": "12-02-2024" },
+        { "id": "B0B3LJ7JWH", "url": "http://www.audible.com/pd/B0B3LJ7JWH", "title": "The Stolen Heir", "author": "Holly Black", "purchase_date": "12-02-2024" },
+        { "id": "0062951602", "url": "http://www.audible.com/pd/0062951602", "title": "King Bullet", "author": "Richard Kadrey", "purchase_date": "12-02-2024" },
+        { "id": "B00BQZ5JKY", "url": "http://www.audible.com/pd/B00BQZ5JKY", "title": "Song of the Beast", "author": "Carol Berg", "purchase_date": "12-02-2024" },
+        { "id": "B00M8U0CJ4", "url": "http://www.audible.com/pd/B00M8U0CJ4", "title": "The Sense of Style", "author": "Steven Pinker", "purchase_date": "12-02-2024" },
+        { "id": "B09D1DH6NX", "url": "http://www.audible.com/pd/B09D1DH6NX", "title": "Monster Hunter Bloodlines", "author": "Larry Correia", "purchase_date": "12-02-2024" },
+        { "id": "B00PHPT01I", "url": "http://www.audible.com/pd/B00PHPT01I", "title": "Legion: Skin Deep", "author": "Brandon Sanderson", "purchase_date": "12-02-2024" },
+        { "id": "B0B29L7HZ8", "url": "http://www.audible.com/pd/B0B29L7HZ8", "title": "House of Blades", "author": "Will Wight", "purchase_date": "12-01-2024" },
+        { "id": "B003NX2RFM", "url": "http://www.audible.com/pd/B003NX2RFM", "title": "At the Gates of Darkness", "author": "Raymond E. Feist", "purchase_date": "11-04-2024" },
+        { "id": "B00425LNN2", "url": "http://www.audible.com/pd/B00425LNN2", "title": "Rides a Dread Legion", "author": "Raymond E. Feist", "purchase_date": "10-31-2024" },
+        { "id": "0062975404", "url": "http://www.audible.com/pd/0062975404", "title": "Wrath of a Mad God", "author": "Raymond E. Feist", "purchase_date": "10-29-2024" },
+        { "id": "0062975374", "url": "http://www.audible.com/pd/0062975374", "title": "Into a Dark Realm", "author": "Raymond E. Feist", "purchase_date": "10-28-2024" },
+        { "id": "0062975366", "url": "http://www.audible.com/pd/0062975366", "title": "Flight of the Nighthawks", "author": "Raymond E. Feist", "purchase_date": "10-25-2024" },
+        { "id": "0062975560", "url": "http://www.audible.com/pd/0062975560", "title": "Exile's Return", "author": "Raymond E. Feist", "purchase_date": "10-24-2024" },
+        { "id": "0062975544", "url": "http://www.audible.com/pd/0062975544", "title": "King of Foxes", "author": "Raymond E. Feist", "purchase_date": "10-23-2024" },
+        { "id": "0062975307", "url": "http://www.audible.com/pd/0062975307", "title": "Jimmy the Hand", "author": "Raymond E. Feist, S.M. Stirling", "purchase_date": "10-23-2024" },
+        { "id": "0062975528", "url": "http://www.audible.com/pd/0062975528", "title": "Talon of the Silver Hawk", "author": "Raymond E. Feist", "purchase_date": "10-21-2024" },
+        { "id": "0062975323", "url": "http://www.audible.com/pd/0062975323", "title": "Murder in LaMut", "author": "Joel Rosenberg, Raymond E. Feist", "purchase_date": "10-20-2024" },
+        { "id": "006297534X", "url": "http://www.audible.com/pd/006297534X", "title": "Honored Enemy", "author": "Raymond E. Feist, William R. Forstchen", "purchase_date": "10-19-2024" },
+        { "id": "0062978845", "url": "http://www.audible.com/pd/0062978845", "title": "Krondor: Tear of the Gods", "author": "Raymond E. Feist", "purchase_date": "10-19-2024" },
+        { "id": "0062975498", "url": "http://www.audible.com/pd/0062975498", "title": "Krondor: The Assassins", "author": "Raymond E. Feist", "purchase_date": "10-16-2024" },
+        { "id": "0062978810", "url": "http://www.audible.com/pd/0062978810", "title": "Krondor the Betrayal", "author": "Raymond E. Feist", "purchase_date": "10-15-2024" }
     ];
 
+    let doc = fixtureDoc("order-page.html");
+    let page = new OrderPage(doc);
     expect(page.items).toEqual(items);
   });
-
 });

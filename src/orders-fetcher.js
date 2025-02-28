@@ -1,4 +1,5 @@
 OrdersFetcher = class {
+  #count = 0;
   #items = [];
 
   async init() {
@@ -34,16 +35,32 @@ OrdersFetcher = class {
     }
   }
 
+  get count() {
+    if(!this.#count) {
+      this.#count = this.years.reduce(
+        (sum, y) => sum + y.pages.reduce( (count, p) => count + p.items.length, 0),
+        0
+      )
+    }
+    return this.#count;
+  }
+
   get items() {
     if (isEmpty(this.#items)) {
-      let items = [];
-      this.#items = this.years.reduce((arr, year) => {
-        items = year.pages.reduce((subarr, page) => {
-          return subarr.concat(page.items);
-        }, []);
-        return arr.concat(items);
-      }, []);
+      let items = {};
+      for (let year of this.years) {
+        for (let page of year.pages) {
+          for (let item of page.items) {
+            items[item.id] = item;
+          }
+        }
+      }
+      this.#items = items;
     }
     return this.#items;
+  }
+
+  set items(value) {
+    this.#items = value;
   }
 }

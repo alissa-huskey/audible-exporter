@@ -117,6 +117,7 @@ OrderPage = class extends Page {
         if (p.title && p.author && !seen[p.id]) {
           seen[p.id] = true;
           arr.push({
+            id: p.id,
             url: `http://www.audible.com/pd/${p.id}`,
             title: p.title,
             author: p.author,

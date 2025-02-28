@@ -56,3 +56,4 @@
 (B) 2025-02-27 @qa On file download, make sure that all TSV rows have the same values in the same order.
 (B) 2025-02-27 @ux Move timeRemaining to notifier.
 (B) 2025-02-27 @qa Change Modal.file = to take a File object instead of a list with url and filename.
+(A) 2025-02-28 @qa Move logic combining order, library and detail info to its own method in exporter.
