@@ -216,4 +216,15 @@ describe("OrderPage", function() {
     let page = new OrderPage(doc);
     expect(page.items).toEqual(items);
   });
+
+  test(".items errors", function() {
+    let page = new OrderPage();
+    let spy = jest.spyOn(global.console, "error")
+    global.console.errors = spy.mockImplementation(() => {});;
+
+    page.items;
+
+    expect(spy.mock.calls).toHaveLength(1);
+  });
+
 });

@@ -70,4 +70,14 @@ describe("LibraryPage", function() {
     expect(page.page_count).toBe(3);
   });
 
+  test(".books errors", function() {
+    let page = new LibraryPage();
+    let spy = jest.spyOn(global.console, "error")
+    global.console.errors = spy.mockImplementation(() => {});;
+
+    page.books;
+
+    expect(spy.mock.calls).toHaveLength(1);
+  });
+
 });

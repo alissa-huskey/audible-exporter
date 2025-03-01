@@ -60,3 +60,5 @@
 (D) 2025-03-01 @qa @pages Parse data from multiple fields, select the first one that has content.
 (M) 2025-03-01 @feature Get a list of collections a book belongs to
 (B) 2025-03-01 @book-details Parse/handle multiple series.
+(B) 2025-03-01 @qa Rename NormalBookPage -> LegacyBookPage
+(A) 2025-03-01 @bug Check B002V1J7QY -- weird in TSV: B002V1J7QY		The Art of Deception: Controlling the Human Element of Security	Kevin Mitnick	Nick Sullivan

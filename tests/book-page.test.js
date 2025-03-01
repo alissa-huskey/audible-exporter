@@ -266,4 +266,15 @@ describe("ADBLBookPage", function() {
   test(".sub_category", function() {
     expect(page.sub_category).toBe("Fantasy");
   });
+
+  test(".data() errors", function() {
+    let page = new BookPage();
+    let spy = jest.spyOn(global.console, "error")
+    global.console.errors = spy.mockImplementation(() => {});;
+
+    page.data();
+
+    expect(spy.mock.calls).toHaveLength(10);
+  });
+
 });

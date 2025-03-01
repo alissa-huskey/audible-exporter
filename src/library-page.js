@@ -44,29 +44,33 @@ LibraryPage = class extends Page {
 
   get books() {
     if (!this.#books) {
-      this.#books = this.rows.reduce((arr, row) => {
-        let ul = row.gcf("bc-list bc-list-nostyle");
-        let title = ul.gcf("bc-size-headline3")?.innerHTML?.trim() || "";
+      try {
+        this.#books = this.rows.reduce((arr, row) => {
+          let ul = row.gcf("bc-list bc-list-nostyle");
+          let title = ul.gcf("bc-size-headline3")?.innerHTML?.trim() || "";
 
-        if (title == "Your First Listen") {
+          if (title == "Your First Listen") {
+            return arr;
+          }
+
+          arr.push({
+            id: row.id?.replace("adbl-library-content-row-", ""),
+            url: (
+              ul.gcf("bc-size-headline3")?.parentElement
+              ?.attributes["href"]?.value
+              ?.replace(/\?.+/, "")
+            ) || "",
+            title: entityDecode(title),
+            author: ul.gcf("authorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
+            narrator: ul.gcf("narratorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
+            series: ul.gcf("seriesLabel")?.gtf("a")?.innerHTML?.trim() || "",
+          });
+
           return arr;
-        }
-
-        arr.push({
-          id: row.id?.replace("adbl-library-content-row-", ""),
-          url: (
-            ul.gcf("bc-size-headline3")?.parentElement
-            ?.attributes["href"]?.value
-            ?.replace(/\?.+/, "")
-          ) || "",
-          title: entityDecode(title),
-          author: ul.gcf("authorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
-          narrator: ul.gcf("narratorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
-          series: ul.gcf("seriesLabel")?.gtf("a")?.innerHTML?.trim() || "",
-        });
-
-        return arr;
-      }, []);
+        }, []);
+      } catch (err) {
+        error(err);
+      }
     }
     return this.#books;
   }

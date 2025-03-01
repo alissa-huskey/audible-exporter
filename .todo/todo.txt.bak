@@ -59,3 +59,5 @@
 (D) 2025-03-01 @download Add purchase_timestamp.
 (D) 2025-03-01 @qa @pages Parse data from multiple fields, select the first one that has content.
 (M) 2025-03-01 @feature Get a list of collections a book belongs to
+(B) 2025-03-01 @book-details Parse/handle multiple series.
+(B) 2025-03-01 @qa Rename NormalBookPage -> LegacyBookPage

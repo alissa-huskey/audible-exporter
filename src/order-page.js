@@ -29,6 +29,7 @@ OrderPage = class extends Page {
     }
 
     this.per_page = per_page || this.#default_per_page;
+    this.#items = null;
   }
 
   async get() {
@@ -111,21 +112,25 @@ OrderPage = class extends Page {
   }
 
   get items() {
-    if (this.doc && isEmpty(this.#items)) {
-      let seen = {};
-      this.#items = this.purchases.reduce((arr, p) => {
-        if (p.title && p.author && !seen[p.id]) {
-          seen[p.id] = true;
-          arr.push({
-            id: p.id,
-            url: `http://www.audible.com/pd/${p.id}`,
-            title: p.title,
-            author: p.author,
-            purchase_date: this.orders[p.order_id].date,
-          });
-        }
-        return arr;
-      }, []);
+    if (!this.#items) {
+      try {
+        let seen = {};
+        this.#items = this.purchases.reduce((arr, p) => {
+          if (p.title && p.author && !seen[p.id]) {
+            seen[p.id] = true;
+            arr.push({
+              id: p.id,
+              url: `http://www.audible.com/pd/${p.id}`,
+              title: p.title,
+              author: p.author,
+              purchase_date: this.orders[p.order_id].date,
+            });
+          }
+          return arr;
+        }, []);
+      } catch (err) {
+        error(err);
+      }
     }
     return this.#items;
   }

@@ -456,22 +456,6 @@ BookPage = class extends Page {
     this.doc = doc;
   }
 
-  getSubgenre(categories, tags) {
-    // return the second category if there is one
-    if (categories.length == 2) {
-      return categories[1];
-    }
-
-    // find the first subgenre listed in tags
-    let listed_subgenres = [...(new Set(tags)).intersection(new Set(subgenres))];
-    if (listed_subgenres.length >= 1) {
-      return listed_subgenres[0];
-    }
-
-    // return the first tag
-    return tags[0]
-  }
-
   /* Convert duration string to minutes int.
    *
    * @example
@@ -484,16 +468,18 @@ BookPage = class extends Page {
   }
 
   data() {
-    let data;
+    let f;
+    let data = {};
 
-    try {
-      data = Object.fromEntries(this.#fields.map((f) => {
-        return [f, this[f]]
-      }));
-      return cleanObject(data)
-    } catch (err) {
-      error(`Parse failure, url: "${this.url}".`, err);
+    for (let i in this.#fields) {
+      try{
+        f = this.#fields[i];
+        data[f] = this[f];
+      } catch (err) {
+        error(`BookPage.${f} (url: ${this.url}):\n`, err);
+      }
     }
+    return cleanObject(data)
   }
 
   get json_audiobook() {
@@ -529,20 +515,20 @@ BookPage = class extends Page {
   }
 
   get rating() {
-    let rating = tryFloat(this.json_audiobook?.aggregateRating?.ratingValue);
+    let rating = tryFloat(this.json_audiobook.aggregateRating.ratingValue);
     return rating ? +rating.toFixed(1) : ""
   }
 
   get num_ratings() {
-    return tryInt(this.json_audiobook?.aggregateRating?.ratingCount);
+    return tryInt(this.json_audiobook.aggregateRating.ratingCount);
   }
 
   get id() {
-    return this.json_product?.productID;
+    return this.json_product.productID;
   }
 
   get date() {
-    let date = this.json_audiobook?.datePublished;
+    let date = this.json_audiobook.datePublished;
     if (!date)
       return
     return new Date(`${date}:00:00:01`)
@@ -556,7 +542,7 @@ BookPage = class extends Page {
   }
 
   get release_timestamp() {
-    return this.date?.getTime();
+    return this.date.getTime();
   }
 
   get title() {
@@ -568,11 +554,11 @@ BookPage = class extends Page {
   }
 
   get publisher() {
-    return this.json_audiobook?.publisher;
+    return this.json_audiobook.publisher;
   }
 
   get publisher_summary() {
-    let text = this.json_audiobook?.description;
+    let text = this.json_audiobook.description;
     if (!text)
       return
     return stripHTML(text)
@@ -586,15 +572,32 @@ BookPage = class extends Page {
   }
 
   get language() {
-    let lang = this.json_audiobook?.inLanguage;
-    if (!lang) {
-      return;
-    }
+    let lang = this.json_audiobook.inLanguage;
     return titleCase(lang);
   }
 
   get categories_list() {
     return [];
+  }
+
+  /**
+   * The duration in minutes.
+   *
+   * @type      {number}
+   * @abstract
+   */
+  get duration_minutes() {
+    return null;
+  }
+
+  /**
+   * The book number in a series.
+   *
+   * @type      {number}
+   * @abstract
+   */
+  get book() {
+    return null;
   }
 
   get tags_list() {
@@ -604,25 +607,30 @@ BookPage = class extends Page {
   get category_type() {
     // check if the fiction tag is listed in the tags
     for (var genre of this.#category_types) {
-      let idx = this.tags_list?.indexOf(genre);
+      let idx = this.tags_list.indexOf(genre);
       if (idx && idx >= 0) {
         return genre.toLowerCase();
       }
     }
 
     let all = [...this.categories_list, ...this.tags_list];
+
+    // check if the word "fiction" or "nonfiction" is in any of the categories or tags
     for (var genre of this.#category_types) {
       if (all.some( (c) => { return c.toLowerCase().includes(genre.toLowerCase()) } )) {
         return genre.toLowerCase();
       }
     }
 
+    // get the fiction/nonfiction designation from #category_genres
     for (var label of all) {
       genre = this.#category_genres[label];
       if (genre) {
         return genre.toLowerCase();
       }
     }
+
+    return null;
   }
 
   get tags() {
@@ -631,13 +639,13 @@ BookPage = class extends Page {
       if (this.main_category) {
         exclude.push(this.main_category);
       }
-      this.#tags = this.tags_list?.filter((t) => {return !exclude.includes(t)});
+      this.#tags = this.tags_list.filter((t) => {return !exclude.includes(t)});
     }
     return this.#tags;
   }
 
   get main_category() {
-    return this.categories_list?.[0];
+    return this.categories_list[0] || null;
   }
 
   get sub_category() {
@@ -653,7 +661,7 @@ BookPage = class extends Page {
       }
 
       // return the first tag
-      return this.tags[0]
+      return this.tags[0] || null;
   }
 
   get categories() {
@@ -695,7 +703,7 @@ ADBLBookPage = class extends BookPage {
 
   // book number
   get book() {
-    return /Book (\d+)/i.exec(this.info.series?.[0].part)?.[1] || "";
+    return /Book (\d+)/i.exec(this.info.series[0].part)[1] || "";
   }
 
   // get summary() {
@@ -703,7 +711,7 @@ ADBLBookPage = class extends BookPage {
   // }
 
   get categories_list() {
-    return this.info.categories?.map((c) => c.name) || [];
+    return this.info.categories.map((c) => c.name) || [];
   }
 
   get tags_list() {
@@ -725,7 +733,7 @@ NormalBookPage = class extends BookPage {
   // }
 
   get duration_minutes() {
-    let text = this.doc.gcf("runtimeLabel")?.innerHTML?.replace(/length:/i, "");
+    let text = this.doc.gcf("runtimeLabel").innerHTML.replace(/length:/i, "");
     return this.toMinutes(text);
   }
 
@@ -744,7 +752,7 @@ NormalBookPage = class extends BookPage {
 
   // book number
   get book() {
-    return /, Book (\d+)/i.exec(this.doc.gcf("seriesLabel")?.innerHTML)?.[1] || "";
+    return /, Book (\d+)/i.exec(this.doc.gcf("seriesLabel").innerHTML)[1] || "";
   }
 
   // get summary() {
@@ -760,7 +768,7 @@ NormalBookPage = class extends BookPage {
   // }
 
   get tags_list() {
-    return this.doc.gc("bc-chip-text").map((c) => { return c.attributes["data-text"]?.value });
+    return this.doc.gc("bc-chip-text").map((c) => { return c.attributes["data-text"].value });
   }
 
   get categories_list() {
@@ -813,29 +821,33 @@ LibraryPage = class extends Page {
 
   get books() {
     if (!this.#books) {
-      this.#books = this.rows.reduce((arr, row) => {
-        let ul = row.gcf("bc-list bc-list-nostyle");
-        let title = ul.gcf("bc-size-headline3")?.innerHTML?.trim() || "";
+      try {
+        this.#books = this.rows.reduce((arr, row) => {
+          let ul = row.gcf("bc-list bc-list-nostyle");
+          let title = ul.gcf("bc-size-headline3")?.innerHTML?.trim() || "";
 
-        if (title == "Your First Listen") {
+          if (title == "Your First Listen") {
+            return arr;
+          }
+
+          arr.push({
+            id: row.id?.replace("adbl-library-content-row-", ""),
+            url: (
+              ul.gcf("bc-size-headline3")?.parentElement
+              ?.attributes["href"]?.value
+              ?.replace(/\?.+/, "")
+            ) || "",
+            title: entityDecode(title),
+            author: ul.gcf("authorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
+            narrator: ul.gcf("narratorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
+            series: ul.gcf("seriesLabel")?.gtf("a")?.innerHTML?.trim() || "",
+          });
+
           return arr;
-        }
-
-        arr.push({
-          id: row.id?.replace("adbl-library-content-row-", ""),
-          url: (
-            ul.gcf("bc-size-headline3")?.parentElement
-            ?.attributes["href"]?.value
-            ?.replace(/\?.+/, "")
-          ) || "",
-          title: entityDecode(title),
-          author: ul.gcf("authorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
-          narrator: ul.gcf("narratorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
-          series: ul.gcf("seriesLabel")?.gtf("a")?.innerHTML?.trim() || "",
-        });
-
-        return arr;
-      }, []);
+        }, []);
+      } catch (err) {
+        error(err);
+      }
     }
     return this.#books;
   }
@@ -939,6 +951,9 @@ OrderPage = class extends Page {
     }
 
     this.per_page = per_page || this.#default_per_page;
+    this.#purchases = null;
+    this.#orders = null;
+    this.#items = null;
   }
 
   async get() {
@@ -1021,18 +1036,22 @@ OrderPage = class extends Page {
   }
 
   get items() {
-    if (this.doc && isEmpty(this.#items)) {
+    if (!this.#items) {
       let seen = {};
       this.#items = this.purchases.reduce((arr, p) => {
-        if (p.title && p.author && !seen[p.id]) {
-          seen[p.id] = true;
-          arr.push({
-            id: p.id,
-            url: `http://www.audible.com/pd/${p.id}`,
-            title: p.title,
-            author: p.author,
-            purchase_date: this.orders[p.order_id].date,
-          });
+        try {
+          if (p.title && p.author && !seen[p.id]) {
+            seen[p.id] = true;
+            arr.push({
+              id: p.id,
+              url: `http://www.audible.com/pd/${p.id}`,
+              title: p.title,
+              author: p.author,
+              purchase_date: this.orders[p.order_id].date,
+            });
+          }
+        } catch (err) {
+          error(`OrderPage.items (year: ${this.year}, page: ${this.page_num}, id: ${p.id}):`, err);
         }
         return arr;
       }, []);
