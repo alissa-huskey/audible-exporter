@@ -59,5 +59,9 @@ LibraryFetcher = class extends Page {
     }
     return this.#books;
   }
+
+  set books(value) {
+    this.#books = value;
+  }
 }
 

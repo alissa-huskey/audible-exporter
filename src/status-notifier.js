@@ -146,6 +146,13 @@ StatusNotifier = class {
     }
   }
 
+  timeLeft(remaining) {
+    let per_book = 1.9;
+
+    return Math.round((remaining * per_book) / 60);
+  }
+
+
   // add the status notifier to the DOM
   create() {
     let notifier = Element.gi(this.selectors.notifier);

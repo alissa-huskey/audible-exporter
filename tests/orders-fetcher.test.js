@@ -83,12 +83,12 @@ describe("OrdersFetcher", function() {
 
   test(".items", function() {
     let years = [
-      {year: 2025, page_count: 1, pages: [{items:[
+      {year: 2025, page_count: 1, pages: [{items: [
         { "id": "B0CQ3759C3", "url": "http://www.audible.com/pd/B0CQ3759C3", "title": "Wind and Truth", "author": "Brandon Sanderson", "purchase_date": "01-21-2025" },
         { "id": "B0BG96TCVH", "url": "http://www.audible.com/pd/B0BG96TCVH", "title": "Demons of Good and Evil", "author": "Kim Harrison", "purchase_date": "12-03-2024" },
         { "id": "1713569264", "url": "http://www.audible.com/pd/1713569264", "title": "The Queen", "author": "Jennifer L. Armentrout", "purchase_date": "12-03-2024" },
       ]}]},
-      {year: 2024, page_count: 1, pages: [{items:[
+      {year: 2024, page_count: 1, pages: [{items: [
         { "id": "1250819148", "url": "http://www.audible.com/pd/1250819148", "title": "The Lives of Saints", "author": "Leigh Bardugo", "purchase_date": "12-03-2024" },
         { "id": "B01AMIGU3K", "url": "http://www.audible.com/pd/B01AMIGU3K", "title": "Patterns in the Dark", "author": "Lindsay Buroker", "purchase_date": "12-03-2024" },
         { "id": "B071NQ26W4", "url": "http://www.audible.com/pd/B071NQ26W4", "title": "Soulblade", "author": "Lindsay Buroker", "purchase_date": "12-03-2024" },
@@ -97,7 +97,6 @@ describe("OrdersFetcher", function() {
 
     orders = new OrdersFetcher();
     orders.years = years;
-    orders.items;
 
     expect(orders.count).toBe(6);
     expect(orders.items["B0CQ3759C3"]).toEqual(years[0].pages[0].items[0]);

@@ -12,7 +12,6 @@
 (D) 2025-02-22 @bug fix purchase_date
 (Z) 2025-02-22 @feature Add my_review
 (Z) 2025-02-22 @feature Add my_rating
-(A) 2025-02-22 @qa Make sure book page fixtures are named correctly.
 (B) 2025-02-22 @qa set variables for css class names in appropriate places.
 (B) 2025-02-23 @ux Fix progress_callback to update every title, not every page.
 (B) 2025-02-23 @ux @feature Add 'Step x of y' to status bar.
@@ -56,4 +55,8 @@
 (B) 2025-02-27 @qa On file download, make sure that all TSV rows have the same values in the same order.
 (B) 2025-02-27 @ux Move timeRemaining to notifier.
 (B) 2025-02-27 @qa Change Modal.file = to take a File object instead of a list with url and filename.
-(A) 2025-02-28 @qa Move logic combining order, library and detail info to its own method in exporter.
+(D) 2025-02-28 @ux @download In TSV download, join categories.
+(B) 2025-02-28 @ux @download In final data, make sure title is like: 'Wind and Truth', not 'Wind and Truth: Book Five of the Stormlight Archive'
+(B) 2025-02-28 @ux @download Add book (number) to final download.
+(B) 2025-02-28 @ux @download Compare results from original download to current results
+(A) 2025-02-28 @housekeeping Fix instructions to download JSON on README.

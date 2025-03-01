@@ -902,6 +902,10 @@ LibraryFetcher = class extends Page {
     }
     return this.#books;
   }
+
+  set books(value) {
+    this.#books = value;
+  }
 }
 
 OrderPage = class extends Page {
@@ -1038,12 +1042,15 @@ OrderPage = class extends Page {
 }
 OrdersFetcher = class {
   #count = 0;
-  #items = [];
+  #items = null;
 
   async init() {
     let page = new OrderPage("last_90_days", 1, 20);
     await page.get();
     this.years = page.years.map((year) => ({year: tryInt(year), page_count: null, pages: []}));
+
+    this.#count = 0;
+    this.#items = null;
   }
 
   async populate(progress_callback=null) {
@@ -1084,7 +1091,7 @@ OrdersFetcher = class {
   }
 
   get items() {
-    if (isEmpty(this.#items)) {
+    if (!this.#items) {
       let items = {};
       for (let year of this.years) {
         for (let page of year.pages) {
@@ -1103,34 +1110,51 @@ OrdersFetcher = class {
   }
 }
 DetailsFetcher = class {
+  #books = {}
+
   constructor(library=null) {
     this.library = library;
-    this.books = {};
+    this.#books = null;
+    this.pages = [];
   }
 
   async populate(progress_callback=null) {
-    let book, remaining
-    let i = 0
+    let book, data;
+
     let total = this.library.length;
+    let i = 0;
 
     for (book of this.library) {
       let page = await BookPage.get(book.url.replace("http", "https"));
+
       page.url = book.url;
-      try {
-        let data = page.data();
-        if (!data) 
-          continue
+      this.pages.push(page);
 
-        this.books[data.id] = data;
-        if (progress_callback) {
-          progress_callback(i, total, data);
-        }
-      } catch {
-
+      if (progress_callback) {
+        progress_callback(i, total, data);
       }
-
       i++;
     }
+  }
+
+  get books() {
+    if (!this.#books) {
+      this.#books = {};
+      let data, page;
+
+      for (page of this.pages) {
+        if (!page) 
+          continue
+
+        let data = page.data();
+        this.#books[data.id] = data;
+      }
+    }
+    return this.#books;
+  }
+
+  set books(value) {
+    this.#books = value
   }
 }
 
@@ -1654,6 +1678,13 @@ StatusNotifier = class {
     }
   }
 
+  timeLeft(remaining) {
+    let per_book = 1.9;
+
+    return Math.round((remaining * per_book) / 60);
+  }
+
+
   // add the status notifier to the DOM
   create() {
     let notifier = Element.gi(this.selectors.notifier);
@@ -1689,14 +1720,8 @@ Exporter = class {
     this.orders = new OrdersFetcher();
     this.library = new LibraryFetcher();
     this.details = new DetailsFetcher();
+    this.results = [];
   }
-
-  timeLeft(remaining) {
-    let per_book = 1.9;
-
-    return Math.round((remaining * per_book) / 60);
-  }
-
   async getOrders() {
     this.notifier.reset();
     this.notifier.text = "Retrieving purchases...";
@@ -1725,9 +1750,6 @@ Exporter = class {
 
   async getBookDetails() {
     let library_info, order_info, book_info, info;
-    let results = [];
-
-    let total_results = this.library.length;
 
     this.notifier.reset();
     this.notifier.text = "Retrieving additional information on titles...";
@@ -1739,11 +1761,16 @@ Exporter = class {
 
       this.notifier.updateProgress(percent, i);
       this.notifier.text = `
-        Retrieving book ${(i+1).toLocaleString()} of ${total.toLocaleString()} (approx ${this.timeLeft(remaining)} minutes remaining)
+        Retrieving book ${(i+1).toLocaleString()} of ${total.toLocaleString()} (approx ${this.notifier.timeLeft(remaining)} minutes remaining)
       `.trim();
     });
 
     log_table("details", this.details.books);
+  }
+
+  getResults() {
+    let library_info, order_info, book_info, info;
+    let results = [];
 
     for (library_info of this.library.books) {
       book_info = this.details.books[library_info.id];
@@ -1751,6 +1778,10 @@ Exporter = class {
       info = cleanObject({...library_info, ...book_info, ...order_info});
       results.push(info);
     }
+
+    log_table("Your audible data", results);
+
+    this.results = results;
     return results;
   }
 
@@ -1769,9 +1800,10 @@ Exporter = class {
       this.notifier.create();
       this.notifier.text = "Initiating download...";
 
-      let orders = await this.getOrders();
-      let library = await this.getLibrary();
-      let books = await this.getBookDetails();
+      await this.getOrders();
+      await this.getLibrary();
+      await this.getBookDetails();
+      this.getResults();
 
       if (!books) {
         error("Failed to download books.")
@@ -1784,12 +1816,11 @@ Exporter = class {
       let elapsed = (after - before) / 1000 / 60;
 
       info(`Done. (${books.length} books, ${elapsed.toFixed(2)} minutes)`);
-      log_table("Your audible data", books);
 
       this.notifier.percent = 1;
       this.notifier.text = "Done."
 
-      this.download(books);
+      this.download(this.books);
 
     } catch (err) {
       error("Fatal error:", err, err.name, err.message);

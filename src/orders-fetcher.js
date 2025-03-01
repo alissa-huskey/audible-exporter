@@ -1,11 +1,14 @@
 OrdersFetcher = class {
   #count = 0;
-  #items = [];
+  #items = null;
 
   async init() {
     let page = new OrderPage("last_90_days", 1, 20);
     await page.get();
     this.years = page.years.map((year) => ({year: tryInt(year), page_count: null, pages: []}));
+
+    this.#count = 0;
+    this.#items = null;
   }
 
   async populate(progress_callback=null) {
@@ -46,7 +49,7 @@ OrdersFetcher = class {
   }
 
   get items() {
-    if (isEmpty(this.#items)) {
+    if (!this.#items) {
       let items = {};
       for (let year of this.years) {
         for (let page of year.pages) {

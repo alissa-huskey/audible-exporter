@@ -36,14 +36,23 @@ describe("DetailsFetcher", function() {
 
     let fetcher = new DetailsFetcher(library);
     await fetcher.populate();
-    let book = fetcher.books["B009CZNUGU"];
 
-    expect(book).toBeDefined();
-    expect(book.title == "Midnight Riot");
+    expect(fetcher.pages).toHaveLength(1);
+    expect(fetcher.pages[0].constructor.name).toBe("ADBLBookPage");
   })
 
-  test(".merge", function() {
-    
+  test(".books", async function() {
+    Page.prototype.fetchDoc = mockFetchDoc("book-details.html")
+
+    let library = [{url: "http://www.audible.com/pd/B009CZNUGU"}]
+
+    let fetcher = new DetailsFetcher(library);
+    await fetcher.populate();
+    let book = fetcher.books["B009CZNUGU"];
+
+    expect(Object.values(fetcher.pages)[0] == "Midnight Riot");
+    expect(book).toBeDefined();
+    expect(book.title == "Midnight Riot");
   })
 
 });
