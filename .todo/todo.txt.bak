@@ -40,7 +40,6 @@
 (A) 2025-02-27 @qa Change http to https for all requests in Page.fetchDoc()
 (Z) 2025-02-27 @ux Display error message dialog on fatal error.
 (D) 2025-02-27 @ux @notifier Add time remaining to bottom context bar.
-x 2025-03-01 2025-02-27 @qa Add AudibleLibraryRow parser or something.
 (M) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
 (A) 2025-02-27 Make API of *Page classes the same, with #fields and data().
 (D) 2025-02-27 Add to readme https://developer.chrome.com/docs/devtools/console/log

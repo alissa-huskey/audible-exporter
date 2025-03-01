@@ -17,6 +17,8 @@ require("../src/library-page.js");
 require("../src/library-book-row.js");
 require("../src/library-fetcher.js");
 require("../src/details-fetcher.js");
+require("../src/order-row.js");
+require("../src/purchase.js");
 require("../src/order-page.js");
 require("../src/year-fetcher.js");
 require("../src/orders-fetcher.js");

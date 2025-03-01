@@ -14,6 +14,9 @@ DetailsFetcher = class {
     let i = 0;
 
     for (book of this.library) {
+      if (!book.url) {
+        continue;
+      }
       let page = await BookPage.get(book.url.replace("http", "https"));
 
       page.url = book.url;

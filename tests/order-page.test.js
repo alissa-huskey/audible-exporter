@@ -10,6 +10,8 @@ require("../src/element.js");
 require("../src/list.js");
 require("../src/parser.js");
 require("../src/page.js");
+require("../src/order-row.js");
+require("../src/purchase.js");
 require("../src/order-page.js");
 
 describe("OrderPage", function() {

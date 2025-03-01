@@ -82,13 +82,9 @@ OrderPage = class extends Page {
     if (this.doc && isEmpty(this.#orders)) {
       let rows = this.doc.qs("tr:has(a[href^='/account/order-details'])");
 
-      let orders = rows.map((row) => {
-        let url = row.qsf("a[href^='/account/order-details']").href;
-        let id = url.match(/orderId=([^&]+)&/)[1];
-        let date = row.qsf(".ui-it-purchasehistory-item-purchasedate").innerHTML?.trim();
-        let total = row.qsf(".ui-it-purchasehistory-item-total div").innerHTML;
-
-        return [id, { id: id, date: date, total: total }];
+      let orders = rows.map((tr) => {
+        let row = new OrderRow(tr);
+        return [row.id, row.data()];
       });
 
       this.#orders = Object.fromEntries(orders);
@@ -99,12 +95,7 @@ OrderPage = class extends Page {
   get purchases() {
     if (this.doc && isEmpty(this.#purchases)) {
       let links = (this.doc.qs("a[data-order-item-id]"));
-      let purchases = links.map((a) => 
-        Object.fromEntries(
-          Object.entries(this.#purchases_attrs).map(([key, attr]) => [key, a.attributes[attr].value])
-        ),
-      );
-
+      let purchases = links.map((a) => new Purchase(a).data());
       this.#purchases = purchases;
     }
 

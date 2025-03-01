@@ -333,7 +333,6 @@ Parser = class {
     }
     return cleanObject(data)
   }
-
 }
 Page = class extends Parser {
   async fetchDoc(url) {
@@ -966,6 +965,53 @@ LibraryFetcher = class extends Page {
   }
 }
 
+Purchase = class extends Parser {
+  _fields = {
+    id: "data-order-item-asin",
+    order_id: "data-order-id",
+    title: "data-order-item-name",
+    author: "data-order-item-author",
+    amount: "data-order-item-cost",
+    credits: "data-order-item-credit-cost",
+  };
+
+  constructor(doc=null) {
+    super();
+    this.doc = doc;
+  }
+
+  data() {
+    return Object.fromEntries(
+      Object.entries(this._fields).map(([key, attr]) => [key, this.doc.attributes[attr].value])
+    )
+  }
+}
+OrderRow = class extends Parser {
+  _fields = ["id", "date", "total"];
+
+  _identifers = [];
+
+  constructor(doc=null) {
+    super();
+    this.doc = doc;
+  }
+
+  get url() {
+    return this.doc.qsf("a[href^='/account/order-details']").href;
+  }
+
+  get id() {
+    return this.url.match(/orderId=([^&]+)&/)[1];
+  }
+
+  get date() {
+    return this.doc.qsf(".ui-it-purchasehistory-item-purchasedate").innerHTML?.trim();
+  }
+
+  get total() {
+    return this.doc.qsf(".ui-it-purchasehistory-item-total div").innerHTML;
+  }
+}
 OrderPage = class extends Page {
   base_url = "https://www.audible.com/account/purchase-history?tf=orders";
 
@@ -1050,13 +1096,9 @@ OrderPage = class extends Page {
     if (this.doc && isEmpty(this.#orders)) {
       let rows = this.doc.qs("tr:has(a[href^='/account/order-details'])");
 
-      let orders = rows.map((row) => {
-        let url = row.qsf("a[href^='/account/order-details']").href;
-        let id = url.match(/orderId=([^&]+)&/)[1];
-        let date = row.qsf(".ui-it-purchasehistory-item-purchasedate").innerHTML?.trim();
-        let total = row.qsf(".ui-it-purchasehistory-item-total div").innerHTML;
-
-        return [id, { id: id, date: date, total: total }];
+      let orders = rows.map((tr) => {
+        let row = new OrderRow(tr);
+        return [row.id, row.data()];
       });
 
       this.#orders = Object.fromEntries(orders);
@@ -1067,12 +1109,7 @@ OrderPage = class extends Page {
   get purchases() {
     if (this.doc && isEmpty(this.#purchases)) {
       let links = (this.doc.qs("a[data-order-item-id]"));
-      let purchases = links.map((a) => 
-        Object.fromEntries(
-          Object.entries(this.#purchases_attrs).map(([key, attr]) => [key, a.attributes[attr].value])
-        ),
-      );
-
+      let purchases = links.map((a) => new Purchase(a).data());
       this.#purchases = purchases;
     }
 
@@ -1225,6 +1262,9 @@ DetailsFetcher = class {
     let i = 0;
 
     for (book of this.library) {
+      if (!book.url) {
+        continue;
+      }
       let page = await BookPage.get(book.url.replace("http", "https"));
 
       page.url = book.url;

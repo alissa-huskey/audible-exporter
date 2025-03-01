@@ -61,3 +61,4 @@
 (B) 2025-03-01 @book-details Parse/handle multiple series.
 (B) 2025-03-01 @qa Rename NormalBookPage -> LegacyBookPage
 (A) 2025-03-01 @bug Check B002V1J7QY -- weird in TSV: B002V1J7QY		The Art of Deception: Controlling the Human Element of Security	Kevin Mitnick	Nick Sullivan
+(A) 2025-03-01 @qa Fix all errors (.todo/error*.txt).
