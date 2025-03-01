@@ -2,43 +2,27 @@ OrdersFetcher = class {
   #count = 0;
   #items = null;
 
-  async init() {
-    let page = new OrderPage("last_90_days", 1, 20);
-    await page.get();
-    this.years = page.years.map((year) => ({year: tryInt(year), page_count: null, pages: []}));
-
+  constructor() {
     this.#count = 0;
     this.#items = null;
   }
 
+  async init() {
+    let page = new OrderPage("last_90_days", 1, 20);
+    await page.get();
+    this.years = page.years;
+  }
+
   async populate(progress_callback=null) {
-    let i, page, page_num, percent;
-    let y = 0;
     let year_count = this.years.length;
+    let i = 0;
 
-    for (var data of this.years)  {
-      y++;
-      i = 0;
-      do {
-        page_num = i + 1;
-        page = new OrderPage(data.year, page_num);
-        try {
-          await page.get();
-          if (!data.page_count) {
-            data.page_count = page.page_count;
-          }
-          data.pages.push(page);
-
-          if (progress_callback) {
-            percent = y / year_count;
-            progress_callback(data.year, page_num, data.page_count, percent);
-          }
-      } catch (err) {
-        error(err);
-      }
-
-        i++;
-      } while (i < data.page_count);
+    for (let year of this.years)  {
+      let fetcher = new YearFetcher(year);
+      let percent = i / year_count;
+      await fetcher.populate(progress_callback, percent);
+      this.years[i] = fetcher;
+      i++;
     }
   }
 

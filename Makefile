@@ -8,7 +8,7 @@ tmpdir     = ${rootdir}/build/tmp
 srcdir     = ${rootdir}/src
 
 dom_deps   = dev util element dom
-deps       = util element list page book-page library-page library-fetcher order-page orders-fetcher details-fetcher dom file tsv-file
+deps       = util element list page book-page library-page library-fetcher order-page year-fetcher orders-fetcher details-fetcher dom file tsv-file
 
 clean:
 	@rm -rf $(builddir)/*

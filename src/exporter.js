@@ -91,7 +91,7 @@ Exporter = class {
       await this.getBookDetails();
       this.getResults();
 
-      if (!books) {
+      if (!this.results || this.results.length == 0) {
         error("Failed to download books.")
         this.notifier.reset();
         this.notifier.text = "Failed."
@@ -101,12 +101,12 @@ Exporter = class {
       let after = new Date().getTime();
       let elapsed = (after - before) / 1000 / 60;
 
-      info(`Done. (${books.length} books, ${elapsed.toFixed(2)} minutes)`);
+      info(`Done. (${this.results.length} this.results, ${elapsed.toFixed(2)} minutes)`);
 
       this.notifier.percent = 1;
       this.notifier.text = "Done."
 
-      this.download(this.books);
+      this.download(this.results);
 
     } catch (err) {
       error("Fatal error:", err, err.name, err.message);

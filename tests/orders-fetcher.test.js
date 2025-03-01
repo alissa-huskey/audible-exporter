@@ -10,6 +10,7 @@ require("../src/element.js");
 require("../src/list.js");
 require("../src/page.js");
 require("../src/order-page.js");
+require("../src/year-fetcher.js");
 require("../src/orders-fetcher.js");
 
 describe("OrdersFetcher", function() {
@@ -26,7 +27,7 @@ describe("OrdersFetcher", function() {
     Page.prototype.fetchDoc = mockFetchDoc("order-page-2025-1-of-1.html");
 
     let years = [...Array(16).keys()].sort((a, b) => b - a).map(
-      (i) => ({year: (i + 2010), page_count: null, pages: []})
+      (i) => String(i + 2010)
     );
 
     orders = new OrdersFetcher();
@@ -51,11 +52,7 @@ describe("OrdersFetcher", function() {
 
     Page.prototype.fetchDoc = mockFetchDocs(docs);
 
-    let years = [
-      {year: 2025, page_count: null, pages: []},
-      {year: 2024, page_count: null, pages: []},
-      {year: 2023, page_count: null, pages: []},
-    ];
+    let years = ["2025", "2024", "2023"];
 
     orders = new OrdersFetcher();
     orders.years = years;

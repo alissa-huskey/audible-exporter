@@ -1,15 +1,13 @@
-(Z) 2025-02-14 @feature Log the amount of time the script took to run.
-(Z) 2025-02-14 @feature Add an option to download as CSV/TSV/JSON.
+(D) 2025-02-14 @feature Add an option to download as CSV/TSV/JSON.
 (Z) 2025-02-14 @feature Add my review if it exists.
 (Z) 2025-02-14 @feature add option to download goodreads CSV importable file
 (Z) 2025-02-14 @ux change date format and/or use timestamp
-(M) 2025-02-14 @bug fix progress bar, says 100% when not yet complete
 (Z) 2025-02-14 @feature add stop button
 (Z) 2025-02-14 @feature get account name
 (Z) 2025-02-17 @feature Parse podcast page: https://www.audible.com/podcast/Crime-Junkie/B08JJMQPN4?qid=1739803996&sr=1-1&ref_pageloadid=ueCYRnHMqKz8Fhrh&pf_rd_p=83218cca-c308-412f-bfcf-90198b687a2f&pf_rd_r=KK4VK8R67XV6A0K7KWJE&plink=vrTUC8MEkmliwSKT&pageLoadId=0NMtsgka5Pb31UHa&creativeId=0d6f6720-f41c-457e-a42b-8c8dceb62f2c&ref=a_search_c3_lProduct_1_1
 (Z) 2025-02-17 @feature parse anthologies from book details
 (Z) 2025-02-21 @feature get finished/not-finished status
-(D) 2025-02-22 @bug fix purchase_date
+(A) 2025-02-22 @bug fix purchase_date
 (Z) 2025-02-22 @feature Add my_review
 (Z) 2025-02-22 @feature Add my_rating
 (B) 2025-02-22 @qa set variables for css class names in appropriate places.
@@ -21,42 +19,44 @@
 (Z) 2025-02-23 @feature Get collections
 (Z) 2025-02-23 @feature Get wishlist https://www.audible.com/library/wishlist
 (Z) 2025-02-23 @feature Get saved authors https://www.audible.com/library/authors
-(Z) 2025-02-23 @feature Get if it is added to favorites https://www.audible.com/library/collections/__FAVORITES
-(Z) 2025-02-23 @feature Get if a book is marked as finished.
+(M) 2025-02-23 @feature Get if it is added to favorites https://www.audible.com/library/collections/__FAVORITES
+(M) 2025-02-23 @feature Get if a book is marked as finished.
 (Z) 2025-02-23 @feature Get if a book has a PDF https://www.audible.com/companion-file/B0CQ3759C3
 (Z) 2025-02-23 @feature Get a list of authors you follow
 (Z) 2025-02-23 @feature Add date downloaded to JSON
 (Z) 2025-02-23 @feature Some way to indicate last download, to avoid downloading everything
-(D) 2025-02-24 @qa consolidate library page fixtures
-(B) 2025-02-24 @qa Add a Year class under OrderPage
 (Z) 2025-02-25 @feature @notifier Add cancel button.
 (D) 2025-02-25 @tools Look into replacing make with gulp.
-(B) 2025-02-26 @qa @notifier Look into event listeners to update progress.
+(A) 2025-02-26 @qa @notifier Look into event listeners to update progress.
 (D) 2025-02-26 @qa Refactor Orders class to have prepare method/stage that will fetch all years and page numbers to get a total page count.
 (D) 2025-02-26 @feature Add limit selector to only download a certain number of order/library pages.
 (B) 2025-02-26 @qa Handle failed requests.
 (Z) 2025-02-26 Implement some sort of pause/resume.
 (B) 2025-02-26 @qa document functions, classes and methods https://developer.wordpress.org/coding-standards/inline-documentation-standards/javascript/
-(B) 2025-02-26 @ux Calculate the time each request takes, use value to estimate time remaining. https://www.geeksforgeeks.org/how-to-measure-time-taken-by-a-function-to-execute-using-javascript/
+(A) 2025-02-26 @ux Calculate the time each request takes, use value to estimate time remaining. https://www.geeksforgeeks.org/how-to-measure-time-taken-by-a-function-to-execute-using-javascript/
 (D) 2025-02-26 @qa @book-details Parse author from json_details instead of HTML.
-(Z) 2025-02-27 @ux Add notice to not navigate away from page or close browser window while running.
+(M) 2025-02-27 @ux Add notice to not navigate away from page or close browser window while running.
 (B) 2025-02-27 @qa Rename *Fetcher.populate() -> *Fetcher.get()
 (A) 2025-02-27 @qa Change http to https for all requests in Page.fetchDoc()
 (Z) 2025-02-27 @ux Display error message dialog on fatal error.
 (D) 2025-02-27 @ux @notifier Add time remaining to bottom context bar.
 (B) 2025-02-27 @qa Add AudibleLibraryRow parser or something.
-(Z) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
-(B) 2025-02-27 Make API of *Page classes the same, with #fields and data().
+(M) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
+(A) 2025-02-27 Make API of *Page classes the same, with #fields and data().
 (D) 2025-02-27 Add to readme https://developer.chrome.com/docs/devtools/console/log
 (D) 2025-02-27 @qa Subclass StatusNotifier to make a notifier for each step (orders, library, details)
 (B) 2025-02-27 @qa Have Page.fetchDoc() set this.url = url
-(A) 2025-02-27 Refactor StatusNotifier to inherit from DOM.
 (D) 2025-02-27 @ux Make the colors between the notifier and modal consistent.
-(B) 2025-02-27 @qa On file download, make sure that all TSV rows have the same values in the same order.
-(B) 2025-02-27 @ux Move timeRemaining to notifier.
-(B) 2025-02-27 @qa Change Modal.file = to take a File object instead of a list with url and filename.
+(A) 2025-02-27 @qa On file download, make sure that all TSV rows have the same values in the same order.
+(A) 2025-02-27 @qa Change Modal.file = to take a File object instead of a list with url and filename.
 (D) 2025-02-28 @ux @download In TSV download, join categories.
-(B) 2025-02-28 @ux @download In final data, make sure title is like: 'Wind and Truth', not 'Wind and Truth: Book Five of the Stormlight Archive'
-(B) 2025-02-28 @ux @download Add book (number) to final download.
+(A) 2025-02-28 @ux @download In final data, make sure title is like: 'Wind and Truth', not 'Wind and Truth: Book Five of the Stormlight Archive'
+(A) 2025-02-28 @ux @download Add book (number) to final download.
 (B) 2025-02-28 @ux @download Compare results from original download to current results
 (A) 2025-02-28 @housekeeping Fix instructions to download JSON on README.
+(A) 2025-03-01 @qa In page classes add a .require() method for checking things like doc and don't fail silently when things are missing.
+(D) 2025-03-01 @qa Add tests for errors.
+(D) 2025-03-01 @download Add purchase_timestamp.
+(D) 2025-03-01 @qa @pages Parse data from multiple fields, select the first one that has content.
+(M) 2025-03-01 @feature Get a list of collections a book belongs to
+(B) 2025-03-01 @book-details Parse/handle multiple series.

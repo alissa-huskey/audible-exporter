@@ -1040,47 +1040,80 @@ OrderPage = class extends Page {
     return this.#items;
   }
 }
+YearFetcher = class {
+
+  #items = [];
+
+ constructor(year=null) {
+    this.year = tryInt(year);
+    this.page_count = null;
+    this.#items = null;
+    this.pages = null;
+  }
+
+  async populate(progress_callback=null, percent=null) {
+    this.pages = [];
+    let i = 0;
+    do {
+      let page_num = i + 1;
+      let page = new OrderPage(this.year, page_num);
+
+      try {
+        await page.get();
+        if (!this.page_count) {
+          this.page_count = page.page_count;
+        }
+        this.pages.push(page);
+
+        if (progress_callback) {
+          progress_callback(this.year, page_num, this.page_count, percent);
+        }
+    } catch (err) {
+      error(err);
+    }
+
+      i++;
+    } while (i < this.page_count);
+  }
+
+  get items() {
+    if (!this.#items && this.pages) {
+      let items = [];
+      for (let page of this.pages) {
+        for (let item of page.items) {
+          items.push(item);
+        }
+      }
+      this.#items = items;
+    }
+    return this.#items;
+  }
+}
 OrdersFetcher = class {
   #count = 0;
   #items = null;
 
-  async init() {
-    let page = new OrderPage("last_90_days", 1, 20);
-    await page.get();
-    this.years = page.years.map((year) => ({year: tryInt(year), page_count: null, pages: []}));
-
+  constructor() {
     this.#count = 0;
     this.#items = null;
   }
 
+  async init() {
+    let page = new OrderPage("last_90_days", 1, 20);
+    await page.get();
+    this.years = page.years;
+  }
+
   async populate(progress_callback=null) {
-    let i, page, page_num, percent;
-    let y = 0;
     let year_count = this.years.length;
+    let i = 0;
 
-    for (var data of this.years)  {
-      y++;
-      i = 0;
-      do {
-        page_num = i + 1;
-        page = new OrderPage(data.year, page_num);
-        try {
-          await page.get();
-          if (!data.page_count) {
-            data.page_count = page.page_count;
-          }
-          data.pages.push(page);
-
-          if (progress_callback) {
-            percent = y / year_count;
-            progress_callback(data.year, page_num, data.page_count, percent);
-          }
-      } catch (err) {
-        error(err);
-      }
-
-        i++;
-      } while (i < data.page_count);
+    for (let year of this.years)  {
+      let fetcher = new YearFetcher(year);
+      let percent = i / year_count;
+      await fetcher.populate(progress_callback, percent);
+      this.years[i] = fetcher;
+      i++;
     }
   }
 
@@ -1789,7 +1822,7 @@ Exporter = class {
       await this.getBookDetails();
       this.getResults();
 
-      if (!books) {
+      if (!this.results || this.results.length == 0) {
         error("Failed to download books.")
         this.notifier.reset();
         this.notifier.text = "Failed."
@@ -1799,12 +1832,12 @@ Exporter = class {
       let after = new Date().getTime();
       let elapsed = (after - before) / 1000 / 60;
 
-      info(`Done. (${books.length} books, ${elapsed.toFixed(2)} minutes)`);
+      info(`Done. (${this.results.length} this.results, ${elapsed.toFixed(2)} minutes)`);
 
       this.notifier.percent = 1;
       this.notifier.text = "Done."
 
-      this.download(this.books);
+      this.download(this.results);
 
     } catch (err) {
       error("Fatal error:", err, err.name, err.message);

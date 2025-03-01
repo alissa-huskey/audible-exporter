@@ -17,10 +17,13 @@ require("../src/library-page.js");
 require("../src/library-fetcher.js");
 require("../src/details-fetcher.js");
 require("../src/order-page.js");
+require("../src/year-fetcher.js");
 require("../src/orders-fetcher.js");
 require("../src/dom.js");
 require("../src/modal.js");
 require("../src/status-notifier.js");
+require("../src/file.js");
+require("../src/tsv-file.js");
 require("../src/exporter.js");
 
 describe("Exporter", function() {
@@ -122,6 +125,22 @@ describe("Exporter", function() {
     exporter.getResults();
 
     expect(exporter.results).toEqual(results);
+  });
+
+  test(".run()", async function() {
+    let mockFn = mockFetchDocs([
+      fixtureDoc("order-page.html"),
+      fixtureDoc("order-page.html"),
+      fixtureDoc("library-page-1-of-1.html") ,
+      fixtureDoc("book-details-audible-original.html"),
+    ]);
+    Page.prototype.fetchDoc = mockFn;
+
+    let exporter = new Exporter();
+    await exporter.run();
+
+    expect(mockFn.mock.calls).toHaveLength(4);
+    expect(exporter.results).toHaveLength(1);
   });
 
 });
