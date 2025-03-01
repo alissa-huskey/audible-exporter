@@ -1162,6 +1162,11 @@ DOM = class {
   #style = null;
   #css = null;
 
+  constructor() {
+    this.#style = null;
+    this.#css = null;
+  }
+
   get style() {
     if (!this.#style) {
       this.#style = Element.create("style", {id: this.selectors.style, type: "text/css"});
@@ -1495,7 +1500,36 @@ a#ae-download-btn:hover:after {
   }
 }
 
-const css = `
+StatusNotifier = class extends DOM {
+  #wrapper = null;
+  #bar = null;
+  #status = null;
+  #percentage = null;
+  #messages = null;
+  #style = null;
+
+  #colors = {
+    darkGreen: "#07ba5b",
+    lightGreen: "#3de367",
+    nearBlack: "#121212",
+    white: "#fff",
+    rasin: "#19191F",
+    darkGray: "#232530",
+    offWhite: "#abaab3",
+    lightGray: "#9a99a1",
+  }
+  #pulse_colors = {true: "#07ba5b", false: "#3de367"}
+
+  selectors = {
+    wrapper: "ae-notifier",
+    bar: "ae-bar",
+    messages: "ae-messages",
+    status: "ae-status-text",
+    percentage: "ae-percent-text",
+  };
+
+  get css() {
+    return `
 #ae-notifier {
   position: fixed;
   top: 100px;
@@ -1532,35 +1566,8 @@ const css = `
   flex-wrap: nowrap;
   justify-content: space-between;
 }
-`;
-
-StatusNotifier = class {
-  #wrapper = null;
-  #bar = null;
-  #status = null;
-  #percentage = null;
-  #messages = null;
-  #css = null
-
-  #colors = {
-    darkGreen: "#07ba5b",
-    lightGreen: "#3de367",
-    nearBlack: "#121212",
-    white: "#fff",
-    rasin: "#19191F",
-    darkGray: "#232530",
-    offWhite: "#abaab3",
-    lightGray: "#9a99a1",
+    `;
   }
-  #pulse_colors = {true: "#07ba5b", false: "#3de367"}
-
-  selectors = {
-    notifier: "ae-notifier",
-    bar: "ae-bar",
-    messages: "ae-messages",
-    status: "ae-status-text",
-    percentage: "ae-percent-text",
-  };
 
   get body_width() {
     return document.body.getBoundingClientRect().width;
@@ -1570,26 +1577,10 @@ StatusNotifier = class {
     return this.body_width * 0.8;
   }
 
-  get css() {
-    if (!this.#css) {
-      this.#css = Element.create("style", {id: "ae-css", type: "text/css"});
-
-      if (this.#css.element.styleSheet) {
-        // Support for IE
-        this.#css.element.styleSheet.cssText = css;
-      } else {
-        // Support for the rest
-        let node = document.createTextNode(css);
-        this.#css.element.appendChild(node);
-      }
-    }
-    return this.#css;
-  }
-
   // Construct notifier wrapper div, append all child elements, and return
   get wrapper() {
     if (!this.#wrapper) {
-      this.#wrapper = Element.create("div", {id: this.selectors.notifier, style: {
+      this.#wrapper = Element.create("div", {id: this.selectors.wrapper, style: {
         width: `${this.bar_width}px`,
         left: `${(this.body_width - this.bar_width) / 2}px`,
         background: this.#colors.nearBlack,
@@ -1682,17 +1673,6 @@ StatusNotifier = class {
     let per_book = 1.9;
 
     return Math.round((remaining * per_book) / 60);
-  }
-
-
-  // add the status notifier to the DOM
-  create() {
-    let notifier = Element.gi(this.selectors.notifier);
-    if (notifier)
-      notifier.outerHTML = "";
-
-    document.head.appendChild(this.css.element);
-    document.body.appendChild(this.wrapper.element);
   }
 
   reset() {

@@ -292,6 +292,11 @@ DOM = class {
   #style = null;
   #css = null;
 
+  constructor() {
+    this.#style = null;
+    this.#css = null;
+  }
+
   get style() {
     if (!this.#style) {
       this.#style = Element.create("style", {id: this.selectors.style, type: "text/css"});

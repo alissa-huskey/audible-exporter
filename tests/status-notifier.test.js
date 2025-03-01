@@ -7,6 +7,7 @@ const $ = require("jquery");
 require("../src/dev.js");
 require("../src/util.js");
 require("../src/element.js");
+require("../src/dom.js");
 require("../src/status-notifier.js");
 
 
@@ -30,7 +31,7 @@ describe("StatusNotifier", function() {
   test(".create()", function() {
     notifier.create();
 
-    el = Element.gi(notifier.selectors.notifier);
+    el = Element.gi(notifier.selectors.wrapper);
     expect(el.element.constructor.name).toBe("HTMLDivElement");
     expect(el.gi(notifier.selectors.bar)).toBeDefined();
     expect(el.gi(notifier.selectors.status)).toBeDefined();
@@ -69,7 +70,7 @@ describe("StatusNotifier", function() {
   test(".delete()", function() {
     notifier.create();
     notifier.delete();
-    expect($(`#${notifier.selectors.notifier}`).length).toBe(0);
+    expect($(`#${notifier.selectors.wrapper}`).length).toBe(0);
   });
 
   test("", function() {
