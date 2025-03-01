@@ -1,0 +1,9 @@
+VM15152:12 [audible-exporter] Fatal error: TypeError: Cannot read properties of undefined (reading 'replace')
+    at DetailsFetcher.populate (<anonymous>:1228:46)
+    at async Exporter.getBookDetails (<anonymous>:1838:5)
+    at async Exporter.run (<anonymous>:1885:7)
+    at async <anonymous>:1912:1 TypeError Cannot read properties of undefined (reading 'replace')
+error	@	VM15152:12
+run	@	VM15152:1906
+await in run		
+(anonymous)	@	VM15152:1912

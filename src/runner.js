@@ -1,3 +1,3 @@
 CONSOLE_OUTPUT = true;
-e = new Exporter();
-await e.run();
+var exporter = new Exporter();
+await exporter.run();

@@ -8,7 +8,9 @@ require("../src/dev.js");
 require("../src/util.js");
 require("../src/element.js");
 require("../src/list.js");
+require("../src/parser.js");
 require("../src/page.js");
+require("../src/library-book-row.js");
 require("../src/library-page.js");
 require("../src/exporter.js");
 
@@ -24,8 +26,9 @@ describe("LibraryPage", function() {
   });
 
   test(".rows", function() {
-    expect(page.rows.constructor.name).toBe("List");
+    expect(page.rows.constructor.name).toBe("Array");
     expect(page.rows.length).toBe(20);
+    expect(page.rows[0].constructor.name).toBe("LibraryBookRow");
   });
 
   test(".books", function() {

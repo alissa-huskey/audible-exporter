@@ -33,11 +33,15 @@ LibraryPage = class extends Page {
   }
 
   get rows() {
-    if (!this.doc)
-      return
     if (!this.#rows) {
+      let i = 0;
+      let arr = [];
       let rows = this.doc.gc("adbl-library-content-row");
-      this.#rows = rows.length ? rows : [];
+      for (let row of rows) {
+        arr.push(new LibraryBookRow(row, this.page_num, (i+1)));
+        i++;
+      }
+      this.#rows = arr;
     }
     return this.#rows;
   }
@@ -46,26 +50,11 @@ LibraryPage = class extends Page {
     if (!this.#books) {
       try {
         this.#books = this.rows.reduce((arr, row) => {
-          let ul = row.gcf("bc-list bc-list-nostyle");
-          let title = ul.gcf("bc-size-headline3")?.innerHTML?.trim() || "";
-
-          if (title == "Your First Listen") {
+          if (row.title == "Your First Listen") {
             return arr;
           }
 
-          arr.push({
-            id: row.id?.replace("adbl-library-content-row-", ""),
-            url: (
-              ul.gcf("bc-size-headline3")?.parentElement
-              ?.attributes["href"]?.value
-              ?.replace(/\?.+/, "")
-            ) || "",
-            title: entityDecode(title),
-            author: ul.gcf("authorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
-            narrator: ul.gcf("narratorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
-            series: ul.gcf("seriesLabel")?.gtf("a")?.innerHTML?.trim() || "",
-          });
-
+          arr.push(row.data());
           return arr;
         }, []);
       } catch (err) {

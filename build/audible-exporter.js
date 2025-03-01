@@ -296,24 +296,10 @@ List = class extends Array {
     return this.slice(-1)[0];
   }
 }
-Page = class {
+Parser = class {
   #doc = null;
-
-  async fetchDoc(url) {
-    let res;
-    try {
-      res = await fetch(url);
-    } catch {
-      throw new Error(`Failed to fetch URL: ${url}.`);
-    }
-
-    if (!res.ok) {
-      throw new Error(`Response status: ${response.status}`);
-    }
-
-    let text = await res.text();
-    return new DOMParser().parseFromString(text, "text/html");
-  }
+  _fields = [];
+  _identifiers = [];
 
   get doc() {
     return this.#doc;
@@ -329,6 +315,40 @@ Page = class {
       }
 
       this.#doc = value;
+    }
+  }
+
+  data() {
+    let f;
+    let data = {};
+
+    for (let i in this._fields) {
+      try{
+        f = this._fields[i];
+        data[f] = this[f];
+      } catch (err) {
+        let identifiers = this._identifers.map((i) => `${i}: ${this[i]}`).join(", ");
+        error(`${this.constructor.name}.${f} (${identifiers}):\n`, err);
+      }
+    }
+    return cleanObject(data)
+  }
+
+}
+Page = class extends Parser {
+  async fetchDoc(url) {
+    let res;
+    try {
+      res = await fetch(url);
+
+      if (!res.ok) {
+        error(`Page.fetchDoc("${url.trim()}"): Response status: ${res.status}`);
+      }
+
+      let text = await res.text();
+      return new DOMParser().parseFromString(text, "text/html");
+    } catch (err) {
+      error(`Page.fetchDoc("${url.trim()}"):\n`, err);
     }
   }
 }
@@ -413,7 +433,7 @@ BookPage = class extends Page {
     "Thriller & Suspense",
   ]
 
-  #fields = [
+  _fields = [
     "id",
     "title",
     "duration_minutes",
@@ -430,9 +450,11 @@ BookPage = class extends Page {
     "categories",
     "rating",
     "num_ratings",
-  ]
+  ];
 
-  #tags = []
+  _identifers = ["url"];
+
+  #tags = [];
   #json_audiobook = null;
   #json_product = null;
 
@@ -465,21 +487,6 @@ BookPage = class extends Page {
     let mins = /\d+(?=\smin)/.exec(text)?.[0] || "0";
     let hours = /\d+(?=\shrs)/.exec(text)?.[0] || "0"
     return (parseInt(hours) * 60) + parseInt(mins);
-  }
-
-  data() {
-    let f;
-    let data = {};
-
-    for (let i in this.#fields) {
-      try{
-        f = this.#fields[i];
-        data[f] = this[f];
-      } catch (err) {
-        error(`BookPage.${f} (url: ${this.url}):\n`, err);
-      }
-    }
-    return cleanObject(data)
   }
 
   get json_audiobook() {
@@ -703,7 +710,7 @@ ADBLBookPage = class extends BookPage {
 
   // book number
   get book() {
-    return /Book (\d+)/i.exec(this.info.series[0].part)[1] || "";
+    return /Book (\d+)/i.exec(this.info.series?.[0].part)?.[1] || "";
   }
 
   // get summary() {
@@ -752,7 +759,7 @@ NormalBookPage = class extends BookPage {
 
   // book number
   get book() {
-    return /, Book (\d+)/i.exec(this.doc.gcf("seriesLabel").innerHTML)[1] || "";
+    return /, Book (\d+)/i.exec(this.doc.gcf("seriesLabel")?.innerHTML)?.[1] || "";
   }
 
   // get summary() {
@@ -773,6 +780,56 @@ NormalBookPage = class extends BookPage {
 
   get categories_list() {
     return this.doc.qs(".categoriesLabel a").map((c) => { return entityDecode(c.innerHTML) || "" }) || [];
+  }
+}
+LibraryBookRow = class extends Parser {
+  _fields = [
+    "id",
+    "url",
+    "title",
+    "author",
+    "narrator",
+    "series",
+  ];
+  _identifers = ["page_num", "row_num"];
+
+  constructor(doc=null, page_num=null, row_num=null) {
+    super();
+    this.doc = doc;
+    this.page_num = page_num;
+    this.row_num = row_num;
+  }
+
+  get id() {
+    return this.doc.id.replace("adbl-library-content-row-", "");
+  }
+
+  get ul() {
+    return this.doc.qsf(".bc-list.bc-list-nostyle");
+  }
+
+  get url() {
+    return this.ul.gcf("bc-size-headline3")
+      .parentElement
+      .attributes["href"]?.value
+      .replace(/\?.+/, "");
+  }
+
+  get title() {
+    let title = this.ul.gcf("bc-size-headline3")?.innerHTML.trim();
+    return entityDecode(title);
+  }
+
+  get author() {
+    return this.ul.gcf("authorLabel").gcf("bc-color-base").innerHTML.trim();
+  }
+
+  get narrator() {
+    return this.ul.qsf(".narratorLabel .bc-color-base")?.innerHTML?.trim();
+  }
+
+  get series() {
+    return this.ul.qsf(".seriesLabel a")?.innerHTML?.trim();
   }
 }
 LibraryPage = class extends Page {
@@ -810,11 +867,15 @@ LibraryPage = class extends Page {
   }
 
   get rows() {
-    if (!this.doc)
-      return
     if (!this.#rows) {
+      let i = 0;
+      let arr = [];
       let rows = this.doc.gc("adbl-library-content-row");
-      this.#rows = rows.length ? rows : [];
+      for (let row of rows) {
+        arr.push(new LibraryBookRow(row, this.page_num, (i+1)));
+        i++;
+      }
+      this.#rows = arr;
     }
     return this.#rows;
   }
@@ -823,26 +884,11 @@ LibraryPage = class extends Page {
     if (!this.#books) {
       try {
         this.#books = this.rows.reduce((arr, row) => {
-          let ul = row.gcf("bc-list bc-list-nostyle");
-          let title = ul.gcf("bc-size-headline3")?.innerHTML?.trim() || "";
-
-          if (title == "Your First Listen") {
+          if (row.title == "Your First Listen") {
             return arr;
           }
 
-          arr.push({
-            id: row.id?.replace("adbl-library-content-row-", ""),
-            url: (
-              ul.gcf("bc-size-headline3")?.parentElement
-              ?.attributes["href"]?.value
-              ?.replace(/\?.+/, "")
-            ) || "",
-            title: entityDecode(title),
-            author: ul.gcf("authorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
-            narrator: ul.gcf("narratorLabel")?.gcf("bc-color-base")?.innerHTML?.trim() || "",
-            series: ul.gcf("seriesLabel")?.gtf("a")?.innerHTML?.trim() || "",
-          });
-
+          arr.push(row.data());
           return arr;
         }, []);
       } catch (err) {
@@ -951,8 +997,6 @@ OrderPage = class extends Page {
     }
 
     this.per_page = per_page || this.#default_per_page;
-    this.#purchases = null;
-    this.#orders = null;
     this.#items = null;
   }
 
@@ -1037,9 +1081,9 @@ OrderPage = class extends Page {
 
   get items() {
     if (!this.#items) {
-      let seen = {};
-      this.#items = this.purchases.reduce((arr, p) => {
-        try {
+      try {
+        let seen = {};
+        this.#items = this.purchases.reduce((arr, p) => {
           if (p.title && p.author && !seen[p.id]) {
             seen[p.id] = true;
             arr.push({
@@ -1050,11 +1094,11 @@ OrderPage = class extends Page {
               purchase_date: this.orders[p.order_id].date,
             });
           }
-        } catch (err) {
-          error(`OrderPage.items (year: ${this.year}, page: ${this.page_num}, id: ${p.id}):`, err);
-        }
-        return arr;
-      }, []);
+          return arr;
+        }, []);
+      } catch (err) {
+        error(err);
+      }
     }
     return this.#items;
   }
@@ -1864,5 +1908,5 @@ Exporter = class {
   }
 }
 CONSOLE_OUTPUT = true;
-e = new Exporter();
-await e.run();
+var exporter = new Exporter();
+await exporter.run();

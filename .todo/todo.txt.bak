@@ -40,7 +40,7 @@
 (A) 2025-02-27 @qa Change http to https for all requests in Page.fetchDoc()
 (Z) 2025-02-27 @ux Display error message dialog on fatal error.
 (D) 2025-02-27 @ux @notifier Add time remaining to bottom context bar.
-(B) 2025-02-27 @qa Add AudibleLibraryRow parser or something.
+x 2025-03-01 2025-02-27 @qa Add AudibleLibraryRow parser or something.
 (M) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
 (A) 2025-02-27 Make API of *Page classes the same, with #fields and data().
 (D) 2025-02-27 Add to readme https://developer.chrome.com/docs/devtools/console/log
@@ -61,3 +61,4 @@
 (M) 2025-03-01 @feature Get a list of collections a book belongs to
 (B) 2025-03-01 @book-details Parse/handle multiple series.
 (B) 2025-03-01 @qa Rename NormalBookPage -> LegacyBookPage
+(A) 2025-03-01 @bug Check B002V1J7QY -- weird in TSV: B002V1J7QY		The Art of Deception: Controlling the Human Element of Security	Kevin Mitnick	Nick Sullivan

@@ -79,7 +79,7 @@ BookPage = class extends Page {
     "Thriller & Suspense",
   ]
 
-  #fields = [
+  _fields = [
     "id",
     "title",
     "duration_minutes",
@@ -96,9 +96,11 @@ BookPage = class extends Page {
     "categories",
     "rating",
     "num_ratings",
-  ]
+  ];
 
-  #tags = []
+  _identifers = ["url"];
+
+  #tags = [];
   #json_audiobook = null;
   #json_product = null;
 
@@ -131,21 +133,6 @@ BookPage = class extends Page {
     let mins = /\d+(?=\smin)/.exec(text)?.[0] || "0";
     let hours = /\d+(?=\shrs)/.exec(text)?.[0] || "0"
     return (parseInt(hours) * 60) + parseInt(mins);
-  }
-
-  data() {
-    let f;
-    let data = {};
-
-    for (let i in this.#fields) {
-      try{
-        f = this.#fields[i];
-        data[f] = this[f];
-      } catch (err) {
-        error(`BookPage.${f} (url: ${this.url}):\n`, err);
-      }
-    }
-    return cleanObject(data)
   }
 
   get json_audiobook() {
@@ -369,7 +356,7 @@ ADBLBookPage = class extends BookPage {
 
   // book number
   get book() {
-    return /Book (\d+)/i.exec(this.info.series[0].part)[1] || "";
+    return /Book (\d+)/i.exec(this.info.series?.[0].part)?.[1] || "";
   }
 
   // get summary() {
@@ -418,7 +405,7 @@ NormalBookPage = class extends BookPage {
 
   // book number
   get book() {
-    return /, Book (\d+)/i.exec(this.doc.gcf("seriesLabel").innerHTML)[1] || "";
+    return /, Book (\d+)/i.exec(this.doc.gcf("seriesLabel")?.innerHTML)?.[1] || "";
   }
 
   // get summary() {

@@ -6,13 +6,20 @@ global.getFixtureFile = function(name) {
 }
 
 global.toDoc = function(text) {
-  return new DOMParser().parseFromString(text, "text/html")
+  return new DOMParser().parseFromString(text, "text/html");
 }
 
 global.fixtureDoc = function(name) {
   let doc = toDoc(getFixtureFile(name));
   doc.name = name;
   return doc;
+}
+
+global.fixtureElement = function(filename, selector) {
+  let doc = fixtureDoc(filename);
+  let el = doc.querySelector(selector);
+
+  return el;
 }
 
 global.mockFn = function(rv) {

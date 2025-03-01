@@ -8,6 +8,7 @@ require("../src/dev.js");
 require("../src/util.js");
 require("../src/element.js");
 require("../src/list.js");
+require("../src/parser.js");
 require("../src/page.js");
 require("../src/order-page.js");
 require("../src/year-fetcher.js");
