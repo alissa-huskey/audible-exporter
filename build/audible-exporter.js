@@ -521,12 +521,12 @@ BookPage = class extends Page {
   }
 
   get rating() {
-    let rating = tryFloat(this.json_audiobook.aggregateRating.ratingValue);
+    let rating = tryFloat(this.json_audiobook.aggregateRating?.ratingValue);
     return rating ? +rating.toFixed(1) : ""
   }
 
   get num_ratings() {
-    return tryInt(this.json_audiobook.aggregateRating.ratingCount);
+    return tryInt(this.json_audiobook.aggregateRating?.ratingCount);
   }
 
   get id() {
@@ -717,7 +717,7 @@ ADBLBookPage = class extends BookPage {
   // }
 
   get categories_list() {
-    return this.info.categories.map((c) => c.name) || [];
+    return this.info.categories?.map((c) => c.name) || [];
   }
 
   get tags_list() {
@@ -778,7 +778,7 @@ NormalBookPage = class extends BookPage {
   }
 
   get categories_list() {
-    return this.doc.qs(".categoriesLabel a").map((c) => { return entityDecode(c.innerHTML) || "" }) || [];
+    return this.doc.qs(".categoriesLabel a")?.map((c) => { return entityDecode(c.innerHTML) || "" }) || [];
   }
 }
 LibraryBookRow = class extends Parser {
@@ -1402,6 +1402,64 @@ TSVFile = class extends File {
 
 
 }
+Result = class {
+  #headers = {
+    id: ["order", "library", "details"],
+    url: ["order", "library"],
+    title: ["order", "details", "library"],
+    author: ["order", "library"],
+    narrator: ["library"],
+    series: ["library"],
+    book: ["details"],
+    publisher: ["details"],
+    duration_minutes: ["details"],
+    release_date: ["details"],
+    release_timestamp: ["details"],
+    purchase_date: ["order"],
+    language: ["details"],
+    publisher_summary: ["details"],
+    rating: ["details"],
+    num_ratings: ["details"],
+    audible_oginal: ["details"],
+    category_type: ["details"],
+    main_category: ["details"],
+    sub_category: ["details"],
+    categories: ["details"],
+  };
+
+  constructor(library=null, details=null, order=null) {
+    this.library = library || {};
+    this.details = details || {};
+    this.order = order || {};
+  }
+
+  first(key) {
+    // the objects to look for key in
+    let sources = [...this.#headers[key]];
+
+    return sources.reduce((fallback, source, _, arr) => {
+      let value = this[source][key];
+
+      // if the key is there, return it and break early
+      if (!["null", "undefined"].includes(typeof value)) {
+        arr.splice(1);
+        return value;
+
+      } else {
+      // otherwise, return ""
+        return fallback;
+      }
+    }, "");
+  }
+
+  data() {
+    return Object.fromEntries(
+      Object.keys(this.#headers).map((key) => {
+        return [key, this.first(key)];
+      })
+    );
+  }
+}
 
 Modal = class extends DOM {
   #css = null;
@@ -1895,8 +1953,8 @@ Exporter = class {
     for (library_info of this.library.books) {
       book_info = this.details.books[library_info.id];
       order_info = this.orders.items[library_info.id];
-      info = cleanObject({...library_info, ...book_info, ...order_info});
-      results.push(info);
+      let result = new Result(library_info, book_info, order_info);
+      results.push(result.data());
     }
 
     log_table("Your audible data", results);

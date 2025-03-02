@@ -27,6 +27,7 @@ require("../src/modal.js");
 require("../src/status-notifier.js");
 require("../src/file.js");
 require("../src/tsv-file.js");
+require("../src/result.js");
 require("../src/exporter.js");
 
 describe("Exporter", function() {

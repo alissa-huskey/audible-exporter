@@ -7,14 +7,12 @@
 (Z) 2025-02-17 @feature Parse podcast page: https://www.audible.com/podcast/Crime-Junkie/B08JJMQPN4?qid=1739803996&sr=1-1&ref_pageloadid=ueCYRnHMqKz8Fhrh&pf_rd_p=83218cca-c308-412f-bfcf-90198b687a2f&pf_rd_r=KK4VK8R67XV6A0K7KWJE&plink=vrTUC8MEkmliwSKT&pageLoadId=0NMtsgka5Pb31UHa&creativeId=0d6f6720-f41c-457e-a42b-8c8dceb62f2c&ref=a_search_c3_lProduct_1_1
 (Z) 2025-02-17 @feature parse anthologies from book details
 (Z) 2025-02-21 @feature get finished/not-finished status
-(A) 2025-02-22 @bug fix purchase_date
 (Z) 2025-02-22 @feature Add my_review
 (Z) 2025-02-22 @feature Add my_rating
 (B) 2025-02-22 @qa set variables for css class names in appropriate places.
 (B) 2025-02-23 @ux Fix progress_callback to update every title, not every page.
 (B) 2025-02-23 @ux @feature Add 'Step x of y' to status bar.
 (B) 2025-02-23 @qa Refactor LibraryPageParser to take a page number and add a .fetch() method to set .doc @maybe
-(A) 2025-02-23 @qa add error catching so the URL or other details can be logged.
 (Z) 2025-02-23 @feature Add series ID.
 (Z) 2025-02-23 @feature Get collections
 (Z) 2025-02-23 @feature Get wishlist https://www.audible.com/library/wishlist
@@ -41,23 +39,20 @@
 (Z) 2025-02-27 @ux Display error message dialog on fatal error.
 (D) 2025-02-27 @ux @notifier Add time remaining to bottom context bar.
 (M) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
-(A) 2025-02-27 Make API of *Page classes the same, with #fields and data().
 (D) 2025-02-27 Add to readme https://developer.chrome.com/docs/devtools/console/log
 (D) 2025-02-27 @qa Subclass StatusNotifier to make a notifier for each step (orders, library, details)
 (B) 2025-02-27 @qa Have Page.fetchDoc() set this.url = url
 (D) 2025-02-27 @ux Make the colors between the notifier and modal consistent.
-(A) 2025-02-27 @qa On file download, make sure that all TSV rows have the same values in the same order.
+x 2025-03-01 2025-02-27 @qa On file download, make sure that all TSV rows have the same values in the same order.
 (A) 2025-02-27 @qa Change Modal.file = to take a File object instead of a list with url and filename.
 (D) 2025-02-28 @ux @download In TSV download, join categories.
-(A) 2025-02-28 @ux @download In final data, make sure title is like: 'Wind and Truth', not 'Wind and Truth: Book Five of the Stormlight Archive'
-(A) 2025-02-28 @ux @download Add book (number) to final download.
+(B) 2025-02-28 @ux @download Add book (number) to final download.
 (B) 2025-02-28 @ux @download Compare results from original download to current results
 (A) 2025-02-28 @housekeeping Fix instructions to download JSON on README.
-(A) 2025-03-01 @qa In page classes add a .require() method for checking things like doc and don't fail silently when things are missing.
 (D) 2025-03-01 @qa Add tests for errors.
 (D) 2025-03-01 @download Add purchase_timestamp.
 (D) 2025-03-01 @qa @pages Parse data from multiple fields, select the first one that has content.
 (M) 2025-03-01 @feature Get a list of collections a book belongs to
 (B) 2025-03-01 @book-details Parse/handle multiple series.
 (B) 2025-03-01 @qa Rename NormalBookPage -> LegacyBookPage
-(A) 2025-03-01 @bug Check B002V1J7QY -- weird in TSV: B002V1J7QY		The Art of Deception: Controlling the Human Element of Security	Kevin Mitnick	Nick Sullivan
+(D) 2025-03-01 @download Rename audible_oginal -> audible_original

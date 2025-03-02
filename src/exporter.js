@@ -61,8 +61,8 @@ Exporter = class {
     for (library_info of this.library.books) {
       book_info = this.details.books[library_info.id];
       order_info = this.orders.items[library_info.id];
-      info = cleanObject({...library_info, ...book_info, ...order_info});
-      results.push(info);
+      let result = new Result(library_info, book_info, order_info);
+      results.push(result.data());
     }
 
     log_table("Your audible data", results);

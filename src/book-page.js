@@ -168,12 +168,12 @@ BookPage = class extends Page {
   }
 
   get rating() {
-    let rating = tryFloat(this.json_audiobook.aggregateRating.ratingValue);
+    let rating = tryFloat(this.json_audiobook.aggregateRating?.ratingValue);
     return rating ? +rating.toFixed(1) : ""
   }
 
   get num_ratings() {
-    return tryInt(this.json_audiobook.aggregateRating.ratingCount);
+    return tryInt(this.json_audiobook.aggregateRating?.ratingCount);
   }
 
   get id() {
@@ -364,7 +364,7 @@ ADBLBookPage = class extends BookPage {
   // }
 
   get categories_list() {
-    return this.info.categories.map((c) => c.name) || [];
+    return this.info.categories?.map((c) => c.name) || [];
   }
 
   get tags_list() {
@@ -425,6 +425,6 @@ NormalBookPage = class extends BookPage {
   }
 
   get categories_list() {
-    return this.doc.qs(".categoriesLabel a").map((c) => { return entityDecode(c.innerHTML) || "" }) || [];
+    return this.doc.qs(".categoriesLabel a")?.map((c) => { return entityDecode(c.innerHTML) || "" }) || [];
   }
 }

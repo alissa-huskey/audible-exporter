@@ -33,3 +33,10 @@ x 2025-03-01 2025-02-27 @ux Move timeRemaining to notifier.
 x 2025-03-01 2025-02-24 @qa consolidate library page fixtures
 x 2025-03-01 2025-02-14 @feature Log the amount of time the script took to run.
 x 2025-03-01 2025-02-27 @qa Add AudibleLibraryRow parser or something.
+x 2025-03-01 2025-03-01 @qa Fix all errors (.todo/error*.txt).
+x 2025-03-01 2025-02-23 @qa add error catching so the URL or other details can be logged.
+x 2025-03-01 2025-02-27 Make API of *Page classes the same, with #fields and data().
+x 2025-03-01 2025-02-28 @ux @download In final data, make sure title is like: 'Wind and Truth', not 'Wind and Truth: Book Five of the Stormlight Archive'
+x 2025-03-01 2025-03-01 @bug Check B002V1J7QY -- weird in TSV: B002V1J7QY		The Art of Deception: Controlling the Human Element of Security	Kevin Mitnick	Nick Sullivan
+x 2025-03-01 2025-02-22 @bug fix purchase_date
+x 2025-03-01 2025-02-27 @qa On file download, make sure that all TSV rows have the same values in the same order.
