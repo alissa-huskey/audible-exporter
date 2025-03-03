@@ -166,6 +166,7 @@ cleanObject = function(ob) {
 delay = (ms) => new Promise(res => {
   setTimeout(res, ms)
 });
+
 /**
  * element.js
  * ************************************************************************************
@@ -301,6 +302,7 @@ Element = class {
     }
   }
 }
+
 /**
  * list.js
  * ************************************************************************************
@@ -321,6 +323,7 @@ List = class extends Array {
     return this.slice(-1)[0];
   }
 }
+
 /**
  * parser.js
  * ************************************************************************************
@@ -364,6 +367,7 @@ Parser = class {
     return cleanObject(data)
   }
 }
+
 /**
  * page.js
  * ************************************************************************************
@@ -386,6 +390,7 @@ Page = class extends Parser {
     }
   }
 }
+
 /**
  * timer.js
  * ************************************************************************************
@@ -431,6 +436,7 @@ Timer = class {
     return result;
   }
 }
+
 /**
  * purchase.js
  * ************************************************************************************
@@ -457,6 +463,7 @@ Purchase = class extends Parser {
     )
   }
 }
+
 /**
  * order-row.js
  * ************************************************************************************
@@ -488,6 +495,7 @@ OrderRow = class extends Parser {
     return this.doc.qsf(".ui-it-purchasehistory-item-total div").innerHTML;
   }
 }
+
 /**
  * order-page.js
  * ************************************************************************************
@@ -621,6 +629,7 @@ OrderPage = class extends Page {
     return this.#items;
   }
 }
+
 /**
  * year-fetcher.js
  * ************************************************************************************
@@ -676,6 +685,7 @@ YearFetcher = class {
     return this.#items;
   }
 }
+
 /**
  * orders-fetcher.js
  * ************************************************************************************
@@ -744,6 +754,7 @@ OrdersFetcher = class {
     this.#items = value;
   }
 }
+
 /**
  * library-book-row.js
  * ************************************************************************************
@@ -799,6 +810,7 @@ LibraryBookRow = class extends Parser {
     return this.ul.qsf(".seriesLabel a")?.innerHTML?.trim();
   }
 }
+
 /**
  * library-page.js
  * ************************************************************************************
@@ -870,6 +882,7 @@ LibraryPage = class extends Page {
     return this.#books;
   }
 }
+
 
 /**
  * library-fetcher.js
@@ -958,6 +971,7 @@ LibraryFetcher = class extends Page {
     this.#books = value;
   }
 }
+
 
 /**
  * book-page.js
@@ -1394,6 +1408,7 @@ NormalBookPage = class extends BookPage {
     return this.doc.qs(".categoriesLabel a")?.map((c) => { return entityDecode(c.innerHTML) || "" }) || [];
   }
 }
+
 /**
  * details-fetcher.js
  * ************************************************************************************
@@ -1437,7 +1452,7 @@ DetailsFetcher = class {
     }
 
     actual.stop();
-    info(`DetailsFetcher.populate() took: ${actual.minutes} minutes (${actual.seconds} seconds)`);
+    info(`DetailsFetcher.populate() took: ${actual.minutes.toFixed(2)} minutes (${actual.seconds} seconds)`);
   }
 
   get books() {
@@ -1460,6 +1475,7 @@ DetailsFetcher = class {
     this.#books = value
   }
 }
+
 
 /**
  * file.js
@@ -1486,6 +1502,7 @@ File = class {
     return `audible_${ts}.${this.extension}`;
   }
 }
+
 /**
  * tsv-file.js
  * ************************************************************************************
@@ -1540,6 +1557,7 @@ TSVFile = class extends File {
 
 
 }
+
 /**
  * result.js
  * ************************************************************************************
@@ -1603,6 +1621,7 @@ Result = class {
     );
   }
 }
+
 /**
  * dom.js
  * ************************************************************************************
@@ -2114,6 +2133,7 @@ a#ae-download-btn:hover:after {
     this.#wrapper.style.display = "none";
   }
 }
+
 /**
  * order-notifier.js
  * ************************************************************************************
@@ -2178,6 +2198,7 @@ OrderNotifier = class extends StatusNotifier {
     return message;
   }
 }
+
 /**
  * library-notifier.js
  * ************************************************************************************
@@ -2221,6 +2242,7 @@ LibraryNotifier = class extends StatusNotifier {
     return message;
   }
 }
+
 /**
  * details-notifier.js
  * ************************************************************************************
@@ -2296,6 +2318,7 @@ DetailsNotifier = class extends StatusNotifier {
     return message;
   }
 }
+
 /**
  * exporter.js
  * ************************************************************************************
@@ -2411,6 +2434,7 @@ Exporter = class {
     }
   }
 }
+
 /**
  * runner.js
  * ************************************************************************************

@@ -1,4 +1,4 @@
-(D) 2025-02-14 @feature Add an option to download as CSV/TSV/JSON.
+(A) 2025-02-14 @feature Add an option to download as CSV/TSV/JSON.
 (Z) 2025-02-14 @feature Add my review if it exists.
 (Z) 2025-02-14 @feature add option to download goodreads CSV importable file
 (Z) 2025-02-14 @ux change date format and/or use timestamp
@@ -11,7 +11,6 @@
 (Z) 2025-02-22 @feature Add my_rating
 (B) 2025-02-22 @qa set variables for css class names in appropriate places.
 (B) 2025-02-23 @ux @feature Add 'Step x of y' to status bar.
-(B) 2025-02-23 @qa Refactor LibraryPageParser to take a page number and add a .fetch() method to set .doc @maybe
 (Z) 2025-02-23 @feature Add series ID.
 (Z) 2025-02-23 @feature Get collections
 (Z) 2025-02-23 @feature Get wishlist https://www.audible.com/library/wishlist
@@ -23,21 +22,19 @@
 (Z) 2025-02-23 @feature Add date downloaded to JSON
 (Z) 2025-02-23 @feature Some way to indicate last download, to avoid downloading everything
 (Z) 2025-02-25 @feature @notifier Add cancel button.
-(D) 2025-02-25 @tools Look into replacing make with gulp.
-(D) 2025-02-26 @qa Refactor Orders class to have prepare method/stage that will fetch all years and page numbers to get a total page count.
+x 2025-03-03 2025-02-25 @tools Look into replacing make with gulp.
+(B) 2025-02-26 @qa Refactor Orders class to have prepare method/stage that will fetch all years and page numbers to get a total page count.
 (B) 2025-02-26 @qa Handle failed requests.
 (Z) 2025-02-26 Implement some sort of pause/resume.
 (B) 2025-02-26 @qa document functions, classes and methods https://developer.wordpress.org/coding-standards/inline-documentation-standards/javascript/
-x 2025-03-02 2025-02-26 @ux Calculate the time each request takes, use value to estimate time remaining. https://www.geeksforgeeks.org/how-to-measure-time-taken-by-a-function-to-execute-using-javascript/
 (D) 2025-02-26 @qa @book-details Parse author from json_details instead of HTML.
-(M) 2025-02-27 @ux Add notice to not navigate away from page or close browser window while running.
+(A) 2025-02-27 @ux Add modal at beginning with start button and waring not to close or navigate away.
 (B) 2025-02-27 @qa Rename *Fetcher.populate() -> *Fetcher.get()
 (A) 2025-02-27 @qa Change http to https for all requests in Page.fetchDoc()
 (Z) 2025-02-27 @ux Display error message dialog on fatal error.
 (D) 2025-02-27 @ux @notifier Add time remaining to bottom context bar.
-(M) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
+(B) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
 (D) 2025-02-27 Add to readme https://developer.chrome.com/docs/devtools/console/log
-(D) 2025-02-27 @qa Subclass StatusNotifier to make a notifier for each step (orders, library, details)
 (B) 2025-02-27 @qa Have Page.fetchDoc() set this.url = url
 (D) 2025-02-27 @ux Make the colors between the notifier and modal consistent.
 (A) 2025-02-27 @qa Change Modal.file = to take a File object instead of a list with url and filename.
@@ -48,13 +45,19 @@ x 2025-03-02 2025-02-26 @ux Calculate the time each request takes, use value to 
 (D) 2025-03-01 @download Add purchase_timestamp.
 (D) 2025-03-01 @qa @pages Parse data from multiple fields, select the first one that has content.
 (M) 2025-03-01 @feature Get a list of collections a book belongs to
-(B) 2025-03-01 @book-details Parse/handle multiple series.
+(A) 2025-03-01 @book-details Parse/handle multiple series.
 (B) 2025-03-01 @qa Rename NormalBookPage -> LegacyBookPage
 (D) 2025-03-01 @download Rename audible_oginal -> audible_original
 (D) 2025-03-01 @qa Log the amount of time it takes for every step (orders, library, details).
 (D) 2025-03-01 @qa Write results to json tag in doc to reduce memory usage
 (B) 2025-03-01 @qa See about getting rid of .data() methods to reduce overhead.
-(A) 2025-03-01 @qa Move LibraryFetcher.fetchPage() -> LibraryPage.get()
+(B) 2025-03-01 @qa Move LibraryFetcher.fetchPage() -> LibraryPage.get()
 (B) 2025-03-02 @download ensure all URL formats are the same.
 (A) 2025-03-02 Remove StatusNotifier.updateProgress
-(B) 2025-03-02 @qa Launch background task to gather 1st page of each year to calculate total pages.
+(A) 2025-03-02 @qa Launch background task to gather 1st page of each year to calculate total pages.
+(A) 2025-03-02 @qa Remove StatusNotifier.timeLeft()
+(A) 2025-03-02 @data Parse as much data as possible from every page.
+(A) 2025-03-02 @ux DetailNotifier: If estimated minutes is an int, don't include .0
+(A) 2025-03-02 @qa test in other browsers
+(A) 2025-03-02 @qa Make the OrderPage constructor not such a mess.
+(A) 2025-03-02 @qa Refactor OrdersFetcher: .years (ie ['2025', '2024'...]) should not be the same as .years (ie [YearFetcher(), YearFetcher()...])
