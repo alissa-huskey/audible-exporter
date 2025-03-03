@@ -34,7 +34,6 @@ OrdersFetcher = class {
       i++;
     }
     dispatchEvent({percent: 1});
-    await delay(1000);
   }
 
   get count() {

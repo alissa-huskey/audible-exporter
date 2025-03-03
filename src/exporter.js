@@ -7,6 +7,7 @@ Exporter = class {
 
   constructor(limit=null) {
     this.limit = limit;
+    this.timer = new Timer();
     this.notifier = new StatusNotifier();
     this.modal = new Modal();
     this.orders = new OrdersFetcher();
@@ -27,7 +28,6 @@ Exporter = class {
 
     log_table("purchases", this.orders.items);
 
-    this.notifier.percent = 1;
     await delay(1000);
 
     return this.orders.items;
@@ -39,7 +39,6 @@ Exporter = class {
     this.notifier.create();
     await this.library.populate(this.limit);
 
-    this.notifier.percent = 1;
     log_table("library", this.library.books);
     await delay(1000);
   }
@@ -54,7 +53,6 @@ Exporter = class {
     this.details.library = this.library.books;
     await this.details.populate();
 
-    this.notifier.percent = 1;
     log_table("details", this.details.books);
     await delay(1500);
   }
@@ -85,7 +83,7 @@ Exporter = class {
 
   async run(limit=null) {
     try {
-      let before = new Date().getTime();
+      this.timer.start();
       this.limit = limit;
 
       this.notifier.create();
@@ -101,10 +99,9 @@ Exporter = class {
         return;
       }
 
-      let after = new Date().getTime();
-      let elapsed = (after - before) / 1000 / 60;
+      this.timer.stop();
 
-      info(`Done. (${this.results.length} results, ${elapsed.toFixed(2)} minutes)`);
+      info(`Done. (${this.results.length} results, ${this.timer.minutes} minutes)`);
 
       this.download(this.results);
 

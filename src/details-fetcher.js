@@ -41,6 +41,7 @@ DetailsFetcher = class {
     }
 
     actual.stop();
+    dispatchEvent({percent: 1});
     info(`DetailsFetcher.populate() took: ${actual.minutes.toFixed(2)} minutes (${actual.seconds} seconds)`);
   }
 

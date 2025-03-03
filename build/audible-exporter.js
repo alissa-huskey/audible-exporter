@@ -166,7 +166,6 @@ cleanObject = function(ob) {
 delay = (ms) => new Promise(res => {
   setTimeout(res, ms)
 });
-
 /**
  * element.js
  * ************************************************************************************
@@ -302,7 +301,6 @@ Element = class {
     }
   }
 }
-
 /**
  * list.js
  * ************************************************************************************
@@ -323,7 +321,6 @@ List = class extends Array {
     return this.slice(-1)[0];
   }
 }
-
 /**
  * parser.js
  * ************************************************************************************
@@ -367,7 +364,6 @@ Parser = class {
     return cleanObject(data)
   }
 }
-
 /**
  * page.js
  * ************************************************************************************
@@ -390,7 +386,6 @@ Page = class extends Parser {
     }
   }
 }
-
 /**
  * timer.js
  * ************************************************************************************
@@ -436,7 +431,6 @@ Timer = class {
     return result;
   }
 }
-
 /**
  * purchase.js
  * ************************************************************************************
@@ -463,7 +457,6 @@ Purchase = class extends Parser {
     )
   }
 }
-
 /**
  * order-row.js
  * ************************************************************************************
@@ -495,7 +488,6 @@ OrderRow = class extends Parser {
     return this.doc.qsf(".ui-it-purchasehistory-item-total div").innerHTML;
   }
 }
-
 /**
  * order-page.js
  * ************************************************************************************
@@ -629,7 +621,6 @@ OrderPage = class extends Page {
     return this.#items;
   }
 }
-
 /**
  * year-fetcher.js
  * ************************************************************************************
@@ -685,7 +676,6 @@ YearFetcher = class {
     return this.#items;
   }
 }
-
 /**
  * orders-fetcher.js
  * ************************************************************************************
@@ -722,7 +712,6 @@ OrdersFetcher = class {
       i++;
     }
     dispatchEvent({percent: 1});
-    await delay(1000);
   }
 
   get count() {
@@ -754,7 +743,6 @@ OrdersFetcher = class {
     this.#items = value;
   }
 }
-
 /**
  * library-book-row.js
  * ************************************************************************************
@@ -810,7 +798,6 @@ LibraryBookRow = class extends Parser {
     return this.ul.qsf(".seriesLabel a")?.innerHTML?.trim();
   }
 }
-
 /**
  * library-page.js
  * ************************************************************************************
@@ -883,7 +870,6 @@ LibraryPage = class extends Page {
   }
 }
 
-
 /**
  * library-fetcher.js
  * ************************************************************************************
@@ -927,7 +913,7 @@ LibraryFetcher = class extends Page {
       i++;
     } while (i < this.page_count);
 
-    delay(1000);
+    dispatchEvent({percent: 1});
 
     return this.pages;
   }
@@ -971,7 +957,6 @@ LibraryFetcher = class extends Page {
     this.#books = value;
   }
 }
-
 
 /**
  * book-page.js
@@ -1408,7 +1393,6 @@ NormalBookPage = class extends BookPage {
     return this.doc.qs(".categoriesLabel a")?.map((c) => { return entityDecode(c.innerHTML) || "" }) || [];
   }
 }
-
 /**
  * details-fetcher.js
  * ************************************************************************************
@@ -1452,6 +1436,7 @@ DetailsFetcher = class {
     }
 
     actual.stop();
+    dispatchEvent({percent: 1});
     info(`DetailsFetcher.populate() took: ${actual.minutes.toFixed(2)} minutes (${actual.seconds} seconds)`);
   }
 
@@ -1476,17 +1461,19 @@ DetailsFetcher = class {
   }
 }
 
-
 /**
  * file.js
  * ************************************************************************************
  */
 
 File = class {
-  mimetype = null;
+  #contents = null;
 
-  constructor(records=null) {
-    this.records = records;
+  mimetype = null;
+  extension = null;
+
+  constructor(contents=null) {
+    this.#contents = contents;
   }
 
   get blob() {
@@ -1501,8 +1488,15 @@ File = class {
     let ts = new Date().getTime();
     return `audible_${ts}.${this.extension}`;
   }
-}
 
+  get contents() {
+    return this.#contents;
+  }
+
+  set contents(value) {
+    this.#contents = value;
+  }
+}
 /**
  * tsv-file.js
  * ************************************************************************************
@@ -1514,6 +1508,11 @@ TSVFile = class extends File {
 
   mimetype = "text/tsv";
   extension = "tsv";
+
+  constructor(records=null) {
+    super();
+    this.records = records;
+  }
 
   get headers() {
     if (!this.records || isEmpty(this.records))
@@ -1557,7 +1556,6 @@ TSVFile = class extends File {
 
 
 }
-
 /**
  * result.js
  * ************************************************************************************
@@ -1621,7 +1619,6 @@ Result = class {
     );
   }
 }
-
 /**
  * dom.js
  * ************************************************************************************
@@ -2133,7 +2130,6 @@ a#ae-download-btn:hover:after {
     this.#wrapper.style.display = "none";
   }
 }
-
 /**
  * order-notifier.js
  * ************************************************************************************
@@ -2198,7 +2194,6 @@ OrderNotifier = class extends StatusNotifier {
     return message;
   }
 }
-
 /**
  * library-notifier.js
  * ************************************************************************************
@@ -2242,7 +2237,6 @@ LibraryNotifier = class extends StatusNotifier {
     return message;
   }
 }
-
 /**
  * details-notifier.js
  * ************************************************************************************
@@ -2318,7 +2312,6 @@ DetailsNotifier = class extends StatusNotifier {
     return message;
   }
 }
-
 /**
  * exporter.js
  * ************************************************************************************
@@ -2328,6 +2321,7 @@ Exporter = class {
 
   constructor(limit=null) {
     this.limit = limit;
+    this.timer = new Timer();
     this.notifier = new StatusNotifier();
     this.modal = new Modal();
     this.orders = new OrdersFetcher();
@@ -2348,7 +2342,6 @@ Exporter = class {
 
     log_table("purchases", this.orders.items);
 
-    this.notifier.percent = 1;
     await delay(1000);
 
     return this.orders.items;
@@ -2360,7 +2353,6 @@ Exporter = class {
     this.notifier.create();
     await this.library.populate(this.limit);
 
-    this.notifier.percent = 1;
     log_table("library", this.library.books);
     await delay(1000);
   }
@@ -2375,7 +2367,6 @@ Exporter = class {
     this.details.library = this.library.books;
     await this.details.populate();
 
-    this.notifier.percent = 1;
     log_table("details", this.details.books);
     await delay(1500);
   }
@@ -2406,7 +2397,7 @@ Exporter = class {
 
   async run(limit=null) {
     try {
-      let before = new Date().getTime();
+      this.timer.start();
       this.limit = limit;
 
       this.notifier.create();
@@ -2422,10 +2413,9 @@ Exporter = class {
         return;
       }
 
-      let after = new Date().getTime();
-      let elapsed = (after - before) / 1000 / 60;
+      this.timer.stop();
 
-      info(`Done. (${this.results.length} results, ${elapsed.toFixed(2)} minutes)`);
+      info(`Done. (${this.results.length} results, ${this.timer.minutes} minutes)`);
 
       this.download(this.results);
 
@@ -2434,7 +2424,6 @@ Exporter = class {
     }
   }
 }
-
 /**
  * runner.js
  * ************************************************************************************

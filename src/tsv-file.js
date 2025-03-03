@@ -10,6 +10,11 @@ TSVFile = class extends File {
   mimetype = "text/tsv";
   extension = "tsv";
 
+  constructor(records=null) {
+    super();
+    this.records = records;
+  }
+
   get headers() {
     if (!this.records || isEmpty(this.records))
       return;

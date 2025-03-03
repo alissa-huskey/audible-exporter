@@ -41,7 +41,7 @@ LibraryFetcher = class extends Page {
       i++;
     } while (i < this.page_count);
 
-    delay(1000);
+    dispatchEvent({percent: 1});
 
     return this.pages;
   }
