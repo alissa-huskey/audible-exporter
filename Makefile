@@ -13,7 +13,7 @@ dom_deps   = dev util element dom
 
 notifiers    = order library details
 
-base_srcs    = util element list parser page
+base_srcs    = util element list parser page timer
 order_srcs   = purchase order-row order-page year-fetcher orders-fetcher
 lib_srcs     = library-book-row library-page library-fetcher
 det_srcs     = book-page details-fetcher

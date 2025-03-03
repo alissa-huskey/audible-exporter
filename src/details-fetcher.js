@@ -15,6 +15,9 @@ DetailsFetcher = class {
   async populate() {
     let book, data;
 
+    let actual = new Timer();
+    actual.start();
+
     let total = this.library.length;
 
     dispatchEvent({book_count: total});
@@ -25,14 +28,20 @@ DetailsFetcher = class {
       if (!book.url) {
         continue;
       }
-      let page = await BookPage.get(book.url.replace("http", "https"));
+      let timer = new Timer();
+      let page = await timer.time(async function() {
+        return await BookPage.get(book.url.replace("http", "https"));
+      });
 
       page.url = book.url;
       this.pages.push(page);
 
       i++;
-      dispatchEvent({book: i});
+      dispatchEvent({book: i, timer: timer});
     }
+
+    actual.stop();
+    info(`DetailsFetcher.populate() took: ${actual.minutes.toFixed(2)} minutes (${actual.seconds} seconds)`);
   }
 
   get books() {

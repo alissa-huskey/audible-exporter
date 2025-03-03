@@ -44,3 +44,4 @@ x 2025-03-02 2025-02-26 @qa @notifier Look into event listeners to update progre
 x 2025-03-02 2025-03-01 @ux Fix the status bar pulsing colors.
 x 2025-03-02 2025-02-28 @ux @download Add book (number) to final download.
 x 2025-03-02 2025-02-26 @feature Add limit selector to only download a certain number of order/library pages.
+x 2025-03-02 2025-02-26 @ux Calculate the time each request takes, use value to estimate time remaining. https://www.geeksforgeeks.org/how-to-measure-time-taken-by-a-function-to-execute-using-javascript/
