@@ -81,6 +81,20 @@ describe("OrdersFetcher", function() {
     expect(year_2023.pages[0].items[0].title).toBe("Pile of Bones");
   });
 
+  test(".populate(limit)", async function() {
+    mockFn = mockFetchDoc("order-page-2025-1-of-1.html");
+    Page.prototype.fetchDoc = mockFn;
+
+    let years = ["2025", "2024", "2023"];
+
+    orders = new OrdersFetcher();
+    orders.years = years;
+    await orders.populate(1);
+
+    expect(mockFn.mock.calls).toHaveLength(1);
+    expect(orders.years).toHaveLength(1);
+  });
+
   test(".items", function() {
     let years = [
       {year: 2025, page_count: 1, pages: [{items: [

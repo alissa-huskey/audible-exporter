@@ -64,6 +64,21 @@ describe("LibraryFetcher", function() {
     expect(library.pages.length).toBe(1);
   });
 
+  test(".populate(limit)", async function() {
+    let mockFetchPage = function() {
+      return jest.fn().mockImplementation(() =>
+        Promise.resolve({page_size: 50, page_count: 5}),
+      );
+    };
+
+    LibraryFetcher.prototype.fetchPage = mockFetchPage();
+
+    let library = new LibraryFetcher()
+    await library.populate(1);
+
+    expect(library.pages.length).toBe(1);
+  });
+
   test(".books", async function() {
     let pages = [
       {

@@ -1,3 +1,8 @@
+/**
+ * status-notifier.js
+ * ************************************************************************************
+ */
+
 StatusNotifier = class extends DOM {
   #wrapper = null;
   #bar = null;
@@ -25,6 +30,10 @@ StatusNotifier = class extends DOM {
     status: "ae-status-text",
     percentage: "ae-percent-text",
   };
+
+  get message() {
+    return "Initializing...";
+  }
 
   get css() {
     return `
@@ -127,15 +136,38 @@ StatusNotifier = class extends DOM {
   updateProgress(percent, i=null) {
     this.percent = percent;
     if (i != null) {
-      let color = this.#pulse_colors[i % 2 == 0]
-      this.bar.background = color;
+      this.pulse(i);
     }
+  }
+
+  pulse(value) {
+    this.bar.style["background-color"] = this.#pulse_colors[value % 2 == 0];
   }
 
   timeLeft(remaining) {
     let per_book = 1.9;
 
     return Math.round((remaining * per_book) / 60);
+  }
+
+  hide() {
+    this.wrapper.classList.add("hidden");
+  }
+
+  show() {
+    this.wrapper.classList.remove("hidden");
+  }
+
+  create() {
+    super.create();
+
+    document.addEventListener("update-ae-notifier", (e) => {
+      for (let [k, v] of Object.entries(e.detail)) {
+        this[k] = v;
+      }
+    });
+
+    this.text = this.message;
   }
 
   reset() {
@@ -146,7 +178,7 @@ StatusNotifier = class extends DOM {
   }
 
   // remove the elements from the DOM
-  delete() {
+  remove() {
     this.wrapper.element.remove();
 
     this.#wrapper = null;

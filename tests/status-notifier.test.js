@@ -67,9 +67,9 @@ describe("StatusNotifier", function() {
     expect(notifier.status.innerText).toBe("");
   });
 
-  test(".delete()", function() {
+  test(".remove()", function() {
     notifier.create();
-    notifier.delete();
+    notifier.remove();
     expect($(`#${notifier.selectors.wrapper}`).length).toBe(0);
   });
 

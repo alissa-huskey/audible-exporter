@@ -1,8 +1,14 @@
+/**
+ * library-fetcher.js
+ * ************************************************************************************
+ */
+
 LibraryFetcher = class extends Page {
   page_size = 50;
   base_url = "https://www.audible.com/library/titles";
 
   #books = [];
+  #page_count = null;
 
   constructor() {
     super();
@@ -16,18 +22,26 @@ LibraryFetcher = class extends Page {
     return new LibraryPage(doc);
   }
 
-  async populate(progress_callback=null) {
+  async populate(limit=null) {
     let i = 0;
     do {
-      let page = await this.fetchPage(i + 1);
+      if (limit) {
+        this.page_count = limit;
+        this.page_size = 20;
+      }
+
+      let page_num = i + 1
+      dispatchEvent({page: page_num});
+
+      let page = await this.fetchPage(page_num);
       this.pages.push(page);
 
-      if (progress_callback) {
-        progress_callback(i, this.page_count);
-      }
+      dispatchEvent({page: page_num, page_count: this.page_count});
 
       i++;
     } while (i < this.page_count);
+
+    delay(1000);
 
     return this.pages;
   }
@@ -41,7 +55,14 @@ LibraryFetcher = class extends Page {
   }
 
   get page_count() {
-    return Math.ceil(this.book_count / this.page_size);
+    if (!this.#page_count) {
+      this.#page_count = Math.ceil(this.book_count / this.page_size);
+    }
+    return this.#page_count;
+  }
+
+  set page_count(value) {
+    this.#page_count = value;
   }
 
   get books() {

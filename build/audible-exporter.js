@@ -1,3 +1,8 @@
+/**
+ * util.js
+ * ************************************************************************************
+ */
+
 var CONSOLE_OUTPUT = false;
 const LOG_PREFIX = "[audible-exporter]";
 
@@ -121,6 +126,12 @@ cleanObject = function(ob) {
   }, {});
 }
 
+dispatchEvent = function(obj) {
+  document.dispatchEvent(new CustomEvent("update-ae-notifier", {
+    detail: obj
+  }));
+}
+
 stripHTML = function(html) {
    let doc = new DOMParser().parseFromString(html, 'text/html');
    return doc.body.textContent || "";
@@ -151,6 +162,15 @@ cleanObject = function(ob) {
     }
   }, {});
 }
+
+delay = (ms) => new Promise(res => {
+  setTimeout(res, ms)
+});
+/**
+ * element.js
+ * ************************************************************************************
+ */
+
 Element = class {
   constructor(elm=null) {
     this.element = elm;
@@ -281,6 +301,11 @@ Element = class {
     }
   }
 }
+/**
+ * list.js
+ * ************************************************************************************
+ */
+
 List = class extends Array {
   constructor(items) {
     items = Array.from(items);
@@ -296,6 +321,11 @@ List = class extends Array {
     return this.slice(-1)[0];
   }
 }
+/**
+ * parser.js
+ * ************************************************************************************
+ */
+
 Parser = class {
   #doc = null;
   _fields = [];
@@ -334,6 +364,11 @@ Parser = class {
     return cleanObject(data)
   }
 }
+/**
+ * page.js
+ * ************************************************************************************
+ */
+
 Page = class extends Parser {
   async fetchDoc(url) {
     let res;
@@ -351,6 +386,539 @@ Page = class extends Parser {
     }
   }
 }
+/**
+ * purchase.js
+ * ************************************************************************************
+ */
+
+Purchase = class extends Parser {
+  _fields = {
+    id: "data-order-item-asin",
+    order_id: "data-order-id",
+    title: "data-order-item-name",
+    author: "data-order-item-author",
+    amount: "data-order-item-cost",
+    credits: "data-order-item-credit-cost",
+  };
+
+  constructor(doc=null) {
+    super();
+    this.doc = doc;
+  }
+
+  data() {
+    return Object.fromEntries(
+      Object.entries(this._fields).map(([key, attr]) => [key, this.doc.attributes[attr].value])
+    )
+  }
+}
+/**
+ * order-row.js
+ * ************************************************************************************
+ */
+
+OrderRow = class extends Parser {
+  _fields = ["id", "date", "total"];
+
+  _identifers = [];
+
+  constructor(doc=null) {
+    super();
+    this.doc = doc;
+  }
+
+  get url() {
+    return this.doc.qsf("a[href^='/account/order-details']").href;
+  }
+
+  get id() {
+    return this.url.match(/orderId=([^&]+)&/)[1];
+  }
+
+  get date() {
+    return this.doc.qsf(".ui-it-purchasehistory-item-purchasedate").innerHTML?.trim();
+  }
+
+  get total() {
+    return this.doc.qsf(".ui-it-purchasehistory-item-total div").innerHTML;
+  }
+}
+/**
+ * order-page.js
+ * ************************************************************************************
+ */
+
+OrderPage = class extends Page {
+  base_url = "https://www.audible.com/account/purchase-history?tf=orders";
+
+  #default_per_page = 40;
+  #purchases_attrs = {
+    id: "data-order-item-asin",
+    order_id: "data-order-id",
+    amount: "data-order-item-cost",
+    credits: "data-order-item-credit-cost",
+    title: "data-order-item-name",
+    author: "data-order-item-author",
+  };
+  #valid_date_ranges = ["last_90_days", "last_180_days", "last_365_days"]
+
+  #orders = {};
+  #purchases = {};
+  #items = [];
+  #page_num = null;
+  #year = null;
+
+  constructor(year_or_doc=null, page_num=null, per_page=null) {
+    super();
+    this.doc = null;
+    if ((typeof year_or_doc == "number" || this.#valid_date_ranges.includes(year_or_doc)) && typeof page_num == "number") {
+      this.year = year_or_doc;
+      this.page_num = page_num;
+    } else if (year_or_doc) {
+      this.doc = year_or_doc;
+    }
+
+    this.per_page = per_page || this.#default_per_page;
+    this.#items = null;
+  }
+
+  async get() {
+    let url = `${this.base_url}&df=${this.year}&pn=${this.page_num}&ps=${this.per_page}`;
+    this.doc = await this.fetchDoc(url);
+    return this.doc;
+  }
+
+  get year() {
+    if (!this.#year && this.doc) {
+      this.#year = this.doc.qsf("#ui-it-purchase-history-date-filter option:checked")?.value;
+    }
+    return tryInt(this.#year);
+  }
+
+  set year(value) {
+    this.#year = value;
+  }
+
+  get page_num() {
+    if (!this.#page_num && this.doc) {
+      this.#page_num = this.doc.qsf("span.purchase-history-pagination-button")?.innerHTML?.trim();
+    }
+    return tryInt(this.#page_num);
+  }
+
+  set page_num(value) {
+    this.#page_num = value;
+  }
+
+  get page_count() {
+    let link = this.doc.qs("a.purchase-history-pagination-button").last
+    let count = link?.innerHTML.trim() || 1;
+    return parseInt(count);
+  }
+
+  get years() {
+    let options = this.doc.qs("#ui-it-purchase-history-date-filter option");
+    let years = options.reduce((arr, option) => {
+      let year = option.value;
+      if (/^\d+$/.test(year)) {
+        arr.push(year);
+      }
+      return arr;
+    }, []);
+    return years;
+  }
+
+  get orders() {
+    if (this.doc && isEmpty(this.#orders)) {
+      let rows = this.doc.qs("tr:has(a[href^='/account/order-details'])");
+
+      let orders = rows.map((tr) => {
+        let row = new OrderRow(tr);
+        return [row.id, row.data()];
+      });
+
+      this.#orders = Object.fromEntries(orders);
+    }
+    return this.#orders;
+  }
+
+  get purchases() {
+    if (this.doc && isEmpty(this.#purchases)) {
+      let links = (this.doc.qs("a[data-order-item-id]"));
+      let purchases = links.map((a) => new Purchase(a).data());
+      this.#purchases = purchases;
+    }
+
+    return this.#purchases;
+  }
+
+  get items() {
+    if (!this.#items) {
+      try {
+        let seen = {};
+        this.#items = this.purchases.reduce((arr, p) => {
+          if (p.title && p.author && !seen[p.id]) {
+            seen[p.id] = true;
+            arr.push({
+              id: p.id,
+              url: `http://www.audible.com/pd/${p.id}`,
+              title: p.title,
+              author: p.author,
+              purchase_date: this.orders[p.order_id].date,
+            });
+          }
+          return arr;
+        }, []);
+      } catch (err) {
+        error(err);
+      }
+    }
+    return this.#items;
+  }
+}
+/**
+ * year-fetcher.js
+ * ************************************************************************************
+ */
+
+YearFetcher = class {
+
+  #items = [];
+
+ constructor(year=null) {
+    this.year = tryInt(year);
+    this.page_count = null;
+    this.#items = null;
+    this.pages = null;
+  }
+
+  async populate() {
+    this.pages = [];
+    let i = 0;
+    do {
+      let page_num = i + 1;
+      let page = new OrderPage(this.year, page_num);
+
+      dispatchEvent({page: page_num});
+
+      try {
+        await page.get();
+        if (!this.page_count) {
+          this.page_count = page.page_count;
+
+          dispatchEvent({page_count: this.page_count});
+          await delay(1000);
+        }
+        this.pages.push(page);
+    } catch (err) {
+      error(err);
+    }
+
+      i++;
+    } while (i < this.page_count);
+  }
+
+  get items() {
+    if (!this.#items && this.pages) {
+      let items = [];
+      for (let page of this.pages) {
+        for (let item of page.items) {
+          items.push(item);
+        }
+      }
+      this.#items = items;
+    }
+    return this.#items;
+  }
+}
+/**
+ * orders-fetcher.js
+ * ************************************************************************************
+ */
+
+OrdersFetcher = class {
+  #count = 0;
+  #items = null;
+
+  constructor() {
+    this.#count = 0;
+    this.#items = null;
+  }
+
+  async init() {
+    let page = new OrderPage("last_90_days", 1, 20);
+    await page.get();
+    this.years = page.years;
+  }
+
+  async populate(limit=null) {
+    if (limit) {
+      this.years.splice(limit, this.years.length);
+      dispatchEvent({years: this.years});
+    }
+    let year_count = this.years.length;
+    let i = 0;
+
+    for (let year of this.years)  {
+      dispatchEvent({year: year, page: null, page_count: null});
+      let fetcher = new YearFetcher(year);
+      await fetcher.populate();
+      this.years[i] = fetcher;
+      i++;
+    }
+    dispatchEvent({percent: 1});
+    await delay(1000);
+  }
+
+  get count() {
+    if(!this.#count) {
+      this.#count = this.years.reduce(
+        (sum, y) => sum + y.pages.reduce( (count, p) => count + p.items.length, 0),
+        0
+      )
+    }
+    return this.#count;
+  }
+
+  get items() {
+    if (!this.#items) {
+      let items = {};
+      for (let year of this.years) {
+        for (let page of year.pages) {
+          for (let item of page.items) {
+            items[item.id] = item;
+          }
+        }
+      }
+      this.#items = items;
+    }
+    return this.#items;
+  }
+
+  set items(value) {
+    this.#items = value;
+  }
+}
+/**
+ * library-book-row.js
+ * ************************************************************************************
+ */
+
+LibraryBookRow = class extends Parser {
+  _fields = [
+    "id",
+    "url",
+    "title",
+    "author",
+    "narrator",
+    "series",
+  ];
+  _identifers = ["page_num", "row_num"];
+
+  constructor(doc=null, page_num=null, row_num=null) {
+    super();
+    this.doc = doc;
+    this.page_num = page_num;
+    this.row_num = row_num;
+  }
+
+  get id() {
+    return this.doc.id.replace("adbl-library-content-row-", "");
+  }
+
+  get ul() {
+    return this.doc.qsf(".bc-list.bc-list-nostyle");
+  }
+
+  get url() {
+    return this.ul.gcf("bc-size-headline3")
+      .parentElement
+      .attributes["href"]?.value
+      .replace(/\?.+/, "");
+  }
+
+  get title() {
+    let title = this.ul.gcf("bc-size-headline3")?.innerHTML.trim();
+    return entityDecode(title);
+  }
+
+  get author() {
+    return this.ul.gcf("authorLabel").gcf("bc-color-base").innerHTML.trim();
+  }
+
+  get narrator() {
+    return this.ul.qsf(".narratorLabel .bc-color-base")?.innerHTML?.trim();
+  }
+
+  get series() {
+    return this.ul.qsf(".seriesLabel a")?.innerHTML?.trim();
+  }
+}
+/**
+ * library-page.js
+ * ************************************************************************************
+ */
+
+LibraryPage = class extends Page {
+  #default_page_size = 20;
+  #rows = null;
+  #books = null;
+
+  constructor(doc=null) {
+    super();
+    this.doc = doc;
+    this.#rows = null;
+    this.#books = null;
+  }
+
+  get page_size() {
+    if (!this.doc)
+      return
+    let size = this.doc.qsf("select[name='pageSize'] option:checked")?.value || this.#default_page_size;
+    return parseInt(size);
+  }
+
+  get page_num() {
+    if (!this.doc)
+      return
+    let num = this.doc.qsf("span.pageNumberElement")?.innerHTML || 1;
+    return parseInt(num);
+  }
+
+  get page_count() {
+    if (!this.doc)
+      return
+    let links = this.doc.qs("a.pageNumberElement");
+    let count = links.last?.innerHTML || 1;
+    return parseInt(count);
+  }
+
+  get rows() {
+    if (!this.#rows) {
+      let i = 0;
+      let arr = [];
+      let rows = this.doc.gc("adbl-library-content-row");
+      for (let row of rows) {
+        arr.push(new LibraryBookRow(row, this.page_num, (i+1)));
+        i++;
+      }
+      this.#rows = arr;
+    }
+    return this.#rows;
+  }
+
+  get books() {
+    if (!this.#books) {
+      try {
+        this.#books = this.rows.reduce((arr, row) => {
+          if (row.title == "Your First Listen") {
+            return arr;
+          }
+
+          arr.push(row.data());
+          return arr;
+        }, []);
+      } catch (err) {
+        error(err);
+      }
+    }
+    return this.#books;
+  }
+}
+
+/**
+ * library-fetcher.js
+ * ************************************************************************************
+ */
+
+LibraryFetcher = class extends Page {
+  page_size = 50;
+  base_url = "https://www.audible.com/library/titles";
+
+  #books = [];
+  #page_count = null;
+
+  constructor() {
+    super();
+    this.pages = [];
+    this.#books = null;
+  }
+
+  async fetchPage(i) {
+    let url = `${this.base_url}?pageSize=${this.page_size}&page=${i}`;
+    let doc = await this.fetchDoc(url);
+    return new LibraryPage(doc);
+  }
+
+  async populate(limit=null) {
+    let i = 0;
+    do {
+      if (limit) {
+        this.page_count = limit;
+        this.page_size = 20;
+      }
+
+      let page_num = i + 1
+      dispatchEvent({page: page_num});
+
+      let page = await this.fetchPage(page_num);
+      this.pages.push(page);
+
+      dispatchEvent({page: page_num, page_count: this.page_count});
+
+      i++;
+    } while (i < this.page_count);
+
+    delay(1000);
+
+    return this.pages;
+  }
+
+  get book_count() {
+    if (!this.pages) {
+      return;
+    }
+    let page = this.pages[0];
+    return page.page_size * page.page_count;
+  }
+
+  get page_count() {
+    if (!this.#page_count) {
+      this.#page_count = Math.ceil(this.book_count / this.page_size);
+    }
+    return this.#page_count;
+  }
+
+  set page_count(value) {
+    this.#page_count = value;
+  }
+
+  get books() {
+    if (!this.#books) {
+      let books = this.pages.reduce((arr, page) => {
+          return arr.concat(
+            // map books by URL to avoid duplicates
+            page.books.map((book) => [book.url, book])
+          );
+        },
+        [],
+      );
+
+      this.#books = Object.values(Object.fromEntries(books));
+    }
+    return this.#books;
+  }
+
+  set books(value) {
+    this.#books = value;
+  }
+}
+
+/**
+ * book-page.js
+ * ************************************************************************************
+ */
+
 /**
  * Book page.
  *
@@ -781,471 +1349,11 @@ NormalBookPage = class extends BookPage {
     return this.doc.qs(".categoriesLabel a")?.map((c) => { return entityDecode(c.innerHTML) || "" }) || [];
   }
 }
-LibraryBookRow = class extends Parser {
-  _fields = [
-    "id",
-    "url",
-    "title",
-    "author",
-    "narrator",
-    "series",
-  ];
-  _identifers = ["page_num", "row_num"];
+/**
+ * details-fetcher.js
+ * ************************************************************************************
+ */
 
-  constructor(doc=null, page_num=null, row_num=null) {
-    super();
-    this.doc = doc;
-    this.page_num = page_num;
-    this.row_num = row_num;
-  }
-
-  get id() {
-    return this.doc.id.replace("adbl-library-content-row-", "");
-  }
-
-  get ul() {
-    return this.doc.qsf(".bc-list.bc-list-nostyle");
-  }
-
-  get url() {
-    return this.ul.gcf("bc-size-headline3")
-      .parentElement
-      .attributes["href"]?.value
-      .replace(/\?.+/, "");
-  }
-
-  get title() {
-    let title = this.ul.gcf("bc-size-headline3")?.innerHTML.trim();
-    return entityDecode(title);
-  }
-
-  get author() {
-    return this.ul.gcf("authorLabel").gcf("bc-color-base").innerHTML.trim();
-  }
-
-  get narrator() {
-    return this.ul.qsf(".narratorLabel .bc-color-base")?.innerHTML?.trim();
-  }
-
-  get series() {
-    return this.ul.qsf(".seriesLabel a")?.innerHTML?.trim();
-  }
-}
-LibraryPage = class extends Page {
-  #default_page_size = 20;
-  #rows = null;
-  #books = null;
-
-  constructor(doc=null) {
-    super();
-    this.doc = doc;
-    this.#rows = null;
-    this.#books = null;
-  }
-
-  get page_size() {
-    if (!this.doc)
-      return
-    let size = this.doc.qsf("select[name='pageSize'] option:checked")?.value || this.#default_page_size;
-    return parseInt(size);
-  }
-
-  get page_num() {
-    if (!this.doc)
-      return
-    let num = this.doc.qsf("span.pageNumberElement")?.innerHTML || 1;
-    return parseInt(num);
-  }
-
-  get page_count() {
-    if (!this.doc)
-      return
-    let links = this.doc.qs("a.pageNumberElement");
-    let count = links.last?.innerHTML || 1;
-    return parseInt(count);
-  }
-
-  get rows() {
-    if (!this.#rows) {
-      let i = 0;
-      let arr = [];
-      let rows = this.doc.gc("adbl-library-content-row");
-      for (let row of rows) {
-        arr.push(new LibraryBookRow(row, this.page_num, (i+1)));
-        i++;
-      }
-      this.#rows = arr;
-    }
-    return this.#rows;
-  }
-
-  get books() {
-    if (!this.#books) {
-      try {
-        this.#books = this.rows.reduce((arr, row) => {
-          if (row.title == "Your First Listen") {
-            return arr;
-          }
-
-          arr.push(row.data());
-          return arr;
-        }, []);
-      } catch (err) {
-        error(err);
-      }
-    }
-    return this.#books;
-  }
-}
-
-LibraryFetcher = class extends Page {
-  page_size = 50;
-  base_url = "https://www.audible.com/library/titles";
-
-  #books = [];
-
-  constructor() {
-    super();
-    this.pages = [];
-    this.#books = null;
-  }
-
-  async fetchPage(i) {
-    let url = `${this.base_url}?pageSize=${this.page_size}&page=${i}`;
-    let doc = await this.fetchDoc(url);
-    return new LibraryPage(doc);
-  }
-
-  async populate(progress_callback=null) {
-    let i = 0;
-    do {
-      let page = await this.fetchPage(i + 1);
-      this.pages.push(page);
-
-      if (progress_callback) {
-        progress_callback(i, this.page_count);
-      }
-
-      i++;
-    } while (i < this.page_count);
-
-    return this.pages;
-  }
-
-  get book_count() {
-    if (!this.pages) {
-      return;
-    }
-    let page = this.pages[0];
-    return page.page_size * page.page_count;
-  }
-
-  get page_count() {
-    return Math.ceil(this.book_count / this.page_size);
-  }
-
-  get books() {
-    if (!this.#books) {
-      let books = this.pages.reduce((arr, page) => {
-          return arr.concat(
-            // map books by URL to avoid duplicates
-            page.books.map((book) => [book.url, book])
-          );
-        },
-        [],
-      );
-
-      this.#books = Object.values(Object.fromEntries(books));
-    }
-    return this.#books;
-  }
-
-  set books(value) {
-    this.#books = value;
-  }
-}
-
-Purchase = class extends Parser {
-  _fields = {
-    id: "data-order-item-asin",
-    order_id: "data-order-id",
-    title: "data-order-item-name",
-    author: "data-order-item-author",
-    amount: "data-order-item-cost",
-    credits: "data-order-item-credit-cost",
-  };
-
-  constructor(doc=null) {
-    super();
-    this.doc = doc;
-  }
-
-  data() {
-    return Object.fromEntries(
-      Object.entries(this._fields).map(([key, attr]) => [key, this.doc.attributes[attr].value])
-    )
-  }
-}
-OrderRow = class extends Parser {
-  _fields = ["id", "date", "total"];
-
-  _identifers = [];
-
-  constructor(doc=null) {
-    super();
-    this.doc = doc;
-  }
-
-  get url() {
-    return this.doc.qsf("a[href^='/account/order-details']").href;
-  }
-
-  get id() {
-    return this.url.match(/orderId=([^&]+)&/)[1];
-  }
-
-  get date() {
-    return this.doc.qsf(".ui-it-purchasehistory-item-purchasedate").innerHTML?.trim();
-  }
-
-  get total() {
-    return this.doc.qsf(".ui-it-purchasehistory-item-total div").innerHTML;
-  }
-}
-OrderPage = class extends Page {
-  base_url = "https://www.audible.com/account/purchase-history?tf=orders";
-
-  #default_per_page = 40;
-  #purchases_attrs = {
-    id: "data-order-item-asin",
-    order_id: "data-order-id",
-    amount: "data-order-item-cost",
-    credits: "data-order-item-credit-cost",
-    title: "data-order-item-name",
-    author: "data-order-item-author",
-  };
-  #valid_date_ranges = ["last_90_days", "last_180_days", "last_365_days"]
-
-  #orders = {};
-  #purchases = {};
-  #items = [];
-  #page_num = null;
-  #year = null;
-
-  constructor(year_or_doc=null, page_num=null, per_page=null) {
-    super();
-    this.doc = null;
-    if ((typeof year_or_doc == "number" || this.#valid_date_ranges.includes(year_or_doc)) && typeof page_num == "number") {
-      this.year = year_or_doc;
-      this.page_num = page_num;
-    } else if (year_or_doc) {
-      this.doc = year_or_doc;
-    }
-
-    this.per_page = per_page || this.#default_per_page;
-    this.#items = null;
-  }
-
-  async get() {
-    let url = `${this.base_url}&df=${this.year}&pn=${this.page_num}&ps=${this.per_page}`;
-    this.doc = await this.fetchDoc(url);
-    return this.doc;
-  }
-
-  get year() {
-    if (!this.#year && this.doc) {
-      this.#year = this.doc.qsf("#ui-it-purchase-history-date-filter option:checked")?.value;
-    }
-    return tryInt(this.#year);
-  }
-
-  set year(value) {
-    this.#year = value;
-  }
-
-  get page_num() {
-    if (!this.#page_num && this.doc) {
-      this.#page_num = this.doc.qsf("span.purchase-history-pagination-button")?.innerHTML?.trim();
-    }
-    return tryInt(this.#page_num);
-  }
-
-  set page_num(value) {
-    this.#page_num = value;
-  }
-
-  get page_count() {
-    let link = this.doc.qs("a.purchase-history-pagination-button").last
-    let count = link?.innerHTML.trim() || 1;
-    return parseInt(count);
-  }
-
-  get years() {
-    let options = this.doc.qs("#ui-it-purchase-history-date-filter option");
-    let years = options.reduce((arr, option) => {
-      let year = option.value;
-      if (/^\d+$/.test(year)) {
-        arr.push(year);
-      }
-      return arr;
-    }, []);
-    return years;
-  }
-
-  get orders() {
-    if (this.doc && isEmpty(this.#orders)) {
-      let rows = this.doc.qs("tr:has(a[href^='/account/order-details'])");
-
-      let orders = rows.map((tr) => {
-        let row = new OrderRow(tr);
-        return [row.id, row.data()];
-      });
-
-      this.#orders = Object.fromEntries(orders);
-    }
-    return this.#orders;
-  }
-
-  get purchases() {
-    if (this.doc && isEmpty(this.#purchases)) {
-      let links = (this.doc.qs("a[data-order-item-id]"));
-      let purchases = links.map((a) => new Purchase(a).data());
-      this.#purchases = purchases;
-    }
-
-    return this.#purchases;
-  }
-
-  get items() {
-    if (!this.#items) {
-      try {
-        let seen = {};
-        this.#items = this.purchases.reduce((arr, p) => {
-          if (p.title && p.author && !seen[p.id]) {
-            seen[p.id] = true;
-            arr.push({
-              id: p.id,
-              url: `http://www.audible.com/pd/${p.id}`,
-              title: p.title,
-              author: p.author,
-              purchase_date: this.orders[p.order_id].date,
-            });
-          }
-          return arr;
-        }, []);
-      } catch (err) {
-        error(err);
-      }
-    }
-    return this.#items;
-  }
-}
-YearFetcher = class {
-
-  #items = [];
-
- constructor(year=null) {
-    this.year = tryInt(year);
-    this.page_count = null;
-    this.#items = null;
-    this.pages = null;
-  }
-
-  async populate(progress_callback=null, percent=null) {
-    this.pages = [];
-    let i = 0;
-    do {
-      let page_num = i + 1;
-      let page = new OrderPage(this.year, page_num);
-
-      try {
-        await page.get();
-        if (!this.page_count) {
-          this.page_count = page.page_count;
-        }
-        this.pages.push(page);
-
-        if (progress_callback) {
-          progress_callback(this.year, page_num, this.page_count, percent);
-        }
-    } catch (err) {
-      error(err);
-    }
-
-      i++;
-    } while (i < this.page_count);
-  }
-
-  get items() {
-    if (!this.#items && this.pages) {
-      let items = [];
-      for (let page of this.pages) {
-        for (let item of page.items) {
-          items.push(item);
-        }
-      }
-      this.#items = items;
-    }
-    return this.#items;
-  }
-}
-OrdersFetcher = class {
-  #count = 0;
-  #items = null;
-
-  constructor() {
-    this.#count = 0;
-    this.#items = null;
-  }
-
-  async init() {
-    let page = new OrderPage("last_90_days", 1, 20);
-    await page.get();
-    this.years = page.years;
-  }
-
-  async populate(progress_callback=null) {
-    let year_count = this.years.length;
-    let i = 0;
-
-    for (let year of this.years)  {
-      let fetcher = new YearFetcher(year);
-      let percent = i / year_count;
-      await fetcher.populate(progress_callback, percent);
-      this.years[i] = fetcher;
-      i++;
-    }
-  }
-
-  get count() {
-    if(!this.#count) {
-      this.#count = this.years.reduce(
-        (sum, y) => sum + y.pages.reduce( (count, p) => count + p.items.length, 0),
-        0
-      )
-    }
-    return this.#count;
-  }
-
-  get items() {
-    if (!this.#items) {
-      let items = {};
-      for (let year of this.years) {
-        for (let page of year.pages) {
-          for (let item of page.items) {
-            items[item.id] = item;
-          }
-        }
-      }
-      this.#items = items;
-    }
-    return this.#items;
-  }
-
-  set items(value) {
-    this.#items = value;
-  }
-}
 DetailsFetcher = class {
   #books = {}
 
@@ -1255,10 +1363,13 @@ DetailsFetcher = class {
     this.pages = [];
   }
 
-  async populate(progress_callback=null) {
+  async populate() {
     let book, data;
 
     let total = this.library.length;
+
+    dispatchEvent({book_count: total});
+
     let i = 0;
 
     for (book of this.library) {
@@ -1270,10 +1381,8 @@ DetailsFetcher = class {
       page.url = book.url;
       this.pages.push(page);
 
-      if (progress_callback) {
-        progress_callback(i, total, data);
-      }
       i++;
+      dispatchEvent({book: i});
     }
   }
 
@@ -1298,41 +1407,11 @@ DetailsFetcher = class {
   }
 }
 
-DOM = class {
-  #style = null;
-  #css = null;
+/**
+ * file.js
+ * ************************************************************************************
+ */
 
-  constructor() {
-    this.#style = null;
-    this.#css = null;
-  }
-
-  get style() {
-    if (!this.#style) {
-      this.#style = Element.create("style", {id: this.selectors.style, type: "text/css"});
-
-      if (this.#style.element.styleSheet) {
-        // Support for IE
-        this.#style.element.styleSheet.cssText = this.css;
-      } else {
-        // Support for the rest
-        let node = document.createTextNode(this.css);
-        this.#style.element.appendChild(node);
-      }
-    }
-    return this.#style;
-  }
-
-  // add the element to the DOM
-  create() {
-    let el = Element.gi(this.selectors.wrapper);
-    if (el)
-      el.outerHTML = "";
-
-    document.head.appendChild(this.style.element);
-    document.body.appendChild(this.wrapper.element);
-  }
-}
 File = class {
   mimetype = null;
 
@@ -1353,6 +1432,11 @@ File = class {
     return `audible_${ts}.${this.extension}`;
   }
 }
+/**
+ * tsv-file.js
+ * ************************************************************************************
+ */
+
 TSVFile = class extends File {
   #headers = null;
   #rows = null;
@@ -1402,6 +1486,11 @@ TSVFile = class extends File {
 
 
 }
+/**
+ * result.js
+ * ************************************************************************************
+ */
+
 Result = class {
   #headers = {
     id: ["order", "library", "details"],
@@ -1460,6 +1549,280 @@ Result = class {
     );
   }
 }
+/**
+ * dom.js
+ * ************************************************************************************
+ */
+
+DOM = class {
+  #style = null;
+  #css = null;
+
+  constructor() {
+    this.#style = null;
+    this.#css = null;
+  }
+
+  get style() {
+    if (!this.#style) {
+      this.#style = Element.create("style", {id: this.selectors.style, type: "text/css"});
+
+      if (this.#style.element.styleSheet) {
+        // Support for IE
+        this.#style.element.styleSheet.cssText = this.css;
+      } else {
+        // Support for the rest
+        let node = document.createTextNode(this.css);
+        this.#style.element.appendChild(node);
+      }
+    }
+    return this.#style;
+  }
+
+  // add the element to the DOM
+  create() {
+    let el = Element.gi(this.selectors.wrapper);
+    if (el)
+      el.outerHTML = "";
+
+    document.head.appendChild(this.style.element);
+    document.body.appendChild(this.wrapper.element);
+  }
+}
+
+/**
+ * status-notifier.js
+ * ************************************************************************************
+ */
+
+StatusNotifier = class extends DOM {
+  #wrapper = null;
+  #bar = null;
+  #status = null;
+  #percentage = null;
+  #messages = null;
+  #style = null;
+
+  #colors = {
+    darkGreen: "#07ba5b",
+    lightGreen: "#3de367",
+    nearBlack: "#121212",
+    white: "#fff",
+    rasin: "#19191F",
+    darkGray: "#232530",
+    offWhite: "#abaab3",
+    lightGray: "#9a99a1",
+  }
+  #pulse_colors = {true: "#07ba5b", false: "#3de367"}
+
+  selectors = {
+    wrapper: "ae-notifier",
+    bar: "ae-bar",
+    messages: "ae-messages",
+    status: "ae-status-text",
+    percentage: "ae-percent-text",
+  };
+
+  get message() {
+    return "Initializing...";
+  }
+
+  get css() {
+    return `
+#ae-notifier {
+  position: fixed;
+  top: 100px;
+  border-radius: 0.2em;
+  border-width: 1px;
+  border-style: solid;
+  font-family: system-ui;
+}
+
+#ae-notifier.hidden {
+  display: none;
+}
+
+#ae-bar {
+  width: 0;
+  height: 50px;
+  border-bottom-right-radius: 0.2em;
+  border-top-right-radius: 0.2em;
+  transition: all 1s;
+  border-width: 1px;
+  border-style: solid;
+}
+
+#ae-messages {
+  padding: 14px;
+  color: #fff;
+}
+
+#ae-status-text {
+  text-wrap: nowrap;
+}
+
+#ae-percent-text {
+}
+
+.row {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+    `;
+  }
+
+  get body_width() {
+    return document.body.getBoundingClientRect().width;
+  }
+
+  get bar_width() {
+    return this.body_width * 0.8;
+  }
+
+  // Construct notifier wrapper div, append all child elements, and return
+  get wrapper() {
+    if (!this.#wrapper) {
+      this.#wrapper = Element.create("div", {id: this.selectors.wrapper, style: {
+        width: `${this.bar_width}px`,
+        left: `${(this.body_width - this.bar_width) / 2}px`,
+        background: this.#colors.nearBlack,
+        'border-color': this.#colors.lightGreen,
+        'z-index': new Date().getTime(),
+      }})
+
+      this.wrapper.element.appendChild(this.bar.element);
+      this.bar.element.appendChild(this.messages.element);
+      this.messages.element.appendChild(this.status.element);
+      this.messages.element.appendChild(this.percentage.element);
+    }
+    return this.#wrapper;
+  }
+
+  // progress bar element
+  get bar() {
+    if (!this.#bar) {
+      this.#bar = Element.create("div", {id: this.selectors.bar, style: {
+        background: this.#colors.darkGreen,
+        'border-color': this.#colors.lightGreen,
+      }});
+    }
+    return this.#bar;
+  }
+
+  get messages() {
+    if (!this.#messages) {
+      this.#messages = Element.create("div", {id: this.selectors.messages, class: "row", style: {
+        width: `${this.bar_width}px`,
+        // color: "#112A46",
+        // color: "#0c1b1d",
+        // color: "#283747",
+      }});
+    }
+    return this.#messages;
+  }
+
+  // status text element
+  get status() {
+    if (!this.#status) {
+      this.#status = Element.create("div", {id: this.selectors.status, style: {
+        // color: "#112A46",
+        // color: "#0c1b1d",
+        // color: "#283747",
+      }});
+    }
+    return this.#status;
+  }
+
+  // percent text element
+  get percentage() {
+    if (!this.#percentage) {
+      this.#percentage = Element.create("span", {id: this.selectors.percentage, style: {
+        color: "#87ff65", // bright green
+        color: "#0aff99", // bright green
+        // color: "#00ff80", // bright green
+        // color: "#00ff9f", // bright green
+        // color: "#0dffae", // bright green
+      }});
+    }
+    return this.#percentage;
+  }
+
+  // set the status text
+  set text(message) {
+    this.status.innerText = message;
+  }
+
+  // set the percentage text and progress bar width
+  set percent(decimal) {
+    let amount = Math.ceil(decimal * 100);
+    this.percentage.innerText = `${amount}%`;
+
+    let width = this.bar_width * decimal;
+    this.bar.style.width = `${width}px`;
+  }
+
+  // set the percent text, progress bar width, and pulse the background color
+  // on alternating odd/even increments
+  updateProgress(percent, i=null) {
+    this.percent = percent;
+    if (i != null) {
+      this.pulse(i);
+    }
+  }
+
+  pulse(value) {
+    this.bar.style["background-color"] = this.#pulse_colors[value % 2 == 0];
+  }
+
+  timeLeft(remaining) {
+    let per_book = 1.9;
+
+    return Math.round((remaining * per_book) / 60);
+  }
+
+  hide() {
+    this.wrapper.classList.add("hidden");
+  }
+
+  show() {
+    this.wrapper.classList.remove("hidden");
+  }
+
+  create() {
+    super.create();
+
+    document.addEventListener("update-ae-notifier", (e) => {
+      for (let [k, v] of Object.entries(e.detail)) {
+        this[k] = v;
+      }
+    });
+
+    this.text = this.message;
+  }
+
+  reset() {
+    this.text = "";
+    this.percent = 0;
+    this.bar.style.background = this.#colors.darkGreen;
+    this.percentage.innerText = "";
+  }
+
+  // remove the elements from the DOM
+  remove() {
+    this.wrapper.element.remove();
+
+    this.#wrapper = null;
+    this.#bar = null;
+    this.#status = null;
+    this.#percentage = null;
+  }
+}
+
+/**
+ * modal.js
+ * ************************************************************************************
+ */
 
 Modal = class extends DOM {
   #css = null;
@@ -1697,202 +2060,160 @@ a#ae-download-btn:hover:after {
     this.#wrapper.style.display = "none";
   }
 }
+/**
+ * order-notifier.js
+ * ************************************************************************************
+ */
 
-StatusNotifier = class extends DOM {
-  #wrapper = null;
-  #bar = null;
-  #status = null;
-  #percentage = null;
-  #messages = null;
-  #style = null;
+OrderNotifier = class extends StatusNotifier {
+  #year = null;
+  #page = null;
+  #page_count = null;
 
-  #colors = {
-    darkGreen: "#07ba5b",
-    lightGreen: "#3de367",
-    nearBlack: "#121212",
-    white: "#fff",
-    rasin: "#19191F",
-    darkGray: "#232530",
-    offWhite: "#abaab3",
-    lightGray: "#9a99a1",
+  constructor(years=null) {
+    super();
+    this.years = years;
   }
+
+  get year() {
+    return this.#year;
+  }
+
+  set year(value) {
+    this.#year = value
+    this.text = this.message;
+    this.percent = this.years.indexOf(value) / this.years.length
+    this.pulse(value);
+  }
+
+  get page() {
+    return this.#page;
+  }
+
+  set page(value) {
+    this.#page = value
+    this.text = this.message;
+  }
+
+  get page_count() {
+    return this.#page_count;
+  }
+
+  set page_count(value) {
+    this.#page_count = value
+    this.text = this.message;
+  }
+
+  get message() {
+    if (!this.year) {
+      return "Retrieving purchases...";
+    }
+
+    let message = `Retrieving ${this.year} purchases`
+    if (this.page) {
+      message += `: page ${this.page}`;
+      if (this.page_count) {
+        message += ` of ${this.page_count}`;
+      } else {
+        message += "...";
+      }
+    } else {
+      message += "...";
+    }
+
+    return message;
+  }
+}
+/**
+ * library-notifier.js
+ * ************************************************************************************
+ */
+
+LibraryNotifier = class extends StatusNotifier {
+  #page = null;
+  #page_count = null;
+
+  get page() {
+    return this.#page;
+  }
+
+  set page(value) {
+    this.#page = value
+    this.text = this.message;
+    this.percent = this.page / this.page_count
+  }
+
+  get page_count() {
+    return this.#page_count;
+  }
+
+  set page_count(value) {
+    this.#page_count = value
+    this.text = this.message;
+  }
+
+  get message() {
+    if (!this.page) {
+      return "Retrieving library...";
+    }
+
+    let message = `Retrieving library: page ${this.page}`
+    if (this.page_count) {
+      message += ` of ${this.page_count}`;
+    } else {
+      message += "...";
+    }
+
+    return message;
+  }
+}
+/**
+ * details-notifier.js
+ * ************************************************************************************
+ */
+
+DetailsNotifier = class extends StatusNotifier {
+  #book = null;
+  #book_count = null;
   #pulse_colors = {true: "#07ba5b", false: "#3de367"}
 
-  selectors = {
-    wrapper: "ae-notifier",
-    bar: "ae-bar",
-    messages: "ae-messages",
-    status: "ae-status-text",
-    percentage: "ae-percent-text",
-  };
-
-  get css() {
-    return `
-#ae-notifier {
-  position: fixed;
-  top: 100px;
-  border-radius: 0.2em;
-  border-width: 1px;
-  border-style: solid;
-  font-family: system-ui;
-}
-
-#ae-bar {
-  width: 0;
-  height: 50px;
-  border-bottom-right-radius: 0.2em;
-  border-top-right-radius: 0.2em;
-  transition: all 1s;
-  border-width: 1px;
-  border-style: solid;
-}
-
-#ae-messages {
-  padding: 14px;
-  color: #fff;
-}
-
-#ae-status-text {
-  text-wrap: nowrap;
-}
-
-#ae-percent-text {
-}
-
-.row {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-}
-    `;
+  get book() {
+    return this.#book;
   }
 
-  get body_width() {
-    return document.body.getBoundingClientRect().width;
+  set book(value) {
+    this.#book = value
+    this.text = this.message;
+    this.percent = this.book / this.book_count
+    this.pulse(value);
   }
 
-  get bar_width() {
-    return this.body_width * 0.8;
+  get book_count() {
+    return this.#book_count;
   }
 
-  // Construct notifier wrapper div, append all child elements, and return
-  get wrapper() {
-    if (!this.#wrapper) {
-      this.#wrapper = Element.create("div", {id: this.selectors.wrapper, style: {
-        width: `${this.bar_width}px`,
-        left: `${(this.body_width - this.bar_width) / 2}px`,
-        background: this.#colors.nearBlack,
-        'border-color': this.#colors.lightGreen,
-        'z-index': new Date().getTime(),
-      }})
+  set book_count(value) {
+    this.#book_count = value
+    this.text = this.message;
+  }
 
-      this.wrapper.element.appendChild(this.bar.element);
-      this.bar.element.appendChild(this.messages.element);
-      this.messages.element.appendChild(this.status.element);
-      this.messages.element.appendChild(this.percentage.element);
+  get message() {
+    if (!this.book) {
+      return "Retrieving additional information on titles...";
     }
-    return this.#wrapper;
-  }
 
-  // progress bar element
-  get bar() {
-    if (!this.#bar) {
-      this.#bar = Element.create("div", {id: this.selectors.bar, style: {
-        background: this.#colors.darkGreen,
-        'border-color': this.#colors.lightGreen,
-      }});
-    }
-    return this.#bar;
-  }
-
-  get messages() {
-    if (!this.#messages) {
-      this.#messages = Element.create("div", {id: this.selectors.messages, class: "row", style: {
-        width: `${this.bar_width}px`,
-        // color: "#112A46",
-        // color: "#0c1b1d",
-        // color: "#283747",
-      }});
-    }
-    return this.#messages;
-  }
-
-  // status text element
-  get status() {
-    if (!this.#status) {
-      this.#status = Element.create("div", {id: this.selectors.status, style: {
-        // color: "#112A46",
-        // color: "#0c1b1d",
-        // color: "#283747",
-      }});
-    }
-    return this.#status;
-  }
-
-  // percent text element
-  get percentage() {
-    if (!this.#percentage) {
-      this.#percentage = Element.create("span", {id: this.selectors.percentage, style: {
-        color: "#87ff65", // bright green
-        color: "#0aff99", // bright green
-        // color: "#00ff80", // bright green
-        // color: "#00ff9f", // bright green
-        // color: "#0dffae", // bright green
-      }});
-    }
-    return this.#percentage;
-  }
-
-  // set the status text
-  set text(message) {
-    this.status.innerText = message;
-  }
-
-  // set the percentage text and progress bar width
-  set percent(decimal) {
-    let amount = Math.ceil(decimal * 100);
-    this.percentage.innerText = `${amount}%`;
-
-    let width = this.bar_width * decimal;
-    this.bar.style.width = `${width}px`;
-  }
-
-  // set the percent text, progress bar width, and pulse the background color
-  // on alternating odd/even increments
-  updateProgress(percent, i=null) {
-    this.percent = percent;
-    if (i != null) {
-      let color = this.#pulse_colors[i % 2 == 0]
-      this.bar.background = color;
-    }
-  }
-
-  timeLeft(remaining) {
-    let per_book = 1.9;
-
-    return Math.round((remaining * per_book) / 60);
-  }
-
-  reset() {
-    this.text = "";
-    this.percent = 0;
-    this.bar.style.background = this.#colors.darkGreen;
-    this.percentage.innerText = "";
-  }
-
-  // remove the elements from the DOM
-  delete() {
-    this.wrapper.element.remove();
-
-    this.#wrapper = null;
-    this.#bar = null;
-    this.#status = null;
-    this.#percentage = null;
+    return `Retrieving book ${this.book} of ${this.book_count}`
   }
 }
+/**
+ * exporter.js
+ * ************************************************************************************
+ */
+
 Exporter = class {
 
-  constructor() {
+  constructor(limit=null) {
+    this.limit = limit;
     this.notifier = new StatusNotifier();
     this.modal = new Modal();
     this.orders = new OrdersFetcher();
@@ -1900,50 +2221,49 @@ Exporter = class {
     this.details = new DetailsFetcher();
     this.results = [];
   }
+
   async getOrders() {
-    this.notifier.reset();
-    this.notifier.text = "Retrieving purchases...";
+    this.notifier.remove();
+    this.notifier = new OrderNotifier();
+    this.notifier.create();
 
     await this.orders.init()
-    await this.orders.populate((year, page, page_count, percent) => {
-      this.notifier.updateProgress(percent, page);
-      this.notifier.text = `Retrieving ${year} purchases: page ${page} of ${page_count}`;
-    });
+    this.notifier.years = [...this.orders.years];
+
+    await this.orders.populate(this.limit);
+
     log_table("purchases", this.orders.items);
+
+    this.notifier.percent = 1;
+    await delay(1000);
+
     return this.orders.items;
   }
 
   async getLibrary() {
-    this.notifier.reset();
-    this.notifier.text = "Retrieving library...";
-    await this.library.populate((i, page_count) => {
-      let page = i + 1;
-      let percent = page/page_count;
-      this.notifier.updateProgress(percent, i);
-      this.notifier.text = `Retrieving library: page ${page} of ${page_count}`;
-    });
+    this.notifier.remove();
+    this.notifier = new LibraryNotifier();
+    this.notifier.create();
+    await this.library.populate(this.limit);
+
+    this.notifier.percent = 1;
     log_table("library", this.library.books);
-    return this.library.books;
+    await delay(1000);
   }
 
   async getBookDetails() {
+    this.notifier.remove();
+    this.notifier = new DetailsNotifier();
+    this.notifier.create();
+
     let library_info, order_info, book_info, info;
 
-    this.notifier.reset();
-    this.notifier.text = "Retrieving additional information on titles...";
-
     this.details.library = this.library.books;
-    await this.details.populate((i, total, data) => {
-      let percent = i/total;
-      let remaining = total - i;
+    await this.details.populate();
 
-      this.notifier.updateProgress(percent, i);
-      this.notifier.text = `
-        Retrieving book ${(i+1).toLocaleString()} of ${total.toLocaleString()} (approx ${this.notifier.timeLeft(remaining)} minutes remaining)
-      `.trim();
-    });
-
+    this.notifier.percent = 1;
     log_table("details", this.details.books);
+    await delay(1500);
   }
 
   getResults() {
@@ -1964,19 +2284,19 @@ Exporter = class {
   }
 
   download(books) {
+    this.notifier.remove();
     let file = new TSVFile(books);
     this.modal.file = [file.url, file.filename];
-    this.notifier.delete();
     this.modal.show()
   }
 
-  async run() {
+  async run(limit=null) {
     try {
       let before = new Date().getTime();
+      this.limit = limit;
 
-      this.modal.create();
       this.notifier.create();
-      this.notifier.text = "Initiating download...";
+      this.modal.create();
 
       await this.getOrders();
       await this.getLibrary();
@@ -1985,18 +2305,13 @@ Exporter = class {
 
       if (!this.results || this.results.length == 0) {
         error("Failed to download books.")
-        this.notifier.reset();
-        this.notifier.text = "Failed."
         return;
       }
 
       let after = new Date().getTime();
       let elapsed = (after - before) / 1000 / 60;
 
-      info(`Done. (${this.results.length} this.results, ${elapsed.toFixed(2)} minutes)`);
-
-      this.notifier.percent = 1;
-      this.notifier.text = "Done."
+      info(`Done. (${this.results.length} results, ${elapsed.toFixed(2)} minutes)`);
 
       this.download(this.results);
 
@@ -2005,6 +2320,11 @@ Exporter = class {
     }
   }
 }
+/**
+ * runner.js
+ * ************************************************************************************
+ */
+
 CONSOLE_OUTPUT = true;
 var exporter = new Exporter();
 await exporter.run();

@@ -1,3 +1,8 @@
+/**
+ * year-fetcher.js
+ * ************************************************************************************
+ */
+
 YearFetcher = class {
 
   #items = [];
@@ -9,23 +14,24 @@ YearFetcher = class {
     this.pages = null;
   }
 
-  async populate(progress_callback=null, percent=null) {
+  async populate() {
     this.pages = [];
     let i = 0;
     do {
       let page_num = i + 1;
       let page = new OrderPage(this.year, page_num);
 
+      dispatchEvent({page: page_num});
+
       try {
         await page.get();
         if (!this.page_count) {
           this.page_count = page.page_count;
+
+          dispatchEvent({page_count: this.page_count});
+          await delay(1000);
         }
         this.pages.push(page);
-
-        if (progress_callback) {
-          progress_callback(this.year, page_num, this.page_count, percent);
-        }
     } catch (err) {
       error(err);
     }

@@ -7,6 +7,10 @@
   font-family: system-ui;
 }
 
+#ae-notifier.hidden {
+  display: none;
+}
+
 #ae-bar {
   width: 0;
   height: 50px;

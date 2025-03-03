@@ -42,3 +42,5 @@ global.mockFetchDocs = function(docs) {
 };
 
 global.URL.createObjectURL = jest.fn(() => "blob:https://www.google.com/6cb50f1f-699a-4975-9e38-29a4df034064");
+
+global.delay = jest.fn();

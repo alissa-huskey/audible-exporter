@@ -1,3 +1,8 @@
+/**
+ * util.js
+ * ************************************************************************************
+ */
+
 var CONSOLE_OUTPUT = false;
 const LOG_PREFIX = "[audible-exporter]";
 
@@ -121,6 +126,12 @@ cleanObject = function(ob) {
   }, {});
 }
 
+dispatchEvent = function(obj) {
+  document.dispatchEvent(new CustomEvent("update-ae-notifier", {
+    detail: obj
+  }));
+}
+
 stripHTML = function(html) {
    let doc = new DOMParser().parseFromString(html, 'text/html');
    return doc.body.textContent || "";
@@ -151,3 +162,7 @@ cleanObject = function(ob) {
     }
   }, {});
 }
+
+delay = (ms) => new Promise(res => {
+  setTimeout(res, ms)
+});

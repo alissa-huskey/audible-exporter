@@ -40,3 +40,7 @@ x 2025-03-01 2025-02-28 @ux @download In final data, make sure title is like: 'W
 x 2025-03-01 2025-03-01 @bug Check B002V1J7QY -- weird in TSV: B002V1J7QY		The Art of Deception: Controlling the Human Element of Security	Kevin Mitnick	Nick Sullivan
 x 2025-03-01 2025-02-22 @bug fix purchase_date
 x 2025-03-01 2025-02-27 @qa On file download, make sure that all TSV rows have the same values in the same order.
+x 2025-03-02 2025-02-26 @qa @notifier Look into event listeners to update progress.
+x 2025-03-02 2025-03-01 @ux Fix the status bar pulsing colors.
+x 2025-03-02 2025-02-28 @ux @download Add book (number) to final download.
+x 2025-03-02 2025-02-26 @feature Add limit selector to only download a certain number of order/library pages.

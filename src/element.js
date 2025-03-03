@@ -1,3 +1,8 @@
+/**
+ * element.js
+ * ************************************************************************************
+ */
+
 Element = class {
   constructor(elm=null) {
     this.element = elm;

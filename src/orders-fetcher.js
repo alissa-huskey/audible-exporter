@@ -1,3 +1,8 @@
+/**
+ * orders-fetcher.js
+ * ************************************************************************************
+ */
+
 OrdersFetcher = class {
   #count = 0;
   #items = null;
@@ -13,17 +18,23 @@ OrdersFetcher = class {
     this.years = page.years;
   }
 
-  async populate(progress_callback=null) {
+  async populate(limit=null) {
+    if (limit) {
+      this.years.splice(limit, this.years.length);
+      dispatchEvent({years: this.years});
+    }
     let year_count = this.years.length;
     let i = 0;
 
     for (let year of this.years)  {
+      dispatchEvent({year: year, page: null, page_count: null});
       let fetcher = new YearFetcher(year);
-      let percent = i / year_count;
-      await fetcher.populate(progress_callback, percent);
+      await fetcher.populate();
       this.years[i] = fetcher;
       i++;
     }
+    dispatchEvent({percent: 1});
+    await delay(1000);
   }
 
   get count() {

@@ -1,3 +1,8 @@
+/**
+ * dev.js
+ * ************************************************************************************
+ */
+
 log = function(...msg) {
   console.log("--->", ...msg);
 }
@@ -5,6 +10,11 @@ log = function(...msg) {
 hr = function(...msg) {
   console.log("****************************************", ...msg)
 }
+/**
+ * util.js
+ * ************************************************************************************
+ */
+
 var CONSOLE_OUTPUT = false;
 const LOG_PREFIX = "[audible-exporter]";
 
@@ -128,6 +138,12 @@ cleanObject = function(ob) {
   }, {});
 }
 
+dispatchEvent = function(obj) {
+  document.dispatchEvent(new CustomEvent("update-ae-notifier", {
+    detail: obj
+  }));
+}
+
 stripHTML = function(html) {
    let doc = new DOMParser().parseFromString(html, 'text/html');
    return doc.body.textContent || "";
@@ -158,6 +174,15 @@ cleanObject = function(ob) {
     }
   }, {});
 }
+
+delay = (ms) => new Promise(res => {
+  setTimeout(res, ms)
+});
+/**
+ * element.js
+ * ************************************************************************************
+ */
+
 Element = class {
   constructor(elm=null) {
     this.element = elm;
@@ -288,6 +313,11 @@ Element = class {
     }
   }
 }
+/**
+ * dom.js
+ * ************************************************************************************
+ */
+
 DOM = class {
   #style = null;
   #css = null;
@@ -323,6 +353,11 @@ DOM = class {
     document.body.appendChild(this.wrapper.element);
   }
 }
+
+/**
+ * modal.js
+ * ************************************************************************************
+ */
 
 Modal = class extends DOM {
   #css = null;

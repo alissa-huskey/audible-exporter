@@ -1,3 +1,8 @@
+/**
+ * library-book-row.js
+ * ************************************************************************************
+ */
+
 LibraryBookRow = class extends Parser {
   _fields = [
     "id",

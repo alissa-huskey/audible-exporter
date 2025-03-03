@@ -25,6 +25,9 @@ require("../src/orders-fetcher.js");
 require("../src/dom.js");
 require("../src/modal.js");
 require("../src/status-notifier.js");
+require("../src/order-notifier.js");
+require("../src/library-notifier.js");
+require("../src/details-notifier.js");
 require("../src/file.js");
 require("../src/tsv-file.js");
 require("../src/result.js");
@@ -51,9 +54,9 @@ describe("Exporter", function() {
 
     Page.prototype.fetchDoc = mockFetchDocs(docs);
     let exporter = new Exporter();
-    exporter.notifier.create()
 
-    let books = await exporter.getLibrary();
+    await exporter.getLibrary();
+    let books = exporter.library.books;
 
     let titles = books.map((b) => b.title);
 

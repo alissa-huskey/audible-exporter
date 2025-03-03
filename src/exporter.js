@@ -1,6 +1,12 @@
+/**
+ * exporter.js
+ * ************************************************************************************
+ */
+
 Exporter = class {
 
-  constructor() {
+  constructor(limit=null) {
+    this.limit = limit;
     this.notifier = new StatusNotifier();
     this.modal = new Modal();
     this.orders = new OrdersFetcher();
@@ -8,50 +14,49 @@ Exporter = class {
     this.details = new DetailsFetcher();
     this.results = [];
   }
+
   async getOrders() {
-    this.notifier.reset();
-    this.notifier.text = "Retrieving purchases...";
+    this.notifier.remove();
+    this.notifier = new OrderNotifier();
+    this.notifier.create();
 
     await this.orders.init()
-    await this.orders.populate((year, page, page_count, percent) => {
-      this.notifier.updateProgress(percent, page);
-      this.notifier.text = `Retrieving ${year} purchases: page ${page} of ${page_count}`;
-    });
+    this.notifier.years = [...this.orders.years];
+
+    await this.orders.populate(this.limit);
+
     log_table("purchases", this.orders.items);
+
+    this.notifier.percent = 1;
+    await delay(1000);
+
     return this.orders.items;
   }
 
   async getLibrary() {
-    this.notifier.reset();
-    this.notifier.text = "Retrieving library...";
-    await this.library.populate((i, page_count) => {
-      let page = i + 1;
-      let percent = page/page_count;
-      this.notifier.updateProgress(percent, i);
-      this.notifier.text = `Retrieving library: page ${page} of ${page_count}`;
-    });
+    this.notifier.remove();
+    this.notifier = new LibraryNotifier();
+    this.notifier.create();
+    await this.library.populate(this.limit);
+
+    this.notifier.percent = 1;
     log_table("library", this.library.books);
-    return this.library.books;
+    await delay(1000);
   }
 
   async getBookDetails() {
+    this.notifier.remove();
+    this.notifier = new DetailsNotifier();
+    this.notifier.create();
+
     let library_info, order_info, book_info, info;
 
-    this.notifier.reset();
-    this.notifier.text = "Retrieving additional information on titles...";
-
     this.details.library = this.library.books;
-    await this.details.populate((i, total, data) => {
-      let percent = i/total;
-      let remaining = total - i;
+    await this.details.populate();
 
-      this.notifier.updateProgress(percent, i);
-      this.notifier.text = `
-        Retrieving book ${(i+1).toLocaleString()} of ${total.toLocaleString()} (approx ${this.notifier.timeLeft(remaining)} minutes remaining)
-      `.trim();
-    });
-
+    this.notifier.percent = 1;
     log_table("details", this.details.books);
+    await delay(1500);
   }
 
   getResults() {
@@ -72,19 +77,19 @@ Exporter = class {
   }
 
   download(books) {
+    this.notifier.remove();
     let file = new TSVFile(books);
     this.modal.file = [file.url, file.filename];
-    this.notifier.delete();
     this.modal.show()
   }
 
-  async run() {
+  async run(limit=null) {
     try {
       let before = new Date().getTime();
+      this.limit = limit;
 
-      this.modal.create();
       this.notifier.create();
-      this.notifier.text = "Initiating download...";
+      this.modal.create();
 
       await this.getOrders();
       await this.getLibrary();
@@ -93,18 +98,13 @@ Exporter = class {
 
       if (!this.results || this.results.length == 0) {
         error("Failed to download books.")
-        this.notifier.reset();
-        this.notifier.text = "Failed."
         return;
       }
 
       let after = new Date().getTime();
       let elapsed = (after - before) / 1000 / 60;
 
-      info(`Done. (${this.results.length} this.results, ${elapsed.toFixed(2)} minutes)`);
-
-      this.notifier.percent = 1;
-      this.notifier.text = "Done."
+      info(`Done. (${this.results.length} results, ${elapsed.toFixed(2)} minutes)`);
 
       this.download(this.results);
 

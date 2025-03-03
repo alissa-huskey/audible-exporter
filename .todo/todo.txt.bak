@@ -10,7 +10,6 @@
 (Z) 2025-02-22 @feature Add my_review
 (Z) 2025-02-22 @feature Add my_rating
 (B) 2025-02-22 @qa set variables for css class names in appropriate places.
-(B) 2025-02-23 @ux Fix progress_callback to update every title, not every page.
 (B) 2025-02-23 @ux @feature Add 'Step x of y' to status bar.
 (B) 2025-02-23 @qa Refactor LibraryPageParser to take a page number and add a .fetch() method to set .doc @maybe
 (Z) 2025-02-23 @feature Add series ID.
@@ -25,9 +24,7 @@
 (Z) 2025-02-23 @feature Some way to indicate last download, to avoid downloading everything
 (Z) 2025-02-25 @feature @notifier Add cancel button.
 (D) 2025-02-25 @tools Look into replacing make with gulp.
-(A) 2025-02-26 @qa @notifier Look into event listeners to update progress.
 (D) 2025-02-26 @qa Refactor Orders class to have prepare method/stage that will fetch all years and page numbers to get a total page count.
-(D) 2025-02-26 @feature Add limit selector to only download a certain number of order/library pages.
 (B) 2025-02-26 @qa Handle failed requests.
 (Z) 2025-02-26 Implement some sort of pause/resume.
 (B) 2025-02-26 @qa document functions, classes and methods https://developer.wordpress.org/coding-standards/inline-documentation-standards/javascript/
@@ -43,10 +40,8 @@
 (D) 2025-02-27 @qa Subclass StatusNotifier to make a notifier for each step (orders, library, details)
 (B) 2025-02-27 @qa Have Page.fetchDoc() set this.url = url
 (D) 2025-02-27 @ux Make the colors between the notifier and modal consistent.
-x 2025-03-01 2025-02-27 @qa On file download, make sure that all TSV rows have the same values in the same order.
 (A) 2025-02-27 @qa Change Modal.file = to take a File object instead of a list with url and filename.
 (D) 2025-02-28 @ux @download In TSV download, join categories.
-(B) 2025-02-28 @ux @download Add book (number) to final download.
 (B) 2025-02-28 @ux @download Compare results from original download to current results
 (A) 2025-02-28 @housekeeping Fix instructions to download JSON on README.
 (D) 2025-03-01 @qa Add tests for errors.
@@ -56,3 +51,8 @@ x 2025-03-01 2025-02-27 @qa On file download, make sure that all TSV rows have t
 (B) 2025-03-01 @book-details Parse/handle multiple series.
 (B) 2025-03-01 @qa Rename NormalBookPage -> LegacyBookPage
 (D) 2025-03-01 @download Rename audible_oginal -> audible_original
+(D) 2025-03-01 @qa Log the amount of time it takes for every step (orders, library, details).
+(D) 2025-03-01 @qa Write results to json tag in doc to reduce memory usage
+(B) 2025-03-01 @qa See about getting rid of .data() methods to reduce overhead.
+(A) 2025-03-01 @qa Move LibraryFetcher.fetchPage() -> LibraryPage.get()
+(B) 2025-03-02 @download ensure all URL formats are the same.

@@ -1,3 +1,8 @@
+/**
+ * details-fetcher.js
+ * ************************************************************************************
+ */
+
 DetailsFetcher = class {
   #books = {}
 
@@ -7,10 +12,13 @@ DetailsFetcher = class {
     this.pages = [];
   }
 
-  async populate(progress_callback=null) {
+  async populate() {
     let book, data;
 
     let total = this.library.length;
+
+    dispatchEvent({book_count: total});
+
     let i = 0;
 
     for (book of this.library) {
@@ -22,10 +30,8 @@ DetailsFetcher = class {
       page.url = book.url;
       this.pages.push(page);
 
-      if (progress_callback) {
-        progress_callback(i, total, data);
-      }
       i++;
+      dispatchEvent({book: i});
     }
   }
 

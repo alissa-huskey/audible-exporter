@@ -1,3 +1,8 @@
+/**
+ * page.js
+ * ************************************************************************************
+ */
+
 Page = class extends Parser {
   async fetchDoc(url) {
     let res;
