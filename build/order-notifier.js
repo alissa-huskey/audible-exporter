@@ -10,6 +10,7 @@ log = function(...msg) {
 hr = function(...msg) {
   console.log("****************************************", ...msg)
 }
+
 /**
  * util.js
  * ************************************************************************************
@@ -178,6 +179,7 @@ cleanObject = function(ob) {
 delay = (ms) => new Promise(res => {
   setTimeout(res, ms)
 });
+
 /**
  * element.js
  * ************************************************************************************
@@ -313,6 +315,7 @@ Element = class {
     }
   }
 }
+
 /**
  * dom.js
  * ************************************************************************************
@@ -366,6 +369,7 @@ StatusNotifier = class extends DOM {
   #percentage = null;
   #messages = null;
   #style = null;
+  #percent = null;
 
   #colors = {
     darkGreen: "#07ba5b",
@@ -377,7 +381,6 @@ StatusNotifier = class extends DOM {
     offWhite: "#abaab3",
     lightGray: "#9a99a1",
   }
-  #pulse_colors = {true: "#07ba5b", false: "#3de367"}
 
   selectors = {
     wrapper: "ae-notifier",
@@ -400,6 +403,9 @@ StatusNotifier = class extends DOM {
   border-width: 1px;
   border-style: solid;
   font-family: system-ui;
+
+  --ae-light-green: #3de367;
+  --ae-dark-green: #07ba5b;
 }
 
 #ae-notifier.hidden {
@@ -414,6 +420,8 @@ StatusNotifier = class extends DOM {
   transition: all 1s;
   border-width: 1px;
   border-style: solid;
+  -webkit-animation: pulse 1s linear alternate;
+  -webkit-animation-iteration-count: infinite; 
 }
 
 #ae-messages {
@@ -432,6 +440,11 @@ StatusNotifier = class extends DOM {
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-between;
+}
+
+@-webkit-keyframes pulse {
+  from { background-color: var(--ae-dark-green); }
+  to { background-color: var(--ae-light-green); }
 }
     `;
   }
@@ -517,26 +530,18 @@ StatusNotifier = class extends DOM {
     this.status.innerText = message;
   }
 
+  get percent() {
+    return this.#percent;
+  }
+
   // set the percentage text and progress bar width
   set percent(decimal) {
+    this.#percent = decimal;
     let amount = Math.ceil(decimal * 100);
     this.percentage.innerText = `${amount}%`;
 
     let width = this.bar_width * decimal;
     this.bar.style.width = `${width}px`;
-  }
-
-  // set the percent text, progress bar width, and pulse the background color
-  // on alternating odd/even increments
-  updateProgress(percent, i=null) {
-    this.percent = percent;
-    if (i != null) {
-      this.pulse(i);
-    }
-  }
-
-  pulse(value) {
-    this.bar.style["background-color"] = this.#pulse_colors[value % 2 == 0];
   }
 
   timeLeft(remaining) {
@@ -582,6 +587,7 @@ StatusNotifier = class extends DOM {
     this.#percentage = null;
   }
 }
+
 /**
  * order-notifier.js
  * ************************************************************************************
@@ -589,11 +595,13 @@ StatusNotifier = class extends DOM {
 
 OrderNotifier = class extends StatusNotifier {
   #year = null;
+  #year_page = null;
   #page = null;
   #page_count = null;
 
-  constructor(years=null) {
+  constructor(total_pages=null, years=null) {
     super();
+    this.total_pages = total_pages;
     this.years = years;
   }
 
@@ -604,8 +612,15 @@ OrderNotifier = class extends StatusNotifier {
   set year(value) {
     this.#year = value
     this.text = this.message;
-    this.percent = this.years.indexOf(value) / this.years.length
-    this.pulse(value);
+  }
+
+  get year_page() {
+    return this.#year_page;
+  }
+
+  set year_page(value) {
+    this.#year_page = value
+    this.text = this.message;
   }
 
   get page() {
@@ -615,6 +630,7 @@ OrderNotifier = class extends StatusNotifier {
   set page(value) {
     this.#page = value
     this.text = this.message;
+    this.percent = value / this.total_pages;
   }
 
   get page_count() {
@@ -632,8 +648,8 @@ OrderNotifier = class extends StatusNotifier {
     }
 
     let message = `Retrieving ${this.year} purchases`
-    if (this.page) {
-      message += `: page ${this.page}`;
+    if (this.year_page) {
+      message += `: page ${this.year_page}`;
       if (this.page_count) {
         message += ` of ${this.page_count}`;
       } else {

@@ -24,7 +24,7 @@ let components = ["status-notifier", "modal"];
  * Notifier compoenents that depend on build/status-notifier.js and have a
  * standalone file including all dependencies saved in build/
  */
-let notifiers = ["order", "library", "details"];
+let notifiers = ["purchase-history", "order", "library", "details"];
 
 /**
  * Files in src/ that the main exporter depends on, in the order they must be
@@ -32,7 +32,7 @@ let notifiers = ["order", "library", "details"];
  */
 let sources = [
   "util", "element", "list", "parser", "page", "timer",
-  "purchase", "order-row", "order-page", "year-fetcher", "orders-fetcher",
+  "purchase", "order-row", "order-page", "orders-fetcher",
   "library-book-row", "library-page", "library-fetcher",
   "book-page", "details-fetcher",
   "file", "tsv-file", "result", "dom",

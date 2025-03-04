@@ -5,11 +5,13 @@
 
 OrderNotifier = class extends StatusNotifier {
   #year = null;
+  #year_page = null;
   #page = null;
   #page_count = null;
 
-  constructor(years=null) {
+  constructor(total_pages=null, years=null) {
     super();
+    this.total_pages = total_pages;
     this.years = years;
   }
 
@@ -20,8 +22,15 @@ OrderNotifier = class extends StatusNotifier {
   set year(value) {
     this.#year = value
     this.text = this.message;
-    this.percent = this.years.indexOf(value) / this.years.length
-    this.pulse(value);
+  }
+
+  get year_page() {
+    return this.#year_page;
+  }
+
+  set year_page(value) {
+    this.#year_page = value
+    this.text = this.message;
   }
 
   get page() {
@@ -31,6 +40,7 @@ OrderNotifier = class extends StatusNotifier {
   set page(value) {
     this.#page = value
     this.text = this.message;
+    this.percent = value / this.total_pages;
   }
 
   get page_count() {
@@ -48,8 +58,8 @@ OrderNotifier = class extends StatusNotifier {
     }
 
     let message = `Retrieving ${this.year} purchases`
-    if (this.page) {
-      message += `: page ${this.page}`;
+    if (this.year_page) {
+      message += `: page ${this.year_page}`;
       if (this.page_count) {
         message += ` of ${this.page_count}`;
       } else {

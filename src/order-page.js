@@ -23,6 +23,19 @@ OrderPage = class extends Page {
   #page_num = null;
   #year = null;
 
+  require(...attrs) {
+    let success = true;
+    for (let a in attrs) {
+      if (!this[attrs[a]]) {
+        let source = new Error().stack.split("\n")[2].match(/at (.*)\.require \[as (.*)] \(.*[/](.*)\)/);
+        let prefix = source ? `<${source[3]} ${source[1]}.${source[2]}> ` : "";
+        error(`${prefix}Missing required attribute: ${attrs[a]}.`);
+        success = false;
+      }
+    }
+    return success;
+  }
+
   constructor(year_or_doc=null, page_num=null, per_page=null) {
     super();
     this.doc = null;
@@ -56,7 +69,7 @@ OrderPage = class extends Page {
 
   get page_num() {
     if (!this.#page_num && this.doc) {
-      this.#page_num = this.doc.qsf("span.purchase-history-pagination-button")?.innerHTML?.trim();
+      this.#page_num = this.doc.qsf("span.purchase-history-pagination-button")?.innerHTML?.trim() || 1;
     }
     return tryInt(this.#page_num);
   }
@@ -66,6 +79,9 @@ OrderPage = class extends Page {
   }
 
   get page_count() {
+    if (!this.require("doc")) {
+      return;
+    }
     let link = this.doc.qs("a.purchase-history-pagination-button").last
     let count = link?.innerHTML.trim() || 1;
     return parseInt(count);

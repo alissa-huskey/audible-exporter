@@ -16,13 +16,23 @@ Exporter = class {
     this.results = [];
   }
 
-  async getOrders() {
+  async getPurchaseHistory() {
     this.notifier.remove();
-    this.notifier = new OrderNotifier();
+    this.notifier = new PurchaseHistoryNotifier();
     this.notifier.create();
 
-    await this.orders.init()
-    this.notifier.years = [...this.orders.years];
+    await this.orders.init(this.limit);
+
+    await delay(1000);
+  }
+
+  async getOrders() {
+    this.notifier.remove();
+    this.notifier = new OrderNotifier(
+      this.orders.pages.length,
+      this.orders.years
+    );
+    this.notifier.create();
 
     await this.orders.populate(this.limit);
 
@@ -89,6 +99,7 @@ Exporter = class {
       this.notifier.create();
       this.modal.create();
 
+      await this.getPurchaseHistory();
       await this.getOrders();
       await this.getLibrary();
       await this.getBookDetails();

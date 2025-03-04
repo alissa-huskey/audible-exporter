@@ -21,11 +21,11 @@ require("../src/details-fetcher.js");
 require("../src/order-row.js");
 require("../src/purchase.js");
 require("../src/order-page.js");
-require("../src/year-fetcher.js");
 require("../src/orders-fetcher.js");
 require("../src/dom.js");
 require("../src/modal.js");
 require("../src/status-notifier.js");
+require("../src/purchase-history-notifier.js");
 require("../src/order-notifier.js");
 require("../src/library-notifier.js");
 require("../src/details-notifier.js");
@@ -36,16 +36,29 @@ require("../src/exporter.js");
 
 describe("Exporter", function() {
 
-  test(".getOrders()", async function() {
+  test(".getPurchaseHistory()", async function() {
     let mockFn = mockFetchDocs([fixtureDoc("order-page.html"), fixtureDoc("order-page.html")]);
     Page.prototype.fetchDoc = mockFn;
 
     let exporter = new Exporter();
-    let items = await exporter.getOrders();
-    let page = exporter.orders.years[0].pages[0];
+    await exporter.getPurchaseHistory();
 
     expect(mockFn.mock.calls).toHaveLength(2);
-    expect(exporter.orders.count).toBe(44);
+    expect(exporter.orders.pages).toHaveLength(1);
+  });
+
+  test(".getOrders()", async function() {
+    let mockFn = mockFetchDocs([fixtureDoc("order-page-2025-1-of-1.html")]);
+    Page.prototype.fetchDoc = mockFn;
+
+    let exporter = new Exporter();
+    exporter.orders.years = ["2025"];
+    exporter.orders.pages = [new OrderPage(2025, 1)];
+
+    await exporter.getOrders();
+
+    expect(mockFn.mock.calls).toHaveLength(1);
+    expect(exporter.orders.count).toBe(1);
   });
 
   test(".getLibrary()", async function() {
@@ -82,8 +95,7 @@ describe("Exporter", function() {
     await exporter.orders.populate();
 
     // make sure the order setup worked as expected
-    expect(exporter.orders.years).toHaveLength(1);
-    expect(exporter.orders.years[0].pages).toHaveLength(1);
+    expect(exporter.orders.pages).toHaveLength(1);
     expect(exporter.orders.count).toBe(44);
 
     await exporter.library.populate();

@@ -166,6 +166,7 @@ cleanObject = function(ob) {
 delay = (ms) => new Promise(res => {
   setTimeout(res, ms)
 });
+
 /**
  * element.js
  * ************************************************************************************
@@ -301,6 +302,7 @@ Element = class {
     }
   }
 }
+
 /**
  * list.js
  * ************************************************************************************
@@ -321,6 +323,7 @@ List = class extends Array {
     return this.slice(-1)[0];
   }
 }
+
 /**
  * parser.js
  * ************************************************************************************
@@ -364,6 +367,7 @@ Parser = class {
     return cleanObject(data)
   }
 }
+
 /**
  * page.js
  * ************************************************************************************
@@ -386,11 +390,30 @@ Page = class extends Parser {
     }
   }
 }
+
 /**
  * timer.js
  * ************************************************************************************
  */
 
+/**
+ * Measure how long a block of code takes to execute.
+ *
+ * @example
+ *   
+      let sleep = (ms) => new Promise(res => {
+        setTimeout(res, ms);
+      });
+
+      let timer = new Timer();
+      timer.start();
+
+      await sleep(500);
+
+      timer.stop();
+      console.log(`That took: ${timer.seconds} seconds.`);
+ *
+ */
 Timer = class {
   constructor(beginning=null, end=null, task=null) {
     this.beginning = beginning;
@@ -431,6 +454,7 @@ Timer = class {
     return result;
   }
 }
+
 /**
  * purchase.js
  * ************************************************************************************
@@ -457,6 +481,7 @@ Purchase = class extends Parser {
     )
   }
 }
+
 /**
  * order-row.js
  * ************************************************************************************
@@ -488,6 +513,7 @@ OrderRow = class extends Parser {
     return this.doc.qsf(".ui-it-purchasehistory-item-total div").innerHTML;
   }
 }
+
 /**
  * order-page.js
  * ************************************************************************************
@@ -512,6 +538,19 @@ OrderPage = class extends Page {
   #items = [];
   #page_num = null;
   #year = null;
+
+  require(...attrs) {
+    let success = true;
+    for (let a in attrs) {
+      if (!this[attrs[a]]) {
+        let source = new Error().stack.split("\n")[2].match(/at (.*)\.require \[as (.*)] \(.*[/](.*)\)/);
+        let prefix = source ? `<${source[3]} ${source[1]}.${source[2]}> ` : "";
+        error(`${prefix}Missing required attribute: ${attrs[a]}.`);
+        success = false;
+      }
+    }
+    return success;
+  }
 
   constructor(year_or_doc=null, page_num=null, per_page=null) {
     super();
@@ -546,7 +585,7 @@ OrderPage = class extends Page {
 
   get page_num() {
     if (!this.#page_num && this.doc) {
-      this.#page_num = this.doc.qsf("span.purchase-history-pagination-button")?.innerHTML?.trim();
+      this.#page_num = this.doc.qsf("span.purchase-history-pagination-button")?.innerHTML?.trim() || 1;
     }
     return tryInt(this.#page_num);
   }
@@ -556,6 +595,9 @@ OrderPage = class extends Page {
   }
 
   get page_count() {
+    if (!this.require("doc")) {
+      return;
+    }
     let link = this.doc.qs("a.purchase-history-pagination-button").last
     let count = link?.innerHTML.trim() || 1;
     return parseInt(count);
@@ -621,61 +663,7 @@ OrderPage = class extends Page {
     return this.#items;
   }
 }
-/**
- * year-fetcher.js
- * ************************************************************************************
- */
 
-YearFetcher = class {
-
-  #items = [];
-
- constructor(year=null) {
-    this.year = tryInt(year);
-    this.page_count = null;
-    this.#items = null;
-    this.pages = null;
-  }
-
-  async populate() {
-    this.pages = [];
-    let i = 0;
-    do {
-      let page_num = i + 1;
-      let page = new OrderPage(this.year, page_num);
-
-      dispatchEvent({page: page_num});
-
-      try {
-        await page.get();
-        if (!this.page_count) {
-          this.page_count = page.page_count;
-
-          dispatchEvent({page_count: this.page_count});
-          await delay(1000);
-        }
-        this.pages.push(page);
-    } catch (err) {
-      error(err);
-    }
-
-      i++;
-    } while (i < this.page_count);
-  }
-
-  get items() {
-    if (!this.#items && this.pages) {
-      let items = [];
-      for (let page of this.pages) {
-        for (let item of page.items) {
-          items.push(item);
-        }
-      }
-      this.#items = items;
-    }
-    return this.#items;
-  }
-}
 /**
  * orders-fetcher.js
  * ************************************************************************************
@@ -688,27 +676,74 @@ OrdersFetcher = class {
   constructor() {
     this.#count = 0;
     this.#items = null;
+    this.pages = [];
   }
 
-  async init() {
+  async init(limit) {
+    // request to get the years in order history
+    let running_count = 0;
     let page = new OrderPage("last_90_days", 1, 20);
     await page.get();
     this.years = page.years;
+
+    if (limit && this.years.length > limit) {
+      this.years.splice(limit);
+    }
+
+    dispatchEvent({years: this.years});
+
+    for (let year of this.years)  {
+      dispatchEvent({year: year});
+
+      let page_num = 1;
+      let page_count;
+
+      do {
+        let page = new OrderPage(tryInt(year), page_num);
+
+        if (page_num == 1) {
+          await page.get();
+          page_count = page.page_count;
+        }
+
+        this.pages.push(page);
+        running_count++;
+        page_num++;
+
+        if (limit && running_count >= limit) {
+          this.years.splice(this.years.indexOf(year));
+          dispatchEvent({years: this.years})
+          break;
+        }
+      } while (page_num <= page_count)
+    }
+
+    dispatchEvent({percent: 1});
   }
 
   async populate(limit=null) {
     if (limit) {
-      this.years.splice(limit, this.years.length);
-      dispatchEvent({years: this.years});
+      this.pages.splice(limit, this.pages.length);
     }
-    let year_count = this.years.length;
+
+    dispatchEvent({total_pages: this.pages.length});
     let i = 0;
 
-    for (let year of this.years)  {
-      dispatchEvent({year: year, page: null, page_count: null});
-      let fetcher = new YearFetcher(year);
-      await fetcher.populate();
-      this.years[i] = fetcher;
+    for (let page of this.pages) {
+      dispatchEvent({
+        year: page.year,
+        year_page: page.page_num,
+        page: i}
+      );
+
+      if (!page.doc) {
+        await page.get();
+        dispatchEvent({page_count: page.page_count});
+      } else {
+        dispatchEvent({page_count: page.page_count});
+        await delay(500);
+      }
+
       i++;
     }
     dispatchEvent({percent: 1});
@@ -716,10 +751,7 @@ OrdersFetcher = class {
 
   get count() {
     if(!this.#count) {
-      this.#count = this.years.reduce(
-        (sum, y) => sum + y.pages.reduce( (count, p) => count + p.items.length, 0),
-        0
-      )
+      this.#count = this.pages.reduce((sum, p) => sum + p.items.length, 0)
     }
     return this.#count;
   }
@@ -727,13 +759,13 @@ OrdersFetcher = class {
   get items() {
     if (!this.#items) {
       let items = {};
-      for (let year of this.years) {
-        for (let page of year.pages) {
-          for (let item of page.items) {
-            items[item.id] = item;
-          }
+
+      for (let page of this.pages) {
+        for (let item of page.items) {
+          items[item.id] = item;
         }
       }
+
       this.#items = items;
     }
     return this.#items;
@@ -743,6 +775,7 @@ OrdersFetcher = class {
     this.#items = value;
   }
 }
+
 /**
  * library-book-row.js
  * ************************************************************************************
@@ -798,6 +831,7 @@ LibraryBookRow = class extends Parser {
     return this.ul.qsf(".seriesLabel a")?.innerHTML?.trim();
   }
 }
+
 /**
  * library-page.js
  * ************************************************************************************
@@ -870,6 +904,7 @@ LibraryPage = class extends Page {
   }
 }
 
+
 /**
  * library-fetcher.js
  * ************************************************************************************
@@ -899,6 +934,7 @@ LibraryFetcher = class extends Page {
     do {
       if (limit) {
         this.page_count = limit;
+        dispatchEvent({page_count: this.page_count});
         this.page_size = 20;
       }
 
@@ -957,6 +993,7 @@ LibraryFetcher = class extends Page {
     this.#books = value;
   }
 }
+
 
 /**
  * book-page.js
@@ -1393,6 +1430,7 @@ NormalBookPage = class extends BookPage {
     return this.doc.qs(".categoriesLabel a")?.map((c) => { return entityDecode(c.innerHTML) || "" }) || [];
   }
 }
+
 /**
  * details-fetcher.js
  * ************************************************************************************
@@ -1461,6 +1499,7 @@ DetailsFetcher = class {
   }
 }
 
+
 /**
  * file.js
  * ************************************************************************************
@@ -1497,6 +1536,7 @@ File = class {
     this.#contents = value;
   }
 }
+
 /**
  * tsv-file.js
  * ************************************************************************************
@@ -1556,6 +1596,7 @@ TSVFile = class extends File {
 
 
 }
+
 /**
  * result.js
  * ************************************************************************************
@@ -1619,6 +1660,7 @@ Result = class {
     );
   }
 }
+
 /**
  * dom.js
  * ************************************************************************************
@@ -1672,6 +1714,7 @@ StatusNotifier = class extends DOM {
   #percentage = null;
   #messages = null;
   #style = null;
+  #percent = null;
 
   #colors = {
     darkGreen: "#07ba5b",
@@ -1683,7 +1726,6 @@ StatusNotifier = class extends DOM {
     offWhite: "#abaab3",
     lightGray: "#9a99a1",
   }
-  #pulse_colors = {true: "#07ba5b", false: "#3de367"}
 
   selectors = {
     wrapper: "ae-notifier",
@@ -1706,6 +1748,9 @@ StatusNotifier = class extends DOM {
   border-width: 1px;
   border-style: solid;
   font-family: system-ui;
+
+  --ae-light-green: #3de367;
+  --ae-dark-green: #07ba5b;
 }
 
 #ae-notifier.hidden {
@@ -1720,6 +1765,8 @@ StatusNotifier = class extends DOM {
   transition: all 1s;
   border-width: 1px;
   border-style: solid;
+  -webkit-animation: pulse 1s linear alternate;
+  -webkit-animation-iteration-count: infinite; 
 }
 
 #ae-messages {
@@ -1738,6 +1785,11 @@ StatusNotifier = class extends DOM {
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-between;
+}
+
+@-webkit-keyframes pulse {
+  from { background-color: var(--ae-dark-green); }
+  to { background-color: var(--ae-light-green); }
 }
     `;
   }
@@ -1823,26 +1875,18 @@ StatusNotifier = class extends DOM {
     this.status.innerText = message;
   }
 
+  get percent() {
+    return this.#percent;
+  }
+
   // set the percentage text and progress bar width
   set percent(decimal) {
+    this.#percent = decimal;
     let amount = Math.ceil(decimal * 100);
     this.percentage.innerText = `${amount}%`;
 
     let width = this.bar_width * decimal;
     this.bar.style.width = `${width}px`;
-  }
-
-  // set the percent text, progress bar width, and pulse the background color
-  // on alternating odd/even increments
-  updateProgress(percent, i=null) {
-    this.percent = percent;
-    if (i != null) {
-      this.pulse(i);
-    }
-  }
-
-  pulse(value) {
-    this.bar.style["background-color"] = this.#pulse_colors[value % 2 == 0];
   }
 
   timeLeft(remaining) {
@@ -2130,6 +2174,56 @@ a#ae-download-btn:hover:after {
     this.#wrapper.style.display = "none";
   }
 }
+
+/**
+ * purchase-history-notifier.js
+ * ************************************************************************************
+ */
+
+PurchaseHistoryNotifier = class extends StatusNotifier {
+  #year = null;
+  #years = null;
+
+  constructor(years=null) {
+    super();
+    this.years = years || [];
+  }
+
+  get year() {
+    return this.#year;
+  }
+
+  set year(value) {
+    this.#year = value
+    this.text = this.message;
+    this.updatePercent();
+  }
+
+  get years() {
+    return this.#years;
+  }
+
+  set years(value) {
+    this.#years = value;
+    this.updatePercent();
+  }
+
+  get message() {
+    if (!this.year) {
+      return "Retrieving purchases history...";
+    }
+
+    return `Retrieving purchases history: ${this.year}`
+  }
+
+  updatePercent() {
+    if (this.#years && this.year != null) {
+      this.percent = this.years.indexOf(this.year) / this.years.length
+    }
+  }
+}
+
+
 /**
  * order-notifier.js
  * ************************************************************************************
@@ -2137,11 +2231,13 @@ a#ae-download-btn:hover:after {
 
 OrderNotifier = class extends StatusNotifier {
   #year = null;
+  #year_page = null;
   #page = null;
   #page_count = null;
 
-  constructor(years=null) {
+  constructor(total_pages=null, years=null) {
     super();
+    this.total_pages = total_pages;
     this.years = years;
   }
 
@@ -2152,8 +2248,15 @@ OrderNotifier = class extends StatusNotifier {
   set year(value) {
     this.#year = value
     this.text = this.message;
-    this.percent = this.years.indexOf(value) / this.years.length
-    this.pulse(value);
+  }
+
+  get year_page() {
+    return this.#year_page;
+  }
+
+  set year_page(value) {
+    this.#year_page = value
+    this.text = this.message;
   }
 
   get page() {
@@ -2163,6 +2266,7 @@ OrderNotifier = class extends StatusNotifier {
   set page(value) {
     this.#page = value
     this.text = this.message;
+    this.percent = value / this.total_pages;
   }
 
   get page_count() {
@@ -2180,8 +2284,8 @@ OrderNotifier = class extends StatusNotifier {
     }
 
     let message = `Retrieving ${this.year} purchases`
-    if (this.page) {
-      message += `: page ${this.page}`;
+    if (this.year_page) {
+      message += `: page ${this.year_page}`;
       if (this.page_count) {
         message += ` of ${this.page_count}`;
       } else {
@@ -2194,6 +2298,7 @@ OrderNotifier = class extends StatusNotifier {
     return message;
   }
 }
+
 /**
  * library-notifier.js
  * ************************************************************************************
@@ -2237,6 +2342,7 @@ LibraryNotifier = class extends StatusNotifier {
     return message;
   }
 }
+
 /**
  * details-notifier.js
  * ************************************************************************************
@@ -2245,7 +2351,6 @@ LibraryNotifier = class extends StatusNotifier {
 DetailsNotifier = class extends StatusNotifier {
   #book = null;
   #book_count = null;
-  #pulse_colors = {true: "#07ba5b", false: "#3de367"}
   times = []
 
   get book() {
@@ -2256,7 +2361,6 @@ DetailsNotifier = class extends StatusNotifier {
     this.#book = value
     this.text = this.message;
     this.percent = this.book / this.book_count
-    this.pulse(value);
   }
 
   get remaining() {
@@ -2312,6 +2416,7 @@ DetailsNotifier = class extends StatusNotifier {
     return message;
   }
 }
+
 /**
  * exporter.js
  * ************************************************************************************
@@ -2330,13 +2435,23 @@ Exporter = class {
     this.results = [];
   }
 
-  async getOrders() {
+  async getPurchaseHistory() {
     this.notifier.remove();
-    this.notifier = new OrderNotifier();
+    this.notifier = new PurchaseHistoryNotifier();
     this.notifier.create();
 
-    await this.orders.init()
-    this.notifier.years = [...this.orders.years];
+    await this.orders.init(this.limit);
+
+    await delay(1000);
+  }
+
+  async getOrders() {
+    this.notifier.remove();
+    this.notifier = new OrderNotifier(
+      this.orders.pages.length,
+      this.orders.years
+    );
+    this.notifier.create();
 
     await this.orders.populate(this.limit);
 
@@ -2403,6 +2518,7 @@ Exporter = class {
       this.notifier.create();
       this.modal.create();
 
+      await this.getPurchaseHistory();
       await this.getOrders();
       await this.getLibrary();
       await this.getBookDetails();
@@ -2424,6 +2540,7 @@ Exporter = class {
     }
   }
 }
+
 /**
  * runner.js
  * ************************************************************************************

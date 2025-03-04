@@ -71,15 +71,12 @@ describe("OrderPage", function() {
   });
 
   test(".page_count", function() {
-    let page = new OrderPage(fixtureDoc("order-page-2025-1-of-1.html"));
-    expect(page.page_count).toBe(1);
+    let page = new OrderPage(fixtureDoc("order-page-2024-1-of-2.html"));
+    expect(page.page_count).toBe(2);
   });
 
   test(".years", function() {
-    let years = [
-      "2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018",
-      "2017", "2016", "2015", "2014", "2013", "2012", "2011", "2010",
-    ];
+    let years = ["2025", "2024", "2023"];
 
     page = new OrderPage(fixtureDoc("order-page-2025-1-of-1.html"));
     expect(page.years).toEqual(years);

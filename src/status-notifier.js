@@ -10,6 +10,7 @@ StatusNotifier = class extends DOM {
   #percentage = null;
   #messages = null;
   #style = null;
+  #percent = null;
 
   #colors = {
     darkGreen: "#07ba5b",
@@ -21,7 +22,6 @@ StatusNotifier = class extends DOM {
     offWhite: "#abaab3",
     lightGray: "#9a99a1",
   }
-  #pulse_colors = {true: "#07ba5b", false: "#3de367"}
 
   selectors = {
     wrapper: "ae-notifier",
@@ -122,26 +122,18 @@ StatusNotifier = class extends DOM {
     this.status.innerText = message;
   }
 
+  get percent() {
+    return this.#percent;
+  }
+
   // set the percentage text and progress bar width
   set percent(decimal) {
+    this.#percent = decimal;
     let amount = Math.ceil(decimal * 100);
     this.percentage.innerText = `${amount}%`;
 
     let width = this.bar_width * decimal;
     this.bar.style.width = `${width}px`;
-  }
-
-  // set the percent text, progress bar width, and pulse the background color
-  // on alternating odd/even increments
-  updateProgress(percent, i=null) {
-    this.percent = percent;
-    if (i != null) {
-      this.pulse(i);
-    }
-  }
-
-  pulse(value) {
-    this.bar.style["background-color"] = this.#pulse_colors[value % 2 == 0];
   }
 
   timeLeft(remaining) {

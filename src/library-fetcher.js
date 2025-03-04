@@ -27,6 +27,7 @@ LibraryFetcher = class extends Page {
     do {
       if (limit) {
         this.page_count = limit;
+        dispatchEvent({page_count: this.page_count});
         this.page_size = 20;
       }
 

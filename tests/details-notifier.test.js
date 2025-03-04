@@ -11,16 +11,7 @@ require("../src/status-notifier.js");
 require("../src/details-notifier.js");
 
 
-describe("Notifier", function() {
-  // document.body.getBoundingClientRect = jest.fn(() => ({
-  //   width: 1000,
-  // }))
-  // let notifier = new StatusNotifier();
-
-  // test("new StatusNotifier", function() {
-  //   expect(notifier.constructor.name).toBe("StatusNotifier");
-  // });
-
+describe("DetailsNotifier", function() {
   let timers = [new Timer(0, 1000), new Timer(0, 1500), new Timer(0, 2000)];
 
   let notifier = new DetailsNotifier();

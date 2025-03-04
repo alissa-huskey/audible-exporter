@@ -48,13 +48,6 @@ describe("StatusNotifier", function() {
     expect(notifier.bar.style.width).toBe("160px");
   });
 
-  test(".updateProgress()", function() {
-    notifier.updateProgress(.3, 2);
-    expect(notifier.percentage.innerText).toBe("30%");
-    expect(notifier.bar.style.width).toBe("240px");
-    expect(notifier.bar.style.background).toBe("rgb(7, 186, 91)");
-  });
-
   test(".reset()", function() {
     notifier.percent = .5;
     notifier.bar.style.background = "#fff";

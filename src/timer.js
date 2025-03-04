@@ -3,6 +3,24 @@
  * ************************************************************************************
  */
 
+/**
+ * Measure how long a block of code takes to execute.
+ *
+ * @example
+ *   
+      let sleep = (ms) => new Promise(res => {
+        setTimeout(res, ms);
+      });
+
+      let timer = new Timer();
+      timer.start();
+
+      await sleep(500);
+
+      timer.stop();
+      console.log(`That took: ${timer.seconds} seconds.`);
+ *
+ */
 Timer = class {
   constructor(beginning=null, end=null, task=null) {
     this.beginning = beginning;

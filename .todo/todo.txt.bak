@@ -22,7 +22,6 @@
 (Z) 2025-02-23 @feature Add date downloaded to JSON
 (Z) 2025-02-23 @feature Some way to indicate last download, to avoid downloading everything
 (Z) 2025-02-25 @feature @notifier Add cancel button.
-x 2025-03-03 2025-02-25 @tools Look into replacing make with gulp.
 (B) 2025-02-26 @qa Refactor Orders class to have prepare method/stage that will fetch all years and page numbers to get a total page count.
 (B) 2025-02-26 @qa Handle failed requests.
 (Z) 2025-02-26 Implement some sort of pause/resume.
@@ -53,11 +52,11 @@ x 2025-03-03 2025-02-25 @tools Look into replacing make with gulp.
 (B) 2025-03-01 @qa See about getting rid of .data() methods to reduce overhead.
 (B) 2025-03-01 @qa Move LibraryFetcher.fetchPage() -> LibraryPage.get()
 (B) 2025-03-02 @download ensure all URL formats are the same.
-(A) 2025-03-02 Remove StatusNotifier.updateProgress
-(A) 2025-03-02 @qa Launch background task to gather 1st page of each year to calculate total pages.
+x 2025-03-04 2025-03-02 Remove StatusNotifier.updateProgress
 (A) 2025-03-02 @qa Remove StatusNotifier.timeLeft()
 (A) 2025-03-02 @data Parse as much data as possible from every page.
 (A) 2025-03-02 @ux DetailNotifier: If estimated minutes is an int, don't include .0
 (A) 2025-03-02 @qa test in other browsers
 (A) 2025-03-02 @qa Make the OrderPage constructor not such a mess.
-(A) 2025-03-02 @qa Refactor OrdersFetcher: .years (ie ['2025', '2024'...]) should not be the same as .years (ie [YearFetcher(), YearFetcher()...])
+(A) 2025-03-04 @ux Incorporate timers into all notifiers.
+(A) 2025-03-04 Move all colors to CSS variables.

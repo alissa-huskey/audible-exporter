@@ -6,7 +6,6 @@
 DetailsNotifier = class extends StatusNotifier {
   #book = null;
   #book_count = null;
-  #pulse_colors = {true: "#07ba5b", false: "#3de367"}
   times = []
 
   get book() {
@@ -17,7 +16,6 @@ DetailsNotifier = class extends StatusNotifier {
     this.#book = value
     this.text = this.message;
     this.percent = this.book / this.book_count
-    this.pulse(value);
   }
 
   get remaining() {
