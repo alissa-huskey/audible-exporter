@@ -88,7 +88,7 @@ Exporter = class {
   download(books) {
     this.notifier.remove();
     let file = new TSVFile(books);
-    this.modal.file = [file.url, file.filename];
+    this.modal.file = file;
     this.modal.show()
   }
 

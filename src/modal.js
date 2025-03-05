@@ -8,6 +8,7 @@ Modal = class extends DOM {
   #wrapper = null;
   #close_btn = null
   #dl_btn = null;
+  #file = null;
 
   selectors = {
     style: "ae-modal-css",
@@ -72,16 +73,19 @@ Modal = class extends DOM {
     return this.#dl_btn;
   }
 
-  set file(args) {
-    let [url, filename] = args;
-    this.dl_btn.element.href = url;
-    this.dl_btn.element.download = filename;
+  get file() {
+    return this.#file;
+  }
+
+  set file(file) {
+    this.#file = file;
+    this.dl_btn.element.href = file.url;
+    this.dl_btn.element.download = file.filename;
     this.dl_btn.element.addEventListener("click", () => {
         setTimeout(() => {
-          window.URL.revokeObjectURL(url);
+          window.URL.revokeObjectURL(file.url);
         }, 10);
     });
-
   }
 
   show() {

@@ -36,7 +36,6 @@
 (D) 2025-02-27 Add to readme https://developer.chrome.com/docs/devtools/console/log
 (B) 2025-02-27 @qa Have Page.fetchDoc() set this.url = url
 (D) 2025-02-27 @ux Make the colors between the notifier and modal consistent.
-(A) 2025-02-27 @qa Change Modal.file = to take a File object instead of a list with url and filename.
 (D) 2025-02-28 @ux @download In TSV download, join categories.
 (B) 2025-02-28 @ux @download Compare results from original download to current results
 (A) 2025-02-28 @housekeeping Fix instructions to download JSON on README.
@@ -56,3 +55,18 @@
 (A) 2025-03-02 @qa test in other browsers
 (A) 2025-03-02 @qa Make the OrderPage constructor not such a mess.
 (A) 2025-03-04 @ux Incorporate timers into all notifiers.
+(D) 2025-03-05 @qa @testing Try HTML validate https://html-validate.org/usage/index.html
+(D) 2025-03-05 @qa @testing Try Babel https://babeljs.io/docs
+(D) 2025-03-05 @qa @testing Try Normalize.css https://github.com/necolas/normalize.css/?tab=readme-ov-file
+(D) 2025-03-05 @qa @testing Try autoprefixer https://github.com/postcss/autoprefixer#browsers
+(D) 2025-03-05 @qa Look into polyfills and transpilers https://javascript.info/polyfills
+(D) 2025-03-05 @qa Look into JS style guides and linters: https://javascript.info/coding-style
+(D) 2025-03-05 @qa @compatability Look into webcomponents polyfills https://github.com/webcomponents/polyfills?tab=readme-ov-file
+(D) 2025-03-05 @qa @compatability Look into Modernizr: https://modernizr.com/docs/
+(B) 2025-03-05 @qa @testing Try eslint: https://dev.to/shivambmgupta/eslint-what-why-when-how-5f1d
+(D) 2025-03-05 @qa @accessibility Try jest-axe https://maxrozen.com/automatic-a11y-testing-with-jest-axe https://dev.to/bdougieyo/accessibility-testing-in-react-with-jest-axe-l7k
+(D) 2025-03-05 @qa @testing Try playwright https://playwright.dev/
+(D) 2025-03-05 @qa @testing Try blisk https://blisk.io/
+(D) 2025-03-05 @qa @testing Look into browserling https://www.browserling.com/
+(D) 2025-03-05 @qa @testing Try testcafe https://testcafe.io/
+(D) 2025-03-05 @qa @testing Look into snapshot testing https://jestjs.io/docs/snapshot-testing

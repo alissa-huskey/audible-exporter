@@ -51,3 +51,4 @@ x 2025-03-04 2025-03-02 Remove StatusNotifier.updateProgress
 x 2025-03-04 2025-03-04 Move all colors to CSS variables.
 x 2025-03-04 2025-03-02 @qa Remove StatusNotifier.timeLeft()
 x 2025-03-04 2025-03-02 @ux DetailNotifier: If estimated minutes is an int, don't include .0
+x 2025-03-05 2025-02-27 @qa Change Modal.file = to take a File object instead of a list with url and filename.

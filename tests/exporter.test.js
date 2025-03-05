@@ -148,6 +148,15 @@ describe("Exporter", function() {
     expect(exporter.results).toEqual(results);
   });
 
+  test("download()", function() {
+    exporter = new Exporter();
+    exporter.modal.create();
+    exporter.download(["a", "b", "c"]);
+
+    expect(exporter.modal.file.constructor.name).toBe("TSVFile");
+    expect(exporter.modal.wrapper.style.display).toBe("block");
+  });
+
   test(".run()", async function() {
     let mockFn = mockFetchDocs([
       fixtureDoc("order-page.html"),
