@@ -22,28 +22,28 @@ describe("DetailsNotifier", function() {
   });
 
   test(".remaining", function() {
-    notifier.book_count = 100;
-    notifier.book = 10;
+    notifier.total = 100;
+    notifier.item_no = 10;
     expect(notifier.remaining).toBe(90);
 
   });
 
-  test(".per_book", function() {
+  test(".per_item", function() {
     notifier.times = timers;
-    expect(notifier.per_book).toBe(1500);
+    expect(notifier.per_item).toBe(1500);
   });
 
   test(".ms_left", function() {
-    notifier.book_count = 100;
-    notifier.book = 10;
+    notifier.total = 100;
+    notifier.item_no = 10;
     notifier.times = timers;
 
     expect(notifier.ms_left).toBe((135000 * 1.05));
   });
 
   test(".minutes_left", function() {
-    notifier.book_count = 100;
-    notifier.book = 10;
+    notifier.total = 100;
+    notifier.item_no = 10;
     notifier.times = timers;
 
     expect(notifier.minutes_left).toBe("2.4");

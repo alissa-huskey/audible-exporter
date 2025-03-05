@@ -20,7 +20,7 @@ DetailsFetcher = class {
 
     let total = this.library.length;
 
-    dispatchEvent({book_count: total});
+    dispatchEvent({total: total});
 
     let i = 0;
 
@@ -37,7 +37,7 @@ DetailsFetcher = class {
       this.pages.push(page);
 
       i++;
-      dispatchEvent({book: i, timer: timer});
+      dispatchEvent({item_no: i, timer: timer});
     }
 
     actual.stop();

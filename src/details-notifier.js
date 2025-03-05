@@ -4,26 +4,27 @@
  */
 
 DetailsNotifier = class extends StatusNotifier {
-  #book = null;
-  #book_count = null;
+  #item_no = null;
+  #total = null;
+
   times = []
 
-  get book() {
-    return this.#book;
+  get item_no() {
+    return this.#item_no;
   }
 
-  set book(value) {
-    this.#book = value
+  set item_no(value) {
+    this.#item_no = value
     this.text = this.message;
-    this.percent = this.book / this.book_count
+    this.percent = this.item_no / this.total
   }
 
   get remaining() {
-    return this.book_count - this.book;
+    return this.total - this.item_no;
   }
 
   get ms_left() {
-    return (this.remaining * this.per_book) * 1.05;
+    return (this.remaining * this.per_item) * 1.05;
   }
 
   get minutes_left() {
@@ -38,26 +39,26 @@ DetailsNotifier = class extends StatusNotifier {
     this.times.push(value);
   }
 
-  get per_book() {
+  get per_item() {
     let total = this.times.reduce((sum, t) =>  sum + t.elapsed, 0);
     return total / this.times.length;
   }
 
-  get book_count() {
-    return this.#book_count;
+  get total() {
+    return this.#total;
   }
 
-  set book_count(value) {
-    this.#book_count = value
+  set total(value) {
+    this.#total = value
     this.text = this.message;
   }
 
   get message() {
-    if (!this.book) {
+    if (!this.item_no) {
       return "Retrieving additional information on titles...";
     }
 
-    let message = `Retrieving book ${this.book} of ${this.book_count}`
+    let message = `Retrieving book ${this.item_no} of ${this.total}`
 
     if (isEmpty(this.times)) {
       return message;
