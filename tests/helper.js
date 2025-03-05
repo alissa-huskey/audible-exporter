@@ -51,3 +51,21 @@ global.mockFetchFixtureDocs = function(files) {
 global.URL.createObjectURL = jest.fn(() => "blob:https://www.google.com/6cb50f1f-699a-4975-9e38-29a4df034064");
 
 global.delay = jest.fn();
+
+/**
+ * Return the milliseconds per item to process the number of remaining items in
+ * the desired minutes.
+ *
+ * @params notifier {StatusNotifier}  the notifier object
+ * @params minutes  {number}          the desired number of minutes
+ *
+ * @returns         {number}          milliseconds per item
+ */
+global.timePerItem = function(notifier, minutes) {
+  // multiplier to reduce the amount of time to account for padding
+  let unpad = (1 - (notifier.estimate_padding - 1));
+
+  // desired minutes in milliseconds divided by remaining items, unpadded
+  let ms = ((minutes * 60 * 1000) / notifier.remaining) * unpad
+  return ms;
+}
