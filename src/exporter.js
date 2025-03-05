@@ -9,6 +9,7 @@ Exporter = class {
     this.limit = limit;
     this.timer = new Timer();
     this.notifier = new StatusNotifier();
+    this.colors = new Colors();
     this.modal = new Modal();
     this.orders = new OrdersFetcher();
     this.library = new LibraryFetcher();
@@ -96,6 +97,7 @@ Exporter = class {
       this.timer.start();
       this.limit = limit;
 
+      this.colors.create();
       this.notifier.create();
       this.modal.create();
 

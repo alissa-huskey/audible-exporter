@@ -52,9 +52,7 @@
 (B) 2025-03-01 @qa See about getting rid of .data() methods to reduce overhead.
 (B) 2025-03-01 @qa Move LibraryFetcher.fetchPage() -> LibraryPage.get()
 (B) 2025-03-02 @download ensure all URL formats are the same.
-(A) 2025-03-02 @qa Remove StatusNotifier.timeLeft()
 (A) 2025-03-02 @data Parse as much data as possible from every page.
-(A) 2025-03-02 @ux DetailNotifier: If estimated minutes is an int, don't include .0
 (A) 2025-03-02 @qa test in other browsers
 (A) 2025-03-02 @qa Make the OrderPage constructor not such a mess.
 (A) 2025-03-04 @ux Incorporate timers into all notifiers.

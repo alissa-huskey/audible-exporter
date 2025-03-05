@@ -1,10 +1,7 @@
 :root {
-  --ae-black-russian: #25242A;
-  --ae-eerie-black: #1A191B;
-  --ae-mystic-white: #dce6ef;
-  --ae-basalt-grey: #999999;
-  --ae-emerald-green: #43c26d;
-  --ae-carbon: #333333;
+  --ae-box-shadow: 3px 3px 10px 3px;
+  --ae-box-shadow-light-bg: var(--ae-box-shadow) var(--ae-dim-gray);
+  --ae-box-shadow-dark-bg: var(--ae-box-shadow) var(--ae-carbon);
 }
 
 .ae-modal {
@@ -31,11 +28,11 @@
   box-shadow: 0 3px 15px -2px #222;
   padding: 20px;
   background-color: var(--ae-black-russian);
-  color: white;
+  color: var(--ae-near-white);
 }
 
 .ae-modal .ae-head {
-  background-color: var(--ae-eerie-black);
+  background-color: var(--ae-near-black);
   padding: 10px;
   border-radius: 10px 10px 0px 0px;
 }
@@ -69,7 +66,6 @@
 }
 
 a#ae-download-btn {
-  /* background-color: #4CC713; */
   background-color: var(--ae-emerald-green);
   color: #000;
   cursor: pointer;
@@ -82,11 +78,19 @@ a#ae-download-btn {
   display: inline-block;
   padding: 10px 25px;
   text-indent: 15px;
+
+  box-shadow: var(--ae-box-shadow-light-bg);
+  -webkit-box-shadow: var(--ae-box-shadow-light-bg);
+  -moz-box-shadow: var(--ae-box-shadow-light-bg);
 }
 
 a#ae-download-btn:hover {
-  background-color: var(--ae-carbon);
-  color: white;
+  background-color: var(--ae-near-black);
+  color: var(--ae-near-white);
+
+  box-shadow: var(--ae-box-shadow-dark-bg);
+  -webkit-box-shadow: var(--ae-box-shadow-dark-bg);
+  -moz-box-shadow: var(--ae-box-shadow-dark-bg);
 }
 
 a#ae-download-btn:before, a#ae-download-btn:after {

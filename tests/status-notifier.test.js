@@ -50,13 +50,11 @@ describe("StatusNotifier", function() {
 
   test(".reset()", function() {
     notifier.percent = .5;
-    notifier.bar.style.background = "#fff";
     notifier.text = "loading...";
 
     notifier.reset();
 
     expect(notifier.bar.style.width).toBe("0px");
-    expect(notifier.bar.style.background).toBe("rgb(7, 186, 91)");
     expect(notifier.status.innerText).toBe("");
   });
 

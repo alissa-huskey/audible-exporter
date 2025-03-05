@@ -1,17 +1,6 @@
-/*
-  #colors = {
-    rasin: "#19191F",
-    darkGray: "#232530",
-    offWhite: "#abaab3",
-    lightGray: "#9a99a1",
-  }
-*/
-
 :root {
-  --ae-bright-green: #0aff99;
-  --ae-light-green: #3de367;
-  --ae-dark-green: #07ba5b;
-  --ae-near-black: #121212;
+  --ae-transparent-black: rgba(0, 0, 0, 0.05);
+  --ae-blur-shadow: 0 0 8px 8px var(--ae-transparent-black);
 }
 
 #ae-notifier {
@@ -44,10 +33,20 @@
 #ae-messages {
   padding: 14px;
   color: #fff;
+  font-size: 1.1em;
+  font-weight: 600;
+
 }
 
 #ae-status-text {
   text-wrap: nowrap;
+
+  -webkit-text-stroke: 0.2px var(--ae-dim-gray);
+
+  background-color: var(--ae-transparent-black);
+  box-shadow: var(--ae-blur-shadow);
+  -webkit-box-shadow: var(--ae-blur-shadow);
+  -moz-box-shadow: var(--ae-blur-shadow);
 }
 
 #ae-percent-text {

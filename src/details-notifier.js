@@ -27,7 +27,11 @@ DetailsNotifier = class extends StatusNotifier {
   }
 
   get minutes_left() {
-    return ((this.ms_left / 1000) / 60).toFixed(1);
+    let minutes = ((this.ms_left / 1000) / 60).toFixed(1);
+    if (minutes == parseInt(minutes)) {
+      minutes = parseInt(minutes);
+    }
+    return minutes;
   }
 
   set timer(value) {

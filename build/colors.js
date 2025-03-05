@@ -358,7 +358,7 @@ DOM = class {
 }
 
 /**
- * colors.js
+ * dom.js
  * ************************************************************************************
  */
 
@@ -366,38 +366,33 @@ Colors = class extends DOM {
   #style = null;
   #css = null;
 
-  selectors = { style: "ae-colors", wrapper: "ae-colors" };
-
   get css() {
     if (!this.#css) {
       this.#css = `
 /*
   #colors = {
+    rasin: "#19191F",
     darkGray: "#232530",
     offWhite: "#abaab3",
+    lightGray: "#9a99a1",
   }
 */
 
 :root {
-  /* --ae-dark-green: #14c45a; */
-  /* --ae-light-green: #18e76a; */
-  /* --ae-emerald-green: #43c26d; */
-
-  --ae-near-black: #1A191B;
-  --ae-black-russian: #25242A;
-
-  --ae-dark-green: #07ba5b;
-  --ae-emerald-green: #14B762;
-  --ae-light-green: #20D174;
   --ae-bright-green: #0aff99;
+  /* --ae-light-green: #18e76a; */
+  --ae-light-green: #20D174;
+  /* --ae-dark-green: #14c45a; */
+  --ae-dark-green: #07ba5b;
+  --ae-near-black: #1A191B;
 
-  --ae-carbon: #333333;
-  --ae-dim-gray: #4d4d4d;
-  --ae-gray: #808080;
-  --ae-basalt-gray: #9a99a1;  /* very close to #999999 */
+  --ae-black-russian: #25242A;
+  --ae-near-black: #1A191B;
   --ae-mystic-white: #dce6ef;
-  --ae-near-white: #eaeaea;
-
+  --ae-basalt-grey: #999999;
+  /* --ae-emerald-green: #43c26d; */
+  --ae-emerald-green: #14B762;
+  --ae-carbon: #333333;
 }
       `;
     }
@@ -406,293 +401,5 @@ Colors = class extends DOM {
 
   get wrapper() {
     return this.style;
-  }
-}
-
-/**
- * status-notifier.js
- * ************************************************************************************
- */
-
-StatusNotifier = class extends DOM {
-  #wrapper = null;
-  #bar = null;
-  #status = null;
-  #percentage = null;
-  #messages = null;
-  #style = null;
-  #percent = null;
-
-  selectors = {
-    wrapper: "ae-notifier",
-    bar: "ae-bar",
-    messages: "ae-messages",
-    status: "ae-status-text",
-    percentage: "ae-percent-text",
-  };
-
-  get message() {
-    return "Initializing...";
-  }
-
-  get css() {
-    return `
-:root {
-  --ae-transparent-black: rgba(0, 0, 0, 0.05);
-  --ae-blur-shadow: 0 0 8px 8px var(--ae-transparent-black);
-}
-
-#ae-notifier {
-  position: fixed;
-  top: 100px;
-  border-radius: 0.2em;
-  font-family: system-ui;
-  border: 1px solid var(--ae-light-green);
-  background-color: var(--ae-near-black);
-}
-
-#ae-notifier.hidden {
-  display: none;
-}
-
-#ae-bar {
-  width: 0;
-  height: 50px;
-  border-bottom-right-radius: 0.2em;
-  border-top-right-radius: 0.2em;
-  transition: all 1s;
-  border-width: 1px;
-  border-style: solid;
-  background-color: var(--ae-dark-green);
-  border-color: var(--ae-light-green);
-  -webkit-animation: pulse 1s linear alternate;
-  -webkit-animation-iteration-count: infinite; 
-}
-
-#ae-messages {
-  padding: 14px;
-  color: #fff;
-  font-size: 1.1em;
-  font-weight: 600;
-
-}
-
-#ae-status-text {
-  text-wrap: nowrap;
-
-  -webkit-text-stroke: 0.2px var(--ae-dim-gray);
-
-  background-color: var(--ae-transparent-black);
-  box-shadow: var(--ae-blur-shadow);
-  -webkit-box-shadow: var(--ae-blur-shadow);
-  -moz-box-shadow: var(--ae-blur-shadow);
-}
-
-#ae-percent-text {
-  color: var(--ae-bright-green);
-}
-
-.row {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-}
-
-@-webkit-keyframes pulse {
-  from { background-color: var(--ae-dark-green); }
-  to { background-color: var(--ae-light-green); }
-}
-    `;
-  }
-
-  get body_width() {
-    return document.body.getBoundingClientRect().width;
-  }
-
-  get bar_width() {
-    return this.body_width * 0.8;
-  }
-
-  // Construct notifier wrapper div, append all child elements, and return
-  get wrapper() {
-    if (!this.#wrapper) {
-      this.#wrapper = Element.create("div", {id: this.selectors.wrapper, style: {
-        width: `${this.bar_width}px`,
-        left: `${(this.body_width - this.bar_width) / 2}px`,
-        'z-index': new Date().getTime(),
-      }})
-
-      this.wrapper.element.appendChild(this.bar.element);
-      this.bar.element.appendChild(this.messages.element);
-      this.messages.element.appendChild(this.status.element);
-      this.messages.element.appendChild(this.percentage.element);
-    }
-    return this.#wrapper;
-  }
-
-  // progress bar element
-  get bar() {
-    if (!this.#bar) {
-      this.#bar = Element.create("div", {id: this.selectors.bar});
-    }
-    return this.#bar;
-  }
-
-  get messages() {
-    if (!this.#messages) {
-      this.#messages = Element.create("div", {id: this.selectors.messages, class: "row", style: {
-        width: `${this.bar_width}px`,
-      }});
-    }
-    return this.#messages;
-  }
-
-  // status text element
-  get status() {
-    if (!this.#status) {
-      this.#status = Element.create("div", {id: this.selectors.status});
-    }
-    return this.#status;
-  }
-
-  // percent text element
-  get percentage() {
-    if (!this.#percentage) {
-      this.#percentage = Element.create("span", {id: this.selectors.percentage});
-    }
-    return this.#percentage;
-  }
-
-  // set the status text
-  set text(message) {
-    this.status.innerText = message;
-  }
-
-  get percent() {
-    return this.#percent;
-  }
-
-  // set the percentage text and progress bar width
-  set percent(decimal) {
-    this.#percent = decimal;
-    let amount = Math.ceil(decimal * 100);
-    this.percentage.innerText = `${amount}%`;
-
-    let width = this.bar_width * decimal;
-    this.bar.style.width = `${width}px`;
-  }
-
-  hide() {
-    this.wrapper.classList.add("hidden");
-  }
-
-  show() {
-    this.wrapper.classList.remove("hidden");
-  }
-
-  create() {
-    super.create();
-
-    document.addEventListener("update-ae-notifier", (e) => {
-      for (let [k, v] of Object.entries(e.detail)) {
-        this[k] = v;
-      }
-    });
-
-    this.text = this.message;
-  }
-
-  reset() {
-    this.text = "";
-    this.percent = 0;
-    this.percentage.innerText = "";
-  }
-
-  // remove the elements from the DOM
-  remove() {
-    this.wrapper.element.remove();
-
-    this.#wrapper = null;
-    this.#bar = null;
-    this.#status = null;
-    this.#percentage = null;
-  }
-}
-
-/**
- * details-notifier.js
- * ************************************************************************************
- */
-
-DetailsNotifier = class extends StatusNotifier {
-  #book = null;
-  #book_count = null;
-  times = []
-
-  get book() {
-    return this.#book;
-  }
-
-  set book(value) {
-    this.#book = value
-    this.text = this.message;
-    this.percent = this.book / this.book_count
-  }
-
-  get remaining() {
-    return this.book_count - this.book;
-  }
-
-  get ms_left() {
-    return (this.remaining * this.per_book) * 1.05;
-  }
-
-  get minutes_left() {
-    let minutes = ((this.ms_left / 1000) / 60).toFixed(1);
-    if (minutes == parseInt(minutes)) {
-      minutes = parseInt(minutes);
-    }
-    return minutes;
-  }
-
-  set timer(value) {
-    this.times.push(value);
-  }
-
-  get per_book() {
-    let total = this.times.reduce((sum, t) =>  sum + t.elapsed, 0);
-    return total / this.times.length;
-  }
-
-  get book_count() {
-    return this.#book_count;
-  }
-
-  set book_count(value) {
-    this.#book_count = value
-    this.text = this.message;
-  }
-
-  get message() {
-    if (!this.book) {
-      return "Retrieving additional information on titles...";
-    }
-
-    let message = `Retrieving book ${this.book} of ${this.book_count}`
-
-    if (isEmpty(this.times)) {
-      return message;
-    }
-
-    let minutes = this.minutes_left;
-    if (minutes <= 0.5) {
-      message += " (less than a minute remaining)";
-    } else if (minutes <= 1) {
-      message += " (about a minute remaining)";
-    } else {
-      message += ` (about ${this.minutes_left} minutes remaining)`;
-    }
-
-    return message;
   }
 }

@@ -23,6 +23,7 @@ require("../src/purchase.js");
 require("../src/order-page.js");
 require("../src/orders-fetcher.js");
 require("../src/dom.js");
+require("../src/colors.js");
 require("../src/modal.js");
 require("../src/status-notifier.js");
 require("../src/purchase-history-notifier.js");

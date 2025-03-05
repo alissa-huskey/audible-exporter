@@ -1,0 +1,28 @@
+/*
+  #colors = {
+    darkGray: "#232530",
+    offWhite: "#abaab3",
+  }
+*/
+
+:root {
+  /* --ae-dark-green: #14c45a; */
+  /* --ae-light-green: #18e76a; */
+  /* --ae-emerald-green: #43c26d; */
+
+  --ae-near-black: #1A191B;
+  --ae-black-russian: #25242A;
+
+  --ae-dark-green: #07ba5b;
+  --ae-emerald-green: #14B762;
+  --ae-light-green: #20D174;
+  --ae-bright-green: #0aff99;
+
+  --ae-carbon: #333333;
+  --ae-dim-gray: #4d4d4d;
+  --ae-gray: #808080;
+  --ae-basalt-gray: #9a99a1;  /* very close to #999999 */
+  --ae-mystic-white: #dce6ef;
+  --ae-near-white: #eaeaea;
+
+}

@@ -358,6 +358,58 @@ DOM = class {
 }
 
 /**
+ * colors.js
+ * ************************************************************************************
+ */
+
+Colors = class extends DOM {
+  #style = null;
+  #css = null;
+
+  selectors = { style: "ae-colors", wrapper: "ae-colors" };
+
+  get css() {
+    if (!this.#css) {
+      this.#css = `
+/*
+  #colors = {
+    darkGray: "#232530",
+    offWhite: "#abaab3",
+  }
+*/
+
+:root {
+  /* --ae-dark-green: #14c45a; */
+  /* --ae-light-green: #18e76a; */
+  /* --ae-emerald-green: #43c26d; */
+
+  --ae-near-black: #1A191B;
+  --ae-black-russian: #25242A;
+
+  --ae-dark-green: #07ba5b;
+  --ae-emerald-green: #14B762;
+  --ae-light-green: #20D174;
+  --ae-bright-green: #0aff99;
+
+  --ae-carbon: #333333;
+  --ae-dim-gray: #4d4d4d;
+  --ae-gray: #808080;
+  --ae-basalt-gray: #9a99a1;  /* very close to #999999 */
+  --ae-mystic-white: #dce6ef;
+  --ae-near-white: #eaeaea;
+
+}
+      `;
+    }
+    return this.#css;
+  }
+
+  get wrapper() {
+    return this.style;
+  }
+}
+
+/**
  * modal.js
  * ************************************************************************************
  */
@@ -381,12 +433,9 @@ Modal = class extends DOM {
     if (!this.#css) {
       this.#css = `
 :root {
-  --ae-black-russian: #25242A; /* color(srgb 0.14549 0.140392 0.163529) */
-  --ae-eerie-black: #1A191B; /* color(srgb 0.100549 0.0985098 0.107765) */
-  --ae-mystic-white: #dce6ef;
-  --ae-basalt-grey: #999999;
-  --ae-emerald-green: #43c26d;
-  --ae-carbon: #333333;
+  --ae-box-shadow: 3px 3px 10px 3px;
+  --ae-box-shadow-light-bg: var(--ae-box-shadow) var(--ae-dim-gray);
+  --ae-box-shadow-dark-bg: var(--ae-box-shadow) var(--ae-carbon);
 }
 
 .ae-modal {
@@ -412,13 +461,12 @@ Modal = class extends DOM {
   border-radius: 15px;
   box-shadow: 0 3px 15px -2px #222;
   padding: 20px;
-  background: var(--ae-black-russian);
-  color: white;
-  /* color: #6b7280; */
+  background-color: var(--ae-black-russian);
+  color: var(--ae-near-white);
 }
 
 .ae-modal .ae-head {
-  background-color: var(--ae-eerie-black);
+  background-color: var(--ae-near-black);
   padding: 10px;
   border-radius: 10px 10px 0px 0px;
 }
@@ -452,7 +500,6 @@ Modal = class extends DOM {
 }
 
 a#ae-download-btn {
-  /* background-color: #4CC713; */
   background-color: var(--ae-emerald-green);
   color: #000;
   cursor: pointer;
@@ -465,11 +512,19 @@ a#ae-download-btn {
   display: inline-block;
   padding: 10px 25px;
   text-indent: 15px;
+
+  box-shadow: var(--ae-box-shadow-light-bg);
+  -webkit-box-shadow: var(--ae-box-shadow-light-bg);
+  -moz-box-shadow: var(--ae-box-shadow-light-bg);
 }
 
 a#ae-download-btn:hover {
-  background-color: var(--ae-carbon);
-  color: white;
+  background-color: var(--ae-near-black);
+  color: var(--ae-near-white);
+
+  box-shadow: var(--ae-box-shadow-dark-bg);
+  -webkit-box-shadow: var(--ae-box-shadow-dark-bg);
+  -moz-box-shadow: var(--ae-box-shadow-dark-bg);
 }
 
 a#ae-download-btn:before, a#ae-download-btn:after {

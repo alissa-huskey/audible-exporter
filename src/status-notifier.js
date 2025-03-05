@@ -107,12 +107,6 @@ StatusNotifier = class extends DOM {
     this.bar.style.width = `${width}px`;
   }
 
-  timeLeft(remaining) {
-    let per_book = 1.9;
-
-    return Math.round((remaining * per_book) / 60);
-  }
-
   hide() {
     this.wrapper.classList.add("hidden");
   }

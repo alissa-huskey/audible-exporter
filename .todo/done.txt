@@ -49,3 +49,5 @@ x 2025-03-02 2025-02-27 @qa Subclass StatusNotifier to make a notifier for each 
 x 2025-03-03 2025-02-25 @tools Look into replacing make with gulp.
 x 2025-03-04 2025-03-02 Remove StatusNotifier.updateProgress
 x 2025-03-04 2025-03-04 Move all colors to CSS variables.
+x 2025-03-04 2025-03-02 @qa Remove StatusNotifier.timeLeft()
+x 2025-03-04 2025-03-02 @ux DetailNotifier: If estimated minutes is an int, don't include .0

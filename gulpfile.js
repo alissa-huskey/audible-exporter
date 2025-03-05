@@ -46,7 +46,10 @@ let sources = [
  */
 task("inject-css", (cb) => {
   log("task: inject-css");
-  return src(components.map((d) => `src/${d}.js`))
+  return src([
+    `${dirs.src}/colors.js`,
+    ...components.map((d) => `src/${d}.js`)
+  ])
     .pipe(using({}))
     .pipe(replace(
       /\n\s+\/\* CSS_MARKER (.*) \*\/\n/, (_, stylesheet) => {
@@ -74,6 +77,7 @@ buildComponents = function(done) {
     return () => (
       src([
         ...["dev", "util", "element", "dom"].map((d) => `src/${d}.js`),
+        `${dirs.tmp}/colors.js`,
         `${dirs.tmp}/${name}.js`,
       ])
         .pipe(concat(`${name}.js`))
@@ -119,6 +123,7 @@ task("audible-exporter", (done) => {
   log("task: audible-exporter");
   return src([
     ...sources.map((f) => `${dirs.src}/${f}.js`),
+    `${dirs.tmp}/colors.js`,
     ...components.map((f) => `${dirs.tmp}/${f}.js`),
     ...notifiers.map((f) => `${dirs.src}/${f}-notifier.js`),
     `${dirs.src}/exporter.js`,
