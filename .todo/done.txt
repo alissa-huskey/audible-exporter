@@ -48,3 +48,4 @@ x 2025-03-02 2025-02-26 @ux Calculate the time each request takes, use value to 
 x 2025-03-02 2025-02-27 @qa Subclass StatusNotifier to make a notifier for each step (orders, library, details)
 x 2025-03-03 2025-02-25 @tools Look into replacing make with gulp.
 x 2025-03-04 2025-03-02 Remove StatusNotifier.updateProgress
+x 2025-03-04 2025-03-04 Move all colors to CSS variables.

@@ -380,6 +380,15 @@ Modal = class extends DOM {
   get css() {
     if (!this.#css) {
       this.#css = `
+:root {
+  --ae-black-russian: #25242A; /* color(srgb 0.14549 0.140392 0.163529) */
+  --ae-eerie-black: #1A191B; /* color(srgb 0.100549 0.0985098 0.107765) */
+  --ae-mystic-white: #dce6ef;
+  --ae-basalt-grey: #999999;
+  --ae-emerald-green: #43c26d;
+  --ae-carbon: #333333;
+}
+
 .ae-modal {
   box-sizing: border-box;
   position: fixed;
@@ -403,21 +412,19 @@ Modal = class extends DOM {
   border-radius: 15px;
   box-shadow: 0 3px 15px -2px #222;
   padding: 20px;
-  background: color(srgb 0.14549 0.140392 0.163529);
+  background: var(--ae-black-russian);
   color: white;
   /* color: #6b7280; */
 }
 
 .ae-modal .ae-head {
-  background-color: color(srgb 0.100549 0.0985098 0.107765);
+  background-color: var(--ae-eerie-black);
   padding: 10px;
-  /* top-left  top-right bottom-right bottom-left */
   border-radius: 10px 10px 0px 0px;
-  /* border-bottom: 1px solid #ddd; */
 }
 
 .ae-modal h1 {
-  color: #dce6ef;
+  color: var(--ae-mystic-white);
   font-size: 1.1rem;
   font-weight: 600;
   line-height: normal;
@@ -427,7 +434,7 @@ Modal = class extends DOM {
 }
 
 .ae-modal #ae-close-btn {
-  color: #999;
+  color: var(--ae-basalt-gray);
   font-size: 28px;
   font-weight: bold;
   text-decoration: none;
@@ -446,7 +453,7 @@ Modal = class extends DOM {
 
 a#ae-download-btn {
   /* background-color: #4CC713; */
-  background-color: #43c26d;
+  background-color: var(--ae-emerald-green);
   color: #000;
   cursor: pointer;
 
@@ -461,7 +468,7 @@ a#ae-download-btn {
 }
 
 a#ae-download-btn:hover {
-  background-color: #333;
+  background-color: var(--ae-carbon);
   color: white;
 }
 
@@ -498,11 +505,11 @@ a#ae-download-btn:after {
 }
 
 a#ae-download-btn:hover:before {
-  border-color: #43c26d;
+  border-color: var(--ae-emerald-green);
 }
 
 a#ae-download-btn:hover:after {
-  border-top-color: #43c26d;
+  border-top-color: var(--ae-emerald-green);
   animation-play-state: running;
 }
 

@@ -1716,17 +1716,6 @@ StatusNotifier = class extends DOM {
   #style = null;
   #percent = null;
 
-  #colors = {
-    darkGreen: "#07ba5b",
-    lightGreen: "#3de367",
-    nearBlack: "#121212",
-    white: "#fff",
-    rasin: "#19191F",
-    darkGray: "#232530",
-    offWhite: "#abaab3",
-    lightGray: "#9a99a1",
-  }
-
   selectors = {
     wrapper: "ae-notifier",
     bar: "ae-bar",
@@ -1741,16 +1730,29 @@ StatusNotifier = class extends DOM {
 
   get css() {
     return `
+/*
+  #colors = {
+    rasin: "#19191F",
+    darkGray: "#232530",
+    offWhite: "#abaab3",
+    lightGray: "#9a99a1",
+  }
+*/
+
+:root {
+  --ae-bright-green: #0aff99;
+  --ae-light-green: #3de367;
+  --ae-dark-green: #07ba5b;
+  --ae-near-black: #121212;
+}
+
 #ae-notifier {
   position: fixed;
   top: 100px;
   border-radius: 0.2em;
-  border-width: 1px;
-  border-style: solid;
   font-family: system-ui;
-
-  --ae-light-green: #3de367;
-  --ae-dark-green: #07ba5b;
+  border: 1px solid var(--ae-light-green);
+  background-color: var(--ae-near-black);
 }
 
 #ae-notifier.hidden {
@@ -1765,6 +1767,8 @@ StatusNotifier = class extends DOM {
   transition: all 1s;
   border-width: 1px;
   border-style: solid;
+  background-color: var(--ae-dark-green);
+  border-color: var(--ae-light-green);
   -webkit-animation: pulse 1s linear alternate;
   -webkit-animation-iteration-count: infinite; 
 }
@@ -1779,6 +1783,7 @@ StatusNotifier = class extends DOM {
 }
 
 #ae-percent-text {
+  color: var(--ae-bright-green);
 }
 
 .row {
@@ -1808,8 +1813,6 @@ StatusNotifier = class extends DOM {
       this.#wrapper = Element.create("div", {id: this.selectors.wrapper, style: {
         width: `${this.bar_width}px`,
         left: `${(this.body_width - this.bar_width) / 2}px`,
-        background: this.#colors.nearBlack,
-        'border-color': this.#colors.lightGreen,
         'z-index': new Date().getTime(),
       }})
 
@@ -1824,10 +1827,7 @@ StatusNotifier = class extends DOM {
   // progress bar element
   get bar() {
     if (!this.#bar) {
-      this.#bar = Element.create("div", {id: this.selectors.bar, style: {
-        background: this.#colors.darkGreen,
-        'border-color': this.#colors.lightGreen,
-      }});
+      this.#bar = Element.create("div", {id: this.selectors.bar});
     }
     return this.#bar;
   }
@@ -1859,13 +1859,7 @@ StatusNotifier = class extends DOM {
   // percent text element
   get percentage() {
     if (!this.#percentage) {
-      this.#percentage = Element.create("span", {id: this.selectors.percentage, style: {
-        color: "#87ff65", // bright green
-        color: "#0aff99", // bright green
-        // color: "#00ff80", // bright green
-        // color: "#00ff9f", // bright green
-        // color: "#0dffae", // bright green
-      }});
+      this.#percentage = Element.create("span", {id: this.selectors.percentage});
     }
     return this.#percentage;
   }
@@ -1918,7 +1912,6 @@ StatusNotifier = class extends DOM {
   reset() {
     this.text = "";
     this.percent = 0;
-    this.bar.style.background = this.#colors.darkGreen;
     this.percentage.innerText = "";
   }
 
@@ -1956,6 +1949,15 @@ Modal = class extends DOM {
   get css() {
     if (!this.#css) {
       this.#css = `
+:root {
+  --ae-black-russian: #25242A; /* color(srgb 0.14549 0.140392 0.163529) */
+  --ae-eerie-black: #1A191B; /* color(srgb 0.100549 0.0985098 0.107765) */
+  --ae-mystic-white: #dce6ef;
+  --ae-basalt-grey: #999999;
+  --ae-emerald-green: #43c26d;
+  --ae-carbon: #333333;
+}
+
 .ae-modal {
   box-sizing: border-box;
   position: fixed;
@@ -1979,21 +1981,19 @@ Modal = class extends DOM {
   border-radius: 15px;
   box-shadow: 0 3px 15px -2px #222;
   padding: 20px;
-  background: color(srgb 0.14549 0.140392 0.163529);
+  background: var(--ae-black-russian);
   color: white;
   /* color: #6b7280; */
 }
 
 .ae-modal .ae-head {
-  background-color: color(srgb 0.100549 0.0985098 0.107765);
+  background-color: var(--ae-eerie-black);
   padding: 10px;
-  /* top-left  top-right bottom-right bottom-left */
   border-radius: 10px 10px 0px 0px;
-  /* border-bottom: 1px solid #ddd; */
 }
 
 .ae-modal h1 {
-  color: #dce6ef;
+  color: var(--ae-mystic-white);
   font-size: 1.1rem;
   font-weight: 600;
   line-height: normal;
@@ -2003,7 +2003,7 @@ Modal = class extends DOM {
 }
 
 .ae-modal #ae-close-btn {
-  color: #999;
+  color: var(--ae-basalt-gray);
   font-size: 28px;
   font-weight: bold;
   text-decoration: none;
@@ -2022,7 +2022,7 @@ Modal = class extends DOM {
 
 a#ae-download-btn {
   /* background-color: #4CC713; */
-  background-color: #43c26d;
+  background-color: var(--ae-emerald-green);
   color: #000;
   cursor: pointer;
 
@@ -2037,7 +2037,7 @@ a#ae-download-btn {
 }
 
 a#ae-download-btn:hover {
-  background-color: #333;
+  background-color: var(--ae-carbon);
   color: white;
 }
 
@@ -2074,11 +2074,11 @@ a#ae-download-btn:after {
 }
 
 a#ae-download-btn:hover:before {
-  border-color: #43c26d;
+  border-color: var(--ae-emerald-green);
 }
 
 a#ae-download-btn:hover:after {
-  border-top-color: #43c26d;
+  border-top-color: var(--ae-emerald-green);
   animation-play-state: running;
 }
 

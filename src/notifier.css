@@ -1,13 +1,26 @@
+/*
+  #colors = {
+    rasin: "#19191F",
+    darkGray: "#232530",
+    offWhite: "#abaab3",
+    lightGray: "#9a99a1",
+  }
+*/
+
+:root {
+  --ae-bright-green: #0aff99;
+  --ae-light-green: #3de367;
+  --ae-dark-green: #07ba5b;
+  --ae-near-black: #121212;
+}
+
 #ae-notifier {
   position: fixed;
   top: 100px;
   border-radius: 0.2em;
-  border-width: 1px;
-  border-style: solid;
   font-family: system-ui;
-
-  --ae-light-green: #3de367;
-  --ae-dark-green: #07ba5b;
+  border: 1px solid var(--ae-light-green);
+  background-color: var(--ae-near-black);
 }
 
 #ae-notifier.hidden {
@@ -22,6 +35,8 @@
   transition: all 1s;
   border-width: 1px;
   border-style: solid;
+  background-color: var(--ae-dark-green);
+  border-color: var(--ae-light-green);
   -webkit-animation: pulse 1s linear alternate;
   -webkit-animation-iteration-count: infinite; 
 }
@@ -36,6 +51,7 @@
 }
 
 #ae-percent-text {
+  color: var(--ae-bright-green);
 }
 
 .row {

@@ -58,4 +58,3 @@
 (A) 2025-03-02 @qa test in other browsers
 (A) 2025-03-02 @qa Make the OrderPage constructor not such a mess.
 (A) 2025-03-04 @ux Incorporate timers into all notifiers.
-(A) 2025-03-04 Move all colors to CSS variables.

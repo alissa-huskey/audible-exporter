@@ -371,17 +371,6 @@ StatusNotifier = class extends DOM {
   #style = null;
   #percent = null;
 
-  #colors = {
-    darkGreen: "#07ba5b",
-    lightGreen: "#3de367",
-    nearBlack: "#121212",
-    white: "#fff",
-    rasin: "#19191F",
-    darkGray: "#232530",
-    offWhite: "#abaab3",
-    lightGray: "#9a99a1",
-  }
-
   selectors = {
     wrapper: "ae-notifier",
     bar: "ae-bar",
@@ -396,16 +385,29 @@ StatusNotifier = class extends DOM {
 
   get css() {
     return `
+/*
+  #colors = {
+    rasin: "#19191F",
+    darkGray: "#232530",
+    offWhite: "#abaab3",
+    lightGray: "#9a99a1",
+  }
+*/
+
+:root {
+  --ae-bright-green: #0aff99;
+  --ae-light-green: #3de367;
+  --ae-dark-green: #07ba5b;
+  --ae-near-black: #121212;
+}
+
 #ae-notifier {
   position: fixed;
   top: 100px;
   border-radius: 0.2em;
-  border-width: 1px;
-  border-style: solid;
   font-family: system-ui;
-
-  --ae-light-green: #3de367;
-  --ae-dark-green: #07ba5b;
+  border: 1px solid var(--ae-light-green);
+  background-color: var(--ae-near-black);
 }
 
 #ae-notifier.hidden {
@@ -420,6 +422,8 @@ StatusNotifier = class extends DOM {
   transition: all 1s;
   border-width: 1px;
   border-style: solid;
+  background-color: var(--ae-dark-green);
+  border-color: var(--ae-light-green);
   -webkit-animation: pulse 1s linear alternate;
   -webkit-animation-iteration-count: infinite; 
 }
@@ -434,6 +438,7 @@ StatusNotifier = class extends DOM {
 }
 
 #ae-percent-text {
+  color: var(--ae-bright-green);
 }
 
 .row {
@@ -463,8 +468,6 @@ StatusNotifier = class extends DOM {
       this.#wrapper = Element.create("div", {id: this.selectors.wrapper, style: {
         width: `${this.bar_width}px`,
         left: `${(this.body_width - this.bar_width) / 2}px`,
-        background: this.#colors.nearBlack,
-        'border-color': this.#colors.lightGreen,
         'z-index': new Date().getTime(),
       }})
 
@@ -479,10 +482,7 @@ StatusNotifier = class extends DOM {
   // progress bar element
   get bar() {
     if (!this.#bar) {
-      this.#bar = Element.create("div", {id: this.selectors.bar, style: {
-        background: this.#colors.darkGreen,
-        'border-color': this.#colors.lightGreen,
-      }});
+      this.#bar = Element.create("div", {id: this.selectors.bar});
     }
     return this.#bar;
   }
@@ -514,13 +514,7 @@ StatusNotifier = class extends DOM {
   // percent text element
   get percentage() {
     if (!this.#percentage) {
-      this.#percentage = Element.create("span", {id: this.selectors.percentage, style: {
-        color: "#87ff65", // bright green
-        color: "#0aff99", // bright green
-        // color: "#00ff80", // bright green
-        // color: "#00ff9f", // bright green
-        // color: "#0dffae", // bright green
-      }});
+      this.#percentage = Element.create("span", {id: this.selectors.percentage});
     }
     return this.#percentage;
   }
@@ -573,7 +567,6 @@ StatusNotifier = class extends DOM {
   reset() {
     this.text = "";
     this.percent = 0;
-    this.bar.style.background = this.#colors.darkGreen;
     this.percentage.innerText = "";
   }
 
