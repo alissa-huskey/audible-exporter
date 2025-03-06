@@ -439,6 +439,81 @@ StatusNotifier = class extends DOM {
     percentage: "ae-percent-text",
   };
 
+  /* Elements
+   ***************************************************************************/
+
+  /**
+   * Construct HTML elements.
+   *
+   * @returns {Element}
+   */
+  get wrapper() {
+    if (!this.#wrapper) {
+      this.#wrapper = Element.create("div", {id: this.selectors.wrapper, style: {
+        width: `${this.bar_width}px`,
+        left: `${(this.body_width - this.bar_width) / 2}px`,
+        'z-index': new Date().getTime(),
+      }})
+
+      this.wrapper.element.appendChild(this.bar.element);
+      this.bar.element.appendChild(this.messages.element);
+      this.messages.element.appendChild(this.status.element);
+      this.messages.element.appendChild(this.percentage.element);
+    }
+    return this.#wrapper;
+  }
+
+  /**
+   * Progress bar element.
+   *
+   * @returns {Element}
+   */
+  get bar() {
+    if (!this.#bar) {
+      this.#bar = Element.create("div", {id: this.selectors.bar});
+    }
+    return this.#bar;
+  }
+
+  /**
+   * Div that contains text elements.
+   *
+   * @returns {Element}
+   */
+  get messages() {
+    if (!this.#messages) {
+      this.#messages = Element.create("div", {id: this.selectors.messages, class: "row", style: {
+        width: `${this.bar_width}px`,
+      }});
+    }
+    return this.#messages;
+  }
+
+  /**
+   * Div that contains status message.
+   *
+   * @returns {Element}
+   */
+  get status() {
+    if (!this.#status) {
+      this.#status = Element.create("div", {id: this.selectors.status});
+    }
+    return this.#status;
+  }
+
+  /**
+   * Span element that contains percentage text.
+   */
+  get percentage() {
+    if (!this.#percentage) {
+      this.#percentage = Element.create("span", {id: this.selectors.percentage});
+    }
+    return this.#percentage;
+  }
+
+  /* Accessors
+   ***************************************************************************/
+
   /**
    * The number of the current item being processed.
    *
@@ -477,6 +552,48 @@ StatusNotifier = class extends DOM {
   }
 
   /**
+   * Get the status message text.
+   *
+   * @returns {string}
+   */
+  get text() {
+    return this.status.innerText;
+  }
+
+  /**
+   * Set the status message text.
+   *
+   * @param {string} message  Message to display.
+   */
+  set text(message) {
+    this.status.innerText = message;
+  }
+
+  /**
+   * The current percent complete.
+   *
+   * @returns {float} A value between 0 and 1.0
+   */
+  get percent() {
+    return this.#percent;
+  }
+
+  /**
+   * Set the percent complete.
+   *
+   * Set the modal.percent value, the progress bar width, and the percentage
+   * text.
+   */
+  set percent(decimal) {
+    this.#percent = decimal;
+    let amount = Math.ceil(decimal * 100);
+    this.percentage.innerText = `${amount}%`;
+
+    let width = this.bar_width * decimal;
+    this.bar.style.width = `${width}px`;
+  }
+
+  /**
    * Add a Timer object to the list of times.
    *
    * @param {Timer} value
@@ -485,10 +602,26 @@ StatusNotifier = class extends DOM {
     this.times.push(value);
   }
 
+  /* Static getters
+   ***************************************************************************/
+
+  /**
+   * The message to display to the user.
+   *
+   * @returns {string}
+   */
   get message() {
     return "Initializing...";
   }
 
+  /**
+   * The CSS required to render this element.
+   *
+   * On build, the CSS_MARKER line will be replaced with the contents of
+   * notifier.css.
+   *
+   * @returns {string}
+   */
   get css() {
     return `
 :root {
@@ -559,10 +692,23 @@ StatusNotifier = class extends DOM {
     `;
   }
 
+  /* Calculated properties
+   ***************************************************************************/
+
+  /**
+   * The body width.
+   *
+   * @returns {number}
+   */
   get body_width() {
     return document.body.getBoundingClientRect().width;
   }
 
+  /**
+   * The overall width of the progress bar.
+   *
+   * @returns {number}
+   */
   get bar_width() {
     return this.body_width * 0.8;
   }
@@ -607,117 +753,6 @@ StatusNotifier = class extends DOM {
   }
 
   /**
-   * Construct HTML elements.
-   *
-   * @returns {Element}
-   */
-  get wrapper() {
-    if (!this.#wrapper) {
-      this.#wrapper = Element.create("div", {id: this.selectors.wrapper, style: {
-        width: `${this.bar_width}px`,
-        left: `${(this.body_width - this.bar_width) / 2}px`,
-        'z-index': new Date().getTime(),
-      }})
-
-      this.wrapper.element.appendChild(this.bar.element);
-      this.bar.element.appendChild(this.messages.element);
-      this.messages.element.appendChild(this.status.element);
-      this.messages.element.appendChild(this.percentage.element);
-    }
-    return this.#wrapper;
-  }
-
-  /**
-   * Progress bar element.
-   *
-   * @returns {Element}
-   */
-  get bar() {
-    if (!this.#bar) {
-      this.#bar = Element.create("div", {id: this.selectors.bar});
-    }
-    return this.#bar;
-  }
-
-  /**
-   * Container element that contains text elements.
-   *
-   * @returns {Element}
-   */
-  get messages() {
-    if (!this.#messages) {
-      this.#messages = Element.create("div", {id: this.selectors.messages, class: "row", style: {
-        width: `${this.bar_width}px`,
-      }});
-    }
-    return this.#messages;
-  }
-
-  /**
-   * Div that contains status message.
-   *
-   * @returns {Element}
-   */
-  get status() {
-    if (!this.#status) {
-      this.#status = Element.create("div", {id: this.selectors.status});
-    }
-    return this.#status;
-  }
-
-  /**
-   * Span element that contains percentage text.
-   */
-  get percentage() {
-    if (!this.#percentage) {
-      this.#percentage = Element.create("span", {id: this.selectors.percentage});
-    }
-    return this.#percentage;
-  }
-
-  /**
-   * Get the status message text.
-   *
-   * @returns {string}
-   */
-  get text() {
-    return this.status.innerText;
-  }
-
-  /**
-   * Set the status message text.
-   *
-   * @param {string} message  Message to display.
-   */
-  set text(message) {
-    this.status.innerText = message;
-  }
-
-  /**
-   * The current percent complete.
-   *
-   * @returns {float} A value between 0 and 1.0
-   */
-  get percent() {
-    return this.#percent;
-  }
-
-  /**
-   * Set the percent complete.
-   *
-   * Set the modal.percent value, the progress bar width, and the percentage
-   * text.
-   */
-  set percent(decimal) {
-    this.#percent = decimal;
-    let amount = Math.ceil(decimal * 100);
-    this.percentage.innerText = `${amount}%`;
-
-    let width = this.bar_width * decimal;
-    this.bar.style.width = `${width}px`;
-  }
-
-  /**
    * Message to display to the user of the estimated time left.
    *
    * @returns {string}
@@ -738,6 +773,22 @@ StatusNotifier = class extends DOM {
     }
 
     return ` (${text})`;
+  }
+
+  /* Methods
+   ***************************************************************************/
+
+  /**
+   * Event listener.
+   *
+   * For each item in the event.detail object, set the window.ae.notifier
+   * attribute named key to value.
+   */
+  listen(evt) {
+    let notifier = window.ae.notifier;
+    for (let [k, v] of Object.entries(evt.detail)) {
+      notifier[k] = v;
+    }
   }
 
   /**
@@ -766,19 +817,6 @@ StatusNotifier = class extends DOM {
     window.ae = window.ae || {};
     window.ae.notifier = this;
     this.text = this.message;
-  }
-
-  /**
-   * Event listener.
-   *
-   * For each item in the event.detail object, set the window.ae.notifier
-   * attribute named key to value.
-   */
-  listen(evt) {
-    let notifier = window.ae.notifier;
-    for (let [k, v] of Object.entries(evt.detail)) {
-      notifier[k] = v;
-    }
   }
 
   /**
