@@ -22,9 +22,9 @@ LibraryNotifier = class extends StatusNotifier {
    * @param {number} value
    */
   set item_no(value) {
-    this.#item_no = value
+    this.#item_no = value;
     this.text = this.message;
-    this.percent = this.item_no / this.total
+    this.percent = this.ratio;
   }
 
   /**

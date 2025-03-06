@@ -52,24 +52,6 @@ OrderNotifier = class extends StatusNotifier {
   }
 
   /**
-   * The current page of total pages being processed.
-   *
-   * @returns {number}
-   */
-  get item_no() {
-    return this.#item_no;
-  }
-
-  /**
-   * Set the page and update text and percent.
-   */
-  set item_no(value) {
-    this.#item_no = value
-    this.text = this.message;
-    this.percent = value / this.total;
-  }
-
-  /**
    * The number of pages to be processed for the current year.
    *
    * @returns {number}

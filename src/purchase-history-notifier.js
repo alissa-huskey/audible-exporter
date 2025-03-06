@@ -28,9 +28,9 @@ PurchaseHistoryNotifier = class extends StatusNotifier {
    * @param {string} value  The year being processed.
    */
   set year(value) {
-    this.#year = value
+    this.#year = value;
     this.text = this.message;
-    this.updatePercent();
+    this.percent = this.ratio;
   }
 
   /**
@@ -49,7 +49,7 @@ PurchaseHistoryNotifier = class extends StatusNotifier {
    */
   set years(value) {
     this.#years = value;
-    this.updatePercent();
+    this.percent = this.ratio;
   }
 
   get item_no() {
@@ -71,15 +71,6 @@ PurchaseHistoryNotifier = class extends StatusNotifier {
     }
 
     return `Retrieving purchase history: ${this.year}${this.time_left}`
-  }
-
-  /**
-   * Update the percent.
-   */
-  updatePercent() {
-    if (this.#years && this.year != null) {
-      this.percent = this.item_no / this.total;
-    }
   }
 }
 

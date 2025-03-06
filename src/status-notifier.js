@@ -120,9 +120,9 @@ StatusNotifier = class extends DOM {
    * @returns {number}
    */
   set item_no(value) {
-    this.#item_no = value
+    this.#item_no = value;
     this.text = this.message;
-    this.percent = this.item_no / this.total
+    this.percent = this.ratio;
   }
 
   /**
@@ -133,11 +133,12 @@ StatusNotifier = class extends DOM {
   }
 
   /**
-   * Set .total and update .text.
+   * Set .total and update text and percent.
    */
   set total(value) {
-    this.#total = value
+    this.#total = value;
     this.text = this.message;
+    this.percent = this.ratio;
   }
 
   /**
@@ -174,6 +175,9 @@ StatusNotifier = class extends DOM {
    * text.
    */
   set percent(decimal) {
+    if (isNaN(decimal) || !isFinite(decimal)) {
+      return;
+    }
     this.#percent = decimal;
     let amount = Math.ceil(decimal * 100);
     this.percentage.innerText = `${amount}%`;
@@ -236,6 +240,13 @@ StatusNotifier = class extends DOM {
    */
   get bar_width() {
     return this.body_width * 0.8;
+  }
+
+  /**
+   * The calculated percent complete.
+   */
+  get ratio() {
+    return this.item_no / this.total;
   }
 
   /**

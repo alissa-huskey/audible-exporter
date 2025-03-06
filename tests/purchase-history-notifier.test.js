@@ -52,17 +52,6 @@ describe("PurchaseHistoryNotifier", function() {
     expect(notifier.total).toBe(4);
   });
 
-  test(".updatePercent()", function() {
-    let years = ["2025", "2024", "2023", "2022"];
-    let notifier = new PurchaseHistoryNotifier();
-    notifier.year = "2024";
-    notifier.years = years;
-
-    notifier.updatePercent();
-
-    expect(notifier.percent).toBe(0.25);
-  });
-
   test(".message", function() {
     let notifier = new PurchaseHistoryNotifier();
     expect(notifier.message).toBe("Retrieving purchase history...");

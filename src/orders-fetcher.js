@@ -27,14 +27,15 @@ OrdersFetcher = class {
     dispatchEvent({years: this.years});
 
     for (let year of this.years)  {
+      let timer = new Timer();
+      timer.start();
+
       dispatchEvent({year: year});
 
       let page_num = 1;
       let page_count;
 
       do {
-        let timer = new Timer();
-        timer.start();
         let page = new OrderPage(tryInt(year), page_num);
 
         if (page_num == 1) {
@@ -51,9 +52,9 @@ OrdersFetcher = class {
           dispatchEvent({years: this.years})
           break;
         }
-        timer.stop();
-        dispatchEvent({timer: timer});
       } while (page_num <= page_count)
+      timer.stop();
+      dispatchEvent({timer: timer});
     }
 
     dispatchEvent({percent: 1});

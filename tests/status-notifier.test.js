@@ -45,6 +45,13 @@ describe("StatusNotifier", function() {
     expect().toBe();
   });
 
+  test(".ratio", function() {
+    notifier.total = 100;
+    notifier.item_no = 10;
+
+    expect(notifier.ratio).toBe(.1);
+  });
+
   test(".remaining", function() {
     notifier.total = 100;
     notifier.item_no = 10;
