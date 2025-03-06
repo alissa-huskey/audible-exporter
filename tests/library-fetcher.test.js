@@ -6,6 +6,7 @@ const $ = require("jquery");
 
 require("../src/dev.js");
 require("../src/util.js");
+require("../src/timer.js");
 require("../src/element.js");
 require("../src/list.js");
 require("../src/parser.js");

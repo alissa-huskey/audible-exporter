@@ -29,20 +29,20 @@ DetailsFetcher = class {
         continue;
       }
       let timer = new Timer();
-      let page = await timer.time(async function() {
-        return await BookPage.get(book.url.replace("http", "https"));
-      });
+      timer.start();
+      let page = await BookPage.get(book.url.replace("http", "https"));
 
       page.url = book.url;
       this.pages.push(page);
-
       i++;
+
+      timer.stop();
       dispatchEvent({item_no: i, timer: timer});
     }
 
     actual.stop();
     dispatchEvent({percent: 1});
-    info(`DetailsFetcher.populate() took: ${actual.minutes.toFixed(2)} minutes (${actual.seconds} seconds)`);
+    info(`DetailsFetcher.populate() took: ${actual.minutes} minutes (${actual.seconds} seconds)`);
   }
 
   get books() {

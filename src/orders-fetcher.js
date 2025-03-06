@@ -33,6 +33,8 @@ OrdersFetcher = class {
       let page_count;
 
       do {
+        let timer = new Timer();
+        timer.start();
         let page = new OrderPage(tryInt(year), page_num);
 
         if (page_num == 1) {
@@ -49,6 +51,8 @@ OrdersFetcher = class {
           dispatchEvent({years: this.years})
           break;
         }
+        timer.stop();
+        dispatchEvent({timer: timer});
       } while (page_num <= page_count)
     }
 
@@ -60,15 +64,18 @@ OrdersFetcher = class {
       this.pages.splice(limit, this.pages.length);
     }
 
-    dispatchEvent({total_pages: this.pages.length});
+    dispatchEvent({total: this.pages.length});
     let i = 0;
 
     for (let page of this.pages) {
+      let timer = new Timer();
+      timer.start();
+
       dispatchEvent({
         year: page.year,
         year_page: page.page_num,
-        page: i}
-      );
+        item_no: i,
+      });
 
       if (!page.doc) {
         await page.get();
@@ -79,6 +86,8 @@ OrdersFetcher = class {
       }
 
       i++;
+      timer.stop();
+      dispatchEvent({timer: timer});
     }
     dispatchEvent({percent: 1});
   }

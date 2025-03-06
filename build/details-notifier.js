@@ -423,6 +423,14 @@ StatusNotifier = class extends DOM {
   #style = null;
   #percent = null;
 
+  #item_no = null;
+  #total = null;
+
+  estimate_padding = 1.05;
+  event_name = "update-ae-notifier";
+
+  times = []
+
   selectors = {
     wrapper: "ae-notifier",
     bar: "ae-bar",
@@ -430,6 +438,52 @@ StatusNotifier = class extends DOM {
     status: "ae-status-text",
     percentage: "ae-percent-text",
   };
+
+  /**
+   * The number of the current item being processed.
+   *
+   * @returns {number}
+   */
+  get item_no() {
+    return this.#item_no;
+  }
+
+  /**
+   * Set .item_no and update .text and .percent.
+   *
+   * @param   {number} value  The number of the current item being processed.
+   *
+   * @returns {number}
+   */
+  set item_no(value) {
+    this.#item_no = value
+    this.text = this.message;
+    this.percent = this.item_no / this.total
+  }
+
+  /**
+   * The total number of items to process.
+   */
+  get total() {
+    return this.#total;
+  }
+
+  /**
+   * Set .total and update .text.
+   */
+  set total(value) {
+    this.#total = value
+    this.text = this.message;
+  }
+
+  /**
+   * Add a Timer object to the list of times.
+   *
+   * @param {Timer} value
+   */
+  set timer(value) {
+    this.times.push(value);
+  }
 
   get message() {
     return "Initializing...";
@@ -513,7 +567,50 @@ StatusNotifier = class extends DOM {
     return this.body_width * 0.8;
   }
 
-  // Construct notifier wrapper div, append all child elements, and return
+  /**
+   * The number of items still to be processed.
+   *
+   * @returns {number}
+   */
+  get remaining() {
+    return this.total - this.item_no;
+  }
+
+  /**
+   * Amount of time it takes to process each item.
+   *
+   * Calculated as average of elapsed time in all timer objects in .times in
+   * milliseconds.
+   *
+   * @returns {number}
+   */
+  get per_item() {
+    let total = this.times.reduce((sum, t) =>  sum + t.elapsed, 0);
+    return total / this.times.length;
+  }
+
+  /**
+   * Estimate time left to process remaining items in milliseconds.
+   *
+   * @return {number}
+   */
+  get ms_left() {
+    return (this.remaining * this.per_item) * this.estimate_padding;
+  }
+
+  get minutes_left() {
+    let minutes = ((this.ms_left / 1000) / 60).toFixed(1);
+    if (minutes == parseInt(minutes)) {
+      minutes = parseInt(minutes);
+    }
+    return minutes;
+  }
+
+  /**
+   * Construct HTML elements.
+   *
+   * @returns {Element}
+   */
   get wrapper() {
     if (!this.#wrapper) {
       this.#wrapper = Element.create("div", {id: this.selectors.wrapper, style: {
@@ -530,7 +627,11 @@ StatusNotifier = class extends DOM {
     return this.#wrapper;
   }
 
-  // progress bar element
+  /**
+   * Progress bar element.
+   *
+   * @returns {Element}
+   */
   get bar() {
     if (!this.#bar) {
       this.#bar = Element.create("div", {id: this.selectors.bar});
@@ -538,6 +639,11 @@ StatusNotifier = class extends DOM {
     return this.#bar;
   }
 
+  /**
+   * Container element that contains text elements.
+   *
+   * @returns {Element}
+   */
   get messages() {
     if (!this.#messages) {
       this.#messages = Element.create("div", {id: this.selectors.messages, class: "row", style: {
@@ -547,7 +653,11 @@ StatusNotifier = class extends DOM {
     return this.#messages;
   }
 
-  // status text element
+  /**
+   * Div that contains status message.
+   *
+   * @returns {Element}
+   */
   get status() {
     if (!this.#status) {
       this.#status = Element.create("div", {id: this.selectors.status});
@@ -555,7 +665,9 @@ StatusNotifier = class extends DOM {
     return this.#status;
   }
 
-  // percent text element
+  /**
+   * Span element that contains percentage text.
+   */
   get percentage() {
     if (!this.#percentage) {
       this.#percentage = Element.create("span", {id: this.selectors.percentage});
@@ -563,16 +675,39 @@ StatusNotifier = class extends DOM {
     return this.#percentage;
   }
 
-  // set the status text
+  /**
+   * Get the status message text.
+   *
+   * @returns {string}
+   */
+  get text() {
+    return this.status.innerText;
+  }
+
+  /**
+   * Set the status message text.
+   *
+   * @param {string} message  Message to display.
+   */
   set text(message) {
     this.status.innerText = message;
   }
 
+  /**
+   * The current percent complete.
+   *
+   * @returns {float} A value between 0 and 1.0
+   */
   get percent() {
     return this.#percent;
   }
 
-  // set the percentage text and progress bar width
+  /**
+   * Set the percent complete.
+   *
+   * Set the modal.percent value, the progress bar width, and the percentage
+   * text.
+   */
   set percent(decimal) {
     this.#percent = decimal;
     let amount = Math.ceil(decimal * 100);
@@ -582,34 +717,88 @@ StatusNotifier = class extends DOM {
     this.bar.style.width = `${width}px`;
   }
 
+  /**
+   * Message to display to the user of the estimated time left.
+   *
+   * @returns {string}
+   */
+  get time_left() {
+    if (!this.times.length) {
+      return "";
+    }
+
+    let minutes = this.minutes_left;
+    let text;
+    if (minutes <= 0.5) {
+      text = "less than a minute remaining";
+    } else if (minutes <= 1) {
+      text = "about a minute remaining";
+    } else {
+      text = `about ${minutes} minutes remaining`;
+    }
+
+    return ` (${text})`;
+  }
+
+  /**
+   * Hide the modal element.
+   */
   hide() {
     this.wrapper.classList.add("hidden");
   }
 
+  /**
+   * Show the modal element.
+   */
   show() {
     this.wrapper.classList.remove("hidden");
   }
 
+  /**
+   * Add the wrapper HTML element to the DOM.
+   *
+   * Add the .wrapper element to the DOM, add the update-ae-notifier event
+   * listener, and set the intital status text.
+   */
   create() {
     super.create();
-
-    document.addEventListener("update-ae-notifier", (e) => {
-      for (let [k, v] of Object.entries(e.detail)) {
-        this[k] = v;
-      }
-    });
-
+    document.addEventListener(this.event_name, this.listen);
+    window.ae = window.ae || {};
+    window.ae.notifier = this;
     this.text = this.message;
   }
 
+  /**
+   * Event listener.
+   *
+   * For each item in the event.detail object, set the window.ae.notifier
+   * attribute named key to value.
+   */
+  listen(evt) {
+    let notifier = window.ae.notifier;
+    for (let [k, v] of Object.entries(evt.detail)) {
+      notifier[k] = v;
+    }
+  }
+
+  /**
+   * Clear all user-visible values and set the percent to zero.
+   */
   reset() {
     this.text = "";
     this.percent = 0;
     this.percentage.innerText = "";
   }
 
-  // remove the elements from the DOM
+  /**
+   * Remove the wrapper HTML element from the DOM and remove the event
+   * listener.
+   */
   remove() {
+    document.removeEventListener(this.event_name, this.listen);
+    if (window.ae) {
+      window.ae.notifier = null;
+    }
     this.wrapper.element.remove();
 
     this.#wrapper = null;
@@ -625,72 +814,29 @@ StatusNotifier = class extends DOM {
  */
 
 DetailsNotifier = class extends StatusNotifier {
-  #book = null;
-  #book_count = null;
-  times = []
+  #item_no = null;
+  #total = null;
 
-  get book() {
-    return this.#book;
-  }
-
-  set book(value) {
-    this.#book = value
-    this.text = this.message;
-    this.percent = this.book / this.book_count
-  }
-
-  get remaining() {
-    return this.book_count - this.book;
-  }
-
-  get ms_left() {
-    return (this.remaining * this.per_book) * 1.05;
-  }
-
-  get minutes_left() {
-    let minutes = ((this.ms_left / 1000) / 60).toFixed(1);
-    if (minutes == parseInt(minutes)) {
-      minutes = parseInt(minutes);
-    }
-    return minutes;
-  }
-
-  set timer(value) {
-    this.times.push(value);
-  }
-
-  get per_book() {
-    let total = this.times.reduce((sum, t) =>  sum + t.elapsed, 0);
-    return total / this.times.length;
-  }
-
-  get book_count() {
-    return this.#book_count;
-  }
-
-  set book_count(value) {
-    this.#book_count = value
-    this.text = this.message;
-  }
-
+  /**
+   * Status message to display to the user.
+   *
+   * Depending on status of progress bar may include:
+   *
+   * - Initial message.
+   * - item_no of total
+   * - Estimated minutes remaining
+   *
+   * @returns {string}
+   */
   get message() {
-    if (!this.book) {
+    if (!this.item_no) {
       return "Retrieving additional information on titles...";
     }
 
-    let message = `Retrieving book ${this.book} of ${this.book_count}`
+    let message = `Retrieving book ${this.item_no} of ${this.total}`
 
-    if (isEmpty(this.times)) {
-      return message;
-    }
-
-    let minutes = this.minutes_left;
-    if (minutes <= 0.5) {
-      message += " (less than a minute remaining)";
-    } else if (minutes <= 1) {
-      message += " (about a minute remaining)";
-    } else {
-      message += ` (about ${this.minutes_left} minutes remaining)`;
+    if (!isEmpty(this.times)) {
+      message += this.time_left;
     }
 
     return message;

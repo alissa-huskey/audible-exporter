@@ -47,7 +47,7 @@ Timer = class {
   }
 
   get minutes() {
-    return this.seconds / 60;
+    return (this.seconds / 60).toFixed(2);
   }
 
   ts() {

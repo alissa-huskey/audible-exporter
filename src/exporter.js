@@ -18,6 +18,9 @@ Exporter = class {
   }
 
   async getPurchaseHistory() {
+    let timer = new Timer(null, null, "getPurchaseHistory");
+    timer.start();
+
     this.notifier.remove();
     this.notifier = new PurchaseHistoryNotifier();
     this.notifier.create();
@@ -25,9 +28,15 @@ Exporter = class {
     await this.orders.init(this.limit);
 
     await delay(1000);
+    timer.stop();
+
+    info(`getPurchaseHistory() took ${timer.minutes} minutes (${timer.seconds} seconds).`)
   }
 
   async getOrders() {
+    let timer = new Timer();
+    timer.start();
+
     this.notifier.remove();
     this.notifier = new OrderNotifier(
       this.orders.pages.length,
@@ -41,31 +50,42 @@ Exporter = class {
 
     await delay(1000);
 
+    timer.stop();
+    info(`getOrders() took ${timer.minutes} minutes (${timer.seconds} seconds).`)
     return this.orders.items;
   }
 
   async getLibrary() {
+    let timer = new Timer();
+    timer.start();
+
     this.notifier.remove();
     this.notifier = new LibraryNotifier();
     this.notifier.create();
     await this.library.populate(this.limit);
 
     log_table("library", this.library.books);
+
     await delay(1000);
+    timer.stop();
+    info(`getLibrary() took ${timer.minutes} minutes (${timer.seconds} seconds).`)
   }
 
   async getBookDetails() {
+    let timer = new Timer();
+    timer.start();
+
     this.notifier.remove();
     this.notifier = new DetailsNotifier();
     this.notifier.create();
-
-    let library_info, order_info, book_info, info;
 
     this.details.library = this.library.books;
     await this.details.populate();
 
     log_table("details", this.details.books);
     await delay(1500);
+    timer.stop();
+    info(`getBookDetails() took ${timer.minutes} minutes (${timer.seconds} seconds).`)
   }
 
   getResults() {

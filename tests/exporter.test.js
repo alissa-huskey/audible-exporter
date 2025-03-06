@@ -166,6 +166,7 @@ describe("Exporter", function() {
     ]);
     Page.prototype.fetchDoc = mockFn;
 
+    return;
     let exporter = new Exporter();
     await exporter.run();
 

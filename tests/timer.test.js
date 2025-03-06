@@ -1,7 +1,28 @@
 require("../src/dev.js");
+require("../src/util.js");
 require("../src/timer.js");
 
 describe("Timer", function() {
+
+
+  test("new Timer()", function() {
+    let timer = new Timer();
+    expect(timer.constructor.name).toBe("Timer");
+
+    timer = new Timer(5, 10);
+    timer.beginning = 5;
+    timer.end = 10;
+
+    timer = new Timer(5, 10, "something");
+    timer.beginning = 5;
+    timer.end = 10;
+    timer.task = "something";
+
+    timer = new Timer(null, null, "something");
+    timer.beginning = null;
+    timer.end = null;
+    timer.task = "something";
+  });
 
   test(".ts()", function() {
     let timer = new Timer();

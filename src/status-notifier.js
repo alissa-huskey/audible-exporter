@@ -16,6 +16,7 @@ StatusNotifier = class extends DOM {
   #total = null;
 
   estimate_padding = 1.05;
+  event_name = "update-ae-notifier";
 
   times = []
 
@@ -39,7 +40,8 @@ StatusNotifier = class extends DOM {
   /**
    * Set .item_no and update .text and .percent.
    *
-   * @param value {number} The number of the current item being processed.
+   * @param   {number} value  The number of the current item being processed.
+   *
    * @returns {number}
    */
   set item_no(value) {
@@ -66,7 +68,7 @@ StatusNotifier = class extends DOM {
   /**
    * Add a Timer object to the list of times.
    *
-   * @param value {Timer}
+   * @param {Timer} value
    */
   set timer(value) {
     this.times.push(value);
@@ -210,7 +212,7 @@ StatusNotifier = class extends DOM {
   /**
    * Set the status message text.
    *
-   * @param {string}  Message to display.
+   * @param {string} message  Message to display.
    */
   set text(message) {
     this.status.innerText = message;
@@ -285,14 +287,23 @@ StatusNotifier = class extends DOM {
    */
   create() {
     super.create();
-
-    document.addEventListener("update-ae-notifier", (e) => {
-      for (let [k, v] of Object.entries(e.detail)) {
-        this[k] = v;
-      }
-    });
-
+    document.addEventListener(this.event_name, this.listen);
+    window.ae = window.ae || {};
+    window.ae.notifier = this;
     this.text = this.message;
+  }
+
+  /**
+   * Event listener.
+   *
+   * For each item in the event.detail object, set the window.ae.notifier
+   * attribute named key to value.
+   */
+  listen(evt) {
+    let notifier = window.ae.notifier;
+    for (let [k, v] of Object.entries(evt.detail)) {
+      notifier[k] = v;
+    }
   }
 
   /**
@@ -305,9 +316,14 @@ StatusNotifier = class extends DOM {
   }
 
   /**
-   * Remove the wrapper HTML element from the DOM.
+   * Remove the wrapper HTML element from the DOM and remove the event
+   * listener.
    */
   remove() {
+    document.removeEventListener(this.event_name, this.listen);
+    if (window.ae) {
+      window.ae.notifier = null;
+    }
     this.wrapper.element.remove();
 
     this.#wrapper = null;

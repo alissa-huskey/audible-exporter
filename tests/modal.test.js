@@ -43,14 +43,17 @@ describe("Modal", function() {
   });
 
   test(".file =", function() {
-    let a = modal.dl_btn.element;
     let file = {
       filename: "export.json",
       url: "blob:https://www.audible.com/9f6b4e9f-cd4e-4a60-b302-e8dbd5a485ec",
     };
+
+    let modal = new Modal();
+    let a = modal.dl_btn.element;
+
     modal.file = file;
 
-    expect(a.file).toEqual(file);
+    expect(modal.file).toEqual(file);
     expect(a.href).toBe(file.url);
     expect(a.download).toBe(file.filename);
   });

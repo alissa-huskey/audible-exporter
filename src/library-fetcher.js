@@ -25,21 +25,25 @@ LibraryFetcher = class extends Page {
   async populate(limit=null) {
     let i = 0;
     do {
+      let timer = new Timer();
+      timer.start();
       if (limit) {
         this.page_count = limit;
-        dispatchEvent({page_count: this.page_count});
+        dispatchEvent({total: this.page_count});
         this.page_size = 20;
       }
 
       let page_num = i + 1
-      dispatchEvent({page: page_num});
+      dispatchEvent({item_no: page_num});
 
       let page = await this.fetchPage(page_num);
       this.pages.push(page);
 
-      dispatchEvent({page: page_num, page_count: this.page_count});
-
       i++;
+
+      timer.stop();
+
+      dispatchEvent({item_no: page_num, total: this.page_count, timer: timer});
     } while (i < this.page_count);
 
     dispatchEvent({percent: 1});

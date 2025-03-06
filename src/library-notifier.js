@@ -4,40 +4,65 @@
  */
 
 LibraryNotifier = class extends StatusNotifier {
-  #page = null;
-  #page_count = null;
+  #item_no = null;
+  #total = null;
 
-  get page() {
-    return this.#page;
+  /**
+   * The current page.
+   *
+   * @returns {number}
+   */
+  get item_no() {
+    return this.#item_no;
   }
 
-  set page(value) {
-    this.#page = value
+  /**
+   * Set page and update text and percent.
+   *
+   * @param {number} value
+   */
+  set item_no(value) {
+    this.#item_no = value
     this.text = this.message;
-    this.percent = this.page / this.page_count
+    this.percent = this.item_no / this.total
   }
 
-  get page_count() {
-    return this.#page_count;
+  /**
+   * The total number of pages.
+   *
+   * @returns {number}
+   */
+  get total() {
+    return this.#total;
   }
 
-  set page_count(value) {
-    this.#page_count = value
+  /**
+   * Set the total and update text.
+   *
+   * @param {number} value
+   */
+  set total(value) {
+    this.#total = value
     this.text = this.message;
   }
 
+  /**
+   * The message to display to the user.
+   *
+   * @returns {string}
+   */
   get message() {
-    if (!this.page) {
+    if (!this.item_no) {
       return "Retrieving library...";
     }
 
-    let message = `Retrieving library: page ${this.page}`
-    if (this.page_count) {
-      message += ` of ${this.page_count}`;
+    let message = `Retrieving library: page ${this.item_no}`
+    if (this.total) {
+      message += ` of ${this.total}`;
     } else {
       message += "...";
     }
 
-    return message;
+    return message + this.time_left;
   }
 }
