@@ -577,7 +577,22 @@ Modal = class extends DOM {
   cursor: pointer;
 }
 
-a#ae-download-btn {
+#ae-download-btn {
+  position: relative;
+}
+
+.ae-actions {
+  display: flex;
+  gap: 10px;
+}
+
+#ae-download-btn a.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  color: white;
+}
+
+#ae-download-btn a {
   background-color: var(--ae-emerald-green);
   color: #000;
   cursor: pointer;
@@ -596,7 +611,7 @@ a#ae-download-btn {
   -moz-box-shadow: var(--ae-box-shadow-light-bg);
 }
 
-a#ae-download-btn:hover {
+#ae-download-btn a:hover {
   background-color: var(--ae-near-black);
   color: var(--ae-near-white);
 
@@ -605,16 +620,16 @@ a#ae-download-btn:hover {
   -moz-box-shadow: var(--ae-box-shadow-dark-bg);
 }
 
-a#ae-download-btn:before, a#ae-download-btn:after {
+#ae-download-btn a:before, #ae-download-btn a:after {
   content: ' ';
   display: block;
   position: absolute;
-  left: 33px;
-  top: 45%;
+  left: 14px;
+  top: 52%;
 }
 
 /* Download box shape  */
-a#ae-download-btn:before {
+#ae-download-btn a:before {
   width: 10px;
   height: 2px;
   border-style: solid;
@@ -622,7 +637,7 @@ a#ae-download-btn:before {
 }
 
 /* Download arrow shape */
-a#ae-download-btn:after {
+#ae-download-btn a:after {
   width: 0;
   height: 0;
   margin-left: 1px;
@@ -637,11 +652,11 @@ a#ae-download-btn:after {
   animation-play-state: paused;
 }
 
-a#ae-download-btn:hover:before {
+#ae-download-btn a:hover:before {
   border-color: var(--ae-emerald-green);
 }
 
-a#ae-download-btn:hover:after {
+#ae-download-btn a:hover:after {
   border-top-color: var(--ae-emerald-green);
   animation-play-state: running;
 }
@@ -681,16 +696,20 @@ a#ae-download-btn:hover:after {
       let head = Doc.create("div", { class: this.selectors.head });
       let h1 = Doc.create("h1");
       let p = Doc.create("p");
+      let dl_wrapper = Doc.create("span", {id: this.selectors.dl_btn});
 
       h1.innerHTML = "Download";
       p.innerHTML = "Your export is ready!";
 
       this.wrapper.element.appendChild(content.element);
-      content.element.appendChild(head.element);
-      content.element.appendChild(p.element);
-      content.element.appendChild(this.dl_btn.element);
       head.element.appendChild(this.close_btn.element);
       head.element.appendChild(h1.element);
+
+      dl_wrapper.element.appendChild(this.dl_btn.element)
+
+      content.element.appendChild(head.element);
+      content.element.appendChild(p.element);
+      content.element.appendChild(dl_wrapper.element);
 
       this.#wrapper.style["z-index"] = new Date().getTime();
     }

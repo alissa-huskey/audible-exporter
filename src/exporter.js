@@ -112,7 +112,7 @@ Exporter = class {
     return results;
   }
 
-  download(books) {
+  downloadReady(books) {
     this.notifier.remove();
     let file = new TSVFile(books);
     this.modal.file = file;
@@ -145,7 +145,7 @@ Exporter = class {
         `Done. (${this.results.length} results, ${this.timer.minutes} minutes)`,
       );
 
-      this.download(this.results);
+      this.downloadReady(this.results);
     } catch (err) {
       error("Fatal error:", err, err.name, err.message);
     }

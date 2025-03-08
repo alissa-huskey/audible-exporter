@@ -154,10 +154,10 @@ describe("Exporter", () => {
     expect(exporter.results).toEqual(results);
   });
 
-  test("download()", () => {
+  test("downloadReady()", () => {
     exporter = new Exporter();
     exporter.modal.create();
-    exporter.download(["a", "b", "c"]);
+    exporter.downloadReady(["a", "b", "c"]);
 
     expect(exporter.modal.file).toBeA(TSVFile);
     expect(exporter.modal.wrapper.style.display).toBe("block");
