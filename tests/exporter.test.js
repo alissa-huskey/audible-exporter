@@ -29,7 +29,7 @@ require("../src/purchase-history-notifier.js");
 require("../src/order-notifier.js");
 require("../src/library-notifier.js");
 require("../src/details-notifier.js");
-require("../src/file.js");
+require("../src/virtual-file.js");
 require("../src/tsv-file.js");
 require("../src/result.js");
 require("../src/exporter.js");

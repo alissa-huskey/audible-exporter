@@ -4,7 +4,7 @@
 
 require("../src/dev.js");
 require("../src/util.js");
-require("../src/file.js");
+require("../src/virtual-file.js");
 require("../src/tsv-file.js");
 
 describe("TSVFile", () => {

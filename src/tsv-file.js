@@ -3,7 +3,7 @@
  * ************************************************************************************
  */
 
-TSVFile = class extends File {
+TSVFile = class extends VirtualFile {
   #headers = null;
   #rows = null;
 

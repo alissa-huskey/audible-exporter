@@ -166,7 +166,7 @@ delay = (ms) =>
   });
 
 /**
- * element.js
+ * doc.js
  * ************************************************************************************
  */
 
@@ -1529,11 +1529,11 @@ DetailsFetcher = class {
 };
 
 /**
- * file.js
+ * virtual-file.js
  * ************************************************************************************
  */
 
-File = class {
+VirtualFile = class {
   #contents = null;
 
   mimetype = null;
@@ -1570,7 +1570,7 @@ File = class {
  * ************************************************************************************
  */
 
-TSVFile = class extends File {
+TSVFile = class extends VirtualFile {
   #headers = null;
   #rows = null;
 

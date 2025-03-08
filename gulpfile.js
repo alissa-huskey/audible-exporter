@@ -46,7 +46,7 @@ let sources = [
   "library-fetcher",
   "book-page",
   "details-fetcher",
-  "file",
+  "virtual-file",
   "tsv-file",
   "result",
   "dom",
