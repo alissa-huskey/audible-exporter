@@ -123,7 +123,7 @@ cleanObject = function (ob) {
   }, {});
 };
 
-dispatchEvent = function (obj) {
+fireEvent = function (obj) {
   document.dispatchEvent(
     new CustomEvent("update-ae-notifier", { detail: obj }),
   );

@@ -24,13 +24,13 @@ OrdersFetcher = class {
       this.years.splice(limit);
     }
 
-    dispatchEvent({ years: this.years });
+    fireEvent({ years: this.years });
 
     for (let year of this.years) {
       let timer = new Timer();
       timer.start();
 
-      dispatchEvent({ year: year });
+      fireEvent({ year: year });
 
       let page_num = 1;
       let page_count;
@@ -49,15 +49,15 @@ OrdersFetcher = class {
 
         if (limit && running_count >= limit) {
           this.years.splice(this.years.indexOf(year));
-          dispatchEvent({ years: this.years });
+          fireEvent({ years: this.years });
           break;
         }
       } while (page_num <= page_count);
       timer.stop();
-      dispatchEvent({ timer: timer });
+      fireEvent({ timer: timer });
     }
 
-    dispatchEvent({ percent: 1 });
+    fireEvent({ percent: 1 });
   }
 
   async populate(limit = null) {
@@ -65,14 +65,14 @@ OrdersFetcher = class {
       this.pages.splice(limit, this.pages.length);
     }
 
-    dispatchEvent({ total: this.pages.length });
+    fireEvent({ total: this.pages.length });
     let i = 0;
 
     for (let page of this.pages) {
       let timer = new Timer();
       timer.start();
 
-      dispatchEvent({
+      fireEvent({
         year: page.year,
         year_page: page.page_num,
         item_no: i,
@@ -80,17 +80,17 @@ OrdersFetcher = class {
 
       if (!page.doc) {
         await page.get();
-        dispatchEvent({ page_count: page.page_count });
+        fireEvent({ page_count: page.page_count });
       } else {
-        dispatchEvent({ page_count: page.page_count });
+        fireEvent({ page_count: page.page_count });
         await delay(500);
       }
 
       i++;
       timer.stop();
-      dispatchEvent({ timer: timer });
+      fireEvent({ timer: timer });
     }
-    dispatchEvent({ percent: 1 });
+    fireEvent({ percent: 1 });
   }
 
   get count() {

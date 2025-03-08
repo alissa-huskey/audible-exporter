@@ -69,4 +69,3 @@
 (D) 2025-03-07 @qa look into preformance (memory specifically) testing
 (A) 2025-03-08 @qa Rename Element, due to eslint error
 (A) 2025-03-08 @qa rename File, due to eslint error
-(A) 2025-03-08 @qa Rename function dispatchEvent

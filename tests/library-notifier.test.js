@@ -45,17 +45,17 @@ describe("LibraryNotifier", () => {
     let notifier = new LibraryNotifier();
     notifier.create();
 
-    dispatchEvent({ total: 10 });
+    fireEvent({ total: 10 });
     expect(notifier.total).toBe(10);
 
-    dispatchEvent({ item_no: 3 });
+    fireEvent({ item_no: 3 });
     expect(notifier.item_no).toBe(3);
 
     timer = new Timer();
-    dispatchEvent({ timer: timer });
+    fireEvent({ timer: timer });
     expect(notifier.times).toEqual([timer]);
 
-    dispatchEvent({ percent: 0.2 });
+    fireEvent({ percent: 0.2 });
     expect(notifier.percent).toBe(0.2);
   });
 });

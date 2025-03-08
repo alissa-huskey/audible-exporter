@@ -20,7 +20,7 @@ DetailsFetcher = class {
 
     let total = this.library.length;
 
-    dispatchEvent({ total: total });
+    fireEvent({ total: total });
 
     let i = 0;
 
@@ -37,11 +37,11 @@ DetailsFetcher = class {
       i++;
 
       timer.stop();
-      dispatchEvent({ item_no: i, timer: timer });
+      fireEvent({ item_no: i, timer: timer });
     }
 
     actual.stop();
-    dispatchEvent({ percent: 1 });
+    fireEvent({ percent: 1 });
     info(
       `DetailsFetcher.populate() took: ${actual.minutes} minutes (${actual.seconds} seconds)`,
     );
