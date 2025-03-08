@@ -4,19 +4,20 @@
  */
 
 Element = class {
-  constructor(elm=null) {
+  constructor(elm = null) {
     this.element = elm;
 
-    if (!elm) {
-      return
-    }
+    if (!elm) return;
 
     for (let k in elm.__proto__) {
-      if (Object.hasOwnProperty(k)) { continue }
+      // eslint-disable-next-line no-prototype-builtins
+      if (Object.hasOwnProperty(k)) continue;
 
       Object.defineProperty(this, k, {
-        get: function() { return this.element[k]; },
-        set: function(v) { this.element[k] = v },
+        get: () => this.element[k],
+        set: (v) => {
+          this.element[k] = v;
+        },
       });
     }
   }
@@ -41,7 +42,7 @@ Element = class {
    * let elm = Element.create("div", {id: "container"});
    * let elm = Element.create("<p>hello</p>");
    */
-  static create(html, attrs={}) {
+  static create(html, attrs = {}) {
     let dom;
     if (html.includes("<")) {
       let doc = document.createElement("body");
@@ -59,20 +60,20 @@ Element = class {
     }
 
     let element = new Element(dom);
-    element.set(attrs)
+    element.set(attrs);
     return element;
   }
 
-  static gc (name) {
+  static gc(name) {
     return new List(document.getElementsByClassName(name));
   }
 
-  static gi (name) {
-    let node = document.getElementById(name)
+  static gi(name) {
+    let node = document.getElementById(name);
     return new Element(node);
   }
 
-  static gt (name) {
+  static gt(name) {
     return new List(document.getElementsByTagName(name));
   }
 
@@ -87,9 +88,7 @@ Element = class {
   }
 
   gc(name) {
-    if (!this.element) {
-      return []
-    }
+    if (!this.element) return [];
 
     let res = this.element.getElementsByClassName(name);
     return new List(res);
@@ -100,16 +99,14 @@ Element = class {
   }
 
   gt(name) {
-    if (!this.element) {
-      return []
-    }
+    if (!this.element) return [];
 
     let res = this.element.getElementsByTagName(name);
     return new List(res);
   }
 
-  gcf(name) { return this.gc(name)[0] }
-  gtf(name) { return this.gt(name)[0] }
+  gcf = (name) => this.gc(name)[0];
+  gtf = (name) => this.gt(name)[0];
 
   qs(query) {
     let res = this.element.querySelectorAll(query);
@@ -121,7 +118,7 @@ Element = class {
     return new Element(res);
   }
 
-  set(attrs, value=null) {
+  set(attrs, value = null) {
     if (typeof attrs == "string") {
       let key = attrs;
       attrs = {};
@@ -132,4 +129,4 @@ Element = class {
       this.element.setAttribute(k, v);
     }
   }
-}
+};

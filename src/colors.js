@@ -37,4 +37,4 @@ Colors = class extends DOM {
     }
     this.wrapper.element.remove();
   }
-}
+};

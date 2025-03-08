@@ -13,14 +13,17 @@ Purchase = class extends Parser {
     credits: "data-order-item-credit-cost",
   };
 
-  constructor(doc=null) {
+  constructor(doc = null) {
     super();
     this.doc = doc;
   }
 
   data() {
     return Object.fromEntries(
-      Object.entries(this._fields).map(([key, attr]) => [key, this.doc.attributes[attr].value])
-    )
+      Object.entries(this._fields).map(([key, attr]) => [
+        key,
+        this.doc.attributes[attr].value,
+      ]),
+    );
   }
-}
+};

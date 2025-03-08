@@ -14,7 +14,10 @@ DOM = class {
 
   get style() {
     if (!this.#style) {
-      this.#style = Element.create("style", {id: this.selectors.style, type: "text/css"});
+      this.#style = Element.create("style", {
+        id: this.selectors.style,
+        type: "text/css",
+      });
 
       if (this.#style.element.styleSheet) {
         // Support for IE
@@ -31,10 +34,9 @@ DOM = class {
   // add the element to the DOM
   create() {
     let el = Element.gi(this.selectors.wrapper);
-    if (el)
-      el.outerHTML = "";
+    if (el) el.outerHTML = "";
 
     document.head.appendChild(this.style.element);
     document.body.appendChild(this.wrapper.element);
   }
-}
+};

@@ -22,19 +22,19 @@ LibraryFetcher = class extends Page {
     return new LibraryPage(doc);
   }
 
-  async populate(limit=null) {
+  async populate(limit = null) {
     let i = 0;
     do {
       let timer = new Timer();
       timer.start();
       if (limit) {
         this.page_count = limit;
-        dispatchEvent({total: this.page_count});
+        dispatchEvent({ total: this.page_count });
         this.page_size = 20;
       }
 
-      let page_num = i + 1
-      dispatchEvent({item_no: page_num});
+      let page_num = i + 1;
+      dispatchEvent({ item_no: page_num });
 
       let page = await this.fetchPage(page_num);
       this.pages.push(page);
@@ -43,18 +43,20 @@ LibraryFetcher = class extends Page {
 
       timer.stop();
 
-      dispatchEvent({item_no: page_num, total: this.page_count, timer: timer});
+      dispatchEvent({
+        item_no: page_num,
+        total: this.page_count,
+        timer: timer,
+      });
     } while (i < this.page_count);
 
-    dispatchEvent({percent: 1});
+    dispatchEvent({ percent: 1 });
 
     return this.pages;
   }
 
   get book_count() {
-    if (!this.pages) {
-      return;
-    }
+    if (!this.pages) return null;
     let page = this.pages[0];
     return page.page_size * page.page_count;
   }
@@ -73,13 +75,11 @@ LibraryFetcher = class extends Page {
   get books() {
     if (!this.#books) {
       let books = this.pages.reduce((arr, page) => {
-          return arr.concat(
-            // map books by URL to avoid duplicates
-            page.books.map((book) => [book.url, book])
-          );
-        },
-        [],
-      );
+        return arr.concat(
+          // map books by URL to avoid duplicates
+          page.books.map((book) => [book.url, book]),
+        );
+      }, []);
 
       this.#books = Object.values(Object.fromEntries(books));
     }
@@ -89,5 +89,4 @@ LibraryFetcher = class extends Page {
   set books(value) {
     this.#books = value;
   }
-}
-
+};

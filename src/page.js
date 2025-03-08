@@ -19,4 +19,4 @@ Page = class extends Parser {
       error(`Page.fetchDoc("${url.trim()}"):\n`, err);
     }
   }
-}
+};

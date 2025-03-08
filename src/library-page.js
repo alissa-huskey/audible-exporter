@@ -8,7 +8,7 @@ LibraryPage = class extends Page {
   #rows = null;
   #books = null;
 
-  constructor(doc=null) {
+  constructor(doc = null) {
     super();
     this.doc = doc;
     this.#rows = null;
@@ -16,22 +16,21 @@ LibraryPage = class extends Page {
   }
 
   get page_size() {
-    if (!this.doc)
-      return
-    let size = this.doc.qsf("select[name='pageSize'] option:checked")?.value || this.#default_page_size;
+    if (!this.doc) return null;
+    let size =
+      this.doc.qsf("select[name='pageSize'] option:checked")?.value ||
+      this.#default_page_size;
     return parseInt(size);
   }
 
   get page_num() {
-    if (!this.doc)
-      return
+    if (!this.doc) return null;
     let num = this.doc.qsf("span.pageNumberElement")?.innerHTML || 1;
     return parseInt(num);
   }
 
   get page_count() {
-    if (!this.doc)
-      return
+    if (!this.doc) return null;
     let links = this.doc.qs("a.pageNumberElement");
     let count = links.last?.innerHTML || 1;
     return parseInt(count);
@@ -43,7 +42,7 @@ LibraryPage = class extends Page {
       let arr = [];
       let rows = this.doc.gc("adbl-library-content-row");
       for (let row of rows) {
-        arr.push(new LibraryBookRow(row, this.page_num, (i+1)));
+        arr.push(new LibraryBookRow(row, this.page_num, i + 1));
         i++;
       }
       this.#rows = arr;
@@ -68,5 +67,4 @@ LibraryPage = class extends Page {
     }
     return this.#books;
   }
-}
-
+};

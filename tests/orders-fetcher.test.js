@@ -16,17 +16,15 @@ require("../src/order-row.js");
 require("../src/order-page.js");
 require("../src/orders-fetcher.js");
 
-describe("OrdersFetcher", function() {
-
+describe("OrdersFetcher", () => {
   let base_url = new OrderPage().base_url;
 
-  test("new OrdersFetcher()", function() {
+  test("new OrdersFetcher()", () => {
     orders = new OrdersFetcher();
     expect(orders).toBeA(OrdersFetcher);
   });
 
-
-  test(".init()", async function() {
+  test(".init()", async () => {
     let files = await glob("tests/fixtures/order-page-*-1-of-*.html");
     let pat = /^.*\//;
     let filenames = [
@@ -40,7 +38,7 @@ describe("OrdersFetcher", function() {
     orders = new OrdersFetcher();
     await orders.init();
 
-    expect(mockFn.mock.calls).toHaveLength(4)
+    expect(mockFn.mock.calls).toHaveLength(4);
 
     expect(orders.pages.length).toEqual(6);
     expect(orders.pages[0]).toBeA(OrderPage);
@@ -57,7 +55,7 @@ describe("OrdersFetcher", function() {
     expect(orders.pages[2].doc).toBeNull();
   });
 
-  test(".init(limit)", async function() {
+  test(".init(limit)", async () => {
     let filenames = [
       "order-page-2025-1-of-1.html",
       "order-page-2025-1-of-1.html",
@@ -73,8 +71,7 @@ describe("OrdersFetcher", function() {
     expect(orders.pages).toHaveLength(1);
   });
 
-  test(".populate()", async function() {
-
+  test(".populate()", async () => {
     let files = await glob("tests/fixtures/order-page-*-1-of-*.html");
     let pat = /^.*\//;
     let docs = [
@@ -82,8 +79,14 @@ describe("OrdersFetcher", function() {
       ...files.map((f) => fixtureDoc(f.replace(pat, ""))).reverse(),
     ];
 
-    let runs = [[2024, 2], [2023, 2], [2023, 3]];
-    let urls = runs.map(([year, page]) => [`${base_url}&df=${year}&pn=${page}&ps=40`]);
+    let runs = [
+      [2024, 2],
+      [2023, 2],
+      [2023, 3],
+    ];
+    let urls = runs.map(([year, page]) => [
+      `${base_url}&df=${year}&pn=${page}&ps=40`,
+    ]);
 
     Page.prototype.fetchDoc = mockFetchDocs(docs);
 
@@ -102,31 +105,40 @@ describe("OrdersFetcher", function() {
     expect(Page.prototype.fetchDoc.mock.calls).toEqual(urls);
   });
 
-  test(".populate(limit)", async function() {
+  test(".populate(limit)", async () => {
     let doc = fixtureDoc("order-page-2025-1-of-1.html");
     let mockFn = mockFetchDocs([doc]);
     Page.prototype.fetchDoc = mockFn;
 
     orders = new OrdersFetcher();
-    orders.pages = [new OrderPage(doc), new OrderPage(2024, 1), new OrderPage(2024, 2)];
+    orders.pages = [
+      new OrderPage(doc),
+      new OrderPage(2024, 1),
+      new OrderPage(2024, 2),
+    ];
     await orders.populate(1);
 
     expect(mockFn.mock.calls).toHaveLength(0);
     expect(orders.pages).toHaveLength(1);
   });
 
-  test(".items", function() {
+  test(".items", () => {
+    // prettier-ignore
     let pages = [
-      {items: [
-        { "id": "B0CQ3759C3", "url": "http://www.audible.com/pd/B0CQ3759C3", "title": "Wind and Truth", "author": "Brandon Sanderson", "purchase_date": "01-21-2025" },
-        { "id": "B0BG96TCVH", "url": "http://www.audible.com/pd/B0BG96TCVH", "title": "Demons of Good and Evil", "author": "Kim Harrison", "purchase_date": "12-03-2024" },
-        { "id": "1713569264", "url": "http://www.audible.com/pd/1713569264", "title": "The Queen", "author": "Jennifer L. Armentrout", "purchase_date": "12-03-2024" },
-      ]},
-      {items: [
-        { "id": "1250819148", "url": "http://www.audible.com/pd/1250819148", "title": "The Lives of Saints", "author": "Leigh Bardugo", "purchase_date": "12-03-2024" },
-        { "id": "B01AMIGU3K", "url": "http://www.audible.com/pd/B01AMIGU3K", "title": "Patterns in the Dark", "author": "Lindsay Buroker", "purchase_date": "12-03-2024" },
-        { "id": "B071NQ26W4", "url": "http://www.audible.com/pd/B071NQ26W4", "title": "Soulblade", "author": "Lindsay Buroker", "purchase_date": "12-03-2024" },
-      ]},
+      {
+        items: [
+          { id: "B0CQ3759C3", url: "http://www.audible.com/pd/B0CQ3759C3", title: "Wind and Truth", author: "Brandon Sanderson", purchase_date: "01-21-2025" },
+          { id: "B0BG96TCVH", url: "http://www.audible.com/pd/B0BG96TCVH", title: "Demons of Good and Evil", author: "Kim Harrison", purchase_date: "12-03-2024" },
+          { id: "1713569264", url: "http://www.audible.com/pd/1713569264", title: "The Queen", author: "Jennifer L. Armentrout", purchase_date: "12-03-2024" },
+        ],
+      },
+      {
+        items: [
+          { id: "1250819148", url: "http://www.audible.com/pd/1250819148", title: "The Lives of Saints", author: "Leigh Bardugo", purchase_date: "12-03-2024" },
+          { id: "B01AMIGU3K", url: "http://www.audible.com/pd/B01AMIGU3K", title: "Patterns in the Dark", author: "Lindsay Buroker", purchase_date: "12-03-2024" },
+          { id: "B071NQ26W4", url: "http://www.audible.com/pd/B071NQ26W4", title: "Soulblade", author: "Lindsay Buroker", purchase_date: "12-03-2024" },
+        ],
+      },
     ];
 
     orders = new OrdersFetcher();
@@ -135,5 +147,4 @@ describe("OrdersFetcher", function() {
     expect(orders.count).toBe(6);
     expect(orders.items["B0CQ3759C3"]).toEqual(pages[0].items[0]);
   });
-
 });

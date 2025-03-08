@@ -4,9 +4,9 @@
  */
 
 DetailsFetcher = class {
-  #books = {}
+  #books = {};
 
-  constructor(library=null) {
+  constructor(library = null) {
     this.library = library;
     this.#books = null;
     this.pages = [];
@@ -20,7 +20,7 @@ DetailsFetcher = class {
 
     let total = this.library.length;
 
-    dispatchEvent({total: total});
+    dispatchEvent({ total: total });
 
     let i = 0;
 
@@ -37,12 +37,14 @@ DetailsFetcher = class {
       i++;
 
       timer.stop();
-      dispatchEvent({item_no: i, timer: timer});
+      dispatchEvent({ item_no: i, timer: timer });
     }
 
     actual.stop();
-    dispatchEvent({percent: 1});
-    info(`DetailsFetcher.populate() took: ${actual.minutes} minutes (${actual.seconds} seconds)`);
+    dispatchEvent({ percent: 1 });
+    info(
+      `DetailsFetcher.populate() took: ${actual.minutes} minutes (${actual.seconds} seconds)`,
+    );
   }
 
   get books() {
@@ -51,8 +53,7 @@ DetailsFetcher = class {
       let data, page;
 
       for (page of this.pages) {
-        if (!page) 
-          continue
+        if (!page) continue;
 
         let data = page.data();
         this.#books[data.id] = data;
@@ -62,7 +63,6 @@ DetailsFetcher = class {
   }
 
   set books(value) {
-    this.#books = value
+    this.#books = value;
   }
-}
-
+};

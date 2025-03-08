@@ -3,13 +3,13 @@
  * ************************************************************************************
  */
 
-log = function(...msg) {
+log = function (...msg) {
   console.log("--->", ...msg);
-}
+};
 
-hr = function(...msg) {
-  console.log("****************************************", ...msg)
-}
+hr = function (...msg) {
+  console.log("****************************************", ...msg);
+};
 
 /**
  * util.js
@@ -19,18 +19,18 @@ hr = function(...msg) {
 var CONSOLE_OUTPUT = false;
 const LOG_PREFIX = "[audible-exporter]";
 
-info = function(...msg) {
+info = function (...msg) {
   if (!CONSOLE_OUTPUT) {
     return;
   }
   console.log(LOG_PREFIX, ...msg);
-}
+};
 
-error = function(...msg) {
+error = function (...msg) {
   console.error(LOG_PREFIX, ...msg);
-}
+};
 
-log_table = function(label, data) {
+log_table = function (label, data) {
   if (!CONSOLE_OUTPUT) {
     return;
   }
@@ -38,21 +38,21 @@ log_table = function(label, data) {
   console.groupCollapsed(name);
   console.table(data);
   console.groupEnd(name);
-}
+};
 
-titleCase = function(text) {
+titleCase = function (text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
-}
+};
 
-first = function(arr) {
+first = function (arr) {
   let v;
   for (v of arr) {
-    if (v) return v
+    if (v) return v;
   }
-}
+};
 
-const EMPTIES = {"Object": "{}", "Array": "[]"};
-isEmpty = function(o) {
+const EMPTIES = { Object: "{}", Array: "[]" };
+isEmpty = function (o) {
   if (!o) {
     return true;
   }
@@ -68,35 +68,32 @@ isEmpty = function(o) {
   }
 
   return JSON.stringify(o) == EMPTIES[type];
-}
+};
 
-tryFloat = function(o) {
+tryFloat = function (o) {
   try {
     f = parseFloat(o);
     return isNaN(f) ? o : f;
-
   } catch (err) {
     return o;
   }
-}
+};
 
-tryInt = function(f) {
+tryInt = function (f) {
   try {
     let i = parseInt(f);
-    return i == f ? i : f
+    return i == f ? i : f;
   } catch (err) {
     return f;
   }
-}
+};
 
-entityDecode = function(text) {
+entityDecode = function (text) {
   return text.replace("&amp;", "&");
-}
+};
 
-dateString = function(date) {
-  if (!date) {
-    return ""
-  }
+dateString = function (date) {
+  if (!date) return "";
   var months = [
     "Jan",
     "Feb",
@@ -115,9 +112,9 @@ dateString = function(date) {
     date = new Date(date);
   }
   return `${date.getFullYear()} ${months[date.getMonth()]} ${date.getDate()}`;
-}
+};
 
-cleanObject = function(ob) {
+cleanObject = function (ob) {
   return Object.entries(ob).reduce((r, [k, v]) => {
     if (
       v != null &&
@@ -137,24 +134,24 @@ cleanObject = function(ob) {
       return r;
     }
   }, {});
-}
+};
 
-dispatchEvent = function(obj) {
-  document.dispatchEvent(new CustomEvent("update-ae-notifier", {
-    detail: obj
-  }));
-}
+dispatchEvent = function (obj) {
+  document.dispatchEvent(
+    new CustomEvent("update-ae-notifier", { detail: obj }),
+  );
+};
 
-stripHTML = function(html) {
-   let doc = new DOMParser().parseFromString(html, 'text/html');
-   return doc.body.textContent || "";
-}
+stripHTML = function (html) {
+  let doc = new DOMParser().parseFromString(html, "text/html");
+  return doc.body.textContent || "";
+};
 
-rando = (n) => Math.round(Math.random() * n)
+rando = (n) => Math.round(Math.random() * n);
 
-reg = (o, n) => (o ? o[n] : "")
+reg = (o, n) => (o ? o[n] : "");
 
-cleanObject = function(ob) {
+cleanObject = function (ob) {
   return Object.entries(ob).reduce((r, [k, v]) => {
     if (
       v != null &&
@@ -174,11 +171,12 @@ cleanObject = function(ob) {
       return r;
     }
   }, {});
-}
+};
 
-delay = (ms) => new Promise(res => {
-  setTimeout(res, ms)
-});
+delay = (ms) =>
+  new Promise((res) => {
+    setTimeout(res, ms);
+  });
 
 /**
  * timer.js
@@ -204,7 +202,7 @@ delay = (ms) => new Promise(res => {
  *
  */
 Timer = class {
-  constructor(beginning=null, end=null, task=null) {
+  constructor(beginning = null, end = null, task = null) {
     this.beginning = beginning;
     this.end = end;
     this.task = task;
@@ -242,7 +240,7 @@ Timer = class {
     this.stop();
     return result;
   }
-}
+};
 
 /**
  * element.js
@@ -250,19 +248,19 @@ Timer = class {
  */
 
 Element = class {
-  constructor(elm=null) {
+  constructor(elm = null) {
     this.element = elm;
 
-    if (!elm) {
-      return
-    }
+    if (!elm) return;
 
     for (let k in elm.__proto__) {
-      if (Object.hasOwnProperty(k)) { continue }
+      if (Object.hasOwnProperty(k)) continue;
 
       Object.defineProperty(this, k, {
-        get: function() { return this.element[k]; },
-        set: function(v) { this.element[k] = v },
+        get: () => this.element[k],
+        set: (v) => {
+          this.element[k] = v;
+        },
       });
     }
   }
@@ -287,7 +285,7 @@ Element = class {
    * let elm = Element.create("div", {id: "container"});
    * let elm = Element.create("<p>hello</p>");
    */
-  static create(html, attrs={}) {
+  static create(html, attrs = {}) {
     let dom;
     if (html.includes("<")) {
       let doc = document.createElement("body");
@@ -305,20 +303,20 @@ Element = class {
     }
 
     let element = new Element(dom);
-    element.set(attrs)
+    element.set(attrs);
     return element;
   }
 
-  static gc (name) {
+  static gc(name) {
     return new List(document.getElementsByClassName(name));
   }
 
-  static gi (name) {
-    let node = document.getElementById(name)
+  static gi(name) {
+    let node = document.getElementById(name);
     return new Element(node);
   }
 
-  static gt (name) {
+  static gt(name) {
     return new List(document.getElementsByTagName(name));
   }
 
@@ -333,9 +331,7 @@ Element = class {
   }
 
   gc(name) {
-    if (!this.element) {
-      return []
-    }
+    if (!this.element) return [];
 
     let res = this.element.getElementsByClassName(name);
     return new List(res);
@@ -346,16 +342,14 @@ Element = class {
   }
 
   gt(name) {
-    if (!this.element) {
-      return []
-    }
+    if (!this.element) return [];
 
     let res = this.element.getElementsByTagName(name);
     return new List(res);
   }
 
-  gcf(name) { return this.gc(name)[0] }
-  gtf(name) { return this.gt(name)[0] }
+  gcf = (name) => this.gc(name)[0];
+  gtf = (name) => this.gt(name)[0];
 
   qs(query) {
     let res = this.element.querySelectorAll(query);
@@ -367,7 +361,7 @@ Element = class {
     return new Element(res);
   }
 
-  set(attrs, value=null) {
+  set(attrs, value = null) {
     if (typeof attrs == "string") {
       let key = attrs;
       attrs = {};
@@ -378,7 +372,7 @@ Element = class {
       this.element.setAttribute(k, v);
     }
   }
-}
+};
 
 /**
  * dom.js
@@ -396,7 +390,10 @@ DOM = class {
 
   get style() {
     if (!this.#style) {
-      this.#style = Element.create("style", {id: this.selectors.style, type: "text/css"});
+      this.#style = Element.create("style", {
+        id: this.selectors.style,
+        type: "text/css",
+      });
 
       if (this.#style.element.styleSheet) {
         // Support for IE
@@ -413,13 +410,12 @@ DOM = class {
   // add the element to the DOM
   create() {
     let el = Element.gi(this.selectors.wrapper);
-    if (el)
-      el.outerHTML = "";
+    if (el) el.outerHTML = "";
 
     document.head.appendChild(this.style.element);
     document.body.appendChild(this.wrapper.element);
   }
-}
+};
 
 /**
  * colors.js
@@ -487,7 +483,7 @@ Colors = class extends DOM {
     }
     this.wrapper.element.remove();
   }
-}
+};
 
 /**
  * modal.js
@@ -497,7 +493,7 @@ Colors = class extends DOM {
 Modal = class extends DOM {
   #css = null;
   #wrapper = null;
-  #close_btn = null
+  #close_btn = null;
   #dl_btn = null;
   #file = null;
 
@@ -679,9 +675,9 @@ a#ae-download-btn:hover:after {
   // Construct wrapper div, append all child elements, and return
   get wrapper() {
     if (!this.#wrapper) {
-      this.#wrapper = Element.create("div", {class: this.selectors.wrapper });
-      let content = Element.create("div", {class: this.selectors.content});
-      let head = Element.create("div", {class: this.selectors.head});
+      this.#wrapper = Element.create("div", { class: this.selectors.wrapper });
+      let content = Element.create("div", { class: this.selectors.content });
+      let head = Element.create("div", { class: this.selectors.head });
       let h1 = Element.create("h1");
       let p = Element.create("p");
 
@@ -691,9 +687,9 @@ a#ae-download-btn:hover:after {
       this.wrapper.element.appendChild(content.element);
       content.element.appendChild(head.element);
       content.element.appendChild(p.element);
-      content.element.appendChild(this.dl_btn.element)
-      head.element.appendChild(this.close_btn.element)
-      head.element.appendChild(h1.element)
+      content.element.appendChild(this.dl_btn.element);
+      head.element.appendChild(this.close_btn.element);
+      head.element.appendChild(h1.element);
 
       this.#wrapper.style["z-index"] = new Date().getTime();
     }
@@ -702,21 +698,25 @@ a#ae-download-btn:hover:after {
 
   get close_btn() {
     if (!this.#close_btn) {
-        this.#close_btn = Element.create("a", {id: this.selectors.close_btn});
-        this.#close_btn.innerHTML = "&times;";
-        this.#close_btn.attributes.href = "#";
-        this.#close_btn.element.addEventListener("click", () => {
+      this.#close_btn = Element.create("a", { id: this.selectors.close_btn });
+      this.#close_btn.innerHTML = "&times;";
+      this.#close_btn.attributes.href = "#";
+      this.#close_btn.element.addEventListener(
+        "click",
+        () => {
           this.hide();
-        }, false);
+        },
+        false,
+      );
     }
     return this.#close_btn;
   }
 
   get dl_btn() {
     if (!this.#dl_btn) {
-      this.#dl_btn = Element.create("a", {id: this.selectors.dl_btn});
-        this.#dl_btn.attributes.href = "#";
-      this.#dl_btn.innerHTML = "Download";;
+      this.#dl_btn = Element.create("a", { id: this.selectors.dl_btn });
+      this.#dl_btn.attributes.href = "#";
+      this.#dl_btn.innerHTML = "Download";
     }
     return this.#dl_btn;
   }
@@ -730,9 +730,9 @@ a#ae-download-btn:hover:after {
     this.dl_btn.element.href = file.url;
     this.dl_btn.element.download = file.filename;
     this.dl_btn.element.addEventListener("click", () => {
-        setTimeout(() => {
-          window.URL.revokeObjectURL(file.url);
-        }, 10);
+      setTimeout(() => {
+        window.URL.revokeObjectURL(file.url);
+      }, 10);
     });
   }
 
@@ -751,4 +751,4 @@ a#ae-download-btn:hover:after {
     super.create();
     new Colors().create();
   }
-}
+};

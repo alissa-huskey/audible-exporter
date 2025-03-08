@@ -22,7 +22,7 @@
  *
  */
 Timer = class {
-  constructor(beginning=null, end=null, task=null) {
+  constructor(beginning = null, end = null, task = null) {
     this.beginning = beginning;
     this.end = end;
     this.task = task;
@@ -60,4 +60,4 @@ Timer = class {
     this.stop();
     return result;
   }
-}
+};

@@ -50,7 +50,6 @@
 (D) 2025-03-05 @qa Look into JS style guides and linters: https://javascript.info/coding-style
 (B) 2025-03-05 @qa @compatability Look into webcomponents polyfills https://github.com/webcomponents/polyfills?tab=readme-ov-file
 (B) 2025-03-05 @qa @compatability Look into Modernizr: https://modernizr.com/docs/
-x 2025-03-08 2025-03-05 @qa @testing Try eslint: https://dev.to/shivambmgupta/eslint-what-why-when-how-5f1d
 (D) 2025-03-05 @qa @accessibility Try jest-axe https://maxrozen.com/automatic-a11y-testing-with-jest-axe https://dev.to/bdougieyo/accessibility-testing-in-react-with-jest-axe-l7k
 (D) 2025-03-05 @qa @testing Try playwright https://playwright.dev/
 (D) 2025-03-05 @qa @testing Try blisk https://blisk.io/
@@ -68,3 +67,5 @@ x 2025-03-08 2025-03-05 @qa @testing Try eslint: https://dev.to/shivambmgupta/es
 (D) 2025-03-07 @notifiers .reset() should reset timers, item_no and total
 (C) 2025-03-07 @qa Make all requests from / instead of audible.com/
 (D) 2025-03-07 @qa look into preformance (memory specifically) testing
+(A) 2025-03-08 @qa Rename Element, due to eslint error
+(A) 2025-03-08 @qa rename File, due to eslint error

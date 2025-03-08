@@ -9,7 +9,7 @@ PurchaseHistoryNotifier = class extends StatusNotifier {
 
   step_no = 1;
 
-  constructor(years=null) {
+  constructor(years = null) {
     super();
     this.times = [];
     this.years = years || [];
@@ -84,7 +84,6 @@ PurchaseHistoryNotifier = class extends StatusNotifier {
       return "Retrieving purchase history...";
     }
 
-    return `Retrieving purchase history: ${this.year}`
+    return `Retrieving purchase history: ${this.year}`;
   }
-}
-
+};

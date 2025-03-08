@@ -17,4 +17,4 @@ List = class extends Array {
   get last() {
     return this.slice(-1)[0];
   }
-}
+};

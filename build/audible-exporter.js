@@ -6,18 +6,18 @@
 var CONSOLE_OUTPUT = false;
 const LOG_PREFIX = "[audible-exporter]";
 
-info = function(...msg) {
+info = function (...msg) {
   if (!CONSOLE_OUTPUT) {
     return;
   }
   console.log(LOG_PREFIX, ...msg);
-}
+};
 
-error = function(...msg) {
+error = function (...msg) {
   console.error(LOG_PREFIX, ...msg);
-}
+};
 
-log_table = function(label, data) {
+log_table = function (label, data) {
   if (!CONSOLE_OUTPUT) {
     return;
   }
@@ -25,21 +25,21 @@ log_table = function(label, data) {
   console.groupCollapsed(name);
   console.table(data);
   console.groupEnd(name);
-}
+};
 
-titleCase = function(text) {
+titleCase = function (text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
-}
+};
 
-first = function(arr) {
+first = function (arr) {
   let v;
   for (v of arr) {
-    if (v) return v
+    if (v) return v;
   }
-}
+};
 
-const EMPTIES = {"Object": "{}", "Array": "[]"};
-isEmpty = function(o) {
+const EMPTIES = { Object: "{}", Array: "[]" };
+isEmpty = function (o) {
   if (!o) {
     return true;
   }
@@ -55,35 +55,32 @@ isEmpty = function(o) {
   }
 
   return JSON.stringify(o) == EMPTIES[type];
-}
+};
 
-tryFloat = function(o) {
+tryFloat = function (o) {
   try {
     f = parseFloat(o);
     return isNaN(f) ? o : f;
-
   } catch (err) {
     return o;
   }
-}
+};
 
-tryInt = function(f) {
+tryInt = function (f) {
   try {
     let i = parseInt(f);
-    return i == f ? i : f
+    return i == f ? i : f;
   } catch (err) {
     return f;
   }
-}
+};
 
-entityDecode = function(text) {
+entityDecode = function (text) {
   return text.replace("&amp;", "&");
-}
+};
 
-dateString = function(date) {
-  if (!date) {
-    return ""
-  }
+dateString = function (date) {
+  if (!date) return "";
   var months = [
     "Jan",
     "Feb",
@@ -102,9 +99,9 @@ dateString = function(date) {
     date = new Date(date);
   }
   return `${date.getFullYear()} ${months[date.getMonth()]} ${date.getDate()}`;
-}
+};
 
-cleanObject = function(ob) {
+cleanObject = function (ob) {
   return Object.entries(ob).reduce((r, [k, v]) => {
     if (
       v != null &&
@@ -124,24 +121,24 @@ cleanObject = function(ob) {
       return r;
     }
   }, {});
-}
+};
 
-dispatchEvent = function(obj) {
-  document.dispatchEvent(new CustomEvent("update-ae-notifier", {
-    detail: obj
-  }));
-}
+dispatchEvent = function (obj) {
+  document.dispatchEvent(
+    new CustomEvent("update-ae-notifier", { detail: obj }),
+  );
+};
 
-stripHTML = function(html) {
-   let doc = new DOMParser().parseFromString(html, 'text/html');
-   return doc.body.textContent || "";
-}
+stripHTML = function (html) {
+  let doc = new DOMParser().parseFromString(html, "text/html");
+  return doc.body.textContent || "";
+};
 
-rando = (n) => Math.round(Math.random() * n)
+rando = (n) => Math.round(Math.random() * n);
 
-reg = (o, n) => (o ? o[n] : "")
+reg = (o, n) => (o ? o[n] : "");
 
-cleanObject = function(ob) {
+cleanObject = function (ob) {
   return Object.entries(ob).reduce((r, [k, v]) => {
     if (
       v != null &&
@@ -161,11 +158,12 @@ cleanObject = function(ob) {
       return r;
     }
   }, {});
-}
+};
 
-delay = (ms) => new Promise(res => {
-  setTimeout(res, ms)
-});
+delay = (ms) =>
+  new Promise((res) => {
+    setTimeout(res, ms);
+  });
 
 /**
  * element.js
@@ -173,19 +171,19 @@ delay = (ms) => new Promise(res => {
  */
 
 Element = class {
-  constructor(elm=null) {
+  constructor(elm = null) {
     this.element = elm;
 
-    if (!elm) {
-      return
-    }
+    if (!elm) return;
 
     for (let k in elm.__proto__) {
-      if (Object.hasOwnProperty(k)) { continue }
+      if (Object.hasOwnProperty(k)) continue;
 
       Object.defineProperty(this, k, {
-        get: function() { return this.element[k]; },
-        set: function(v) { this.element[k] = v },
+        get: () => this.element[k],
+        set: (v) => {
+          this.element[k] = v;
+        },
       });
     }
   }
@@ -210,7 +208,7 @@ Element = class {
    * let elm = Element.create("div", {id: "container"});
    * let elm = Element.create("<p>hello</p>");
    */
-  static create(html, attrs={}) {
+  static create(html, attrs = {}) {
     let dom;
     if (html.includes("<")) {
       let doc = document.createElement("body");
@@ -228,20 +226,20 @@ Element = class {
     }
 
     let element = new Element(dom);
-    element.set(attrs)
+    element.set(attrs);
     return element;
   }
 
-  static gc (name) {
+  static gc(name) {
     return new List(document.getElementsByClassName(name));
   }
 
-  static gi (name) {
-    let node = document.getElementById(name)
+  static gi(name) {
+    let node = document.getElementById(name);
     return new Element(node);
   }
 
-  static gt (name) {
+  static gt(name) {
     return new List(document.getElementsByTagName(name));
   }
 
@@ -256,9 +254,7 @@ Element = class {
   }
 
   gc(name) {
-    if (!this.element) {
-      return []
-    }
+    if (!this.element) return [];
 
     let res = this.element.getElementsByClassName(name);
     return new List(res);
@@ -269,16 +265,14 @@ Element = class {
   }
 
   gt(name) {
-    if (!this.element) {
-      return []
-    }
+    if (!this.element) return [];
 
     let res = this.element.getElementsByTagName(name);
     return new List(res);
   }
 
-  gcf(name) { return this.gc(name)[0] }
-  gtf(name) { return this.gt(name)[0] }
+  gcf = (name) => this.gc(name)[0];
+  gtf = (name) => this.gt(name)[0];
 
   qs(query) {
     let res = this.element.querySelectorAll(query);
@@ -290,7 +284,7 @@ Element = class {
     return new Element(res);
   }
 
-  set(attrs, value=null) {
+  set(attrs, value = null) {
     if (typeof attrs == "string") {
       let key = attrs;
       attrs = {};
@@ -301,7 +295,7 @@ Element = class {
       this.element.setAttribute(k, v);
     }
   }
-}
+};
 
 /**
  * list.js
@@ -322,7 +316,7 @@ List = class extends Array {
   get last() {
     return this.slice(-1)[0];
   }
-}
+};
 
 /**
  * parser.js
@@ -340,8 +334,7 @@ Parser = class {
 
   set doc(value) {
     if (value) {
-      if (!value)
-        return;
+      if (!value) return;
 
       if (value.constructor.name != "Element") {
         value = new Element(value);
@@ -356,17 +349,19 @@ Parser = class {
     let data = {};
 
     for (let i in this._fields) {
-      try{
+      try {
         f = this._fields[i];
         data[f] = this[f];
       } catch (err) {
-        let identifiers = this._identifers.map((i) => `${i}: ${this[i]}`).join(", ");
+        let identifiers = this._identifers
+          .map((i) => `${i}: ${this[i]}`)
+          .join(", ");
         error(`${this.constructor.name}.${f} (${identifiers}):\n`, err);
       }
     }
-    return cleanObject(data)
+    return cleanObject(data);
   }
-}
+};
 
 /**
  * page.js
@@ -389,7 +384,7 @@ Page = class extends Parser {
       error(`Page.fetchDoc("${url.trim()}"):\n`, err);
     }
   }
-}
+};
 
 /**
  * timer.js
@@ -415,7 +410,7 @@ Page = class extends Parser {
  *
  */
 Timer = class {
-  constructor(beginning=null, end=null, task=null) {
+  constructor(beginning = null, end = null, task = null) {
     this.beginning = beginning;
     this.end = end;
     this.task = task;
@@ -453,7 +448,7 @@ Timer = class {
     this.stop();
     return result;
   }
-}
+};
 
 /**
  * purchase.js
@@ -470,17 +465,20 @@ Purchase = class extends Parser {
     credits: "data-order-item-credit-cost",
   };
 
-  constructor(doc=null) {
+  constructor(doc = null) {
     super();
     this.doc = doc;
   }
 
   data() {
     return Object.fromEntries(
-      Object.entries(this._fields).map(([key, attr]) => [key, this.doc.attributes[attr].value])
-    )
+      Object.entries(this._fields).map(([key, attr]) => [
+        key,
+        this.doc.attributes[attr].value,
+      ]),
+    );
   }
-}
+};
 
 /**
  * order-row.js
@@ -492,7 +490,7 @@ OrderRow = class extends Parser {
 
   _identifers = [];
 
-  constructor(doc=null) {
+  constructor(doc = null) {
     super();
     this.doc = doc;
   }
@@ -506,13 +504,15 @@ OrderRow = class extends Parser {
   }
 
   get date() {
-    return this.doc.qsf(".ui-it-purchasehistory-item-purchasedate").innerHTML?.trim();
+    return this.doc
+      .qsf(".ui-it-purchasehistory-item-purchasedate")
+      .innerHTML?.trim();
   }
 
   get total() {
     return this.doc.qsf(".ui-it-purchasehistory-item-total div").innerHTML;
   }
-}
+};
 
 /**
  * order-page.js
@@ -531,7 +531,7 @@ OrderPage = class extends Page {
     title: "data-order-item-name",
     author: "data-order-item-author",
   };
-  #valid_date_ranges = ["last_90_days", "last_180_days", "last_365_days"]
+  #valid_date_ranges = ["last_90_days", "last_180_days", "last_365_days"];
 
   #orders = {};
   #purchases = {};
@@ -543,7 +543,9 @@ OrderPage = class extends Page {
     let success = true;
     for (let a in attrs) {
       if (!this[attrs[a]]) {
-        let source = new Error().stack.split("\n")[2].match(/at (.*)\.require \[as (.*)] \(.*[/](.*)\)/);
+        let source = new Error().stack
+          .split("\n")[2]
+          .match(/at (.*)\.require \[as (.*)] \(.*[/](.*)\)/);
         let prefix = source ? `<${source[3]} ${source[1]}.${source[2]}> ` : "";
         error(`${prefix}Missing required attribute: ${attrs[a]}.`);
         success = false;
@@ -552,10 +554,14 @@ OrderPage = class extends Page {
     return success;
   }
 
-  constructor(year_or_doc=null, page_num=null, per_page=null) {
+  constructor(year_or_doc = null, page_num = null, per_page = null) {
     super();
     this.doc = null;
-    if ((typeof year_or_doc == "number" || this.#valid_date_ranges.includes(year_or_doc)) && typeof page_num == "number") {
+    if (
+      (typeof year_or_doc == "number" ||
+        this.#valid_date_ranges.includes(year_or_doc)) &&
+      typeof page_num == "number"
+    ) {
       this.year = year_or_doc;
       this.page_num = page_num;
     } else if (year_or_doc) {
@@ -574,7 +580,9 @@ OrderPage = class extends Page {
 
   get year() {
     if (!this.#year && this.doc) {
-      this.#year = this.doc.qsf("#ui-it-purchase-history-date-filter option:checked")?.value;
+      this.#year = this.doc.qsf(
+        "#ui-it-purchase-history-date-filter option:checked",
+      )?.value;
     }
     return tryInt(this.#year);
   }
@@ -585,7 +593,10 @@ OrderPage = class extends Page {
 
   get page_num() {
     if (!this.#page_num && this.doc) {
-      this.#page_num = this.doc.qsf("span.purchase-history-pagination-button")?.innerHTML?.trim() || 1;
+      this.#page_num =
+        this.doc
+          .qsf("span.purchase-history-pagination-button")
+          ?.innerHTML?.trim() || 1;
     }
     return tryInt(this.#page_num);
   }
@@ -595,10 +606,8 @@ OrderPage = class extends Page {
   }
 
   get page_count() {
-    if (!this.require("doc")) {
-      return;
-    }
-    let link = this.doc.qs("a.purchase-history-pagination-button").last
+    if (!this.require("doc")) return null;
+    let link = this.doc.qs("a.purchase-history-pagination-button").last;
     let count = link?.innerHTML.trim() || 1;
     return parseInt(count);
   }
@@ -631,7 +640,7 @@ OrderPage = class extends Page {
 
   get purchases() {
     if (this.doc && isEmpty(this.#purchases)) {
-      let links = (this.doc.qs("a[data-order-item-id]"));
+      let links = this.doc.qs("a[data-order-item-id]");
       let purchases = links.map((a) => new Purchase(a).data());
       this.#purchases = purchases;
     }
@@ -662,7 +671,7 @@ OrderPage = class extends Page {
     }
     return this.#items;
   }
-}
+};
 
 /**
  * orders-fetcher.js
@@ -690,13 +699,13 @@ OrdersFetcher = class {
       this.years.splice(limit);
     }
 
-    dispatchEvent({years: this.years});
+    dispatchEvent({ years: this.years });
 
-    for (let year of this.years)  {
+    for (let year of this.years) {
       let timer = new Timer();
       timer.start();
 
-      dispatchEvent({year: year});
+      dispatchEvent({ year: year });
 
       let page_num = 1;
       let page_count;
@@ -715,23 +724,23 @@ OrdersFetcher = class {
 
         if (limit && running_count >= limit) {
           this.years.splice(this.years.indexOf(year));
-          dispatchEvent({years: this.years})
+          dispatchEvent({ years: this.years });
           break;
         }
-      } while (page_num <= page_count)
+      } while (page_num <= page_count);
       timer.stop();
-      dispatchEvent({timer: timer});
+      dispatchEvent({ timer: timer });
     }
 
-    dispatchEvent({percent: 1});
+    dispatchEvent({ percent: 1 });
   }
 
-  async populate(limit=null) {
+  async populate(limit = null) {
     if (limit) {
       this.pages.splice(limit, this.pages.length);
     }
 
-    dispatchEvent({total: this.pages.length});
+    dispatchEvent({ total: this.pages.length });
     let i = 0;
 
     for (let page of this.pages) {
@@ -746,22 +755,22 @@ OrdersFetcher = class {
 
       if (!page.doc) {
         await page.get();
-        dispatchEvent({page_count: page.page_count});
+        dispatchEvent({ page_count: page.page_count });
       } else {
-        dispatchEvent({page_count: page.page_count});
+        dispatchEvent({ page_count: page.page_count });
         await delay(500);
       }
 
       i++;
       timer.stop();
-      dispatchEvent({timer: timer});
+      dispatchEvent({ timer: timer });
     }
-    dispatchEvent({percent: 1});
+    dispatchEvent({ percent: 1 });
   }
 
   get count() {
-    if(!this.#count) {
-      this.#count = this.pages.reduce((sum, p) => sum + p.items.length, 0)
+    if (!this.#count) {
+      this.#count = this.pages.reduce((sum, p) => sum + p.items.length, 0);
     }
     return this.#count;
   }
@@ -784,7 +793,7 @@ OrdersFetcher = class {
   set items(value) {
     this.#items = value;
   }
-}
+};
 
 /**
  * library-book-row.js
@@ -792,17 +801,10 @@ OrdersFetcher = class {
  */
 
 LibraryBookRow = class extends Parser {
-  _fields = [
-    "id",
-    "url",
-    "title",
-    "author",
-    "narrator",
-    "series",
-  ];
+  _fields = ["id", "url", "title", "author", "narrator", "series"];
   _identifers = ["page_num", "row_num"];
 
-  constructor(doc=null, page_num=null, row_num=null) {
+  constructor(doc = null, page_num = null, row_num = null) {
     super();
     this.doc = doc;
     this.page_num = page_num;
@@ -818,10 +820,9 @@ LibraryBookRow = class extends Parser {
   }
 
   get url() {
-    return this.ul.gcf("bc-size-headline3")
-      .parentElement
-      .attributes["href"]?.value
-      .replace(/\?.+/, "");
+    return this.ul
+      .gcf("bc-size-headline3")
+      .parentElement.attributes["href"]?.value.replace(/\?.+/, "");
   }
 
   get title() {
@@ -840,7 +841,7 @@ LibraryBookRow = class extends Parser {
   get series() {
     return this.ul.qsf(".seriesLabel a")?.innerHTML?.trim();
   }
-}
+};
 
 /**
  * library-page.js
@@ -852,7 +853,7 @@ LibraryPage = class extends Page {
   #rows = null;
   #books = null;
 
-  constructor(doc=null) {
+  constructor(doc = null) {
     super();
     this.doc = doc;
     this.#rows = null;
@@ -860,22 +861,21 @@ LibraryPage = class extends Page {
   }
 
   get page_size() {
-    if (!this.doc)
-      return
-    let size = this.doc.qsf("select[name='pageSize'] option:checked")?.value || this.#default_page_size;
+    if (!this.doc) return null;
+    let size =
+      this.doc.qsf("select[name='pageSize'] option:checked")?.value ||
+      this.#default_page_size;
     return parseInt(size);
   }
 
   get page_num() {
-    if (!this.doc)
-      return
+    if (!this.doc) return null;
     let num = this.doc.qsf("span.pageNumberElement")?.innerHTML || 1;
     return parseInt(num);
   }
 
   get page_count() {
-    if (!this.doc)
-      return
+    if (!this.doc) return null;
     let links = this.doc.qs("a.pageNumberElement");
     let count = links.last?.innerHTML || 1;
     return parseInt(count);
@@ -887,7 +887,7 @@ LibraryPage = class extends Page {
       let arr = [];
       let rows = this.doc.gc("adbl-library-content-row");
       for (let row of rows) {
-        arr.push(new LibraryBookRow(row, this.page_num, (i+1)));
+        arr.push(new LibraryBookRow(row, this.page_num, i + 1));
         i++;
       }
       this.#rows = arr;
@@ -912,8 +912,7 @@ LibraryPage = class extends Page {
     }
     return this.#books;
   }
-}
-
+};
 
 /**
  * library-fetcher.js
@@ -939,19 +938,19 @@ LibraryFetcher = class extends Page {
     return new LibraryPage(doc);
   }
 
-  async populate(limit=null) {
+  async populate(limit = null) {
     let i = 0;
     do {
       let timer = new Timer();
       timer.start();
       if (limit) {
         this.page_count = limit;
-        dispatchEvent({total: this.page_count});
+        dispatchEvent({ total: this.page_count });
         this.page_size = 20;
       }
 
-      let page_num = i + 1
-      dispatchEvent({item_no: page_num});
+      let page_num = i + 1;
+      dispatchEvent({ item_no: page_num });
 
       let page = await this.fetchPage(page_num);
       this.pages.push(page);
@@ -960,18 +959,20 @@ LibraryFetcher = class extends Page {
 
       timer.stop();
 
-      dispatchEvent({item_no: page_num, total: this.page_count, timer: timer});
+      dispatchEvent({
+        item_no: page_num,
+        total: this.page_count,
+        timer: timer,
+      });
     } while (i < this.page_count);
 
-    dispatchEvent({percent: 1});
+    dispatchEvent({ percent: 1 });
 
     return this.pages;
   }
 
   get book_count() {
-    if (!this.pages) {
-      return;
-    }
+    if (!this.pages) return null;
     let page = this.pages[0];
     return page.page_size * page.page_count;
   }
@@ -990,13 +991,11 @@ LibraryFetcher = class extends Page {
   get books() {
     if (!this.#books) {
       let books = this.pages.reduce((arr, page) => {
-          return arr.concat(
-            // map books by URL to avoid duplicates
-            page.books.map((book) => [book.url, book])
-          );
-        },
-        [],
-      );
+        return arr.concat(
+          // map books by URL to avoid duplicates
+          page.books.map((book) => [book.url, book]),
+        );
+      }, []);
 
       this.#books = Object.values(Object.fromEntries(books));
     }
@@ -1006,8 +1005,7 @@ LibraryFetcher = class extends Page {
   set books(value) {
     this.#books = value;
   }
-}
-
+};
 
 /**
  * book-page.js
@@ -1020,51 +1018,49 @@ LibraryFetcher = class extends Page {
  * Parse the book details from the audible book page.
  */
 BookPage = class extends Page {
-
   #category_types = ["Fiction", "Nonfiction"];
 
   #category_genres = {
-    'Arts & Entertainment': "nonfiction",
-    'Biographies & Memoirs': "nonfiction",
-    'Business & Careers': "nonfiction",
-    'Children\'s Audiobooks': null,
-    'Action & Adventure': "fiction", // children's audiobooks
-    'Activities & Hobbies': "nonfiction", // children's audiobooks
-    'Animals & Nature': "nonfiction", // children's audiobooks
-    'Education & Learning': "nonfiction",
-    'Fairy Tales, Folk Tales & Myths': "fiction",
-    'Geography & Cultures': "nonfiction",
-    'Comedy & Humor': null,
-    'Performing Arts': "nonfiction", // comedy & humor
-    'Computers & Technology': "nonfiction",
-    'Education & Learning': "nonfiction",
-    'Erotica': null,
-    'Sex Instruction': "nonfiction", // erotica
-    'Health & Wellness': "nonfiction",
-    'History': "nonfiction",
-    'Home & Garden': "nonfiction",
-    'LGBTQ+': "null",
-    'LGBTQ+ Studies': "nonfiction",
-    'Parenting & Families': "nonfiction",
-    'Literature & Fiction': "fiction",
-    'Money & Finance': "nonfiction",
-    'Mystery, Thriller & Suspense': null,
-    'True Crime': "nonfiction", // mystery, thriller & suspense
-    'Mystery': "fiction", // mystery, thriller & suspense
-    'Thriller & Suspense': "fiction", // mystery, thriller & suspense
-    'Crime Fiction': "fiction", // mystery, thriller & suspense
-    'Politics & Social Sciences': "nonfiction",
-    'Politics, Society & Current Events': "nonfiction",
-    'Relationships, Parenting & Personal Development': "nonfiction",
-    'Religion & Spirituality': "nonfiction",
-    'Romance': "fiction",
-    'Science & Engineering': "nonfiction",
-    'Sports & Outdoors': "nonfiction",
-    'Teen & Young Adult': null,
-    'Health, Lifestyle & Relationships': "nonfiction", // teen & young adult
-    'History & Culture': "nonfiction", // teen & young adult
-    'Travel & Tourism': "nonfiction",
-  }
+    "Arts & Entertainment": "nonfiction",
+    "Biographies & Memoirs": "nonfiction",
+    "Business & Careers": "nonfiction",
+    "Children's Audiobooks": null,
+    "Action & Adventure": "fiction", // children"s audiobooks
+    "Activities & Hobbies": "nonfiction", // children"s audiobooks
+    "Animals & Nature": "nonfiction", // children"s audiobooks
+    "Fairy Tales, Folk Tales & Myths": "fiction",
+    "Geography & Cultures": "nonfiction",
+    "Comedy & Humor": null,
+    "Performing Arts": "nonfiction", // comedy & humor
+    "Computers & Technology": "nonfiction",
+    "Education & Learning": "nonfiction",
+    Erotica: null,
+    "Sex Instruction": "nonfiction", // erotica
+    "Health & Wellness": "nonfiction",
+    History: "nonfiction",
+    "Home & Garden": "nonfiction",
+    "LGBTQ+": "null",
+    "LGBTQ+ Studies": "nonfiction",
+    "Parenting & Families": "nonfiction",
+    "Literature & Fiction": "fiction",
+    "Money & Finance": "nonfiction",
+    "Mystery, Thriller & Suspense": null,
+    "True Crime": "nonfiction", // mystery, thriller & suspense
+    Mystery: "fiction", // mystery, thriller & suspense
+    "Thriller & Suspense": "fiction", // mystery, thriller & suspense
+    "Crime Fiction": "fiction", // mystery, thriller & suspense
+    "Politics & Social Sciences": "nonfiction",
+    "Politics, Society & Current Events": "nonfiction",
+    "Relationships, Parenting & Personal Development": "nonfiction",
+    "Religion & Spirituality": "nonfiction",
+    Romance: "fiction",
+    "Science & Engineering": "nonfiction",
+    "Sports & Outdoors": "nonfiction",
+    "Teen & Young Adult": null,
+    "Health, Lifestyle & Relationships": "nonfiction", // teen & young adult
+    "History & Culture": "nonfiction", // teen & young adult
+    "Travel & Tourism": "nonfiction",
+  };
 
   #sub_categories = [
     "Science Fiction",
@@ -1093,7 +1089,7 @@ BookPage = class extends Page {
     "Historical", // biographies & Memoiirs
     "Young Adult",
     "Thriller & Suspense",
-  ]
+  ];
 
   _fields = [
     "id",
@@ -1121,7 +1117,7 @@ BookPage = class extends Page {
   #json_product = null;
 
   static async get(url) {
-    let page = new Page()
+    let page = new Page();
     let doc = await page.fetchDoc(url);
     doc = new Element(doc);
 
@@ -1135,7 +1131,7 @@ BookPage = class extends Page {
     return page;
   }
 
-  constructor(doc=null) {
+  constructor(doc = null) {
     super();
     this.doc = doc;
   }
@@ -1147,8 +1143,8 @@ BookPage = class extends Page {
    */
   toMinutes(text) {
     let mins = /\d+(?=\smin)/.exec(text)?.[0] || "0";
-    let hours = /\d+(?=\shrs)/.exec(text)?.[0] || "0"
-    return (parseInt(hours) * 60) + parseInt(mins);
+    let hours = /\d+(?=\shrs)/.exec(text)?.[0] || "0";
+    return parseInt(hours) * 60 + parseInt(mins);
   }
 
   get json_audiobook() {
@@ -1185,7 +1181,7 @@ BookPage = class extends Page {
 
   get rating() {
     let rating = tryFloat(this.json_audiobook.aggregateRating?.ratingValue);
-    return rating ? +rating.toFixed(1) : ""
+    return rating ? +rating.toFixed(1) : "";
   }
 
   get num_ratings() {
@@ -1198,15 +1194,12 @@ BookPage = class extends Page {
 
   get date() {
     let date = this.json_audiobook.datePublished;
-    if (!date)
-      return
-    return new Date(`${date}:00:00:01`)
+    if (!date) return null;
+    return new Date(`${date}:00:00:01`);
   }
 
   get release_date() {
-    if (!this.date) {
-      return;
-    }
+    if (!this.date) return null;
     return dateString(this.date);
   }
 
@@ -1228,15 +1221,12 @@ BookPage = class extends Page {
 
   get publisher_summary() {
     let text = this.json_audiobook.description;
-    if (!text)
-      return
-    return stripHTML(text)
+    if (!text) return null;
+    return stripHTML(text);
   }
 
-  get audible_oginal () {
-    if (!this.publisher) {
-      return;
-    }
+  get audible_oginal() {
+    if (!this.publisher) return null;
     return /^Audible Original/.test(this.publisher);
   }
 
@@ -1285,8 +1275,12 @@ BookPage = class extends Page {
     let all = [...this.categories_list, ...this.tags_list];
 
     // check if the word "fiction" or "nonfiction" is in any of the categories or tags
-    for (var genre of this.#category_types) {
-      if (all.some( (c) => { return c.toLowerCase().includes(genre.toLowerCase()) } )) {
+    for (let genre of this.#category_types) {
+      if (
+        all.some((c) => {
+          return c.toLowerCase().includes(genre.toLowerCase());
+        })
+      ) {
         return genre.toLowerCase();
       }
     }
@@ -1308,7 +1302,9 @@ BookPage = class extends Page {
       if (this.main_category) {
         exclude.push(this.main_category);
       }
-      this.#tags = this.tags_list.filter((t) => {return !exclude.includes(t)});
+      this.#tags = this.tags_list.filter((t) => {
+        return !exclude.includes(t);
+      });
     }
     return this.#tags;
   }
@@ -1318,25 +1314,27 @@ BookPage = class extends Page {
   }
 
   get sub_category() {
-      // return the second category if there is one
-      if (this.categories_list && this.categories_list.length == 2) {
-        return this.categories_list[1];
-      }
+    // return the second category if there is one
+    if (this.categories_list && this.categories_list.length == 2) {
+      return this.categories_list[1];
+    }
 
-      // find the first subgenre listed in tags
-      let listed_subgenres = [...(new Set(this.tags)).intersection(new Set(this.#sub_categories))];
-      if (listed_subgenres.length >= 1) {
-        return listed_subgenres[0];
-      }
+    // find the first subgenre listed in tags
+    let listed_subgenres = [
+      ...new Set(this.tags).intersection(new Set(this.#sub_categories)),
+    ];
+    if (listed_subgenres.length >= 1) {
+      return listed_subgenres[0];
+    }
 
-      // return the first tag
-      return this.tags[0] || null;
+    // return the first tag
+    return this.tags[0] || null;
   }
 
   get categories() {
     return this.tags.filter((c) => !this.categories_list.includes(c));
   }
-}
+};
 
 /* Book pages which use custom <adbl-*> tags.
  *
@@ -1349,9 +1347,14 @@ ADBLBookPage = class extends BookPage {
   get adbl() {
     return this.doc.qs("adbl-product-metadata script");
   }
-  
+
   get info() {
-    return Object.assign({}, ...this.adbl.map((e) => {return JSON.parse(e.textContent)}));
+    return Object.assign(
+      {},
+      ...this.adbl.map((e) => {
+        return JSON.parse(e.textContent);
+      }),
+    );
   }
 
   get duration_minutes() {
@@ -1384,9 +1387,11 @@ ADBLBookPage = class extends BookPage {
   }
 
   get tags_list() {
-    return this.doc.qs("adbl-chip-group.product-topictag-impression adbl-chip").map((c) => c.innerHTML)
+    return this.doc
+      .qs("adbl-chip-group.product-topictag-impression adbl-chip")
+      .map((c) => c.innerHTML);
   }
-}
+};
 
 /* Book pages which do not use custom <adbl-*> tags.
  *
@@ -1421,7 +1426,9 @@ NormalBookPage = class extends BookPage {
 
   // book number
   get book() {
-    return /, Book (\d+)/i.exec(this.doc.gcf("seriesLabel")?.innerHTML)?.[1] || "";
+    return (
+      /, Book (\d+)/i.exec(this.doc.gcf("seriesLabel")?.innerHTML)?.[1] || ""
+    );
   }
 
   // get summary() {
@@ -1437,13 +1444,19 @@ NormalBookPage = class extends BookPage {
   // }
 
   get tags_list() {
-    return this.doc.gc("bc-chip-text").map((c) => { return c.attributes["data-text"].value });
+    return this.doc.gc("bc-chip-text").map((c) => {
+      return c.attributes["data-text"].value;
+    });
   }
 
   get categories_list() {
-    return this.doc.qs(".categoriesLabel a")?.map((c) => { return entityDecode(c.innerHTML) || "" }) || [];
+    return (
+      this.doc.qs(".categoriesLabel a")?.map((c) => {
+        return entityDecode(c.innerHTML) || "";
+      }) || []
+    );
   }
-}
+};
 
 /**
  * details-fetcher.js
@@ -1451,9 +1464,9 @@ NormalBookPage = class extends BookPage {
  */
 
 DetailsFetcher = class {
-  #books = {}
+  #books = {};
 
-  constructor(library=null) {
+  constructor(library = null) {
     this.library = library;
     this.#books = null;
     this.pages = [];
@@ -1467,7 +1480,7 @@ DetailsFetcher = class {
 
     let total = this.library.length;
 
-    dispatchEvent({total: total});
+    dispatchEvent({ total: total });
 
     let i = 0;
 
@@ -1484,12 +1497,14 @@ DetailsFetcher = class {
       i++;
 
       timer.stop();
-      dispatchEvent({item_no: i, timer: timer});
+      dispatchEvent({ item_no: i, timer: timer });
     }
 
     actual.stop();
-    dispatchEvent({percent: 1});
-    info(`DetailsFetcher.populate() took: ${actual.minutes} minutes (${actual.seconds} seconds)`);
+    dispatchEvent({ percent: 1 });
+    info(
+      `DetailsFetcher.populate() took: ${actual.minutes} minutes (${actual.seconds} seconds)`,
+    );
   }
 
   get books() {
@@ -1498,8 +1513,7 @@ DetailsFetcher = class {
       let data, page;
 
       for (page of this.pages) {
-        if (!page) 
-          continue
+        if (!page) continue;
 
         let data = page.data();
         this.#books[data.id] = data;
@@ -1509,10 +1523,9 @@ DetailsFetcher = class {
   }
 
   set books(value) {
-    this.#books = value
+    this.#books = value;
   }
-}
-
+};
 
 /**
  * file.js
@@ -1525,12 +1538,12 @@ File = class {
   mimetype = null;
   extension = null;
 
-  constructor(contents=null) {
+  constructor(contents = null) {
     this.#contents = contents;
   }
 
   get blob() {
-    return new Blob([this.contents], {type: this.mimetype});
+    return new Blob([this.contents], { type: this.mimetype });
   }
 
   get url() {
@@ -1549,7 +1562,7 @@ File = class {
   set contents(value) {
     this.#contents = value;
   }
-}
+};
 
 /**
  * tsv-file.js
@@ -1563,14 +1576,13 @@ TSVFile = class extends File {
   mimetype = "text/tsv";
   extension = "tsv";
 
-  constructor(records=null) {
+  constructor(records = null) {
     super();
     this.records = records;
   }
 
   get headers() {
-    if (!this.records || isEmpty(this.records))
-      return;
+    if (!this.records || isEmpty(this.records)) return null;
     if (!this.#headers) {
       this.#headers = Object.keys(this.records[0]).map((h) => this.sanitize(h));
     }
@@ -1578,17 +1590,17 @@ TSVFile = class extends File {
   }
 
   get rows() {
-    if (!this.records || isEmpty(this.records))
-      return;
+    if (!this.records || isEmpty(this.records)) return null;
     if (!this.#rows) {
-      this.#rows = this.records.map((row) => Object.values(row).map((v) => this.sanitize(v)));
+      this.#rows = this.records.map((row) =>
+        Object.values(row).map((v) => this.sanitize(v)),
+      );
     }
     return this.#rows;
   }
 
   get contents() {
-    if (!this.records || isEmpty(this.records))
-      return;
+    if (!this.records || isEmpty(this.records)) return null;
 
     let lines = [this.headers, ...this.rows];
     let text = lines.map((l) => l.join("\t")).join("\n") + "\n";
@@ -1600,16 +1612,14 @@ TSVFile = class extends File {
     text = String(text);
 
     return text
-        .replace(/\t|\v|\f|\u0009/g, " ")
-        .replace(/\r|\n/g, " ")
-        .replace(/\0/g, "")
-        .replace(/\\/g, "\\\\")
-        .replace(/\'/g, "\\'")
-        .replace(/\"/g, '\\"')
+      .replace(/\t|\v|\f/g, " ")
+      .replace(/\r|\n/g, " ")
+      .replace(/\0/g, "")
+      .replace(/\\/g, "\\\\")
+      .replace(/'/g, "\\'")
+      .replace(/"/g, '\\"');
   }
-
-
-}
+};
 
 /**
  * result.js
@@ -1641,7 +1651,7 @@ Result = class {
     categories: ["details"],
   };
 
-  constructor(library=null, details=null, order=null) {
+  constructor(library = null, details = null, order = null) {
     this.library = library || {};
     this.details = details || {};
     this.order = order || {};
@@ -1658,9 +1668,8 @@ Result = class {
       if (!["null", "undefined"].includes(typeof value)) {
         arr.splice(1);
         return value;
-
       } else {
-      // otherwise, return ""
+        // otherwise, return ""
         return fallback;
       }
     }, "");
@@ -1670,10 +1679,10 @@ Result = class {
     return Object.fromEntries(
       Object.keys(this.#headers).map((key) => {
         return [key, this.first(key)];
-      })
+      }),
     );
   }
-}
+};
 
 /**
  * dom.js
@@ -1691,7 +1700,10 @@ DOM = class {
 
   get style() {
     if (!this.#style) {
-      this.#style = Element.create("style", {id: this.selectors.style, type: "text/css"});
+      this.#style = Element.create("style", {
+        id: this.selectors.style,
+        type: "text/css",
+      });
 
       if (this.#style.element.styleSheet) {
         // Support for IE
@@ -1708,13 +1720,12 @@ DOM = class {
   // add the element to the DOM
   create() {
     let el = Element.gi(this.selectors.wrapper);
-    if (el)
-      el.outerHTML = "";
+    if (el) el.outerHTML = "";
 
     document.head.appendChild(this.style.element);
     document.body.appendChild(this.wrapper.element);
   }
-}
+};
 
 /**
  * colors.js
@@ -1782,7 +1793,7 @@ Colors = class extends DOM {
     }
     this.wrapper.element.remove();
   }
-}
+};
 
 /**
  * status-notifier.js
@@ -1809,7 +1820,7 @@ StatusNotifier = class extends DOM {
   estimate_padding = 1.05;
   event_name = "update-ae-notifier";
 
-  times = []
+  times = [];
 
   selectors = {
     wrapper: "ae-notifier",
@@ -1832,11 +1843,14 @@ StatusNotifier = class extends DOM {
    */
   get wrapper() {
     if (!this.#wrapper) {
-      this.#wrapper = Element.create("div", {id: this.selectors.wrapper, style: {
-        width: `${this.bar_width}px`,
-        left: `${(this.body_width - this.bar_width) / 2}px`,
-        'z-index': new Date().getTime(),
-      }})
+      this.#wrapper = Element.create("div", {
+        id: this.selectors.wrapper,
+        style: {
+          width: `${this.bar_width}px`,
+          left: `${(this.body_width - this.bar_width) / 2}px`,
+          "z-index": new Date().getTime(),
+        },
+      });
 
       this.wrapper.element.appendChild(this.bar.element);
       this.wrapper.element.appendChild(this.context.element);
@@ -1851,7 +1865,7 @@ StatusNotifier = class extends DOM {
    */
   get bar() {
     if (!this.#bar) {
-      this.#bar = Element.create("div", {id: this.selectors.bar});
+      this.#bar = Element.create("div", { id: this.selectors.bar });
       this.#bar.element.appendChild(this.messages.element);
     }
     return this.#bar;
@@ -1867,9 +1881,7 @@ StatusNotifier = class extends DOM {
       this.#messages = Element.create("div", {
         id: this.selectors.messages,
         class: "ae-row",
-        style: {
-          width: `${this.bar_width}px`,
-        }
+        style: { width: `${this.bar_width}px` },
       });
       this.#messages.element.appendChild(this.status.element);
       this.#messages.element.appendChild(this.percentage.element);
@@ -1884,7 +1896,7 @@ StatusNotifier = class extends DOM {
    */
   get status() {
     if (!this.#status) {
-      this.#status = Element.create("div", {id: this.selectors.status});
+      this.#status = Element.create("div", { id: this.selectors.status });
     }
     return this.#status;
   }
@@ -1894,7 +1906,9 @@ StatusNotifier = class extends DOM {
    */
   get percentage() {
     if (!this.#percentage) {
-      this.#percentage = Element.create("span", {id: this.selectors.percentage});
+      this.#percentage = Element.create("span", {
+        id: this.selectors.percentage,
+      });
     }
     return this.#percentage;
   }
@@ -1924,7 +1938,7 @@ StatusNotifier = class extends DOM {
    */
   get steps() {
     if (!this.#steps) {
-      this.#steps = Element.create("span", {id: this.selectors.steps});
+      this.#steps = Element.create("span", { id: this.selectors.steps });
     }
     return this.#steps;
   }
@@ -1936,7 +1950,7 @@ StatusNotifier = class extends DOM {
    */
   get estimate() {
     if (!this.#estimate) {
-      this.#estimate = Element.create("span", {id: this.selectors.estimate});
+      this.#estimate = Element.create("span", { id: this.selectors.estimate });
     }
     return this.#estimate;
   }
@@ -2250,7 +2264,7 @@ StatusNotifier = class extends DOM {
    * @returns {number}
    */
   get per_item() {
-    let total = this.times.reduce((sum, t) =>  sum + t.elapsed, 0);
+    let total = this.times.reduce((sum, t) => sum + t.elapsed, 0);
     return total / this.times.length;
   }
 
@@ -2260,7 +2274,7 @@ StatusNotifier = class extends DOM {
    * @return {number}
    */
   get ms_left() {
-    return (this.remaining * this.per_item) * this.estimate_padding;
+    return this.remaining * this.per_item * this.estimate_padding;
   }
 
   /**
@@ -2269,7 +2283,7 @@ StatusNotifier = class extends DOM {
    * @returns {string}
    */
   get minutes_left() {
-    let minutes = ((this.ms_left / 1000) / 60).toFixed(1);
+    let minutes = (this.ms_left / 1000 / 60).toFixed(1);
     if (minutes == parseInt(minutes)) {
       minutes = parseInt(minutes).toString();
     }
@@ -2372,7 +2386,7 @@ StatusNotifier = class extends DOM {
     this.#status = null;
     this.#percentage = null;
   }
-}
+};
 
 /**
  * modal.js
@@ -2382,7 +2396,7 @@ StatusNotifier = class extends DOM {
 Modal = class extends DOM {
   #css = null;
   #wrapper = null;
-  #close_btn = null
+  #close_btn = null;
   #dl_btn = null;
   #file = null;
 
@@ -2564,9 +2578,9 @@ a#ae-download-btn:hover:after {
   // Construct wrapper div, append all child elements, and return
   get wrapper() {
     if (!this.#wrapper) {
-      this.#wrapper = Element.create("div", {class: this.selectors.wrapper });
-      let content = Element.create("div", {class: this.selectors.content});
-      let head = Element.create("div", {class: this.selectors.head});
+      this.#wrapper = Element.create("div", { class: this.selectors.wrapper });
+      let content = Element.create("div", { class: this.selectors.content });
+      let head = Element.create("div", { class: this.selectors.head });
       let h1 = Element.create("h1");
       let p = Element.create("p");
 
@@ -2576,9 +2590,9 @@ a#ae-download-btn:hover:after {
       this.wrapper.element.appendChild(content.element);
       content.element.appendChild(head.element);
       content.element.appendChild(p.element);
-      content.element.appendChild(this.dl_btn.element)
-      head.element.appendChild(this.close_btn.element)
-      head.element.appendChild(h1.element)
+      content.element.appendChild(this.dl_btn.element);
+      head.element.appendChild(this.close_btn.element);
+      head.element.appendChild(h1.element);
 
       this.#wrapper.style["z-index"] = new Date().getTime();
     }
@@ -2587,21 +2601,25 @@ a#ae-download-btn:hover:after {
 
   get close_btn() {
     if (!this.#close_btn) {
-        this.#close_btn = Element.create("a", {id: this.selectors.close_btn});
-        this.#close_btn.innerHTML = "&times;";
-        this.#close_btn.attributes.href = "#";
-        this.#close_btn.element.addEventListener("click", () => {
+      this.#close_btn = Element.create("a", { id: this.selectors.close_btn });
+      this.#close_btn.innerHTML = "&times;";
+      this.#close_btn.attributes.href = "#";
+      this.#close_btn.element.addEventListener(
+        "click",
+        () => {
           this.hide();
-        }, false);
+        },
+        false,
+      );
     }
     return this.#close_btn;
   }
 
   get dl_btn() {
     if (!this.#dl_btn) {
-      this.#dl_btn = Element.create("a", {id: this.selectors.dl_btn});
-        this.#dl_btn.attributes.href = "#";
-      this.#dl_btn.innerHTML = "Download";;
+      this.#dl_btn = Element.create("a", { id: this.selectors.dl_btn });
+      this.#dl_btn.attributes.href = "#";
+      this.#dl_btn.innerHTML = "Download";
     }
     return this.#dl_btn;
   }
@@ -2615,9 +2633,9 @@ a#ae-download-btn:hover:after {
     this.dl_btn.element.href = file.url;
     this.dl_btn.element.download = file.filename;
     this.dl_btn.element.addEventListener("click", () => {
-        setTimeout(() => {
-          window.URL.revokeObjectURL(file.url);
-        }, 10);
+      setTimeout(() => {
+        window.URL.revokeObjectURL(file.url);
+      }, 10);
     });
   }
 
@@ -2636,7 +2654,7 @@ a#ae-download-btn:hover:after {
     super.create();
     new Colors().create();
   }
-}
+};
 
 /**
  * purchase-history-notifier.js
@@ -2649,7 +2667,7 @@ PurchaseHistoryNotifier = class extends StatusNotifier {
 
   step_no = 1;
 
-  constructor(years=null) {
+  constructor(years = null) {
     super();
     this.times = [];
     this.years = years || [];
@@ -2724,10 +2742,9 @@ PurchaseHistoryNotifier = class extends StatusNotifier {
       return "Retrieving purchase history...";
     }
 
-    return `Retrieving purchase history: ${this.year}`
+    return `Retrieving purchase history: ${this.year}`;
   }
-}
-
+};
 
 /**
  * order-notifier.js
@@ -2742,7 +2759,7 @@ OrderNotifier = class extends StatusNotifier {
 
   step_no = 2;
 
-  constructor(total=null, years=null) {
+  constructor(total = null, years = null) {
     super();
     this.total = total;
     this.years = years;
@@ -2773,7 +2790,7 @@ OrderNotifier = class extends StatusNotifier {
    * @params {string} value  The year being processed.
    */
   set year(value) {
-    this.#year = value
+    this.#year = value;
     this.text = this.message;
   }
 
@@ -2790,7 +2807,7 @@ OrderNotifier = class extends StatusNotifier {
    * Set the page_year and update text.
    */
   set year_page(value) {
-    this.#year_page = value
+    this.#year_page = value;
     this.text = this.message;
   }
 
@@ -2807,7 +2824,7 @@ OrderNotifier = class extends StatusNotifier {
    * Set the page_count and update text.
    */
   set page_count(value) {
-    this.#page_count = value
+    this.#page_count = value;
     this.text = this.message;
   }
 
@@ -2821,7 +2838,7 @@ OrderNotifier = class extends StatusNotifier {
       return "Retrieving purchases...";
     }
 
-    let message = `Retrieving ${this.year} purchases`
+    let message = `Retrieving ${this.year} purchases`;
     if (this.year_page) {
       message += `: page ${this.year_page}`;
       if (this.page_count) {
@@ -2835,7 +2852,7 @@ OrderNotifier = class extends StatusNotifier {
 
     return message;
   }
-}
+};
 
 /**
  * library-notifier.js
@@ -2868,7 +2885,7 @@ LibraryNotifier = class extends StatusNotifier {
       return "Retrieving library...";
     }
 
-    let message = `Retrieving library: page ${this.item_no}`
+    let message = `Retrieving library: page ${this.item_no}`;
     if (this.total) {
       message += ` of ${this.total}`;
     } else {
@@ -2877,7 +2894,7 @@ LibraryNotifier = class extends StatusNotifier {
 
     return message;
   }
-}
+};
 
 /**
  * details-notifier.js
@@ -2918,7 +2935,7 @@ DetailsNotifier = class extends StatusNotifier {
 
     return `Retrieving book ${this.item_no} of ${this.total}`;
   }
-}
+};
 
 /**
  * exporter.js
@@ -2926,8 +2943,7 @@ DetailsNotifier = class extends StatusNotifier {
  */
 
 Exporter = class {
-
-  constructor(limit=null) {
+  constructor(limit = null) {
     this.limit = limit;
     this.timer = new Timer();
     this.notifier = new StatusNotifier();
@@ -2952,7 +2968,9 @@ Exporter = class {
     await delay(1000);
     timer.stop();
 
-    info(`getPurchaseHistory() took ${timer.minutes} minutes (${timer.seconds} seconds).`)
+    info(
+      `getPurchaseHistory() took ${timer.minutes} minutes (${timer.seconds} seconds).`,
+    );
   }
 
   async getOrders() {
@@ -2962,7 +2980,7 @@ Exporter = class {
     this.notifier.remove();
     this.notifier = new OrderNotifier(
       this.orders.pages.length,
-      this.orders.years
+      this.orders.years,
     );
     this.notifier.create();
 
@@ -2973,7 +2991,9 @@ Exporter = class {
     await delay(1000);
 
     timer.stop();
-    info(`getOrders() took ${timer.minutes} minutes (${timer.seconds} seconds).`)
+    info(
+      `getOrders() took ${timer.minutes} minutes (${timer.seconds} seconds).`,
+    );
     return this.orders.items;
   }
 
@@ -2990,7 +3010,9 @@ Exporter = class {
 
     await delay(1000);
     timer.stop();
-    info(`getLibrary() took ${timer.minutes} minutes (${timer.seconds} seconds).`)
+    info(
+      `getLibrary() took ${timer.minutes} minutes (${timer.seconds} seconds).`,
+    );
   }
 
   async getBookDetails() {
@@ -3007,7 +3029,9 @@ Exporter = class {
     log_table("details", this.details.books);
     await delay(1500);
     timer.stop();
-    info(`getBookDetails() took ${timer.minutes} minutes (${timer.seconds} seconds).`)
+    info(
+      `getBookDetails() took ${timer.minutes} minutes (${timer.seconds} seconds).`,
+    );
   }
 
   getResults() {
@@ -3031,10 +3055,10 @@ Exporter = class {
     this.notifier.remove();
     let file = new TSVFile(books);
     this.modal.file = file;
-    this.modal.show()
+    this.modal.show();
   }
 
-  async run(limit=null) {
+  async run(limit = null) {
     try {
       this.timer.start();
       this.limit = limit;
@@ -3050,21 +3074,22 @@ Exporter = class {
       this.getResults();
 
       if (!this.results || this.results.length == 0) {
-        error("Failed to download books.")
+        error("Failed to download books.");
         return;
       }
 
       this.timer.stop();
 
-      info(`Done. (${this.results.length} results, ${this.timer.minutes} minutes)`);
+      info(
+        `Done. (${this.results.length} results, ${this.timer.minutes} minutes)`,
+      );
 
       this.download(this.results);
-
     } catch (err) {
       error("Fatal error:", err, err.name, err.message);
     }
   }
-}
+};
 
 /**
  * runner.js
@@ -3072,5 +3097,8 @@ Exporter = class {
  */
 
 CONSOLE_OUTPUT = true;
-var exporter = new Exporter();
-await exporter.run();
+
+void (async function main() {
+  exporter = new Exporter();
+  await exporter.run();
+})();

@@ -10,14 +10,13 @@ TSVFile = class extends File {
   mimetype = "text/tsv";
   extension = "tsv";
 
-  constructor(records=null) {
+  constructor(records = null) {
     super();
     this.records = records;
   }
 
   get headers() {
-    if (!this.records || isEmpty(this.records))
-      return;
+    if (!this.records || isEmpty(this.records)) return null;
     if (!this.#headers) {
       this.#headers = Object.keys(this.records[0]).map((h) => this.sanitize(h));
     }
@@ -25,17 +24,17 @@ TSVFile = class extends File {
   }
 
   get rows() {
-    if (!this.records || isEmpty(this.records))
-      return;
+    if (!this.records || isEmpty(this.records)) return null;
     if (!this.#rows) {
-      this.#rows = this.records.map((row) => Object.values(row).map((v) => this.sanitize(v)));
+      this.#rows = this.records.map((row) =>
+        Object.values(row).map((v) => this.sanitize(v)),
+      );
     }
     return this.#rows;
   }
 
   get contents() {
-    if (!this.records || isEmpty(this.records))
-      return;
+    if (!this.records || isEmpty(this.records)) return null;
 
     let lines = [this.headers, ...this.rows];
     let text = lines.map((l) => l.join("\t")).join("\n") + "\n";
@@ -47,13 +46,11 @@ TSVFile = class extends File {
     text = String(text);
 
     return text
-        .replace(/\t|\v|\f|\u0009/g, " ")
-        .replace(/\r|\n/g, " ")
-        .replace(/\0/g, "")
-        .replace(/\\/g, "\\\\")
-        .replace(/\'/g, "\\'")
-        .replace(/\"/g, '\\"')
+      .replace(/\t|\v|\f/g, " ")
+      .replace(/\r|\n/g, " ")
+      .replace(/\0/g, "")
+      .replace(/\\/g, "\\\\")
+      .replace(/'/g, "\\'")
+      .replace(/"/g, '\\"');
   }
-
-
-}
+};

@@ -24,13 +24,13 @@ OrdersFetcher = class {
       this.years.splice(limit);
     }
 
-    dispatchEvent({years: this.years});
+    dispatchEvent({ years: this.years });
 
-    for (let year of this.years)  {
+    for (let year of this.years) {
       let timer = new Timer();
       timer.start();
 
-      dispatchEvent({year: year});
+      dispatchEvent({ year: year });
 
       let page_num = 1;
       let page_count;
@@ -49,23 +49,23 @@ OrdersFetcher = class {
 
         if (limit && running_count >= limit) {
           this.years.splice(this.years.indexOf(year));
-          dispatchEvent({years: this.years})
+          dispatchEvent({ years: this.years });
           break;
         }
-      } while (page_num <= page_count)
+      } while (page_num <= page_count);
       timer.stop();
-      dispatchEvent({timer: timer});
+      dispatchEvent({ timer: timer });
     }
 
-    dispatchEvent({percent: 1});
+    dispatchEvent({ percent: 1 });
   }
 
-  async populate(limit=null) {
+  async populate(limit = null) {
     if (limit) {
       this.pages.splice(limit, this.pages.length);
     }
 
-    dispatchEvent({total: this.pages.length});
+    dispatchEvent({ total: this.pages.length });
     let i = 0;
 
     for (let page of this.pages) {
@@ -80,22 +80,22 @@ OrdersFetcher = class {
 
       if (!page.doc) {
         await page.get();
-        dispatchEvent({page_count: page.page_count});
+        dispatchEvent({ page_count: page.page_count });
       } else {
-        dispatchEvent({page_count: page.page_count});
+        dispatchEvent({ page_count: page.page_count });
         await delay(500);
       }
 
       i++;
       timer.stop();
-      dispatchEvent({timer: timer});
+      dispatchEvent({ timer: timer });
     }
-    dispatchEvent({percent: 1});
+    dispatchEvent({ percent: 1 });
   }
 
   get count() {
-    if(!this.#count) {
-      this.#count = this.pages.reduce((sum, p) => sum + p.items.length, 0)
+    if (!this.#count) {
+      this.#count = this.pages.reduce((sum, p) => sum + p.items.length, 0);
     }
     return this.#count;
   }
@@ -118,4 +118,4 @@ OrdersFetcher = class {
   set items(value) {
     this.#items = value;
   }
-}
+};

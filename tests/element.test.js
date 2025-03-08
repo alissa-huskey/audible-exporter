@@ -2,29 +2,30 @@
  * @jest-environment jsdom
  */
 
-const $ = require("jquery");
-
 require("../src/dev.js");
 require("../src/util.js");
 require("../src/list.js");
 require("../src/element.js");
 
-
-describe("Element", function() {
+describe("Element", () => {
   beforeEach(() => {
-    document.body.innerHTML = (
-      '<div id="wrapper" class="container"><ul id="list">' +
-      '<li>a</li><li class="selected">b</li><li>c</li>' +
-      '</ul></div>'
-    );
+    document.body.innerHTML = `
+      <div id="wrapper" class="container">
+        <ul id="list">
+          <li>a</li>
+          <li class="selected">b</li>
+          <li>c</li>
+        </ul>
+      </div>"
+    `;
   });
 
-  test("Element()", function() {
+  test("Element()", () => {
     e = new Element();
     expect(e).toBeA(Element);
   });
 
-  test("Element(HTMLElement())", function() {
+  test("Element(HTMLElement())", () => {
     elm = document.getElementById("wrapper");
     element = new Element(elm);
 
@@ -33,31 +34,31 @@ describe("Element", function() {
     expect(element.element.attributes["class"].value).toBe("container");
   });
 
-  test("Element.create()", function() {
+  test("Element.create()", () => {
     e = Element.create("p");
-    expect(e.element.tagName).toBe("P")
+    expect(e.element.tagName).toBe("P");
 
-    e = Element.create("p", {style: "width: 200px; border: 2px;"});
-    expect(e.element.style.width).toBe("200px")
-    expect(e.element.style.border).toBe("2px")
+    e = Element.create("p", { style: "width: 200px; border: 2px;" });
+    expect(e.element.style.width).toBe("200px");
+    expect(e.element.style.border).toBe("2px");
 
-    e = Element.create("p", {style: {width: "500px", color: "blue"}});
-    expect(e.element.style.width).toBe("500px")
-    expect(e.element.style.color).toBe("blue")
+    e = Element.create("p", { style: { width: "500px", color: "blue" } });
+    expect(e.element.style.width).toBe("500px");
+    expect(e.element.style.color).toBe("blue");
 
-    e = Element.create("p", {style: "width: 200px;"});
-    expect(e.element.style.width).toBe("200px")
+    e = Element.create("p", { style: "width: 200px;" });
+    expect(e.element.style.width).toBe("200px");
 
-    e = Element.create("p", {id: "summary"});
-    expect(e.element.tagName).toBe("P")
-    expect(e.element.id).toBe("summary")
+    e = Element.create("p", { id: "summary" });
+    expect(e.element.tagName).toBe("P");
+    expect(e.element.id).toBe("summary");
 
     e = Element.create("<p>hello</p>");
-    expect(e.element.tagName).toBe("P")
-    expect(e.element.innerHTML).toBe("hello")
+    expect(e.element.tagName).toBe("P");
+    expect(e.element.innerHTML).toBe("hello");
   });
 
-  test("Element.gt()", function() {
+  test("Element.gt()", () => {
     items = Element.gt("ul");
 
     expect(items).toBeA(List);
@@ -65,7 +66,7 @@ describe("Element", function() {
     expect(items[0].element.tagName).toBe("UL");
   });
 
-  test("Element.gc()", function() {
+  test("Element.gc()", () => {
     items = Element.gc("selected");
 
     expect(items).toBeA(List);
@@ -73,26 +74,28 @@ describe("Element", function() {
     expect(items[0].element.tagName).toBe("LI");
   });
 
-  test("Element.gi()", function() {
+  test("Element.gi()", () => {
     e = Element.gi("list");
 
     expect(e).toBeA(Element);
     expect(e.element.tagName).toBe("UL");
   });
 
-  test("getter", function() {
+  test("getter", () => {
     element = new Element(document.getElementById("list"));
     expect(element.tagName).toBe("UL");
   });
 
-  test("setter", function() {
+  test("setter", () => {
     element = new Element(document.getElementById("list"));
     element.id = "nav";
     expect(element.element.id).toBe("nav");
   });
 
-  test("Element.from_html()", function() {
-    element = Element.from_html("<html><head></head><body><p>hello</p></body></html>");
+  test("Element.from_html()", () => {
+    element = Element.from_html(
+      "<html><head></head><body><p>hello</p></body></html>",
+    );
     expect(element.element.tagName).toBe("HTML");
     expect(element.element.lastChild?.lastChild?.tagName).toBe("P");
     expect(element.element.lastChild?.lastChild?.innerHTML).toBe("hello");
@@ -103,7 +106,7 @@ describe("Element", function() {
     expect(element.element.lastChild?.lastChild?.innerHTML).toBe("hello");
   });
 
-  test(".gi()", function() {
+  test(".gi()", () => {
     element = new Element(document.getElementById("wrapper"));
     res = element.gi("list");
 
@@ -111,42 +114,42 @@ describe("Element", function() {
     expect(res.element.tagName).toBe("UL");
   });
 
-  test(".gt()", function() {
+  test(".gt()", () => {
     element = new Element(document.getElementById("wrapper"));
-    res = element.gt("li")
+    res = element.gt("li");
 
     expect(res.constructor?.name).toBe("List");
     expect(res.length).toBe(3);
-    expect(res[0].constructor?.name).toBe("Element")
+    expect(res[0].constructor?.name).toBe("Element");
   });
 
-  test(".gc()", function() {
+  test(".gc()", () => {
     element = new Element(document.getElementById("wrapper"));
 
-    res = element.gc("selected")
+    res = element.gc("selected");
 
     expect(res.constructor?.name).toBe("List");
-    expect(res[0].attributes["class"].value).toBe("selected")
+    expect(res[0].attributes["class"].value).toBe("selected");
   });
 
-  test(".gtf()", function() {
+  test(".gtf()", () => {
     element = new Element(document.getElementById("wrapper"));
-    res = element.gtf("li")
+    res = element.gtf("li");
 
     expect(res.constructor?.name).toBe("Element");
-    expect(res.element.tagName).toBe("LI")
+    expect(res.element.tagName).toBe("LI");
   });
 
-  test(".gc()", function() {
+  test(".gc()", () => {
     element = new Element(document.getElementById("wrapper"));
 
-    res = element.gcf("selected")
+    res = element.gcf("selected");
 
     expect(res.constructor?.name).toBe("Element");
-    expect(res.element.attributes["class"].value).toBe("selected")
+    expect(res.element.attributes["class"].value).toBe("selected");
   });
 
-  test(".qsf()", function() {
+  test(".qsf()", () => {
     element = new Element(document.getElementById("wrapper"));
     res = element.qsf("li");
 
@@ -155,7 +158,7 @@ describe("Element", function() {
     expect(res.innerHTML).toBe("a");
   });
 
-  test(".qs()", function() {
+  test(".qs()", () => {
     element = new Element(document.getElementById("wrapper"));
     res = element.qs("li");
 
@@ -163,7 +166,7 @@ describe("Element", function() {
     expect(res.length).toBe(3);
   });
 
-  test(".set()", function() {
+  test(".set()", () => {
     e = new Element(document.createElement("h1"));
     e.set("id", "title");
 
@@ -174,5 +177,4 @@ describe("Element", function() {
 
     // e.set({id: "title"})
   });
-
 });

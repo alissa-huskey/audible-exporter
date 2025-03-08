@@ -4,17 +4,10 @@
  */
 
 LibraryBookRow = class extends Parser {
-  _fields = [
-    "id",
-    "url",
-    "title",
-    "author",
-    "narrator",
-    "series",
-  ];
+  _fields = ["id", "url", "title", "author", "narrator", "series"];
   _identifers = ["page_num", "row_num"];
 
-  constructor(doc=null, page_num=null, row_num=null) {
+  constructor(doc = null, page_num = null, row_num = null) {
     super();
     this.doc = doc;
     this.page_num = page_num;
@@ -30,10 +23,9 @@ LibraryBookRow = class extends Parser {
   }
 
   get url() {
-    return this.ul.gcf("bc-size-headline3")
-      .parentElement
-      .attributes["href"]?.value
-      .replace(/\?.+/, "");
+    return this.ul
+      .gcf("bc-size-headline3")
+      .parentElement.attributes["href"]?.value.replace(/\?.+/, "");
   }
 
   get title() {
@@ -52,4 +44,4 @@ LibraryBookRow = class extends Parser {
   get series() {
     return this.ul.qsf(".seriesLabel a")?.innerHTML?.trim();
   }
-}
+};

@@ -23,7 +23,7 @@ StatusNotifier = class extends DOM {
   estimate_padding = 1.05;
   event_name = "update-ae-notifier";
 
-  times = []
+  times = [];
 
   selectors = {
     wrapper: "ae-notifier",
@@ -46,11 +46,14 @@ StatusNotifier = class extends DOM {
    */
   get wrapper() {
     if (!this.#wrapper) {
-      this.#wrapper = Element.create("div", {id: this.selectors.wrapper, style: {
-        width: `${this.bar_width}px`,
-        left: `${(this.body_width - this.bar_width) / 2}px`,
-        'z-index': new Date().getTime(),
-      }})
+      this.#wrapper = Element.create("div", {
+        id: this.selectors.wrapper,
+        style: {
+          width: `${this.bar_width}px`,
+          left: `${(this.body_width - this.bar_width) / 2}px`,
+          "z-index": new Date().getTime(),
+        },
+      });
 
       this.wrapper.element.appendChild(this.bar.element);
       this.wrapper.element.appendChild(this.context.element);
@@ -65,7 +68,7 @@ StatusNotifier = class extends DOM {
    */
   get bar() {
     if (!this.#bar) {
-      this.#bar = Element.create("div", {id: this.selectors.bar});
+      this.#bar = Element.create("div", { id: this.selectors.bar });
       this.#bar.element.appendChild(this.messages.element);
     }
     return this.#bar;
@@ -81,9 +84,7 @@ StatusNotifier = class extends DOM {
       this.#messages = Element.create("div", {
         id: this.selectors.messages,
         class: "ae-row",
-        style: {
-          width: `${this.bar_width}px`,
-        }
+        style: { width: `${this.bar_width}px` },
       });
       this.#messages.element.appendChild(this.status.element);
       this.#messages.element.appendChild(this.percentage.element);
@@ -98,7 +99,7 @@ StatusNotifier = class extends DOM {
    */
   get status() {
     if (!this.#status) {
-      this.#status = Element.create("div", {id: this.selectors.status});
+      this.#status = Element.create("div", { id: this.selectors.status });
     }
     return this.#status;
   }
@@ -108,7 +109,9 @@ StatusNotifier = class extends DOM {
    */
   get percentage() {
     if (!this.#percentage) {
-      this.#percentage = Element.create("span", {id: this.selectors.percentage});
+      this.#percentage = Element.create("span", {
+        id: this.selectors.percentage,
+      });
     }
     return this.#percentage;
   }
@@ -138,7 +141,7 @@ StatusNotifier = class extends DOM {
    */
   get steps() {
     if (!this.#steps) {
-      this.#steps = Element.create("span", {id: this.selectors.steps});
+      this.#steps = Element.create("span", { id: this.selectors.steps });
     }
     return this.#steps;
   }
@@ -150,7 +153,7 @@ StatusNotifier = class extends DOM {
    */
   get estimate() {
     if (!this.#estimate) {
-      this.#estimate = Element.create("span", {id: this.selectors.estimate});
+      this.#estimate = Element.create("span", { id: this.selectors.estimate });
     }
     return this.#estimate;
   }
@@ -386,7 +389,7 @@ StatusNotifier = class extends DOM {
    * @returns {number}
    */
   get per_item() {
-    let total = this.times.reduce((sum, t) =>  sum + t.elapsed, 0);
+    let total = this.times.reduce((sum, t) => sum + t.elapsed, 0);
     return total / this.times.length;
   }
 
@@ -396,7 +399,7 @@ StatusNotifier = class extends DOM {
    * @return {number}
    */
   get ms_left() {
-    return (this.remaining * this.per_item) * this.estimate_padding;
+    return this.remaining * this.per_item * this.estimate_padding;
   }
 
   /**
@@ -405,7 +408,7 @@ StatusNotifier = class extends DOM {
    * @returns {string}
    */
   get minutes_left() {
-    let minutes = ((this.ms_left / 1000) / 60).toFixed(1);
+    let minutes = (this.ms_left / 1000 / 60).toFixed(1);
     if (minutes == parseInt(minutes)) {
       minutes = parseInt(minutes).toString();
     }
@@ -508,4 +511,4 @@ StatusNotifier = class extends DOM {
     this.#status = null;
     this.#percentage = null;
   }
-}
+};

@@ -2,8 +2,6 @@
  * @jest-environment jsdom
  */
 
-const $ = require("jquery");
-
 require("../src/dev.js");
 require("../src/util.js");
 require("../src/element.js");
@@ -11,19 +9,18 @@ require("../src/list.js");
 require("../src/parser.js");
 require("../src/purchase.js");
 
-describe("Purchase", function() {
-
+describe("Purchase", () => {
   let row = new Purchase(fixtureElement("purchase.html", "a"));
 
-  test("new Purchase()", function() {
+  test("new Purchase()", () => {
     expect(row).toBeA(Purchase);
   });
 
-  test("new Purchase(doc)", function() {
+  test("new Purchase(doc)", () => {
     expect(row.doc).toBeA(Element);
   });
 
-  test(".data()", function() {
+  test(".data()", () => {
     let data = {
       id: "B0CQ3759C3",
       order_id: "D01-7379715-3760239",
@@ -35,5 +32,4 @@ describe("Purchase", function() {
 
     expect(row.data()).toEqual(data);
   });
-
 });

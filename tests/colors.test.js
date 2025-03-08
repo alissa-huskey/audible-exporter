@@ -10,14 +10,13 @@ require("../src/element.js");
 require("../src/dom.js");
 require("../src/colors.js");
 
-describe("Colors", function() {
-
-  test("new Colors()", function() {
+describe("Colors", () => {
+  test("new Colors()", () => {
     let element = new Colors();
     expect(element).toBeA(Colors);
   });
 
-  test(".create()", function() {
+  test(".create()", () => {
     let element = new Colors();
     element.create();
 
@@ -25,14 +24,12 @@ describe("Colors", function() {
     expect(window.ae.colors).toEqual(element);
   });
 
-  test(".remove()", function() {
+  test(".remove()", () => {
     window.ae.colors = new Colors();
 
     let element = new Colors();
     element.remove();
 
-
     expect(window.ae.colors).toBeNull();
   });
-
 });

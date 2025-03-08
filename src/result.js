@@ -28,7 +28,7 @@ Result = class {
     categories: ["details"],
   };
 
-  constructor(library=null, details=null, order=null) {
+  constructor(library = null, details = null, order = null) {
     this.library = library || {};
     this.details = details || {};
     this.order = order || {};
@@ -45,9 +45,8 @@ Result = class {
       if (!["null", "undefined"].includes(typeof value)) {
         arr.splice(1);
         return value;
-
       } else {
-      // otherwise, return ""
+        // otherwise, return ""
         return fallback;
       }
     }, "");
@@ -57,7 +56,7 @@ Result = class {
     return Object.fromEntries(
       Object.keys(this.#headers).map((key) => {
         return [key, this.first(key)];
-      })
+      }),
     );
   }
-}
+};

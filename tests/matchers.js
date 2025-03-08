@@ -1,5 +1,4 @@
-const {format: prettyFormat} = require('pretty-format');
-
+const { format: prettyFormat } = require("pretty-format");
 
 /**
  * Return the class name of an object.
@@ -17,7 +16,7 @@ function getClass(obj) {
 function pp(obj) {
   let padding = "\n" + " ".repeat(10);
   let text = padding + prettyFormat(obj).replaceAll("\n", padding);
-  return text
+  return text;
 }
 
 /**
@@ -30,9 +29,9 @@ function pp(obj) {
  */
 function isInstance(value, klass) {
   if (typeof klass == "string") {
-    return (value.constructor.name == klass);
+    return value.constructor.name == klass;
   } else {
-    return (value instanceof klass);
+    return value instanceof klass;
   }
 }
 
@@ -63,11 +62,11 @@ function rcvdStyle(u, value) {
  * @returns {string}
  */
 function exptStyle(u, klass) {
-   if (typeof klass == "string") {
-     return u.printExpected(klass) ;
-   } else {
-     return u.EXPECTED_COLOR(klass.name);
-   }
+  if (typeof klass == "string") {
+    return u.printExpected(klass);
+  } else {
+    return u.EXPECTED_COLOR(klass.name);
+  }
 }
 
 /**
@@ -77,15 +76,15 @@ function exptStyle(u, klass) {
  * @param  {string, type}  klass   The expected class.
  */
 function toBeA(value, klass) {
-  let assertion = this.utils.matcherHint(
-    "toBeA", undefined, undefined, {isNot: this.isNot}
-  );
+  let assertion = this.utils.matcherHint("toBeA", undefined, undefined, {
+    isNot: this.isNot,
+  });
   let received = rcvdStyle(this.utils, value);
   let expected = exptStyle(this.utils, klass);
-  let claim = (this.isNot ? "not " : "");
+  let claim = this.isNot ? "not " : "";
   let pass = isInstance(value, klass);
 
-  let message=  `
+  let message = `
     ${assertion}
 
     Expected type: ${claim}${expected}
@@ -94,7 +93,7 @@ function toBeA(value, klass) {
       ${pp(value)}
   `;
 
-  return {message: () => message, pass: pass}
+  return { message: () => message, pass: pass };
 }
 
 expect.extend({ toBeA });

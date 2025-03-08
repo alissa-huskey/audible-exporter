@@ -15,7 +15,7 @@ OrderPage = class extends Page {
     title: "data-order-item-name",
     author: "data-order-item-author",
   };
-  #valid_date_ranges = ["last_90_days", "last_180_days", "last_365_days"]
+  #valid_date_ranges = ["last_90_days", "last_180_days", "last_365_days"];
 
   #orders = {};
   #purchases = {};
@@ -27,7 +27,9 @@ OrderPage = class extends Page {
     let success = true;
     for (let a in attrs) {
       if (!this[attrs[a]]) {
-        let source = new Error().stack.split("\n")[2].match(/at (.*)\.require \[as (.*)] \(.*[/](.*)\)/);
+        let source = new Error().stack
+          .split("\n")[2]
+          .match(/at (.*)\.require \[as (.*)] \(.*[/](.*)\)/);
         let prefix = source ? `<${source[3]} ${source[1]}.${source[2]}> ` : "";
         error(`${prefix}Missing required attribute: ${attrs[a]}.`);
         success = false;
@@ -36,10 +38,14 @@ OrderPage = class extends Page {
     return success;
   }
 
-  constructor(year_or_doc=null, page_num=null, per_page=null) {
+  constructor(year_or_doc = null, page_num = null, per_page = null) {
     super();
     this.doc = null;
-    if ((typeof year_or_doc == "number" || this.#valid_date_ranges.includes(year_or_doc)) && typeof page_num == "number") {
+    if (
+      (typeof year_or_doc == "number" ||
+        this.#valid_date_ranges.includes(year_or_doc)) &&
+      typeof page_num == "number"
+    ) {
       this.year = year_or_doc;
       this.page_num = page_num;
     } else if (year_or_doc) {
@@ -58,7 +64,9 @@ OrderPage = class extends Page {
 
   get year() {
     if (!this.#year && this.doc) {
-      this.#year = this.doc.qsf("#ui-it-purchase-history-date-filter option:checked")?.value;
+      this.#year = this.doc.qsf(
+        "#ui-it-purchase-history-date-filter option:checked",
+      )?.value;
     }
     return tryInt(this.#year);
   }
@@ -69,7 +77,10 @@ OrderPage = class extends Page {
 
   get page_num() {
     if (!this.#page_num && this.doc) {
-      this.#page_num = this.doc.qsf("span.purchase-history-pagination-button")?.innerHTML?.trim() || 1;
+      this.#page_num =
+        this.doc
+          .qsf("span.purchase-history-pagination-button")
+          ?.innerHTML?.trim() || 1;
     }
     return tryInt(this.#page_num);
   }
@@ -79,10 +90,8 @@ OrderPage = class extends Page {
   }
 
   get page_count() {
-    if (!this.require("doc")) {
-      return;
-    }
-    let link = this.doc.qs("a.purchase-history-pagination-button").last
+    if (!this.require("doc")) return null;
+    let link = this.doc.qs("a.purchase-history-pagination-button").last;
     let count = link?.innerHTML.trim() || 1;
     return parseInt(count);
   }
@@ -115,7 +124,7 @@ OrderPage = class extends Page {
 
   get purchases() {
     if (this.doc && isEmpty(this.#purchases)) {
-      let links = (this.doc.qs("a[data-order-item-id]"));
+      let links = this.doc.qs("a[data-order-item-id]");
       let purchases = links.map((a) => new Purchase(a).data());
       this.#purchases = purchases;
     }
@@ -146,4 +155,4 @@ OrderPage = class extends Page {
     }
     return this.#items;
   }
-}
+};

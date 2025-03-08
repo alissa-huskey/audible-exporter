@@ -29,7 +29,7 @@ LibraryNotifier = class extends StatusNotifier {
       return "Retrieving library...";
     }
 
-    let message = `Retrieving library: page ${this.item_no}`
+    let message = `Retrieving library: page ${this.item_no}`;
     if (this.total) {
       message += ` of ${this.total}`;
     } else {
@@ -38,4 +38,4 @@ LibraryNotifier = class extends StatusNotifier {
 
     return message;
   }
-}
+};

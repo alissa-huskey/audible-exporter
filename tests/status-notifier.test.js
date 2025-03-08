@@ -12,10 +12,8 @@ require("../src/dom.js");
 require("../src/colors.js");
 require("../src/status-notifier.js");
 
-
-describe("StatusNotifier", function() {
-
-  test("new StatusNotifier", function() {
+describe("StatusNotifier", () => {
+  test("new StatusNotifier", () => {
     let notifier = new StatusNotifier();
 
     expect(notifier).toBeA(StatusNotifier);
@@ -23,9 +21,8 @@ describe("StatusNotifier", function() {
 
   test.todo("listen(event)");
 
-  describe("Progress calculation", function() {
-
-    test(".item_no =", function() {
+  describe("Progress calculation", () => {
+    test(".item_no =", () => {
       jest.spyOn(StatusNotifier.prototype, "total", "get").mockReturnValue(100);
 
       let notifier = new StatusNotifier();
@@ -36,8 +33,10 @@ describe("StatusNotifier", function() {
       expect(notifier.text).toBe(notifier.message);
     });
 
-    test(".total =", function() {
-      jest.spyOn(StatusNotifier.prototype, "item_no", "get").mockReturnValue(10);
+    test(".total =", () => {
+      jest
+        .spyOn(StatusNotifier.prototype, "item_no", "get")
+        .mockReturnValue(10);
 
       let notifier = new StatusNotifier();
       notifier.total = 100;
@@ -48,7 +47,7 @@ describe("StatusNotifier", function() {
       expect().toBe();
     });
 
-    test(".ratio", function() {
+    test(".ratio", () => {
       let notifier = new StatusNotifier();
       expect(notifier.ratio).toBeNull();
 
@@ -58,118 +57,118 @@ describe("StatusNotifier", function() {
       notifier.item_no = 10;
       expect(notifier.ratio).toBe(0.1);
     });
-
   });
 
-  describe("Elements", function() {
+  describe("Elements", () => {
     let notifier = new StatusNotifier();
+    let s = notifier.selectors;
 
-    test(".status", function() {
+    test(".status", () => {
       let status = $(notifier.status.element)[0];
 
       expect(status.tagName).toBe("DIV");
     });
 
-    test(".percentage", function() {
+    test(".percentage", () => {
       let percentage = $(notifier.percentage.element)[0];
 
       expect(percentage.tagName).toBe("SPAN");
     });
 
-    test(".steps", function() {
+    test(".steps", () => {
       let steps = $(notifier.steps.element)[0];
 
       expect(steps.tagName).toBe("SPAN");
     });
 
-    test(".estimate", function() {
+    test(".estimate", () => {
       let estimate = $(notifier.estimate.element)[0];
 
       expect(estimate.tagName).toBe("SPAN");
     });
 
-    test(".messages", function() {
+    test(".messages", () => {
       let messages = $(notifier.messages.element)[0];
 
       expect(messages.tagName).toBe("DIV");
 
-      expect($(messages).find(`#${notifier.selectors.status}`)[0]?.tagName).toBe("DIV");
-      expect($(messages).find(`#${notifier.selectors.percentage}`)[0]?.tagName).toBe("SPAN");
+      expect($(messages).find(`#${s.status}`)[0]?.tagName).toBe("DIV");
+      expect($(messages).find(`#${s.percentage}`)[0]?.tagName).toBe("SPAN");
     });
 
-    test(".bar", function() {
+    test(".bar", () => {
       let bar = $(notifier.bar.element)[0];
 
       expect(bar.tagName).toBe("DIV");
 
-      expect($(bar).find(`#${notifier.selectors.messages}`)[0]?.tagName).toBe("DIV");
+      expect($(bar).find(`#${s.messages}`)[0]?.tagName).toBe("DIV");
     });
 
-    test(".context", function() {
+    test(".context", () => {
       let context = $(notifier.context.element)[0];
 
       expect(context.tagName).toBe("DIV");
 
-      expect($(context).find(`#${notifier.selectors.steps}`)[0]?.tagName).toBe("SPAN");
-      expect($(context).find(`#${notifier.selectors.estimate}`)[0]?.tagName).toBe("SPAN");
+      expect($(context).find(`#${s.steps}`)[0]?.tagName).toBe("SPAN");
+      expect($(context).find(`#${s.estimate}`)[0]?.tagName).toBe("SPAN");
     });
 
-    test(".wrapper", function() {
+    test(".wrapper", () => {
       let wrapper = $(notifier.wrapper.element)[0];
 
       expect(wrapper.tagName).toBe("DIV");
 
-      expect($(wrapper).find(`#${notifier.selectors.bar}`)[0]?.tagName).toBe("DIV");
-      expect($(wrapper).find(`#${notifier.selectors.context}`)[0]?.tagName).toBe("DIV");
+      expect($(wrapper).find(`#${s.bar}`)[0]?.tagName).toBe("DIV");
+      expect($(wrapper).find(`#${s.context}`)[0]?.tagName).toBe("DIV");
     });
-
   });
 
-  describe("Content attributes", function() {
+  describe("Content attributes", () => {
     let notifier = new StatusNotifier();
 
     afterEach(() => {
       notifier.reset();
     });
 
-    test(".text =", function() {
-      notifier.text = "oh hai."
+    test(".text =", () => {
+      notifier.text = "oh hai.";
       expect(notifier.status.innerText).toBe("oh hai.");
     });
 
-    test(".percent =", function() {
+    test(".percent =", () => {
       document.body.getBoundingClientRect = jest.fn(() => ({
         width: 1000,
-      }))
+      }));
 
       notifier.percent = 0.2;
       expect(notifier.percentage.innerText).toBe("20%");
       expect(notifier.bar.style.width).toBe("160px");
     });
 
-    test(".step =", function() {
+    test(".step =", () => {
       notifier.step = "Step 2 of 5: Purchases since 2020";
-      expect(notifier.steps.innerText).toBe("Step 2 of 5: Purchases since 2020");
+      expect(notifier.steps.innerText).toBe(
+        "Step 2 of 5: Purchases since 2020",
+      );
     });
 
-    test(".time =", function() {
-      notifier.time = "about 2.5 minutes remaining"
+    test(".time =", () => {
+      notifier.time = "about 2.5 minutes remaining";
       expect(notifier.estimate.innerText).toBe("about 2.5 minutes remaining");
     });
 
-    test(".step_text", function() {
+    test(".step_text", () => {
       expect(notifier.step_text).toBe("");
 
       notifier.step_no = 1;
       expect(notifier.step_text).toBe("[Step 1 of 4]");
 
-      notifier.step_desc = "Washing dishes"
+      notifier.step_desc = "Washing dishes";
       expect(notifier.step_text).toBe("[Step 1 of 4: Washing dishes]");
     });
-
   });
 
-  describe("Time estimation", function() {
+  describe("Time estimation", () => {
     let timers = [new Timer(0, 1000), new Timer(0, 1500), new Timer(0, 2000)];
     let notifier = new StatusNotifier();
 
@@ -177,32 +176,32 @@ describe("StatusNotifier", function() {
       notifier.times = [];
     });
 
-    test(".timer =", function() {
+    test(".timer =", () => {
       notifier.timer = timers[0];
       expect(notifier.times).toHaveLength(1);
       expect(notifier.times[0]).toBe(timers[0]);
     });
 
-    test(".remaining", function() {
+    test(".remaining", () => {
       notifier.total = 100;
       notifier.item_no = 10;
       expect(notifier.remaining).toBe(90);
     });
 
-    test(".per_item", function() {
+    test(".per_item", () => {
       notifier.times = timers;
       expect(notifier.per_item).toBe(1500);
     });
 
-    test(".ms_left", function() {
+    test(".ms_left", () => {
       notifier.total = 100;
       notifier.item_no = 10;
       notifier.times = timers;
 
-      expect(notifier.ms_left).toBe((135000 * notifier.estimate_padding));
+      expect(notifier.ms_left).toBe(135000 * notifier.estimate_padding);
     });
 
-    test(".minutes_left", function() {
+    test(".minutes_left", () => {
       notifier.times = timers;
       notifier.total = 100;
       notifier.item_no = 10;
@@ -212,7 +211,7 @@ describe("StatusNotifier", function() {
       expect(notifier.minutes_left).toBe("2");
     });
 
-    test(".time_left", function() {
+    test(".time_left", () => {
       let notifier = new StatusNotifier();
       expect(notifier.time_left).toBe("");
 
@@ -229,28 +228,27 @@ describe("StatusNotifier", function() {
       notifier.times = [new Timer(0, timePerItem(notifier, 1))];
       expect(notifier.time_left).toBe("about a minute remaining");
 
-      notifier.times = [new Timer(0, timePerItem(notifier, .5))];
+      notifier.times = [new Timer(0, timePerItem(notifier, 0.5))];
       expect(notifier.time_left).toBe("less than a minute remaining");
     });
-
   });
 
-  describe("DOM", function() {
-
-    test(".create()", function() {
+  describe("DOM", () => {
+    test(".create()", () => {
       let notifier = new StatusNotifier();
+      let s = notifier.selectors;
       notifier.create();
 
-      expect($(`#${notifier.selectors.wrapper}`)).toHaveLength(1);
+      expect($(`#${s.wrapper}`)).toHaveLength(1);
       expect($(`#${new Colors().selectors.wrapper}`)).toHaveLength(1);
 
       expect(window.ae.notifier).toEqual(notifier);
       expect(window.ae.colors).not.toBeNull();
     });
 
-    test(".reset()", function() {
+    test(".reset()", () => {
       let notifier = new StatusNotifier();
-      notifier.percent = .5;
+      notifier.percent = 0.5;
       notifier.text = "loading...";
       notifier.step = "Step 1 of 4: Retrieving purchase history";
       notifier.time = "less than a minute remaining";
@@ -263,30 +261,29 @@ describe("StatusNotifier", function() {
       expect(notifier.estimate.innerText).toBe("");
     });
 
-    test(".remove()", function() {
+    test(".remove()", () => {
       let notifier = new StatusNotifier();
+      let s = notifier.selectors;
       notifier.create();
       notifier.remove();
 
       expect(window.ae.notifier).toBeNull;
-      expect($(`#${notifier.selectors.wrapper}`).length).toBe(0);
+      expect($(`#${s.wrapper}`).length).toBe(0);
     });
 
-    test(".hide()", function() {
+    test(".hide()", () => {
       let notifier = new StatusNotifier();
       notifier.hide();
 
       expect(notifier.wrapper.classList).toContain("hidden");
     });
 
-    test(".show()", function() {
+    test(".show()", () => {
       let notifier = new StatusNotifier();
       notifier.wrapper.classList.add("hidden");
       notifier.show();
 
       expect(notifier.wrapper.classList).not.toContain("hidden");
     });
-
   });
-
 });

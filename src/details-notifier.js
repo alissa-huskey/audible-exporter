@@ -37,4 +37,4 @@ DetailsNotifier = class extends StatusNotifier {
 
     return `Retrieving book ${this.item_no} of ${this.total}`;
   }
-}
+};

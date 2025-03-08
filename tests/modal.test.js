@@ -12,15 +12,14 @@ require("../src/dom.js");
 require("../src/colors.js");
 require("../src/modal.js");
 
-
-describe("Modal", function() {
+describe("Modal", () => {
   let modal = new Modal();
 
-  test("new Modal", function() {
+  test("new Modal", () => {
     expect(modal).toBeA(Modal);
   });
 
-  test(".create()", function() {
+  test(".create()", () => {
     modal.create();
 
     modals = $(`.${modal.selectors.wrapper}`);
@@ -34,23 +33,23 @@ describe("Modal", function() {
     expect(window.ae.colors).toBeA(Colors);
   });
 
-  test("elements", function() {
+  test("elements", () => {
     expect(modal.wrapper).toBeA(Element);
     expect(modal.close_btn).toBeA(Element);
     expect(modal.dl_btn).toBeA(Element);
   });
 
-  test("show", function() {
+  test("show", () => {
     modal.show();
     expect(modal.wrapper.style.display).toBe("block");
   });
 
-  test("hide", function() {
+  test("hide", () => {
     modal.hide();
     expect(modal.wrapper.style.display).toBe("none");
   });
 
-  test(".file =", function() {
+  test(".file =", () => {
     let file = {
       filename: "export.json",
       url: "blob:https://www.audible.com/9f6b4e9f-cd4e-4a60-b302-e8dbd5a485ec",
@@ -65,5 +64,4 @@ describe("Modal", function() {
     expect(a.href).toBe(file.url);
     expect(a.download).toBe(file.filename);
   });
-
 });

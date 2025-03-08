@@ -8,7 +8,7 @@ OrderRow = class extends Parser {
 
   _identifers = [];
 
-  constructor(doc=null) {
+  constructor(doc = null) {
     super();
     this.doc = doc;
   }
@@ -22,10 +22,12 @@ OrderRow = class extends Parser {
   }
 
   get date() {
-    return this.doc.qsf(".ui-it-purchasehistory-item-purchasedate").innerHTML?.trim();
+    return this.doc
+      .qsf(".ui-it-purchasehistory-item-purchasedate")
+      .innerHTML?.trim();
   }
 
   get total() {
     return this.doc.qsf(".ui-it-purchasehistory-item-total div").innerHTML;
   }
-}
+};

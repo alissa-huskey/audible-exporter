@@ -4,8 +4,7 @@
  */
 
 Exporter = class {
-
-  constructor(limit=null) {
+  constructor(limit = null) {
     this.limit = limit;
     this.timer = new Timer();
     this.notifier = new StatusNotifier();
@@ -30,7 +29,9 @@ Exporter = class {
     await delay(1000);
     timer.stop();
 
-    info(`getPurchaseHistory() took ${timer.minutes} minutes (${timer.seconds} seconds).`)
+    info(
+      `getPurchaseHistory() took ${timer.minutes} minutes (${timer.seconds} seconds).`,
+    );
   }
 
   async getOrders() {
@@ -40,7 +41,7 @@ Exporter = class {
     this.notifier.remove();
     this.notifier = new OrderNotifier(
       this.orders.pages.length,
-      this.orders.years
+      this.orders.years,
     );
     this.notifier.create();
 
@@ -51,7 +52,9 @@ Exporter = class {
     await delay(1000);
 
     timer.stop();
-    info(`getOrders() took ${timer.minutes} minutes (${timer.seconds} seconds).`)
+    info(
+      `getOrders() took ${timer.minutes} minutes (${timer.seconds} seconds).`,
+    );
     return this.orders.items;
   }
 
@@ -68,7 +71,9 @@ Exporter = class {
 
     await delay(1000);
     timer.stop();
-    info(`getLibrary() took ${timer.minutes} minutes (${timer.seconds} seconds).`)
+    info(
+      `getLibrary() took ${timer.minutes} minutes (${timer.seconds} seconds).`,
+    );
   }
 
   async getBookDetails() {
@@ -85,7 +90,9 @@ Exporter = class {
     log_table("details", this.details.books);
     await delay(1500);
     timer.stop();
-    info(`getBookDetails() took ${timer.minutes} minutes (${timer.seconds} seconds).`)
+    info(
+      `getBookDetails() took ${timer.minutes} minutes (${timer.seconds} seconds).`,
+    );
   }
 
   getResults() {
@@ -109,10 +116,10 @@ Exporter = class {
     this.notifier.remove();
     let file = new TSVFile(books);
     this.modal.file = file;
-    this.modal.show()
+    this.modal.show();
   }
 
-  async run(limit=null) {
+  async run(limit = null) {
     try {
       this.timer.start();
       this.limit = limit;
@@ -128,18 +135,19 @@ Exporter = class {
       this.getResults();
 
       if (!this.results || this.results.length == 0) {
-        error("Failed to download books.")
+        error("Failed to download books.");
         return;
       }
 
       this.timer.stop();
 
-      info(`Done. (${this.results.length} results, ${this.timer.minutes} minutes)`);
+      info(
+        `Done. (${this.results.length} results, ${this.timer.minutes} minutes)`,
+      );
 
       this.download(this.results);
-
     } catch (err) {
       error("Fatal error:", err, err.name, err.message);
     }
   }
-}
+};

@@ -7,35 +7,34 @@ require("../src/util.js");
 require("../src/file.js");
 require("../src/tsv-file.js");
 
-
-describe("TSVFile", function() {
-  test("new TSVFile()", function() {
+describe("TSVFile", () => {
+  test("new TSVFile()", () => {
     let file = new TSVFile();
     expect(file).toBeA(TSVFile);
 
-    let records = [{a: 1}]
+    let records = [{ a: 1 }];
     file = new TSVFile(records);
     expect(file.records).toEqual(records);
   });
 
-  test(".filename", function() {
+  test(".filename", () => {
     let file = new TSVFile();
     expect(file.filename).toMatch(/^audible_\d+\.tsv$/);
-  })
+  });
 
-  test(".headers", function() {
-    let records = [{a: 1, b: 2, c: 3}]
+  test(".headers", () => {
+    let records = [{ a: 1, b: 2, c: 3 }];
     let file = new TSVFile(records);
     expect(file.headers).toEqual(["a", "b", "c"]);
-  })
+  });
 
-  test(".rows", function() {
-    let records = [{a: 1, b: 2, c: 3}]
+  test(".rows", () => {
+    let records = [{ a: 1, b: 2, c: 3 }];
     let file = new TSVFile(records);
     expect(file.rows).toEqual([["1", "2", "3"]]);
-  })
+  });
 
-  test(".sanitize()", function() {
+  test(".sanitize()", () => {
     let file = new TSVFile();
 
     expect(file.sanitize(1)).toEqual("1");
@@ -52,22 +51,22 @@ describe("TSVFile", function() {
     expect(file.sanitize("a \u0009 b \u0009 c")).toBe("a   b   c");
   });
 
-  test(".contents", function() {
-    let records = [{a: 1, b: 2, c: 3}]
+  test(".contents", () => {
+    let records = [{ a: 1, b: 2, c: 3 }];
     let file = new TSVFile(records);
     expect(file.contents).toEqual("a\tb\tc\n1\t2\t3\n");
-  })
+  });
 
-  test(".blob", function() {
-    let records = [{a: 1, b: 2, c: 3}]
+  test(".blob", () => {
+    let records = [{ a: 1, b: 2, c: 3 }];
     let file = new TSVFile(records);
     let blob = file.blob;
     expect(blob).toBeA(Blob);
     expect(blob.type).toBe("text/tsv");
-  })
+  });
 
-  test(".url", function() {
-    let file = new TSVFile([{a: 1, b: 2, c: 3}]);
+  test(".url", () => {
+    let file = new TSVFile([{ a: 1, b: 2, c: 3 }]);
     expect(file.url).toMatch(/^blob:/);
-  })
+  });
 });

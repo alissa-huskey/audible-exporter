@@ -11,7 +11,7 @@ OrderNotifier = class extends StatusNotifier {
 
   step_no = 2;
 
-  constructor(total=null, years=null) {
+  constructor(total = null, years = null) {
     super();
     this.total = total;
     this.years = years;
@@ -42,7 +42,7 @@ OrderNotifier = class extends StatusNotifier {
    * @params {string} value  The year being processed.
    */
   set year(value) {
-    this.#year = value
+    this.#year = value;
     this.text = this.message;
   }
 
@@ -59,7 +59,7 @@ OrderNotifier = class extends StatusNotifier {
    * Set the page_year and update text.
    */
   set year_page(value) {
-    this.#year_page = value
+    this.#year_page = value;
     this.text = this.message;
   }
 
@@ -76,7 +76,7 @@ OrderNotifier = class extends StatusNotifier {
    * Set the page_count and update text.
    */
   set page_count(value) {
-    this.#page_count = value
+    this.#page_count = value;
     this.text = this.message;
   }
 
@@ -90,7 +90,7 @@ OrderNotifier = class extends StatusNotifier {
       return "Retrieving purchases...";
     }
 
-    let message = `Retrieving ${this.year} purchases`
+    let message = `Retrieving ${this.year} purchases`;
     if (this.year_page) {
       message += `: page ${this.year_page}`;
       if (this.page_count) {
@@ -104,4 +104,4 @@ OrderNotifier = class extends StatusNotifier {
 
     return message;
   }
-}
+};

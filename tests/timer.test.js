@@ -2,10 +2,8 @@ require("../src/dev.js");
 require("../src/util.js");
 require("../src/timer.js");
 
-describe("Timer", function() {
-
-
-  test("new Timer()", function() {
+describe("Timer", () => {
+  test("new Timer()", () => {
     let timer = new Timer();
     expect(timer).toBeA(Timer);
 
@@ -24,22 +22,22 @@ describe("Timer", function() {
     timer.task = "something";
   });
 
-  test(".ts()", function() {
+  test(".ts()", () => {
     let timer = new Timer();
     expect(typeof timer.ts()).toBe("number");
   });
 
-  test(".start()", function() {
+  test(".start()", () => {
     let timer = new Timer();
     expect(typeof timer.start()).toBe("number");
   });
 
-  test(".stop()", function() {
+  test(".stop()", () => {
     let timer = new Timer();
     expect(typeof timer.stop()).toBe("number");
   });
 
-  test(".elapsed", function() {
+  test(".elapsed", () => {
     let timer = new Timer();
     timer.beginning = 1740971898000;
     timer.end = 1740971899000;
@@ -47,13 +45,14 @@ describe("Timer", function() {
     expect(timer.elapsed).toBe(1000);
   });
 
-  test(".time()", async function() {
-    let sleep = (ms) => new Promise(res => {
-      setTimeout(res, ms)
-    });
+  test(".time()", async () => {
+    let sleep = (ms) =>
+      new Promise((res) => {
+        setTimeout(res, ms);
+      });
 
     let timer = new Timer();
-    let result = await timer.time(async function() {
+    let result = await timer.time(async () => {
       await sleep(100);
       return 100;
     });
@@ -61,5 +60,4 @@ describe("Timer", function() {
     expect(result).toBe(100);
     expect(timer.elapsed).toBeWithin(100, 110);
   });
-
 });

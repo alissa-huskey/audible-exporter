@@ -6,18 +6,18 @@
 var CONSOLE_OUTPUT = false;
 const LOG_PREFIX = "[audible-exporter]";
 
-info = function(...msg) {
+info = function (...msg) {
   if (!CONSOLE_OUTPUT) {
     return;
   }
   console.log(LOG_PREFIX, ...msg);
-}
+};
 
-error = function(...msg) {
+error = function (...msg) {
   console.error(LOG_PREFIX, ...msg);
-}
+};
 
-log_table = function(label, data) {
+log_table = function (label, data) {
   if (!CONSOLE_OUTPUT) {
     return;
   }
@@ -25,21 +25,21 @@ log_table = function(label, data) {
   console.groupCollapsed(name);
   console.table(data);
   console.groupEnd(name);
-}
+};
 
-titleCase = function(text) {
+titleCase = function (text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
-}
+};
 
-first = function(arr) {
+first = function (arr) {
   let v;
   for (v of arr) {
-    if (v) return v
+    if (v) return v;
   }
-}
+};
 
-const EMPTIES = {"Object": "{}", "Array": "[]"};
-isEmpty = function(o) {
+const EMPTIES = { Object: "{}", Array: "[]" };
+isEmpty = function (o) {
   if (!o) {
     return true;
   }
@@ -55,35 +55,32 @@ isEmpty = function(o) {
   }
 
   return JSON.stringify(o) == EMPTIES[type];
-}
+};
 
-tryFloat = function(o) {
+tryFloat = function (o) {
   try {
     f = parseFloat(o);
     return isNaN(f) ? o : f;
-
   } catch (err) {
     return o;
   }
-}
+};
 
-tryInt = function(f) {
+tryInt = function (f) {
   try {
     let i = parseInt(f);
-    return i == f ? i : f
+    return i == f ? i : f;
   } catch (err) {
     return f;
   }
-}
+};
 
-entityDecode = function(text) {
+entityDecode = function (text) {
   return text.replace("&amp;", "&");
-}
+};
 
-dateString = function(date) {
-  if (!date) {
-    return ""
-  }
+dateString = function (date) {
+  if (!date) return "";
   var months = [
     "Jan",
     "Feb",
@@ -102,9 +99,9 @@ dateString = function(date) {
     date = new Date(date);
   }
   return `${date.getFullYear()} ${months[date.getMonth()]} ${date.getDate()}`;
-}
+};
 
-cleanObject = function(ob) {
+cleanObject = function (ob) {
   return Object.entries(ob).reduce((r, [k, v]) => {
     if (
       v != null &&
@@ -124,24 +121,24 @@ cleanObject = function(ob) {
       return r;
     }
   }, {});
-}
+};
 
-dispatchEvent = function(obj) {
-  document.dispatchEvent(new CustomEvent("update-ae-notifier", {
-    detail: obj
-  }));
-}
+dispatchEvent = function (obj) {
+  document.dispatchEvent(
+    new CustomEvent("update-ae-notifier", { detail: obj }),
+  );
+};
 
-stripHTML = function(html) {
-   let doc = new DOMParser().parseFromString(html, 'text/html');
-   return doc.body.textContent || "";
-}
+stripHTML = function (html) {
+  let doc = new DOMParser().parseFromString(html, "text/html");
+  return doc.body.textContent || "";
+};
 
-rando = (n) => Math.round(Math.random() * n)
+rando = (n) => Math.round(Math.random() * n);
 
-reg = (o, n) => (o ? o[n] : "")
+reg = (o, n) => (o ? o[n] : "");
 
-cleanObject = function(ob) {
+cleanObject = function (ob) {
   return Object.entries(ob).reduce((r, [k, v]) => {
     if (
       v != null &&
@@ -161,8 +158,9 @@ cleanObject = function(ob) {
       return r;
     }
   }, {});
-}
+};
 
-delay = (ms) => new Promise(res => {
-  setTimeout(res, ms)
-});
+delay = (ms) =>
+  new Promise((res) => {
+    setTimeout(res, ms);
+  });

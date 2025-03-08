@@ -4,5 +4,8 @@
  */
 
 CONSOLE_OUTPUT = true;
-var exporter = new Exporter();
-await exporter.run();
+
+void (async function main() {
+  exporter = new Exporter();
+  await exporter.run();
+})();

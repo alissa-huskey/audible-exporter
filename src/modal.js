@@ -6,7 +6,7 @@
 Modal = class extends DOM {
   #css = null;
   #wrapper = null;
-  #close_btn = null
+  #close_btn = null;
   #dl_btn = null;
   #file = null;
 
@@ -31,9 +31,9 @@ Modal = class extends DOM {
   // Construct wrapper div, append all child elements, and return
   get wrapper() {
     if (!this.#wrapper) {
-      this.#wrapper = Element.create("div", {class: this.selectors.wrapper });
-      let content = Element.create("div", {class: this.selectors.content});
-      let head = Element.create("div", {class: this.selectors.head});
+      this.#wrapper = Element.create("div", { class: this.selectors.wrapper });
+      let content = Element.create("div", { class: this.selectors.content });
+      let head = Element.create("div", { class: this.selectors.head });
       let h1 = Element.create("h1");
       let p = Element.create("p");
 
@@ -43,9 +43,9 @@ Modal = class extends DOM {
       this.wrapper.element.appendChild(content.element);
       content.element.appendChild(head.element);
       content.element.appendChild(p.element);
-      content.element.appendChild(this.dl_btn.element)
-      head.element.appendChild(this.close_btn.element)
-      head.element.appendChild(h1.element)
+      content.element.appendChild(this.dl_btn.element);
+      head.element.appendChild(this.close_btn.element);
+      head.element.appendChild(h1.element);
 
       this.#wrapper.style["z-index"] = new Date().getTime();
     }
@@ -54,21 +54,25 @@ Modal = class extends DOM {
 
   get close_btn() {
     if (!this.#close_btn) {
-        this.#close_btn = Element.create("a", {id: this.selectors.close_btn});
-        this.#close_btn.innerHTML = "&times;";
-        this.#close_btn.attributes.href = "#";
-        this.#close_btn.element.addEventListener("click", () => {
+      this.#close_btn = Element.create("a", { id: this.selectors.close_btn });
+      this.#close_btn.innerHTML = "&times;";
+      this.#close_btn.attributes.href = "#";
+      this.#close_btn.element.addEventListener(
+        "click",
+        () => {
           this.hide();
-        }, false);
+        },
+        false,
+      );
     }
     return this.#close_btn;
   }
 
   get dl_btn() {
     if (!this.#dl_btn) {
-      this.#dl_btn = Element.create("a", {id: this.selectors.dl_btn});
-        this.#dl_btn.attributes.href = "#";
-      this.#dl_btn.innerHTML = "Download";;
+      this.#dl_btn = Element.create("a", { id: this.selectors.dl_btn });
+      this.#dl_btn.attributes.href = "#";
+      this.#dl_btn.innerHTML = "Download";
     }
     return this.#dl_btn;
   }
@@ -82,9 +86,9 @@ Modal = class extends DOM {
     this.dl_btn.element.href = file.url;
     this.dl_btn.element.download = file.filename;
     this.dl_btn.element.addEventListener("click", () => {
-        setTimeout(() => {
-          window.URL.revokeObjectURL(file.url);
-        }, 10);
+      setTimeout(() => {
+        window.URL.revokeObjectURL(file.url);
+      }, 10);
     });
   }
 
@@ -103,4 +107,4 @@ Modal = class extends DOM {
     super.create();
     new Colors().create();
   }
-}
+};

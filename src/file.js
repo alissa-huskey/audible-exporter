@@ -9,12 +9,12 @@ File = class {
   mimetype = null;
   extension = null;
 
-  constructor(contents=null) {
+  constructor(contents = null) {
     this.#contents = contents;
   }
 
   get blob() {
-    return new Blob([this.contents], {type: this.mimetype});
+    return new Blob([this.contents], { type: this.mimetype });
   }
 
   get url() {
@@ -33,4 +33,4 @@ File = class {
   set contents(value) {
     this.#contents = value;
   }
-}
+};

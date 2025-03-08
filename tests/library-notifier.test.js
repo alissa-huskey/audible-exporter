@@ -11,19 +11,18 @@ require("../src/colors.js");
 require("../src/status-notifier.js");
 require("../src/library-notifier.js");
 
-describe("LibraryNotifier", function() {
-
-  test(".item_no =", function() {
+describe("LibraryNotifier", () => {
+  test(".item_no =", () => {
     let notifier = new LibraryNotifier();
     notifier.total = 100;
     notifier.item_no = 10;
 
     expect(notifier.item_no).toBe(10);
     expect(notifier.text).toBe(notifier.message);
-    expect(notifier.percent).toBe(.1);
+    expect(notifier.percent).toBe(0.1);
   });
 
-  test(".total =", function() {
+  test(".total =", () => {
     let notifier = new LibraryNotifier();
     notifier.total = 100;
 
@@ -31,7 +30,7 @@ describe("LibraryNotifier", function() {
     expect(notifier.text).toBe(notifier.message);
   });
 
-  test(".message", function() {
+  test(".message", () => {
     let notifier = new LibraryNotifier();
     expect(notifier.message).toBe("Retrieving library...");
 
@@ -42,21 +41,21 @@ describe("LibraryNotifier", function() {
     expect(notifier.message).toBe("Retrieving library: page 1 of 10");
   });
 
-  test(".listener()", function() {
+  test(".listener()", () => {
     let notifier = new LibraryNotifier();
     notifier.create();
 
-    dispatchEvent({total: 10});
+    dispatchEvent({ total: 10 });
     expect(notifier.total).toBe(10);
 
-    dispatchEvent({item_no: 3});
+    dispatchEvent({ item_no: 3 });
     expect(notifier.item_no).toBe(3);
 
     timer = new Timer();
-    dispatchEvent({timer: timer});
+    dispatchEvent({ timer: timer });
     expect(notifier.times).toEqual([timer]);
 
-    dispatchEvent({percent: .2});
-    expect(notifier.percent).toBe(.2);
+    dispatchEvent({ percent: 0.2 });
+    expect(notifier.percent).toBe(0.2);
   });
 });

@@ -9,51 +9,49 @@
  * Parse the book details from the audible book page.
  */
 BookPage = class extends Page {
-
   #category_types = ["Fiction", "Nonfiction"];
 
   #category_genres = {
-    'Arts & Entertainment': "nonfiction",
-    'Biographies & Memoirs': "nonfiction",
-    'Business & Careers': "nonfiction",
-    'Children\'s Audiobooks': null,
-    'Action & Adventure': "fiction", // children's audiobooks
-    'Activities & Hobbies': "nonfiction", // children's audiobooks
-    'Animals & Nature': "nonfiction", // children's audiobooks
-    'Education & Learning': "nonfiction",
-    'Fairy Tales, Folk Tales & Myths': "fiction",
-    'Geography & Cultures': "nonfiction",
-    'Comedy & Humor': null,
-    'Performing Arts': "nonfiction", // comedy & humor
-    'Computers & Technology': "nonfiction",
-    'Education & Learning': "nonfiction",
-    'Erotica': null,
-    'Sex Instruction': "nonfiction", // erotica
-    'Health & Wellness': "nonfiction",
-    'History': "nonfiction",
-    'Home & Garden': "nonfiction",
-    'LGBTQ+': "null",
-    'LGBTQ+ Studies': "nonfiction",
-    'Parenting & Families': "nonfiction",
-    'Literature & Fiction': "fiction",
-    'Money & Finance': "nonfiction",
-    'Mystery, Thriller & Suspense': null,
-    'True Crime': "nonfiction", // mystery, thriller & suspense
-    'Mystery': "fiction", // mystery, thriller & suspense
-    'Thriller & Suspense': "fiction", // mystery, thriller & suspense
-    'Crime Fiction': "fiction", // mystery, thriller & suspense
-    'Politics & Social Sciences': "nonfiction",
-    'Politics, Society & Current Events': "nonfiction",
-    'Relationships, Parenting & Personal Development': "nonfiction",
-    'Religion & Spirituality': "nonfiction",
-    'Romance': "fiction",
-    'Science & Engineering': "nonfiction",
-    'Sports & Outdoors': "nonfiction",
-    'Teen & Young Adult': null,
-    'Health, Lifestyle & Relationships': "nonfiction", // teen & young adult
-    'History & Culture': "nonfiction", // teen & young adult
-    'Travel & Tourism': "nonfiction",
-  }
+    "Arts & Entertainment": "nonfiction",
+    "Biographies & Memoirs": "nonfiction",
+    "Business & Careers": "nonfiction",
+    "Children's Audiobooks": null,
+    "Action & Adventure": "fiction", // children"s audiobooks
+    "Activities & Hobbies": "nonfiction", // children"s audiobooks
+    "Animals & Nature": "nonfiction", // children"s audiobooks
+    "Fairy Tales, Folk Tales & Myths": "fiction",
+    "Geography & Cultures": "nonfiction",
+    "Comedy & Humor": null,
+    "Performing Arts": "nonfiction", // comedy & humor
+    "Computers & Technology": "nonfiction",
+    "Education & Learning": "nonfiction",
+    Erotica: null,
+    "Sex Instruction": "nonfiction", // erotica
+    "Health & Wellness": "nonfiction",
+    History: "nonfiction",
+    "Home & Garden": "nonfiction",
+    "LGBTQ+": "null",
+    "LGBTQ+ Studies": "nonfiction",
+    "Parenting & Families": "nonfiction",
+    "Literature & Fiction": "fiction",
+    "Money & Finance": "nonfiction",
+    "Mystery, Thriller & Suspense": null,
+    "True Crime": "nonfiction", // mystery, thriller & suspense
+    Mystery: "fiction", // mystery, thriller & suspense
+    "Thriller & Suspense": "fiction", // mystery, thriller & suspense
+    "Crime Fiction": "fiction", // mystery, thriller & suspense
+    "Politics & Social Sciences": "nonfiction",
+    "Politics, Society & Current Events": "nonfiction",
+    "Relationships, Parenting & Personal Development": "nonfiction",
+    "Religion & Spirituality": "nonfiction",
+    Romance: "fiction",
+    "Science & Engineering": "nonfiction",
+    "Sports & Outdoors": "nonfiction",
+    "Teen & Young Adult": null,
+    "Health, Lifestyle & Relationships": "nonfiction", // teen & young adult
+    "History & Culture": "nonfiction", // teen & young adult
+    "Travel & Tourism": "nonfiction",
+  };
 
   #sub_categories = [
     "Science Fiction",
@@ -82,7 +80,7 @@ BookPage = class extends Page {
     "Historical", // biographies & Memoiirs
     "Young Adult",
     "Thriller & Suspense",
-  ]
+  ];
 
   _fields = [
     "id",
@@ -110,7 +108,7 @@ BookPage = class extends Page {
   #json_product = null;
 
   static async get(url) {
-    let page = new Page()
+    let page = new Page();
     let doc = await page.fetchDoc(url);
     doc = new Element(doc);
 
@@ -124,7 +122,7 @@ BookPage = class extends Page {
     return page;
   }
 
-  constructor(doc=null) {
+  constructor(doc = null) {
     super();
     this.doc = doc;
   }
@@ -136,8 +134,8 @@ BookPage = class extends Page {
    */
   toMinutes(text) {
     let mins = /\d+(?=\smin)/.exec(text)?.[0] || "0";
-    let hours = /\d+(?=\shrs)/.exec(text)?.[0] || "0"
-    return (parseInt(hours) * 60) + parseInt(mins);
+    let hours = /\d+(?=\shrs)/.exec(text)?.[0] || "0";
+    return parseInt(hours) * 60 + parseInt(mins);
   }
 
   get json_audiobook() {
@@ -174,7 +172,7 @@ BookPage = class extends Page {
 
   get rating() {
     let rating = tryFloat(this.json_audiobook.aggregateRating?.ratingValue);
-    return rating ? +rating.toFixed(1) : ""
+    return rating ? +rating.toFixed(1) : "";
   }
 
   get num_ratings() {
@@ -187,15 +185,12 @@ BookPage = class extends Page {
 
   get date() {
     let date = this.json_audiobook.datePublished;
-    if (!date)
-      return
-    return new Date(`${date}:00:00:01`)
+    if (!date) return null;
+    return new Date(`${date}:00:00:01`);
   }
 
   get release_date() {
-    if (!this.date) {
-      return;
-    }
+    if (!this.date) return null;
     return dateString(this.date);
   }
 
@@ -217,15 +212,12 @@ BookPage = class extends Page {
 
   get publisher_summary() {
     let text = this.json_audiobook.description;
-    if (!text)
-      return
-    return stripHTML(text)
+    if (!text) return null;
+    return stripHTML(text);
   }
 
-  get audible_oginal () {
-    if (!this.publisher) {
-      return;
-    }
+  get audible_oginal() {
+    if (!this.publisher) return null;
     return /^Audible Original/.test(this.publisher);
   }
 
@@ -274,8 +266,12 @@ BookPage = class extends Page {
     let all = [...this.categories_list, ...this.tags_list];
 
     // check if the word "fiction" or "nonfiction" is in any of the categories or tags
-    for (var genre of this.#category_types) {
-      if (all.some( (c) => { return c.toLowerCase().includes(genre.toLowerCase()) } )) {
+    for (let genre of this.#category_types) {
+      if (
+        all.some((c) => {
+          return c.toLowerCase().includes(genre.toLowerCase());
+        })
+      ) {
         return genre.toLowerCase();
       }
     }
@@ -297,7 +293,9 @@ BookPage = class extends Page {
       if (this.main_category) {
         exclude.push(this.main_category);
       }
-      this.#tags = this.tags_list.filter((t) => {return !exclude.includes(t)});
+      this.#tags = this.tags_list.filter((t) => {
+        return !exclude.includes(t);
+      });
     }
     return this.#tags;
   }
@@ -307,25 +305,27 @@ BookPage = class extends Page {
   }
 
   get sub_category() {
-      // return the second category if there is one
-      if (this.categories_list && this.categories_list.length == 2) {
-        return this.categories_list[1];
-      }
+    // return the second category if there is one
+    if (this.categories_list && this.categories_list.length == 2) {
+      return this.categories_list[1];
+    }
 
-      // find the first subgenre listed in tags
-      let listed_subgenres = [...(new Set(this.tags)).intersection(new Set(this.#sub_categories))];
-      if (listed_subgenres.length >= 1) {
-        return listed_subgenres[0];
-      }
+    // find the first subgenre listed in tags
+    let listed_subgenres = [
+      ...new Set(this.tags).intersection(new Set(this.#sub_categories)),
+    ];
+    if (listed_subgenres.length >= 1) {
+      return listed_subgenres[0];
+    }
 
-      // return the first tag
-      return this.tags[0] || null;
+    // return the first tag
+    return this.tags[0] || null;
   }
 
   get categories() {
     return this.tags.filter((c) => !this.categories_list.includes(c));
   }
-}
+};
 
 /* Book pages which use custom <adbl-*> tags.
  *
@@ -338,9 +338,14 @@ ADBLBookPage = class extends BookPage {
   get adbl() {
     return this.doc.qs("adbl-product-metadata script");
   }
-  
+
   get info() {
-    return Object.assign({}, ...this.adbl.map((e) => {return JSON.parse(e.textContent)}));
+    return Object.assign(
+      {},
+      ...this.adbl.map((e) => {
+        return JSON.parse(e.textContent);
+      }),
+    );
   }
 
   get duration_minutes() {
@@ -373,9 +378,11 @@ ADBLBookPage = class extends BookPage {
   }
 
   get tags_list() {
-    return this.doc.qs("adbl-chip-group.product-topictag-impression adbl-chip").map((c) => c.innerHTML)
+    return this.doc
+      .qs("adbl-chip-group.product-topictag-impression adbl-chip")
+      .map((c) => c.innerHTML);
   }
-}
+};
 
 /* Book pages which do not use custom <adbl-*> tags.
  *
@@ -410,7 +417,9 @@ NormalBookPage = class extends BookPage {
 
   // book number
   get book() {
-    return /, Book (\d+)/i.exec(this.doc.gcf("seriesLabel")?.innerHTML)?.[1] || "";
+    return (
+      /, Book (\d+)/i.exec(this.doc.gcf("seriesLabel")?.innerHTML)?.[1] || ""
+    );
   }
 
   // get summary() {
@@ -426,10 +435,16 @@ NormalBookPage = class extends BookPage {
   // }
 
   get tags_list() {
-    return this.doc.gc("bc-chip-text").map((c) => { return c.attributes["data-text"].value });
+    return this.doc.gc("bc-chip-text").map((c) => {
+      return c.attributes["data-text"].value;
+    });
   }
 
   get categories_list() {
-    return this.doc.qs(".categoriesLabel a")?.map((c) => { return entityDecode(c.innerHTML) || "" }) || [];
+    return (
+      this.doc.qs(".categoriesLabel a")?.map((c) => {
+        return entityDecode(c.innerHTML) || "";
+      }) || []
+    );
   }
-}
+};
