@@ -7,6 +7,7 @@ require("../src/util.js");
 require("../src/timer.js");
 require("../src/element.js");
 require("../src/dom.js");
+require("../src/colors.js");
 require("../src/status-notifier.js");
 require("../src/details-notifier.js");
 

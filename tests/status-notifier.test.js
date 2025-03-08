@@ -6,9 +6,10 @@ const $ = require("jquery");
 
 require("../src/dev.js");
 require("../src/util.js");
+require("../src/timer.js");
 require("../src/element.js");
 require("../src/dom.js");
-require("../src/timer.js");
+require("../src/colors.js");
 require("../src/status-notifier.js");
 
 
@@ -240,8 +241,11 @@ describe("StatusNotifier", function() {
       let notifier = new StatusNotifier();
       notifier.create();
 
-      expect(window.ae.notifier).toEqual(notifier);
       expect($(`#${notifier.selectors.wrapper}`)).toHaveLength(1);
+      expect($(`#${new Colors().selectors.wrapper}`)).toHaveLength(1);
+
+      expect(window.ae.notifier).toEqual(notifier);
+      expect(window.ae.colors).not.toBeNull();
     });
 
     test(".reset()", function() {

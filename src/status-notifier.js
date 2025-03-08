@@ -473,8 +473,9 @@ StatusNotifier = class extends DOM {
    */
   create() {
     super.create();
+    new Colors().create();
+
     document.addEventListener(this.event_name, this.listen);
-    window.ae = window.ae || {};
     window.ae.notifier = this;
     this.text = this.message;
     this.step = this.step_text;

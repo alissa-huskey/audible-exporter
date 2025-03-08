@@ -471,6 +471,22 @@ Colors = class extends DOM {
   get wrapper() {
     return this.style;
   }
+
+  create() {
+    super.create();
+    window.ae = window.ae || {};
+    window.ae.colors = this;
+  }
+
+  /**
+   * Remove the style HTML element from the DOM and the window.ae object.
+   */
+  remove() {
+    if (window.ae) {
+      window.ae.colors = null;
+    }
+    this.wrapper.element.remove();
+  }
 }
 
 /**
@@ -1026,8 +1042,9 @@ StatusNotifier = class extends DOM {
    */
   create() {
     super.create();
+    new Colors().create();
+
     document.addEventListener(this.event_name, this.listen);
-    window.ae = window.ae || {};
     window.ae.notifier = this;
     this.text = this.message;
     this.step = this.step_text;

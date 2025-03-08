@@ -95,4 +95,12 @@ Modal = class extends DOM {
   hide() {
     this.#wrapper.style.display = "none";
   }
+
+  /**
+   * Add the wrapper HTML element to the DOM.
+   */
+  create() {
+    super.create();
+    new Colors().create();
+  }
 }

@@ -9,6 +9,7 @@ require("../src/util.js");
 require("../src/element.js");
 require("../src/list.js");
 require("../src/dom.js");
+require("../src/colors.js");
 require("../src/modal.js");
 
 
@@ -22,8 +23,15 @@ describe("Modal", function() {
   test(".create()", function() {
     modal.create();
 
-    el = new Element(document).gcf(modal.selectors.wrapper);
-    expect(el.element).toBeA(HTMLDivElement);
+    modals = $(`.${modal.selectors.wrapper}`);
+    colors = $(`#${new Colors().selectors.style}`);
+
+    expect(modals).toHaveLength(1);
+    expect(modals[0]).toBeA(HTMLDivElement);
+
+    expect(colors).toHaveLength(1);
+    expect(colors[0]).toBeA(HTMLStyleElement);
+    expect(window.ae.colors).toBeA(Colors);
   });
 
   test("elements", function() {

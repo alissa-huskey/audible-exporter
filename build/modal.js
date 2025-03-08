@@ -471,6 +471,22 @@ Colors = class extends DOM {
   get wrapper() {
     return this.style;
   }
+
+  create() {
+    super.create();
+    window.ae = window.ae || {};
+    window.ae.colors = this;
+  }
+
+  /**
+   * Remove the style HTML element from the DOM and the window.ae object.
+   */
+  remove() {
+    if (window.ae) {
+      window.ae.colors = null;
+    }
+    this.wrapper.element.remove();
+  }
 }
 
 /**
@@ -726,5 +742,13 @@ a#ae-download-btn:hover:after {
 
   hide() {
     this.#wrapper.style.display = "none";
+  }
+
+  /**
+   * Add the wrapper HTML element to the DOM.
+   */
+  create() {
+    super.create();
+    new Colors().create();
   }
 }
