@@ -136,7 +136,7 @@ cleanObject = function (ob) {
   }, {});
 };
 
-dispatchEvent = function (obj) {
+fireEvent = function (obj) {
   document.dispatchEvent(
     new CustomEvent("update-ae-notifier", { detail: obj }),
   );
@@ -247,13 +247,14 @@ Timer = class {
  * ************************************************************************************
  */
 
-Element = class {
+Doc = class {
   constructor(elm = null) {
     this.element = elm;
 
     if (!elm) return;
 
     for (let k in elm.__proto__) {
+      // eslint-disable-next-line no-prototype-builtins
       if (Object.hasOwnProperty(k)) continue;
 
       Object.defineProperty(this, k, {
@@ -269,21 +270,21 @@ Element = class {
     let html = document.createElement("html");
     html.innerHTML = text;
 
-    let elm = new Element(html);
+    let elm = new Doc(html);
     return elm;
   }
 
   /**
-   * Create HTML Element.
+   * Create HTMLElement.
    *
    * @param {str}    html     Tag name or HTML string.
    * @param {object} [attrs]  Attributes to set on element.
    *
-   * @return {Element}
+   * @return {Doc}
    *
    * @example
-   * let elm = Element.create("div", {id: "container"});
-   * let elm = Element.create("<p>hello</p>");
+   * let elm = Doc.create("div", {id: "container"});
+   * let elm = Doc.create("<p>hello</p>");
    */
   static create(html, attrs = {}) {
     let dom;
@@ -302,7 +303,7 @@ Element = class {
       delete attrs.style;
     }
 
-    let element = new Element(dom);
+    let element = new Doc(dom);
     element.set(attrs);
     return element;
   }
@@ -313,7 +314,7 @@ Element = class {
 
   static gi(name) {
     let node = document.getElementById(name);
-    return new Element(node);
+    return new Doc(node);
   }
 
   static gt(name) {
@@ -322,7 +323,7 @@ Element = class {
 
   static qs(query) {
     let res = document.querySelector(query);
-    return new Element(res);
+    return new Doc(res);
   }
 
   static qsa(query) {
@@ -338,7 +339,7 @@ Element = class {
   }
 
   gi(name) {
-    return Element.gi(name);
+    return Doc.gi(name);
   }
 
   gt(name) {
@@ -358,7 +359,7 @@ Element = class {
 
   qsf(query) {
     let res = this.element.querySelector(query);
-    return new Element(res);
+    return new Doc(res);
   }
 
   set(attrs, value = null) {
@@ -390,7 +391,7 @@ DOM = class {
 
   get style() {
     if (!this.#style) {
-      this.#style = Element.create("style", {
+      this.#style = Doc.create("style", {
         id: this.selectors.style,
         type: "text/css",
       });
@@ -409,7 +410,7 @@ DOM = class {
 
   // add the element to the DOM
   create() {
-    let el = Element.gi(this.selectors.wrapper);
+    let el = Doc.gi(this.selectors.wrapper);
     if (el) el.outerHTML = "";
 
     document.head.appendChild(this.style.element);
@@ -529,11 +530,11 @@ StatusNotifier = class extends DOM {
   /**
    * Construct HTML elements.
    *
-   * @returns {Element}
+   * @returns {Doc}
    */
   get wrapper() {
     if (!this.#wrapper) {
-      this.#wrapper = Element.create("div", {
+      this.#wrapper = Doc.create("div", {
         id: this.selectors.wrapper,
         style: {
           width: `${this.bar_width}px`,
@@ -551,11 +552,11 @@ StatusNotifier = class extends DOM {
   /**
    * Progress bar element.
    *
-   * @returns {Element}
+   * @returns {Doc}
    */
   get bar() {
     if (!this.#bar) {
-      this.#bar = Element.create("div", { id: this.selectors.bar });
+      this.#bar = Doc.create("div", { id: this.selectors.bar });
       this.#bar.element.appendChild(this.messages.element);
     }
     return this.#bar;
@@ -564,11 +565,11 @@ StatusNotifier = class extends DOM {
   /**
    * Div that contains text elements.
    *
-   * @returns {Element}
+   * @returns {Doc}
    */
   get messages() {
     if (!this.#messages) {
-      this.#messages = Element.create("div", {
+      this.#messages = Doc.create("div", {
         id: this.selectors.messages,
         class: "ae-row",
         style: { width: `${this.bar_width}px` },
@@ -582,11 +583,11 @@ StatusNotifier = class extends DOM {
   /**
    * Div that contains status message.
    *
-   * @returns {Element}
+   * @returns {Doc}
    */
   get status() {
     if (!this.#status) {
-      this.#status = Element.create("div", { id: this.selectors.status });
+      this.#status = Doc.create("div", { id: this.selectors.status });
     }
     return this.#status;
   }
@@ -596,7 +597,7 @@ StatusNotifier = class extends DOM {
    */
   get percentage() {
     if (!this.#percentage) {
-      this.#percentage = Element.create("span", {
+      this.#percentage = Doc.create("span", {
         id: this.selectors.percentage,
       });
     }
@@ -606,11 +607,11 @@ StatusNotifier = class extends DOM {
   /**
    * Div under the progress bar.
    *
-   * @returns {Element}
+   * @returns {Doc}
    */
   get context() {
     if (!this.#context) {
-      this.#context = Element.create("div", {
+      this.#context = Doc.create("div", {
         id: this.selectors.context,
         class: "ae-row empty",
       });
@@ -624,11 +625,11 @@ StatusNotifier = class extends DOM {
   /**
    * Span that contains the "Step x of y" text.
    *
-   * @returns {Element}
+   * @returns {Doc}
    */
   get steps() {
     if (!this.#steps) {
-      this.#steps = Element.create("span", { id: this.selectors.steps });
+      this.#steps = Doc.create("span", { id: this.selectors.steps });
     }
     return this.#steps;
   }
@@ -636,11 +637,11 @@ StatusNotifier = class extends DOM {
   /**
    * Span that contains the estimated remaining time.
    *
-   * @returns {Element}
+   * @returns {Doc}
    */
   get estimate() {
     if (!this.#estimate) {
-      this.#estimate = Element.create("span", { id: this.selectors.estimate });
+      this.#estimate = Doc.create("span", { id: this.selectors.estimate });
     }
     return this.#estimate;
   }

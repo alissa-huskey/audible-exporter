@@ -3,7 +3,7 @@
  * ************************************************************************************
  */
 
-Element = class {
+Doc = class {
   constructor(elm = null) {
     this.element = elm;
 
@@ -26,21 +26,21 @@ Element = class {
     let html = document.createElement("html");
     html.innerHTML = text;
 
-    let elm = new Element(html);
+    let elm = new Doc(html);
     return elm;
   }
 
   /**
-   * Create HTML Element.
+   * Create HTMLElement.
    *
    * @param {str}    html     Tag name or HTML string.
    * @param {object} [attrs]  Attributes to set on element.
    *
-   * @return {Element}
+   * @return {Doc}
    *
    * @example
-   * let elm = Element.create("div", {id: "container"});
-   * let elm = Element.create("<p>hello</p>");
+   * let elm = Doc.create("div", {id: "container"});
+   * let elm = Doc.create("<p>hello</p>");
    */
   static create(html, attrs = {}) {
     let dom;
@@ -59,7 +59,7 @@ Element = class {
       delete attrs.style;
     }
 
-    let element = new Element(dom);
+    let element = new Doc(dom);
     element.set(attrs);
     return element;
   }
@@ -70,7 +70,7 @@ Element = class {
 
   static gi(name) {
     let node = document.getElementById(name);
-    return new Element(node);
+    return new Doc(node);
   }
 
   static gt(name) {
@@ -79,7 +79,7 @@ Element = class {
 
   static qs(query) {
     let res = document.querySelector(query);
-    return new Element(res);
+    return new Doc(res);
   }
 
   static qsa(query) {
@@ -95,7 +95,7 @@ Element = class {
   }
 
   gi(name) {
-    return Element.gi(name);
+    return Doc.gi(name);
   }
 
   gt(name) {
@@ -115,7 +115,7 @@ Element = class {
 
   qsf(query) {
     let res = this.element.querySelector(query);
-    return new Element(res);
+    return new Doc(res);
   }
 
   set(attrs, value = null) {

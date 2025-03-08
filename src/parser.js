@@ -16,8 +16,8 @@ Parser = class {
     if (value) {
       if (!value) return;
 
-      if (value.constructor.name != "Element") {
-        value = new Element(value);
+      if (value.constructor.name != "Doc") {
+        value = new Doc(value);
       }
 
       this.#doc = value;

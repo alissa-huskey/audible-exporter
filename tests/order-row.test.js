@@ -4,7 +4,7 @@
 
 require("../src/dev.js");
 require("../src/util.js");
-require("../src/element.js");
+require("../src/doc.js");
 require("../src/list.js");
 require("../src/parser.js");
 require("../src/order-row.js");
@@ -17,7 +17,7 @@ describe("OrderRow", () => {
   });
 
   test("new OrderRow(doc)", () => {
-    expect(row.doc).toBeA(Element);
+    expect(row.doc).toBeA(Doc);
   });
 
   test(".url", () => {

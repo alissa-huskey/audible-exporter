@@ -4,7 +4,7 @@
 
 require("../src/dev.js");
 require("../src/util.js");
-require("../src/element.js");
+require("../src/doc.js");
 require("../src/list.js");
 require("../src/parser.js");
 require("../src/library-book-row.js");
@@ -22,12 +22,12 @@ describe("LibraryBookRow", () => {
   });
 
   test("new LibraryBookRow(doc)", () => {
-    expect(row.doc).toBeA(Element);
+    expect(row.doc).toBeA(Doc);
   });
 
   test("new LibraryBookRow(doc, page, row)", () => {
     let row = new LibraryBookRow(doc, 1, 5);
-    expect(row.doc).toBeA(Element);
+    expect(row.doc).toBeA(Doc);
     expect(row.page_num).toBe(1);
     expect(row.row_num).toBe(5);
   });
@@ -37,7 +37,7 @@ describe("LibraryBookRow", () => {
   });
 
   test("ul", () => {
-    expect(row.ul).toBeA(Element);
+    expect(row.ul).toBeA(Doc);
     expect(row.ul.element).toBeA(HTMLUListElement);
   });
 

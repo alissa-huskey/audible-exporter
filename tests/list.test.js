@@ -3,7 +3,7 @@
  */
 
 require("../src/dev.js");
-require("../src/element.js");
+require("../src/doc.js");
 require("../src/list.js");
 
 describe("List", () => {

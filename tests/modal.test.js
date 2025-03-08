@@ -6,7 +6,7 @@ const $ = require("jquery");
 
 require("../src/dev.js");
 require("../src/util.js");
-require("../src/element.js");
+require("../src/doc.js");
 require("../src/list.js");
 require("../src/dom.js");
 require("../src/colors.js");
@@ -34,9 +34,9 @@ describe("Modal", () => {
   });
 
   test("elements", () => {
-    expect(modal.wrapper).toBeA(Element);
-    expect(modal.close_btn).toBeA(Element);
-    expect(modal.dl_btn).toBeA(Element);
+    expect(modal.wrapper).toBeA(Doc);
+    expect(modal.close_btn).toBeA(Doc);
+    expect(modal.dl_btn).toBeA(Doc);
   });
 
   test("show", () => {

@@ -4,7 +4,7 @@
 
 require("../src/dev.js");
 require("../src/util.js");
-require("../src/element.js");
+require("../src/doc.js");
 require("../src/list.js");
 require("../src/parser.js");
 require("../src/page.js");
@@ -19,7 +19,7 @@ describe("LibraryPage", () => {
 
   test(".doc", () => {
     let page = new LibraryPage("<html></html>");
-    expect(page.doc).toBeA(Element);
+    expect(page.doc).toBeA(Doc);
   });
 
   test(".rows", () => {

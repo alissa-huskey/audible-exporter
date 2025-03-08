@@ -8,7 +8,7 @@ const path = require("path");
 require("../src/dev.js");
 require("../src/util.js");
 require("../src/timer.js");
-require("../src/element.js");
+require("../src/doc.js");
 require("../src/list.js");
 require("../src/parser.js");
 require("../src/page.js");

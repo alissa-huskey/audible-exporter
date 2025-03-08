@@ -31,11 +31,11 @@ Modal = class extends DOM {
   // Construct wrapper div, append all child elements, and return
   get wrapper() {
     if (!this.#wrapper) {
-      this.#wrapper = Element.create("div", { class: this.selectors.wrapper });
-      let content = Element.create("div", { class: this.selectors.content });
-      let head = Element.create("div", { class: this.selectors.head });
-      let h1 = Element.create("h1");
-      let p = Element.create("p");
+      this.#wrapper = Doc.create("div", { class: this.selectors.wrapper });
+      let content = Doc.create("div", { class: this.selectors.content });
+      let head = Doc.create("div", { class: this.selectors.head });
+      let h1 = Doc.create("h1");
+      let p = Doc.create("p");
 
       h1.innerHTML = "Download";
       p.innerHTML = "Your export is ready!";
@@ -54,7 +54,7 @@ Modal = class extends DOM {
 
   get close_btn() {
     if (!this.#close_btn) {
-      this.#close_btn = Element.create("a", { id: this.selectors.close_btn });
+      this.#close_btn = Doc.create("a", { id: this.selectors.close_btn });
       this.#close_btn.innerHTML = "&times;";
       this.#close_btn.attributes.href = "#";
       this.#close_btn.element.addEventListener(
@@ -70,7 +70,7 @@ Modal = class extends DOM {
 
   get dl_btn() {
     if (!this.#dl_btn) {
-      this.#dl_btn = Element.create("a", { id: this.selectors.dl_btn });
+      this.#dl_btn = Doc.create("a", { id: this.selectors.dl_btn });
       this.#dl_btn.attributes.href = "#";
       this.#dl_btn.innerHTML = "Download";
     }

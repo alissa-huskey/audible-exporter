@@ -6,7 +6,7 @@
 List = class extends Array {
   constructor(items) {
     items = Array.from(items);
-    let elements = items.map((item) => new Element(item));
+    let elements = items.map((item) => new Doc(item));
     super(...elements);
   }
 

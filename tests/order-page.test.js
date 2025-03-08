@@ -4,7 +4,7 @@
 
 require("../src/dev.js");
 require("../src/util.js");
-require("../src/element.js");
+require("../src/doc.js");
 require("../src/list.js");
 require("../src/parser.js");
 require("../src/page.js");
@@ -28,7 +28,7 @@ describe("OrderPage", () => {
     expect(page.year).toBe(2025);
     expect(page.page_num).toBe(1);
     expect(page.per_page).toBe(40);
-    expect(page.doc).toBeA(Element);
+    expect(page.doc).toBeA(Doc);
     expect(page.doc.title).toBe("Purchase History | Audible.com");
   });
 
@@ -56,7 +56,7 @@ describe("OrderPage", () => {
     expect(page.year).toBe(2025);
     expect(page.page_num).toBe(1);
     expect(page).toBeA(OrderPage);
-    expect(page.doc).toBeA(Element);
+    expect(page.doc).toBeA(Doc);
   });
 
   test(".get()", async () => {

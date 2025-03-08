@@ -42,11 +42,11 @@ StatusNotifier = class extends DOM {
   /**
    * Construct HTML elements.
    *
-   * @returns {Element}
+   * @returns {Doc}
    */
   get wrapper() {
     if (!this.#wrapper) {
-      this.#wrapper = Element.create("div", {
+      this.#wrapper = Doc.create("div", {
         id: this.selectors.wrapper,
         style: {
           width: `${this.bar_width}px`,
@@ -64,11 +64,11 @@ StatusNotifier = class extends DOM {
   /**
    * Progress bar element.
    *
-   * @returns {Element}
+   * @returns {Doc}
    */
   get bar() {
     if (!this.#bar) {
-      this.#bar = Element.create("div", { id: this.selectors.bar });
+      this.#bar = Doc.create("div", { id: this.selectors.bar });
       this.#bar.element.appendChild(this.messages.element);
     }
     return this.#bar;
@@ -77,11 +77,11 @@ StatusNotifier = class extends DOM {
   /**
    * Div that contains text elements.
    *
-   * @returns {Element}
+   * @returns {Doc}
    */
   get messages() {
     if (!this.#messages) {
-      this.#messages = Element.create("div", {
+      this.#messages = Doc.create("div", {
         id: this.selectors.messages,
         class: "ae-row",
         style: { width: `${this.bar_width}px` },
@@ -95,11 +95,11 @@ StatusNotifier = class extends DOM {
   /**
    * Div that contains status message.
    *
-   * @returns {Element}
+   * @returns {Doc}
    */
   get status() {
     if (!this.#status) {
-      this.#status = Element.create("div", { id: this.selectors.status });
+      this.#status = Doc.create("div", { id: this.selectors.status });
     }
     return this.#status;
   }
@@ -109,7 +109,7 @@ StatusNotifier = class extends DOM {
    */
   get percentage() {
     if (!this.#percentage) {
-      this.#percentage = Element.create("span", {
+      this.#percentage = Doc.create("span", {
         id: this.selectors.percentage,
       });
     }
@@ -119,11 +119,11 @@ StatusNotifier = class extends DOM {
   /**
    * Div under the progress bar.
    *
-   * @returns {Element}
+   * @returns {Doc}
    */
   get context() {
     if (!this.#context) {
-      this.#context = Element.create("div", {
+      this.#context = Doc.create("div", {
         id: this.selectors.context,
         class: "ae-row empty",
       });
@@ -137,11 +137,11 @@ StatusNotifier = class extends DOM {
   /**
    * Span that contains the "Step x of y" text.
    *
-   * @returns {Element}
+   * @returns {Doc}
    */
   get steps() {
     if (!this.#steps) {
-      this.#steps = Element.create("span", { id: this.selectors.steps });
+      this.#steps = Doc.create("span", { id: this.selectors.steps });
     }
     return this.#steps;
   }
@@ -149,11 +149,11 @@ StatusNotifier = class extends DOM {
   /**
    * Span that contains the estimated remaining time.
    *
-   * @returns {Element}
+   * @returns {Doc}
    */
   get estimate() {
     if (!this.#estimate) {
-      this.#estimate = Element.create("span", { id: this.selectors.estimate });
+      this.#estimate = Doc.create("span", { id: this.selectors.estimate });
     }
     return this.#estimate;
   }

@@ -110,7 +110,7 @@ BookPage = class extends Page {
   static async get(url) {
     let page = new Page();
     let doc = await page.fetchDoc(url);
-    doc = new Element(doc);
+    doc = new Doc(doc);
 
     if (doc.gt("adbl-product-details").length) {
       page = new ADBLBookPage(doc);

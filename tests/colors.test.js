@@ -6,7 +6,7 @@ const $ = require("jquery");
 
 require("../src/dev.js");
 require("../src/util.js");
-require("../src/element.js");
+require("../src/doc.js");
 require("../src/dom.js");
 require("../src/colors.js");
 

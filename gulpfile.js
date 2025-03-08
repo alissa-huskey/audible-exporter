@@ -1,5 +1,5 @@
 const replace = require("gulp-replace");
-const using = require("gulp-using")
+const using = require("gulp-using");
 const concat = require("gulp-concat");
 const { src, dest, task, series, parallel, done } = require("gulp");
 const fs = require("fs");
@@ -31,11 +31,25 @@ let notifiers = ["purchase-history", "order", "library", "details"];
  * required.
  */
 let sources = [
-  "util", "element", "list", "parser", "page", "timer",
-  "purchase", "order-row", "order-page", "orders-fetcher",
-  "library-book-row", "library-page", "library-fetcher",
-  "book-page", "details-fetcher",
-  "file", "tsv-file", "result", "dom",
+  "util",
+  "doc",
+  "list",
+  "parser",
+  "page",
+  "timer",
+  "purchase",
+  "order-row",
+  "order-page",
+  "orders-fetcher",
+  "library-book-row",
+  "library-page",
+  "library-fetcher",
+  "book-page",
+  "details-fetcher",
+  "file",
+  "tsv-file",
+  "result",
+  "dom",
 ];
 
 /**
@@ -46,20 +60,18 @@ let sources = [
  */
 task("inject-css", (cb) => {
   log("task: inject-css");
-  return src([
-    `${dirs.src}/colors.js`,
-    ...components.map((d) => `src/${d}.js`)
-  ])
+  return src([`${dirs.src}/colors.js`, ...components.map((d) => `src/${d}.js`)])
     .pipe(using({}))
-    .pipe(replace(
-      /\n\s+\/\* CSS_MARKER (.*) \*\/\n/, (_, stylesheet) => {
+    .pipe(
+      replace(/\n\s+\/\* CSS_MARKER (.*) \*\/\n/, (_, stylesheet) => {
         if (!stylesheet) {
           cb(new Error("No matching stylesheet found."));
         }
         console.log(`injecting stylesheet: src/${stylesheet}.js`);
-        let css = fs.readFileSync(`src/${stylesheet}.css`).toString()
+        let css = fs.readFileSync(`src/${stylesheet}.css`).toString();
         return `\n${css}`;
-    }))
+      }),
+    )
     .pipe(dest(dirs.tmp));
 });
 
@@ -71,25 +83,24 @@ task("inject-css", (cb) => {
  *
  * Returns a series with one task for each component.
  */
-buildComponents = function(done) {
+buildComponents = function (done) {
   const tasks = components.map((name) => {
     log(`generated task: buildComponents->${name}.js`);
-    return () => (
+    return () =>
       src([
-        ...["dev", "util", "timer", "element", "dom"].map((d) => `src/${d}.js`),
+        ...["dev", "util", "timer", "doc", "dom"].map((d) => `src/${d}.js`),
         `${dirs.tmp}/colors.js`,
         `${dirs.tmp}/${name}.js`,
       ])
         .pipe(concat(`${name}.js`))
-        .pipe(dest(dirs.build))
-    );
+        .pipe(dest(dirs.build));
   });
 
   return series(...tasks, (seriesDone) => {
     seriesDone();
     done();
   })();
-}
+};
 
 /**
  * Generate tasks to build standalone notifiers.
@@ -99,22 +110,21 @@ buildComponents = function(done) {
  *
  * Returns a series with one task for each notifier.
  */
-buildNotifiers = function(done) {
+buildNotifiers = function (done) {
   const tasks = notifiers.map((label) => {
     let name = `${label}-notifier.js`;
     log(`generated task: buildNotifiers->${name}`);
-    return () => (
+    return () =>
       src([`${dirs.build}/status-notifier.js`, `${dirs.src}/${name}`])
         .pipe(concat(name))
-        .pipe(dest(dirs.build))
-    );
+        .pipe(dest(dirs.build));
   });
 
   return series(...tasks, (seriesDone) => {
     seriesDone();
     done();
   })();
-}
+};
 
 /**
  * Build the main audible-exporter.js file.
@@ -128,9 +138,10 @@ task("audible-exporter", (done) => {
     ...notifiers.map((f) => `${dirs.src}/${f}-notifier.js`),
     `${dirs.src}/exporter.js`,
     `${dirs.src}/runner.js`,
-  ]).pipe(concat("audible-exporter.js")).pipe(dest(dirs.build))
+  ])
+    .pipe(concat("audible-exporter.js"))
+    .pipe(dest(dirs.build));
 });
-
 
 task("dom", series("inject-css", buildComponents));
 task("notifiers", series("dom", buildNotifiers));
