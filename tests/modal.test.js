@@ -16,20 +16,20 @@ describe("Modal", function() {
   let modal = new Modal();
 
   test("new Modal", function() {
-    expect(modal.constructor.name).toBe("Modal");
+    expect(modal).toBeA(Modal);
   });
 
   test(".create()", function() {
     modal.create();
 
     el = new Element(document).gcf(modal.selectors.wrapper);
-    expect(el.element.constructor.name).toBe("HTMLDivElement");
+    expect(el.element).toBeA(HTMLDivElement);
   });
 
   test("elements", function() {
-    expect(modal.wrapper.constructor.name).toBe("Element");
-    expect(modal.close_btn.constructor.name).toBe("Element");
-    expect(modal.dl_btn.constructor.name).toBe("Element");
+    expect(modal.wrapper).toBeA(Element);
+    expect(modal.close_btn).toBeA(Element);
+    expect(modal.dl_btn).toBeA(Element);
   });
 
   test("show", function() {

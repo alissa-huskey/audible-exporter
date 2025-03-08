@@ -53,7 +53,21 @@
   color: var(--ae-bright-green);
 }
 
-.row {
+#ae-context.empty {
+  height: 0px;
+  padding: 0px;
+  border-top: 0px;
+}
+
+#ae-context{
+  font-size: .9em;
+  color: #999;
+  background: var(--ae-black-russian);
+  border-top: 1px solid var(--ae-dim-gray);
+  padding: 3px;
+}
+
+.ae-row {
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-between;

@@ -7,7 +7,7 @@ describe("Timer", function() {
 
   test("new Timer()", function() {
     let timer = new Timer();
-    expect(timer.constructor.name).toBe("Timer");
+    expect(timer).toBeA(Timer);
 
     timer = new Timer(5, 10);
     timer.beginning = 5;
@@ -59,9 +59,7 @@ describe("Timer", function() {
     });
 
     expect(result).toBe(100);
-    expect(timer.elapsed >= 100 && timer.elapsed < 150).toBe(true);
+    expect(timer.elapsed).toBeWithin(100, 110);
   });
-
-
 
 });

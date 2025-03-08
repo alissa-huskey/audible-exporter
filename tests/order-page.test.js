@@ -25,11 +25,11 @@ describe("OrderPage", function() {
     await page.get();
 
     expect(OrderPage.prototype.fetchDoc).toHaveBeenCalledWith(`${page.base_url}&df=2025&pn=1&ps=40`)
-    expect(page.constructor.name).toBe("OrderPage");
+    expect(page).toBeA(OrderPage);
     expect(page.year).toBe(2025);
     expect(page.page_num).toBe(1);
     expect(page.per_page).toBe(40);
-    expect(page.doc.constructor.name).toBe("Element");
+    expect(page.doc).toBeA(Element);
     expect(page.doc.title).toBe("Purchase History | Audible.com");
   });
 
@@ -46,7 +46,7 @@ describe("OrderPage", function() {
     OrderPage.prototype.fetchDoc = mockFetchDoc("order-page.html")
     let page = new OrderPage(2025, 1, 20);
 
-    expect(page.constructor.name).toBe("OrderPage");
+    expect(page).toBeA(OrderPage);
     expect(page.year).toBe(2025);
     expect(page.page_num).toBe(1);
     expect(page.per_page).toBe(20);
@@ -56,8 +56,8 @@ describe("OrderPage", function() {
     let page = new OrderPage(doc);
     expect(page.year).toBe(2025);
     expect(page.page_num).toBe(1);
-    expect(page.constructor.name).toBe("OrderPage");
-    expect(page.doc.constructor.name).toBe("Element");
+    expect(page).toBeA(OrderPage);
+    expect(page.doc).toBeA(Element);
   });
 
   test(".get()", async function() {

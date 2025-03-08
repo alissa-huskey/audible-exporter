@@ -21,7 +21,7 @@ describe("Element", function() {
 
   test("Element()", function() {
     e = new Element();
-    expect(e.constructor.name).toBe("Element");
+    expect(e).toBeA(Element);
   });
 
   test("Element(HTMLElement())", function() {
@@ -29,7 +29,7 @@ describe("Element", function() {
     element = new Element(elm);
 
     expect(element.id).toBe("wrapper");
-    expect(element.element.constructor.name).toBe("HTMLDivElement");
+    expect(element.element).toBeA(HTMLDivElement);
     expect(element.element.attributes["class"].value).toBe("container");
   });
 
@@ -60,7 +60,7 @@ describe("Element", function() {
   test("Element.gt()", function() {
     items = Element.gt("ul");
 
-    expect(items.constructor.name).toBe("List");
+    expect(items).toBeA(List);
     expect(items.length).toBe(1);
     expect(items[0].element.tagName).toBe("UL");
   });
@@ -68,7 +68,7 @@ describe("Element", function() {
   test("Element.gc()", function() {
     items = Element.gc("selected");
 
-    expect(items.constructor.name).toBe("List");
+    expect(items).toBeA(List);
     expect(items.length).toBe(1);
     expect(items[0].element.tagName).toBe("LI");
   });
@@ -76,7 +76,7 @@ describe("Element", function() {
   test("Element.gi()", function() {
     e = Element.gi("list");
 
-    expect(e.constructor.name).toBe("Element");
+    expect(e).toBeA(Element);
     expect(e.element.tagName).toBe("UL");
   });
 

@@ -153,7 +153,7 @@ describe("Exporter", function() {
     exporter.modal.create();
     exporter.download(["a", "b", "c"]);
 
-    expect(exporter.modal.file.constructor.name).toBe("TSVFile");
+    expect(exporter.modal.file).toBeA(TSVFile);
     expect(exporter.modal.wrapper.style.display).toBe("block");
   });
 

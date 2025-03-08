@@ -16,7 +16,7 @@ describe("PurchaseHistoryNotifier", function() {
 
   test("new PurchaseHistoryNotifier()", function() {
     let notifier = new PurchaseHistoryNotifier();
-    expect(notifier.constructor.name).toBe("PurchaseHistoryNotifier");
+    expect(notifier).toBeA(PurchaseHistoryNotifier);
     expect(notifier.message).toBe("Retrieving purchase history...");
   });
 

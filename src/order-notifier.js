@@ -9,10 +9,22 @@ OrderNotifier = class extends StatusNotifier {
   #item_no = null;
   #page_count = null;
 
+  step_no = 2;
+
   constructor(total=null, years=null) {
     super();
     this.total = total;
     this.years = years;
+  }
+
+  get step_desc() {
+    let message = "Purchases";
+
+    if (this.years && this.years.length) {
+      message += ` since ${this.years.slice(-1)[0]}`;
+    }
+
+    return message;
   }
 
   /**
@@ -90,6 +102,6 @@ OrderNotifier = class extends StatusNotifier {
       message += "...";
     }
 
-    return message + this.time_left;
+    return message;
   }
 }

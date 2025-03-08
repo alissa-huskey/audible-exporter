@@ -22,7 +22,7 @@ describe("OrdersFetcher", function() {
 
   test("new OrdersFetcher()", function() {
     orders = new OrdersFetcher();
-    expect(orders.constructor.name).toBe("OrdersFetcher");
+    expect(orders).toBeA(OrdersFetcher);
   });
 
 
@@ -43,7 +43,7 @@ describe("OrdersFetcher", function() {
     expect(mockFn.mock.calls).toHaveLength(4)
 
     expect(orders.pages.length).toEqual(6);
-    expect(orders.pages[0].constructor.name).toBe("OrderPage");
+    expect(orders.pages[0]).toBeA(OrderPage);
     expect(orders.pages[0].year).toBe(2025);
     expect(orders.pages[0].page_num).toBe(1);
     expect(orders.pages[0].page_count).toBe(1);

@@ -16,11 +16,11 @@ describe("OrderRow", function() {
   let row = new OrderRow(fixtureElement("order-row.html", "tr"));
 
   test("new OrderRow()", function() {
-    expect(row.constructor.name).toBe("OrderRow");
+    expect(row).toBeA(OrderRow);
   });
 
   test("new OrderRow(doc)", function() {
-    expect(row.doc.constructor.name).toBe("Element");
+    expect(row.doc).toBeA(Element);
   });
 
   test(".url", function() {

@@ -693,14 +693,15 @@ OrdersFetcher = class {
     dispatchEvent({years: this.years});
 
     for (let year of this.years)  {
+      let timer = new Timer();
+      timer.start();
+
       dispatchEvent({year: year});
 
       let page_num = 1;
       let page_count;
 
       do {
-        let timer = new Timer();
-        timer.start();
         let page = new OrderPage(tryInt(year), page_num);
 
         if (page_num == 1) {
@@ -717,9 +718,9 @@ OrdersFetcher = class {
           dispatchEvent({years: this.years})
           break;
         }
-        timer.stop();
-        dispatchEvent({timer: timer});
       } while (page_num <= page_count)
+      timer.stop();
+      dispatchEvent({timer: timer});
     }
 
     dispatchEvent({percent: 1});
@@ -1778,12 +1779,17 @@ StatusNotifier = class extends DOM {
   #status = null;
   #percentage = null;
   #messages = null;
+  #context = null;
+  #steps = null;
+  #estimate = null;
   #style = null;
   #percent = null;
 
   #item_no = null;
   #total = null;
 
+  step_no = null;
+  total_steps = 4;
   estimate_padding = 1.05;
   event_name = "update-ae-notifier";
 
@@ -1795,6 +1801,9 @@ StatusNotifier = class extends DOM {
     messages: "ae-messages",
     status: "ae-status-text",
     percentage: "ae-percent-text",
+    context: "ae-context",
+    steps: "ae-steps-text",
+    estimate: "ae-estimate-text",
   };
 
   /* Elements
@@ -1814,9 +1823,7 @@ StatusNotifier = class extends DOM {
       }})
 
       this.wrapper.element.appendChild(this.bar.element);
-      this.bar.element.appendChild(this.messages.element);
-      this.messages.element.appendChild(this.status.element);
-      this.messages.element.appendChild(this.percentage.element);
+      this.wrapper.element.appendChild(this.context.element);
     }
     return this.#wrapper;
   }
@@ -1829,6 +1836,7 @@ StatusNotifier = class extends DOM {
   get bar() {
     if (!this.#bar) {
       this.#bar = Element.create("div", {id: this.selectors.bar});
+      this.#bar.element.appendChild(this.messages.element);
     }
     return this.#bar;
   }
@@ -1840,9 +1848,15 @@ StatusNotifier = class extends DOM {
    */
   get messages() {
     if (!this.#messages) {
-      this.#messages = Element.create("div", {id: this.selectors.messages, class: "row", style: {
-        width: `${this.bar_width}px`,
-      }});
+      this.#messages = Element.create("div", {
+        id: this.selectors.messages,
+        class: "ae-row",
+        style: {
+          width: `${this.bar_width}px`,
+        }
+      });
+      this.#messages.element.appendChild(this.status.element);
+      this.#messages.element.appendChild(this.percentage.element);
     }
     return this.#messages;
   }
@@ -1869,6 +1883,48 @@ StatusNotifier = class extends DOM {
     return this.#percentage;
   }
 
+  /**
+   * Div under the progress bar.
+   *
+   * @returns {Element}
+   */
+  get context() {
+    if (!this.#context) {
+      this.#context = Element.create("div", {
+        id: this.selectors.context,
+        class: "ae-row empty",
+      });
+
+      this.#context.element.appendChild(this.steps.element);
+      this.#context.element.appendChild(this.estimate.element);
+    }
+    return this.#context;
+  }
+
+  /**
+   * Span that contains the "Step x of y" text.
+   *
+   * @returns {Element}
+   */
+  get steps() {
+    if (!this.#steps) {
+      this.#steps = Element.create("span", {id: this.selectors.steps});
+    }
+    return this.#steps;
+  }
+
+  /**
+   * Span that contains the estimated remaining time.
+   *
+   * @returns {Element}
+   */
+  get estimate() {
+    if (!this.#estimate) {
+      this.#estimate = Element.create("span", {id: this.selectors.estimate});
+    }
+    return this.#estimate;
+  }
+
   /* Accessors
    ***************************************************************************/
 
@@ -1889,9 +1945,10 @@ StatusNotifier = class extends DOM {
    * @returns {number}
    */
   set item_no(value) {
-    this.#item_no = value
+    this.#item_no = value;
     this.text = this.message;
-    this.percent = this.item_no / this.total
+    this.percent = this.ratio;
+    this.time = this.time_left;
   }
 
   /**
@@ -1902,11 +1959,14 @@ StatusNotifier = class extends DOM {
   }
 
   /**
-   * Set .total and update .text.
+   * Set .total and update text and percent.
    */
   set total(value) {
-    this.#total = value
+    this.#total = value;
     this.text = this.message;
+    this.percent = this.ratio;
+    this.time = this.time_left;
+    this.step = this.step_text;
   }
 
   /**
@@ -1943,6 +2003,9 @@ StatusNotifier = class extends DOM {
    * text.
    */
   set percent(decimal) {
+    if (isNaN(decimal) || !isFinite(decimal)) {
+      return;
+    }
     this.#percent = decimal;
     let amount = Math.ceil(decimal * 100);
     this.percentage.innerText = `${amount}%`;
@@ -1952,12 +2015,51 @@ StatusNotifier = class extends DOM {
   }
 
   /**
+   * Get the step message text.
+   *
+   * @returns {string}
+   */
+  get step() {
+    return this.steps.innerText;
+  }
+
+  /**
+   * Set the step message text.
+   *
+   * @param {string} message  Message to display.
+   */
+  set step(message) {
+    this.context.classList.remove("empty");
+    this.steps.innerText = message;
+  }
+
+  /**
+   * Get the remaining time message text.
+   *
+   * @returns {string}
+   */
+  get time() {
+    return this.estimate.innerText;
+  }
+
+  /**
+   * Set the time message text.
+   *
+   * @param {string} message  Message to display.
+   */
+  set time(message) {
+    this.context.classList.remove("empty");
+    this.estimate.innerText = message;
+  }
+
+  /**
    * Add a Timer object to the list of times.
    *
    * @param {Timer} value
    */
   set timer(value) {
     this.times.push(value);
+    this.time = this.time_left;
   }
 
   /* Static getters
@@ -2037,7 +2139,21 @@ StatusNotifier = class extends DOM {
   color: var(--ae-bright-green);
 }
 
-.row {
+#ae-context.empty {
+  height: 0px;
+  padding: 0px;
+  border-top: 0px;
+}
+
+#ae-context{
+  font-size: .9em;
+  color: #999;
+  background: var(--ae-black-russian);
+  border-top: 1px solid var(--ae-dim-gray);
+  padding: 3px;
+}
+
+.ae-row {
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-between;
@@ -2072,6 +2188,35 @@ StatusNotifier = class extends DOM {
   }
 
   /**
+   * The "Step x of y" text to display to the user.
+   *
+   * @returns {string}
+   */
+  get step_text() {
+    if (!this.step_no) {
+      return "";
+    }
+
+    let text = `Step ${this.step_no} of ${this.total_steps}`;
+
+    if (this.step_desc) {
+      text += `: ${this.step_desc}`;
+    }
+
+    return `[${text}]`;
+  }
+
+  /**
+   * The calculated percent complete.
+   */
+  get ratio() {
+    if (!(this.item_no && this.item_no >= 0 && this.total)) {
+      return null;
+    }
+    return this.item_no / this.total;
+  }
+
+  /**
    * The number of items still to be processed.
    *
    * @returns {number}
@@ -2102,10 +2247,15 @@ StatusNotifier = class extends DOM {
     return (this.remaining * this.per_item) * this.estimate_padding;
   }
 
+  /**
+   * Estimate time left to process remaining items in minutes.
+   *
+   * @returns {string}
+   */
   get minutes_left() {
     let minutes = ((this.ms_left / 1000) / 60).toFixed(1);
     if (minutes == parseInt(minutes)) {
-      minutes = parseInt(minutes);
+      minutes = parseInt(minutes).toString();
     }
     return minutes;
   }
@@ -2116,7 +2266,7 @@ StatusNotifier = class extends DOM {
    * @returns {string}
    */
   get time_left() {
-    if (!this.times.length) {
+    if (!(this.times.length && this.item_no != null && this.total)) {
       return "";
     }
 
@@ -2130,7 +2280,7 @@ StatusNotifier = class extends DOM {
       text = `about ${minutes} minutes remaining`;
     }
 
-    return ` (${text})`;
+    return `${text}`;
   }
 
   /* Methods
@@ -2175,6 +2325,7 @@ StatusNotifier = class extends DOM {
     window.ae = window.ae || {};
     window.ae.notifier = this;
     this.text = this.message;
+    this.step = this.step_text;
   }
 
   /**
@@ -2184,6 +2335,8 @@ StatusNotifier = class extends DOM {
     this.text = "";
     this.percent = 0;
     this.percentage.innerText = "";
+    this.estimate.innerText = "";
+    this.steps.innerText = "";
   }
 
   /**
@@ -2469,10 +2622,22 @@ PurchaseHistoryNotifier = class extends StatusNotifier {
   #year = null;
   #years = null;
 
+  step_no = 1;
+
   constructor(years=null) {
     super();
     this.times = [];
     this.years = years || [];
+  }
+
+  get step_desc() {
+    let message = "Purchase history";
+
+    if (this.years.length) {
+      message += ` since ${this.years.slice(-1)[0]}`;
+    }
+
+    return message;
   }
 
   /**
@@ -2490,9 +2655,10 @@ PurchaseHistoryNotifier = class extends StatusNotifier {
    * @param {string} value  The year being processed.
    */
   set year(value) {
-    this.#year = value
+    this.#year = value;
     this.text = this.message;
-    this.updatePercent();
+    this.percent = this.ratio;
+    this.time = this.time_left;
   }
 
   /**
@@ -2511,7 +2677,8 @@ PurchaseHistoryNotifier = class extends StatusNotifier {
    */
   set years(value) {
     this.#years = value;
-    this.updatePercent();
+    this.percent = this.ratio;
+    this.step = this.step_text;
   }
 
   get item_no() {
@@ -2532,16 +2699,7 @@ PurchaseHistoryNotifier = class extends StatusNotifier {
       return "Retrieving purchase history...";
     }
 
-    return `Retrieving purchase history: ${this.year}${this.time_left}`
-  }
-
-  /**
-   * Update the percent.
-   */
-  updatePercent() {
-    if (this.#years && this.year != null) {
-      this.percent = this.item_no / this.total;
-    }
+    return `Retrieving purchase history: ${this.year}`
   }
 }
 
@@ -2557,10 +2715,22 @@ OrderNotifier = class extends StatusNotifier {
   #item_no = null;
   #page_count = null;
 
+  step_no = 2;
+
   constructor(total=null, years=null) {
     super();
     this.total = total;
     this.years = years;
+  }
+
+  get step_desc() {
+    let message = "Purchases";
+
+    if (this.years && this.years.length) {
+      message += ` since ${this.years.slice(-1)[0]}`;
+    }
+
+    return message;
   }
 
   /**
@@ -2597,24 +2767,6 @@ OrderNotifier = class extends StatusNotifier {
   set year_page(value) {
     this.#year_page = value
     this.text = this.message;
-  }
-
-  /**
-   * The current page of total pages being processed.
-   *
-   * @returns {number}
-   */
-  get item_no() {
-    return this.#item_no;
-  }
-
-  /**
-   * Set the page and update text and percent.
-   */
-  set item_no(value) {
-    this.#item_no = value
-    this.text = this.message;
-    this.percent = value / this.total;
   }
 
   /**
@@ -2656,7 +2808,7 @@ OrderNotifier = class extends StatusNotifier {
       message += "...";
     }
 
-    return message + this.time_left;
+    return message;
   }
 }
 
@@ -2669,43 +2821,16 @@ LibraryNotifier = class extends StatusNotifier {
   #item_no = null;
   #total = null;
 
-  /**
-   * The current page.
-   *
-   * @returns {number}
-   */
-  get item_no() {
-    return this.#item_no;
-  }
+  step_no = 3;
 
-  /**
-   * Set page and update text and percent.
-   *
-   * @param {number} value
-   */
-  set item_no(value) {
-    this.#item_no = value
-    this.text = this.message;
-    this.percent = this.item_no / this.total
-  }
+  get step_desc() {
+    let message = "Your library";
 
-  /**
-   * The total number of pages.
-   *
-   * @returns {number}
-   */
-  get total() {
-    return this.#total;
-  }
+    if (this.total) {
+      message += `, ${this.total} ${this.total > 1 ? "pages" : "page"}`;
+    }
 
-  /**
-   * Set the total and update text.
-   *
-   * @param {number} value
-   */
-  set total(value) {
-    this.#total = value
-    this.text = this.message;
+    return message;
   }
 
   /**
@@ -2725,7 +2850,7 @@ LibraryNotifier = class extends StatusNotifier {
       message += "...";
     }
 
-    return message + this.time_left;
+    return message;
   }
 }
 
@@ -2737,6 +2862,18 @@ LibraryNotifier = class extends StatusNotifier {
 DetailsNotifier = class extends StatusNotifier {
   #item_no = null;
   #total = null;
+
+  step_no = 4;
+
+  get step_desc() {
+    let message = "Additional details";
+
+    if (this.total) {
+      message += `, ${this.total} books`;
+    }
+
+    return message;
+  }
 
   /**
    * Status message to display to the user.
@@ -2754,13 +2891,7 @@ DetailsNotifier = class extends StatusNotifier {
       return "Retrieving additional information on titles...";
     }
 
-    let message = `Retrieving book ${this.item_no} of ${this.total}`
-
-    if (!isEmpty(this.times)) {
-      message += this.time_left;
-    }
-
-    return message;
+    return `Retrieving book ${this.item_no} of ${this.total}`;
   }
 }
 

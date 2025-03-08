@@ -20,7 +20,7 @@ describe("LibraryFetcher", function() {
   let library = new LibraryFetcher();
 
   test("LibraryFetcher", function() {
-    expect(library.constructor.name).toBe("LibraryFetcher");
+    expect(library).toBeA(LibraryFetcher);
   });
 
   test(".pages", function() {
@@ -45,7 +45,7 @@ describe("LibraryFetcher", function() {
     let library = new LibraryFetcher();
     let page = await library.fetchPage(1);
 
-    expect(page.constructor.name).toBe("LibraryPage");
+    expect(page).toBeA(LibraryPage);
     expect(page.page_num).toBe(2);
   });
 

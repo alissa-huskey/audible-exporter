@@ -7,6 +7,18 @@ DetailsNotifier = class extends StatusNotifier {
   #item_no = null;
   #total = null;
 
+  step_no = 4;
+
+  get step_desc() {
+    let message = "Additional details";
+
+    if (this.total) {
+      message += `, ${this.total} books`;
+    }
+
+    return message;
+  }
+
   /**
    * Status message to display to the user.
    *
@@ -23,12 +35,6 @@ DetailsNotifier = class extends StatusNotifier {
       return "Retrieving additional information on titles...";
     }
 
-    let message = `Retrieving book ${this.item_no} of ${this.total}`
-
-    if (!isEmpty(this.times)) {
-      message += this.time_left;
-    }
-
-    return message;
+    return `Retrieving book ${this.item_no} of ${this.total}`;
   }
 }

@@ -29,10 +29,10 @@ describe("BookPage", function() {
     ]);
 
     let page = await BookPage.get("https://www.audible.com/pd/0062978810")
-    expect(page.constructor.name).toBe("NormalBookPage");
+    expect(page).toBeA(NormalBookPage);
 
     page = await BookPage.get("https://www.audible.com/pd/0062978810")
-    expect(page.constructor.name).toBe("ADBLBookPage");
+    expect(page).toBeA(ADBLBookPage);
   });
 
 });

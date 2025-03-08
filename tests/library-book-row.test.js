@@ -18,16 +18,16 @@ describe("LibraryBookRow", function() {
 
   test("new LibraryBookRow()", function() {
     let row = new LibraryBookRow();
-    expect(row.constructor.name).toBe("LibraryBookRow");
+    expect(row).toBeA(LibraryBookRow);
   });
 
   test("new LibraryBookRow(doc)", function() {
-    expect(row.doc.constructor.name).toBe("Element");
+    expect(row.doc).toBeA(Element);
   });
 
   test("new LibraryBookRow(doc, page, row)", function() {
     let row = new LibraryBookRow(doc, 1, 5);
-    expect(row.doc.constructor.name).toBe("Element");
+    expect(row.doc).toBeA(Element);
     expect(row.page_num).toBe(1);
     expect(row.row_num).toBe(5);
   });
@@ -37,8 +37,8 @@ describe("LibraryBookRow", function() {
   });
 
   test("ul", function() {
-    expect(row.ul.constructor.name).toBe("Element");
-    expect(row.ul.element.constructor.name).toBe("HTMLUListElement");
+    expect(row.ul).toBeA(Element);
+    expect(row.ul.element).toBeA(HTMLUListElement);
   });
 
   test("url", function() {

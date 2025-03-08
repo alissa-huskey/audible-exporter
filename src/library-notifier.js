@@ -7,43 +7,16 @@ LibraryNotifier = class extends StatusNotifier {
   #item_no = null;
   #total = null;
 
-  /**
-   * The current page.
-   *
-   * @returns {number}
-   */
-  get item_no() {
-    return this.#item_no;
-  }
+  step_no = 3;
 
-  /**
-   * Set page and update text and percent.
-   *
-   * @param {number} value
-   */
-  set item_no(value) {
-    this.#item_no = value;
-    this.text = this.message;
-    this.percent = this.ratio;
-  }
+  get step_desc() {
+    let message = "Your library";
 
-  /**
-   * The total number of pages.
-   *
-   * @returns {number}
-   */
-  get total() {
-    return this.#total;
-  }
+    if (this.total) {
+      message += `, ${this.total} ${this.total > 1 ? "pages" : "page"}`;
+    }
 
-  /**
-   * Set the total and update text.
-   *
-   * @param {number} value
-   */
-  set total(value) {
-    this.#total = value
-    this.text = this.message;
+    return message;
   }
 
   /**
@@ -63,6 +36,6 @@ LibraryNotifier = class extends StatusNotifier {
       message += "...";
     }
 
-    return message + this.time_left;
+    return message;
   }
 }

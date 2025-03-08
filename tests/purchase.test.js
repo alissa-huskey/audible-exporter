@@ -16,11 +16,11 @@ describe("Purchase", function() {
   let row = new Purchase(fixtureElement("purchase.html", "a"));
 
   test("new Purchase()", function() {
-    expect(row.constructor.name).toBe("Purchase");
+    expect(row).toBeA(Purchase);
   });
 
   test("new Purchase(doc)", function() {
-    expect(row.doc.constructor.name).toBe("Element");
+    expect(row.doc).toBeA(Element);
   });
 
   test(".data()", function() {

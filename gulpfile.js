@@ -76,7 +76,7 @@ buildComponents = function(done) {
     log(`generated task: buildComponents->${name}.js`);
     return () => (
       src([
-        ...["dev", "util", "element", "dom"].map((d) => `src/${d}.js`),
+        ...["dev", "util", "timer", "element", "dom"].map((d) => `src/${d}.js`),
         `${dirs.tmp}/colors.js`,
         `${dirs.tmp}/${name}.js`,
       ])

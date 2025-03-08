@@ -69,22 +69,6 @@ describe("DetailsNotifier", function() {
     expect(notifier.minutes_left).toBe("2.4");
   });
 
-  test(".time_left", function() {
-    let notifier = new DetailsNotifier();
-    notifier.total = 100;
-
-    notifier.item_no = 50;
-    notifier.times = [new Timer(0, timePerItem(notifier, 10.5))];
-    expect(notifier.time_left).toBe(" (about 10.5 minutes remaining)");
-
-    notifier.item_no = 99;
-    notifier.times = [new Timer(0, timePerItem(notifier, 1))];
-    expect(notifier.time_left).toBe(" (about a minute remaining)");
-
-    notifier.times = [new Timer(0, timePerItem(notifier, .5))];
-    expect(notifier.time_left).toBe(" (less than a minute remaining)");
-  });
-
   test(".message", function() {
     let notifier = new DetailsNotifier();
     expect(notifier.message).toBe("Retrieving additional information on titles...");
@@ -94,7 +78,7 @@ describe("DetailsNotifier", function() {
     expect(notifier.message).toBe("Retrieving book 50 of 100");
 
     notifier.times = [new Timer(0, timePerItem(notifier, 10.5))];
-    expect(notifier.message).toBe(`Retrieving book 50 of 100 (about 10.5 minutes remaining)`);
+    expect(notifier.message).toBe(`Retrieving book 50 of 100`);
   });
 
 });

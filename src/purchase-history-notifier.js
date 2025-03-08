@@ -7,10 +7,22 @@ PurchaseHistoryNotifier = class extends StatusNotifier {
   #year = null;
   #years = null;
 
+  step_no = 1;
+
   constructor(years=null) {
     super();
     this.times = [];
     this.years = years || [];
+  }
+
+  get step_desc() {
+    let message = "Purchase history";
+
+    if (this.years.length) {
+      message += ` since ${this.years.slice(-1)[0]}`;
+    }
+
+    return message;
   }
 
   /**
@@ -31,6 +43,7 @@ PurchaseHistoryNotifier = class extends StatusNotifier {
     this.#year = value;
     this.text = this.message;
     this.percent = this.ratio;
+    this.time = this.time_left;
   }
 
   /**
@@ -50,6 +63,7 @@ PurchaseHistoryNotifier = class extends StatusNotifier {
   set years(value) {
     this.#years = value;
     this.percent = this.ratio;
+    this.step = this.step_text;
   }
 
   get item_no() {
@@ -70,7 +84,7 @@ PurchaseHistoryNotifier = class extends StatusNotifier {
       return "Retrieving purchase history...";
     }
 
-    return `Retrieving purchase history: ${this.year}${this.time_left}`
+    return `Retrieving purchase history: ${this.year}`
   }
 }
 

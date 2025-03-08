@@ -13,7 +13,7 @@ describe("Result", function() {
   let row = new Result();
 
   test("new Result()", function() {
-    expect(row.constructor.name).toBe("Result");
+    expect(row).toBeA(Result);
   });
 
   test("new Result(library, details, order)", function() {

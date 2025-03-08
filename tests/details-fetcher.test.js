@@ -27,7 +27,7 @@ describe("DetailsFetcher", function() {
   let fetcher = new DetailsFetcher(library);
 
   test("new DetailsFetcher", function() {
-    expect(fetcher.constructor.name).toBe("DetailsFetcher");
+    expect(fetcher).toBeA("DetailsFetcher");
     expect(fetcher.library).toEqual(library);
   });
 
@@ -40,7 +40,7 @@ describe("DetailsFetcher", function() {
     await fetcher.populate();
 
     expect(fetcher.pages).toHaveLength(1);
-    expect(fetcher.pages[0].constructor.name).toBe("ADBLBookPage");
+    expect(fetcher.pages[0]).toBeA("ADBLBookPage");
   })
 
   test(".books", async function() {

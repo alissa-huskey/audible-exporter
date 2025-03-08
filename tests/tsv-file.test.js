@@ -11,7 +11,7 @@ require("../src/tsv-file.js");
 describe("TSVFile", function() {
   test("new TSVFile()", function() {
     let file = new TSVFile();
-    expect(file.constructor.name).toBe("TSVFile");
+    expect(file).toBeA(TSVFile);
 
     let records = [{a: 1}]
     file = new TSVFile(records);
@@ -62,7 +62,7 @@ describe("TSVFile", function() {
     let records = [{a: 1, b: 2, c: 3}]
     let file = new TSVFile(records);
     let blob = file.blob;
-    expect(blob.constructor.name).toBe("Blob");
+    expect(blob).toBeA(Blob);
     expect(blob.type).toBe("text/tsv");
   })
 

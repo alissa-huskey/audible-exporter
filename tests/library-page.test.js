@@ -22,13 +22,13 @@ describe("LibraryPage", function() {
 
   test(".doc", function() {
     let page = new LibraryPage("<html></html>");
-    expect(page.doc.constructor.name).toBe("Element");
+    expect(page.doc).toBeA(Element);
   });
 
   test(".rows", function() {
-    expect(page.rows.constructor.name).toBe("Array");
+    expect(page.rows).toBeA(Array);
     expect(page.rows.length).toBe(20);
-    expect(page.rows[0].constructor.name).toBe("LibraryBookRow");
+    expect(page.rows[0]).toBeA(LibraryBookRow);
   });
 
   test(".books", function() {

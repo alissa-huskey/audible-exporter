@@ -10,7 +10,6 @@
 (Z) 2025-02-22 @feature Add my_review
 (Z) 2025-02-22 @feature Add my_rating
 (B) 2025-02-22 @qa set variables for css class names in appropriate places.
-(B) 2025-02-23 @ux @feature Add 'Step x of y' to status bar.
 (Z) 2025-02-23 @feature Add series ID.
 (Z) 2025-02-23 @feature Get collections
 (Z) 2025-02-23 @feature Get wishlist https://www.audible.com/library/wishlist
@@ -22,7 +21,6 @@
 (Z) 2025-02-23 @feature Add date downloaded to JSON
 (Z) 2025-02-23 @feature Some way to indicate last download, to avoid downloading everything
 (Z) 2025-02-25 @feature @notifier Add cancel button.
-(B) 2025-02-26 @qa Refactor Orders class to have prepare method/stage that will fetch all years and page numbers to get a total page count.
 (B) 2025-02-26 @qa Handle failed requests.
 (Z) 2025-02-26 Implement some sort of pause/resume.
 (B) 2025-02-26 @qa document functions, classes and methods https://developer.wordpress.org/coding-standards/inline-documentation-standards/javascript/
@@ -31,11 +29,9 @@
 (B) 2025-02-27 @qa Rename *Fetcher.populate() -> *Fetcher.get()
 (A) 2025-02-27 @qa Change http to https for all requests in Page.fetchDoc()
 (Z) 2025-02-27 @ux Display error message dialog on fatal error.
-(D) 2025-02-27 @ux @notifier Add time remaining to bottom context bar.
 (B) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
 (D) 2025-02-27 Add to readme https://developer.chrome.com/docs/devtools/console/log
 (B) 2025-02-27 @qa Have Page.fetchDoc() set this.url = url
-(D) 2025-02-27 @ux Make the colors between the notifier and modal consistent.
 (D) 2025-02-28 @ux @download In TSV download, join categories.
 (B) 2025-02-28 @ux @download Compare results from original download to current results
 (A) 2025-02-28 @housekeeping Fix instructions to download JSON on README.
@@ -46,8 +42,6 @@
 (A) 2025-03-01 @book-details Parse/handle multiple series.
 (B) 2025-03-01 @qa Rename NormalBookPage -> LegacyBookPage
 (D) 2025-03-01 @download Rename audible_oginal -> audible_original
-(D) 2025-03-01 @qa Log the amount of time it takes for every step (orders, library, details).
-(D) 2025-03-01 @qa Write results to json tag in doc to reduce memory usage
 (B) 2025-03-01 @qa See about getting rid of .data() methods to reduce overhead.
 (B) 2025-03-01 @qa Move LibraryFetcher.fetchPage() -> LibraryPage.get()
 (B) 2025-03-02 @download ensure all URL formats are the same.
@@ -68,8 +62,15 @@
 (D) 2025-03-05 @qa @testing Look into browserling https://www.browserling.com/
 (D) 2025-03-05 @qa @testing Try testcafe https://testcafe.io/
 (D) 2025-03-05 @qa @testing Look into snapshot testing https://jestjs.io/docs/snapshot-testing
-2025-03-05 @qa @notifiers Add base getter to calculate percent as this.item_no / this.total.
 2025-03-05 @qa @detail-notifier Add error handling for if .item_no and/or .total is not set.
 (A) 2025-03-05 @qa Rename StatusNotifier -> Notifier.
 (A) 2025-03-05 @qa Rename OrderNotifier -> OrdersNotifier.
 (B) 2025-03-05 @ux Make some kind of rough estimate of overall time.
+(A) 2025-03-05 @ux @notifiers When percent is 1, change the message to 'Done retrieving <whatever>'
+(A) 2025-03-05 @qa @notifiers Consider changing text=, time=, etc to .updateText(), .updateTime()
+(A) 2025-03-07 @qa @notifiers .create(): create Colors div if it does not already exist.
+(D) 2025-03-07 @notifiers @dom Change most IDs to classes; add IDs for individual notifiers.
+(A) 2025-03-07 @qa @notifier consider renaming all elements ie status -> status_element / status_el
+(D) 2025-03-07 @qa @testing @notifiers check for adding/removing event listeners  https://www.codeguru.co.in/2021/02/testing-javascript-events-with-jest.html
+(D) 2025-03-07 @notifiers .reset() should reset timers, item_no and total
+(D) 2025-03-07 2025-03-01 @qa Write results to json tag in doc to reduce memory usage

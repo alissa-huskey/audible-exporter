@@ -14,7 +14,7 @@ describe("OrderNotifier", function() {
 
   test("new OrderNotifier()", function() {
     let notifier = new OrderNotifier();
-    expect(notifier.constructor.name).toBe("OrderNotifier");
+    expect(notifier).toBeA(OrderNotifier);
 
     notifier = new OrderNotifier(5, ["2025", "2024", "2023"])
     expect(notifier.total).toBe(5);
