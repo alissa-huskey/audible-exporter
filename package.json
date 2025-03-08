@@ -18,7 +18,17 @@
   },
   "homepage": "https://github.com/alissa-huskey/audible-exporter#readme",
   "devDependencies": {
+    "@eslint/js": "^9.22.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-formatter-compact": "^8.40.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-promise": "^6.6.0",
     "fs": "^0.0.1-security",
+    "globals": "^16.0.0",
     "gulp": "^5.0.0",
     "gulp-cli": "^3.0.0",
     "gulp-concat": "^2.6.1",
@@ -28,6 +38,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-extended": "^4.0.2",
     "jquery": "^3.7.1",
+    "prettier-eslint-cli": "^8.0.1",
     "pretty-format": "^29.7.0"
   },
   "jest": {

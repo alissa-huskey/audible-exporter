@@ -1,10 +1,8 @@
 (A) 2025-02-14 @feature Add an option to download as CSV/TSV/JSON.
 (Z) 2025-02-14 @feature Add my review if it exists.
 (Z) 2025-02-14 @feature add option to download goodreads CSV importable file
-
 (Z) 2025-02-14 @feature add stop button
 (Z) 2025-02-14 @feature get account name
-
 (Z) 2025-02-17 @feature parse anthologies from book details
 (Z) 2025-02-21 @feature get finished/not-finished status
 (Z) 2025-02-22 @feature Add my_review
@@ -27,22 +25,19 @@
 (D) 2025-02-26 @qa @book-details Parse author from json_details instead of HTML.
 (A) 2025-02-27 @ux Add modal at beginning with start button and waring not to close or navigate away.
 (C) 2025-02-27 @qa Rename *Fetcher.populate() -> *Fetcher.get()
-
 (Z) 2025-02-27 @ux Display error message dialog on fatal error.
 (A) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
 (D) 2025-02-27 Add to readme https://developer.chrome.com/docs/devtools/console/log
 (C) 2025-02-27 @qa Have Page.fetchDoc() set this.url = url
 (D) 2025-02-28 @ux @download In TSV download, join categories.
 (B) 2025-02-28 @ux @download Compare results from original download to current results
-
-
 (D) 2025-03-01 @download Add purchase_timestamp.
 (D) 2025-03-01 @qa @pages Parse data from multiple fields, select the first one that has content.
 (M) 2025-03-01 @feature Get a list of collections a book belongs to
 (C) 2025-03-01 @data @book-details Parse/handle multiple series.
 (C) 2025-03-01 @qa Rename NormalBookPage -> LegacyBookPage
 (D) 2025-03-01 @download Rename audible_oginal -> audible_original
-(B) 2025-03-01 @qa See about getting rid of .data() methods to reduce overhead.
+(D) 2025-03-01 @qa See about getting rid of .data() methods to reduce overhead.
 (C) 2025-03-01 @qa Move LibraryFetcher.fetchPage() -> LibraryPage.get()
 (B) 2025-03-02 @download ensure all URL formats are the same.
 (B) 2025-03-02 @data Parse as much data as possible from every page.
@@ -55,7 +50,6 @@
 (D) 2025-03-05 @qa Look into JS style guides and linters: https://javascript.info/coding-style
 (B) 2025-03-05 @qa @compatability Look into webcomponents polyfills https://github.com/webcomponents/polyfills?tab=readme-ov-file
 (B) 2025-03-05 @qa @compatability Look into Modernizr: https://modernizr.com/docs/
-(B) 2025-03-05 @qa @testing Try eslint: https://dev.to/shivambmgupta/eslint-what-why-when-how-5f1d
 (D) 2025-03-05 @qa @accessibility Try jest-axe https://maxrozen.com/automatic-a11y-testing-with-jest-axe https://dev.to/bdougieyo/accessibility-testing-in-react-with-jest-axe-l7k
 (D) 2025-03-05 @qa @testing Try playwright https://playwright.dev/
 (D) 2025-03-05 @qa @testing Try blisk https://blisk.io/
@@ -66,12 +60,10 @@
 (C) 2025-03-05 @qa Rename StatusNotifier -> Notifier.
 (C) 2025-03-05 @qa Rename OrderNotifier -> OrdersNotifier.
 (B) 2025-03-05 @ux Make some kind of rough estimate of overall time.
-
 (B) 2025-03-05 @qa @notifiers Consider changing text=, time=, etc to .updateText(), .updateTime()
 (D) 2025-03-07 @notifiers @dom Change most IDs to classes; add IDs for individual notifiers.
 (B) 2025-03-07 @qa @notifier consider renaming all elements ie status -> status_element / status_el
 (D) 2025-03-07 @qa @testing @notifiers check for adding/removing event listeners  https://www.codeguru.co.in/2021/02/testing-javascript-events-with-jest.html
 (D) 2025-03-07 @notifiers .reset() should reset timers, item_no and total
-
 (C) 2025-03-07 @qa Make all requests from / instead of audible.com/
 (D) 2025-03-07 @qa look into preformance (memory specifically) testing
