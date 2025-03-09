@@ -72,3 +72,4 @@
 (B) 2025-03-09 @housekeeping look into using requires and see if there's a way to compile everything to a flat file.
 (B) 2025-03-09 @housekeeping Remove build dir from repo, add audible-export.js at top level.
 (C) 2025-03-09 @qa @testing Check to see if it runs on a phone.
+x 2025-03-09 2025-03-09 @qa Add Element.appendChild(), have it take multiple arguments.

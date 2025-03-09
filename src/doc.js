@@ -19,6 +19,8 @@ Doc = class {
       // eslint-disable-next-line no-prototype-builtins
       if (Object.hasOwnProperty(k)) continue;
 
+      if (k in this) continue;
+
       Object.defineProperty(this, k, {
         get: () => this.element[k],
         set: (v) => {
@@ -26,6 +28,20 @@ Doc = class {
         },
       });
     }
+  }
+
+  /**
+   * Shortcut for this.element.append().
+   *
+   * @params {...Doc,HTMLElement,string}  Child or children to append.
+   */
+  append(...children) {
+    children.forEach((child) => {
+      if (child instanceof Doc) {
+        child = child.element;
+      }
+      this.element.append(child);
+    });
   }
 
   /**

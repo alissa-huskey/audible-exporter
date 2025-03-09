@@ -70,3 +70,4 @@ x 2025-03-08 2025-03-05 @qa @compatability Look into webcomponents polyfills htt
 x 2025-03-08 2025-03-05 @qa Look into JS style guides and linters: https://javascript.info/coding-style
 x 2025-03-08 2025-03-05 @qa @testing Try Babel https://babeljs.io/docs
 x 2025-03-09 2025-02-27 @ux Add modal at beginning with start button and waring not to close or navigate away.
+x 2025-03-09 2025-03-09 @qa Add Element.appendChild(), have it take multiple arguments.

@@ -21,12 +21,12 @@ describe("Doc", () => {
   });
 
   test("Doc()", () => {
-    e = new Doc();
+    let e = new Doc();
     expect(e).toBeA(Doc);
   });
 
   test("Doc(HTMLElement())", () => {
-    elm = document.getElementById("wrapper");
+    let elm = document.getElementById("wrapper");
     element = new Doc(elm);
 
     expect(element.id).toBe("wrapper");
@@ -35,7 +35,7 @@ describe("Doc", () => {
   });
 
   test("Doc.create()", () => {
-    e = Doc.create("p");
+    let e = Doc.create("p");
     expect(e.element.tagName).toBe("P");
 
     e = Doc.create("p", { style: "width: 200px; border: 2px;" });
@@ -59,7 +59,7 @@ describe("Doc", () => {
   });
 
   test("Doc.gt()", () => {
-    items = Doc.gt("ul");
+    let items = Doc.gt("ul");
 
     expect(items).toBeA(List);
     expect(items.length).toBe(1);
@@ -67,7 +67,7 @@ describe("Doc", () => {
   });
 
   test("Doc.gc()", () => {
-    items = Doc.gc("selected");
+    let items = Doc.gc("selected");
 
     expect(items).toBeA(List);
     expect(items.length).toBe(1);
@@ -75,25 +75,25 @@ describe("Doc", () => {
   });
 
   test("Doc.gi()", () => {
-    e = Doc.gi("list");
+    let e = Doc.gi("list");
 
     expect(e).toBeA(Doc);
     expect(e.element.tagName).toBe("UL");
   });
 
   test("getter", () => {
-    element = new Doc(document.getElementById("list"));
+    let element = new Doc(document.getElementById("list"));
     expect(element.tagName).toBe("UL");
   });
 
   test("setter", () => {
-    element = new Doc(document.getElementById("list"));
+    let element = new Doc(document.getElementById("list"));
     element.id = "nav";
     expect(element.element.id).toBe("nav");
   });
 
   test("Doc.from_html()", () => {
-    element = Doc.from_html(
+    let element = Doc.from_html(
       "<html><head></head><body><p>hello</p></body></html>",
     );
     expect(element.element.tagName).toBe("HTML");
@@ -107,7 +107,7 @@ describe("Doc", () => {
   });
 
   test(".gi()", () => {
-    element = new Doc(document.getElementById("wrapper"));
+    let element = new Doc(document.getElementById("wrapper"));
     res = element.gi("list");
 
     expect(res.constructor?.name).toBe("Doc");
@@ -115,7 +115,7 @@ describe("Doc", () => {
   });
 
   test(".gt()", () => {
-    element = new Doc(document.getElementById("wrapper"));
+    let element = new Doc(document.getElementById("wrapper"));
     res = element.gt("li");
 
     expect(res.constructor?.name).toBe("List");
@@ -124,7 +124,7 @@ describe("Doc", () => {
   });
 
   test(".gc()", () => {
-    element = new Doc(document.getElementById("wrapper"));
+    let element = new Doc(document.getElementById("wrapper"));
 
     res = element.gc("selected");
 
@@ -133,7 +133,7 @@ describe("Doc", () => {
   });
 
   test(".gtf()", () => {
-    element = new Doc(document.getElementById("wrapper"));
+    let element = new Doc(document.getElementById("wrapper"));
     res = element.gtf("li");
 
     expect(res.constructor?.name).toBe("Doc");
@@ -141,7 +141,7 @@ describe("Doc", () => {
   });
 
   test(".gc()", () => {
-    element = new Doc(document.getElementById("wrapper"));
+    let element = new Doc(document.getElementById("wrapper"));
 
     res = element.gcf("selected");
 
@@ -150,7 +150,7 @@ describe("Doc", () => {
   });
 
   test(".qsf()", () => {
-    element = new Doc(document.getElementById("wrapper"));
+    let element = new Doc(document.getElementById("wrapper"));
     res = element.qsf("li");
 
     expect(res.constructor?.name).toBe("Doc");
@@ -159,7 +159,7 @@ describe("Doc", () => {
   });
 
   test(".qs()", () => {
-    element = new Doc(document.getElementById("wrapper"));
+    let element = new Doc(document.getElementById("wrapper"));
     res = element.qs("li");
 
     expect(res.constructor?.name).toBe("List");
@@ -167,14 +167,41 @@ describe("Doc", () => {
   });
 
   test(".set()", () => {
-    e = new Doc(document.createElement("h1"));
+    let e = new Doc(document.createElement("h1"));
     e.set("id", "title");
 
-    // expect(e.element.attributes["id"].value).toBe("title");
-    // expect(e.element.id).toBe("title");
     expect(e.attributes["id"].value).toBe("title");
     expect(e.id).toBe("title");
 
-    // e.set({id: "title"})
+    e = new Doc(document.createElement("h1"));
+    e.set("id", "title");
+
+    e.set({ id: "title", class: "big" });
+
+    expect(e.element.id).toBe("title");
+    expect(e.element.className).toBe("big");
+  });
+
+  test(".append()", () => {
+    let ul = Doc.create("ul");
+    let li = Doc.create("li", { id: "one" });
+
+    ul.append(li.element);
+
+    expect(ul.children).toHaveLength(1);
+    expect(ul.element.children).toHaveLength(1);
+
+    ul.append(Doc.create("li", { id: "two" }));
+
+    expect(ul.children).toHaveLength(2);
+    expect(ul.element.children).toHaveLength(2);
+
+    ul.append(
+      Doc.create("li", { id: "three" }),
+      Doc.create("li", { id: "four" }),
+    );
+
+    expect(ul.children).toHaveLength(4);
+    expect(ul.element.children).toHaveLength(4);
   });
 });

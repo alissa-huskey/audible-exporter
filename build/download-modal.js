@@ -248,9 +248,14 @@ Doc = class {
 
     if (!elm) return;
 
+    let properties = {};
     for (let k in elm.__proto__) {
       // eslint-disable-next-line no-prototype-builtins
       if (Object.hasOwnProperty(k)) continue;
+
+      properties[k] = k in this;
+
+      if (k in this) continue;
 
       Object.defineProperty(this, k, {
         get: () => this.element[k],
@@ -258,7 +263,28 @@ Doc = class {
           this.element[k] = v;
         },
       });
+
+      info(properties);
     }
+  }
+
+  append() {
+    info("appending...");
+  }
+
+  /**
+   * Shortcut for this.element.append().
+   *
+   * @params {...Doc,HTMLElement,string}  Child or children to append.
+   */
+  add(...children) {
+    children.forEach((child) => {
+      if (child instanceof Doc) {
+        child = child.element;
+      }
+      log("appending:", child);
+      this.element.append(child);
+    });
   }
 
   /**
