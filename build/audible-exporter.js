@@ -1,8 +1,3 @@
-/**
- * util.js
- * ************************************************************************************
- */
-
 var CONSOLE_OUTPUT = false;
 const LOG_PREFIX = "[audible-exporter]";
 
@@ -165,11 +160,6 @@ delay = (ms) =>
     setTimeout(res, ms);
   });
 
-/**
- * doc.js
- * ************************************************************************************
- */
-
 Doc = class {
   constructor(elm = null) {
     this.element = elm;
@@ -298,11 +288,6 @@ Doc = class {
   }
 };
 
-/**
- * list.js
- * ************************************************************************************
- */
-
 List = class extends Array {
   constructor(items) {
     items = Array.from(items);
@@ -318,11 +303,6 @@ List = class extends Array {
     return this.slice(-1)[0];
   }
 };
-
-/**
- * parser.js
- * ************************************************************************************
- */
 
 Parser = class {
   #doc = null;
@@ -364,11 +344,6 @@ Parser = class {
   }
 };
 
-/**
- * page.js
- * ************************************************************************************
- */
-
 Page = class extends Parser {
   async fetchDoc(url) {
     let res;
@@ -386,11 +361,6 @@ Page = class extends Parser {
     }
   }
 };
-
-/**
- * timer.js
- * ************************************************************************************
- */
 
 /**
  * Measure how long a block of code takes to execute.
@@ -451,11 +421,6 @@ Timer = class {
   }
 };
 
-/**
- * purchase.js
- * ************************************************************************************
- */
-
 Purchase = class extends Parser {
   _fields = {
     id: "data-order-item-asin",
@@ -480,11 +445,6 @@ Purchase = class extends Parser {
     );
   }
 };
-
-/**
- * order-row.js
- * ************************************************************************************
- */
 
 OrderRow = class extends Parser {
   _fields = ["id", "date", "total"];
@@ -514,11 +474,6 @@ OrderRow = class extends Parser {
     return this.doc.qsf(".ui-it-purchasehistory-item-total div").innerHTML;
   }
 };
-
-/**
- * order-page.js
- * ************************************************************************************
- */
 
 OrderPage = class extends Page {
   base_url = "https://www.audible.com/account/purchase-history?tf=orders";
@@ -674,11 +629,6 @@ OrderPage = class extends Page {
   }
 };
 
-/**
- * orders-fetcher.js
- * ************************************************************************************
- */
-
 OrdersFetcher = class {
   #count = 0;
   #items = null;
@@ -796,11 +746,6 @@ OrdersFetcher = class {
   }
 };
 
-/**
- * library-book-row.js
- * ************************************************************************************
- */
-
 LibraryBookRow = class extends Parser {
   _fields = ["id", "url", "title", "author", "narrator", "series"];
   _identifers = ["page_num", "row_num"];
@@ -843,11 +788,6 @@ LibraryBookRow = class extends Parser {
     return this.ul.qsf(".seriesLabel a")?.innerHTML?.trim();
   }
 };
-
-/**
- * library-page.js
- * ************************************************************************************
- */
 
 LibraryPage = class extends Page {
   #default_page_size = 20;
@@ -914,11 +854,6 @@ LibraryPage = class extends Page {
     return this.#books;
   }
 };
-
-/**
- * library-fetcher.js
- * ************************************************************************************
- */
 
 LibraryFetcher = class extends Page {
   page_size = 50;
@@ -1007,11 +942,6 @@ LibraryFetcher = class extends Page {
     this.#books = value;
   }
 };
-
-/**
- * book-page.js
- * ************************************************************************************
- */
 
 /**
  * Book page.
@@ -1459,11 +1389,6 @@ NormalBookPage = class extends BookPage {
   }
 };
 
-/**
- * details-fetcher.js
- * ************************************************************************************
- */
-
 DetailsFetcher = class {
   #books = {};
 
@@ -1528,11 +1453,6 @@ DetailsFetcher = class {
   }
 };
 
-/**
- * virtual-file.js
- * ************************************************************************************
- */
-
 VirtualFile = class {
   #contents = null;
 
@@ -1564,11 +1484,6 @@ VirtualFile = class {
     this.#contents = value;
   }
 };
-
-/**
- * tsv-file.js
- * ************************************************************************************
- */
 
 TSVFile = class extends VirtualFile {
   #headers = null;
@@ -1622,11 +1537,6 @@ TSVFile = class extends VirtualFile {
   }
 };
 
-/**
- * json-file.js
- * ************************************************************************************
- */
-
 JSONFile = class extends VirtualFile {
   #headers = null;
   #rows = null;
@@ -1644,11 +1554,6 @@ JSONFile = class extends VirtualFile {
     return JSON.stringify(this.records);
   }
 };
-
-/**
- * result.js
- * ************************************************************************************
- */
 
 Result = class {
   #headers = {
@@ -1708,11 +1613,6 @@ Result = class {
   }
 };
 
-/**
- * dom.js
- * ************************************************************************************
- */
-
 DOM = class {
   #style = null;
   #css = null;
@@ -1751,11 +1651,6 @@ DOM = class {
     document.body.appendChild(this.wrapper.element);
   }
 };
-
-/**
- * colors.js
- * ************************************************************************************
- */
 
 Colors = class extends DOM {
   #style = null;
@@ -1815,11 +1710,6 @@ Colors = class extends DOM {
     this.wrapper.element.remove();
   }
 };
-
-/**
- * status-notifier.js
- * ************************************************************************************
- */
 
 StatusNotifier = class extends DOM {
   #wrapper = null;
@@ -2407,11 +2297,6 @@ StatusNotifier = class extends DOM {
   }
 };
 
-/**
- * modal.js
- * ************************************************************************************
- */
-
 Modal = class extends DOM {
   #css = null;
   #wrapper = null;
@@ -2742,11 +2627,6 @@ Modal = class extends DOM {
   }
 };
 
-/**
- * purchase-history-notifier.js
- * ************************************************************************************
- */
-
 PurchaseHistoryNotifier = class extends StatusNotifier {
   #year = null;
   #years = null;
@@ -2831,11 +2711,6 @@ PurchaseHistoryNotifier = class extends StatusNotifier {
     return `Retrieving purchase history: ${this.year}`;
   }
 };
-
-/**
- * order-notifier.js
- * ************************************************************************************
- */
 
 OrderNotifier = class extends StatusNotifier {
   #year = null;
@@ -2940,11 +2815,6 @@ OrderNotifier = class extends StatusNotifier {
   }
 };
 
-/**
- * library-notifier.js
- * ************************************************************************************
- */
-
 LibraryNotifier = class extends StatusNotifier {
   #item_no = null;
   #total = null;
@@ -2982,11 +2852,6 @@ LibraryNotifier = class extends StatusNotifier {
   }
 };
 
-/**
- * details-notifier.js
- * ************************************************************************************
- */
-
 DetailsNotifier = class extends StatusNotifier {
   #item_no = null;
   #total = null;
@@ -3022,11 +2887,6 @@ DetailsNotifier = class extends StatusNotifier {
     return `Retrieving book ${this.item_no} of ${this.total}`;
   }
 };
-
-/**
- * exporter.js
- * ************************************************************************************
- */
 
 /**
  * Event listener to create the export file and start the download.
@@ -3198,11 +3058,6 @@ Exporter = class {
     }
   }
 };
-
-/**
- * runner.js
- * ************************************************************************************
- */
 
 CONSOLE_OUTPUT = true;
 

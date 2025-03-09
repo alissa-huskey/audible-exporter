@@ -1,9 +1,4 @@
 /**
- * exporter.js
- * ************************************************************************************
- */
-
-/**
  * Event listener to create the export file and start the download.
  */
 download = () => {

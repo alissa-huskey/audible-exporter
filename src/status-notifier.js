@@ -1,8 +1,3 @@
-/**
- * status-notifier.js
- * ************************************************************************************
- */
-
 StatusNotifier = class extends DOM {
   #wrapper = null;
   #bar = null;

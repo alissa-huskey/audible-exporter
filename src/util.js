@@ -1,8 +1,3 @@
-/**
- * util.js
- * ************************************************************************************
- */
-
 var CONSOLE_OUTPUT = false;
 const LOG_PREFIX = "[audible-exporter]";
 

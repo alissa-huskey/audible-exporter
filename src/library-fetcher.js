@@ -1,8 +1,3 @@
-/**
- * library-fetcher.js
- * ************************************************************************************
- */
-
 LibraryFetcher = class extends Page {
   page_size = 50;
   base_url = "https://www.audible.com/library/titles";

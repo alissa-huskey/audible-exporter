@@ -1,8 +1,3 @@
-/**
- * dev.js
- * ************************************************************************************
- */
-
 log = function (...msg) {
   console.log("--->", ...msg);
 };
@@ -10,11 +5,6 @@ log = function (...msg) {
 hr = function (...msg) {
   console.log("****************************************", ...msg);
 };
-
-/**
- * util.js
- * ************************************************************************************
- */
 
 var CONSOLE_OUTPUT = false;
 const LOG_PREFIX = "[audible-exporter]";
@@ -179,11 +169,6 @@ delay = (ms) =>
   });
 
 /**
- * timer.js
- * ************************************************************************************
- */
-
-/**
  * Measure how long a block of code takes to execute.
  *
  * @example
@@ -241,11 +226,6 @@ Timer = class {
     return result;
   }
 };
-
-/**
- * doc.js
- * ************************************************************************************
- */
 
 Doc = class {
   constructor(elm = null) {
@@ -375,11 +355,6 @@ Doc = class {
   }
 };
 
-/**
- * dom.js
- * ************************************************************************************
- */
-
 DOM = class {
   #style = null;
   #css = null;
@@ -418,11 +393,6 @@ DOM = class {
     document.body.appendChild(this.wrapper.element);
   }
 };
-
-/**
- * colors.js
- * ************************************************************************************
- */
 
 Colors = class extends DOM {
   #style = null;
@@ -482,11 +452,6 @@ Colors = class extends DOM {
     this.wrapper.element.remove();
   }
 };
-
-/**
- * status-notifier.js
- * ************************************************************************************
- */
 
 StatusNotifier = class extends DOM {
   #wrapper = null;
@@ -1073,11 +1038,6 @@ StatusNotifier = class extends DOM {
     this.#percentage = null;
   }
 };
-
-/**
- * order-notifier.js
- * ************************************************************************************
- */
 
 OrderNotifier = class extends StatusNotifier {
   #year = null;

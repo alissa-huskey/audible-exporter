@@ -1,8 +1,3 @@
-/**
- * tsv-file.js
- * ************************************************************************************
- */
-
 TSVFile = class extends VirtualFile {
   #headers = null;
   #rows = null;

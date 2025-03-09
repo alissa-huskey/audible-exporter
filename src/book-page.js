@@ -1,9 +1,4 @@
 /**
- * book-page.js
- * ************************************************************************************
- */
-
-/**
  * Book page.
  *
  * Parse the book details from the audible book page.

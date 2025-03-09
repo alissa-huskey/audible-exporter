@@ -1,8 +1,3 @@
-/**
- * library-notifier.js
- * ************************************************************************************
- */
-
 LibraryNotifier = class extends StatusNotifier {
   #item_no = null;
   #total = null;

@@ -1,9 +1,4 @@
 /**
- * timer.js
- * ************************************************************************************
- */
-
-/**
  * Measure how long a block of code takes to execute.
  *
  * @example

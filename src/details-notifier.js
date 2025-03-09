@@ -1,8 +1,3 @@
-/**
- * details-notifier.js
- * ************************************************************************************
- */
-
 DetailsNotifier = class extends StatusNotifier {
   #item_no = null;
   #total = null;

@@ -1,8 +1,3 @@
-/**
- * order-notifier.js
- * ************************************************************************************
- */
-
 OrderNotifier = class extends StatusNotifier {
   #year = null;
   #year_page = null;

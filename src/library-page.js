@@ -1,8 +1,3 @@
-/**
- * library-page.js
- * ************************************************************************************
- */
-
 LibraryPage = class extends Page {
   #default_page_size = 20;
   #rows = null;
