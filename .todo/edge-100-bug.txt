@@ -1,0 +1,30 @@
+Edge 100 - 104
+[audible-exporter] DOMException: Failed to execute 'querySelectorAll' on 'Document': 'tr:has(a[href^='/account/order-details'])' is not a valid selector.
+    at Doc.qs (<anonymous>:343:28)
+    at OrderPage.get orders [as orders] (<anonymous>:690:27)
+    at <anonymous>:724:35
+    at List.reduce (<anonymous>)
+    at OrderPage.get items [as items] (<anonymous>:716:38)
+    at OrdersFetcher.get items [as items] (<anonymous>:839:31)
+    at Exporter.getOrders (<anonymous>:3763:40)
+    at async Exporter.run (<anonymous>:3847:7)
+    at async HTMLAnchorElement.<anonymous> (<anonymous>:2755:13)
+error @ VM547:12
+get items @ VM547:730
+get items @ VM547:839
+getOrders @ VM547:3763
+await in getOrders (async)
+run @ VM547:3847
+await in run (async)
+(anonymous) @ VM547:2755
+
+
+[audible-exporter] Fatal error: TypeError: page.items is not iterable
+    at OrdersFetcher.get items [as items] (<anonymous>:839:31)
+    at Exporter.getOrders (<anonymous>:3763:40)
+    at async Exporter.run (<anonymous>:3847:7)
+    at async HTMLAnchorElement.<anonymous> (<anonymous>:2755:13) TypeError page.items is not iterable
+error @ VM547:12
+run @ VM547:3865
+await in run (async)
+(anonymous) @ VM547:2755

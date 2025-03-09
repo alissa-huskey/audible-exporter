@@ -1,0 +1,18 @@
+Edge 110, 105
+
+[audible-exporter] ADBLBookPage.sub_category (url: /pd/The-Stolen-Heir-Audiobook/B0B3LJ7JWH):
+ TypeError: Set.intersection is not a function or its return value is not iterable
+    at get sub_category [as sub_category] (<anonymous>:1372:29)
+    at ADBLBookPage.data (<anonymous>:440:23)
+    at get books [as books] (<anonymous>:1582:25)
+    at Exporter.getBookDetails (<anonymous>:3803:39)
+    at async Exporter.run (<anonymous>:3849:7)
+    at async HTMLAnchorElement.<anonymous> (<anonymous>:2755:13)
+error @ VM162:12
+data @ VM162:445
+get books @ VM162:1582
+getBookDetails @ VM162:3803
+await in getBookDetails (async)
+run @ VM162:3849
+await in run (async)
+(anonymous) @ VM162:2755

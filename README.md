@@ -19,12 +19,33 @@ Usage
 1. Open your browser developer tools. (usually ⌃⇧J on Windows/Linux, or ⌘⌥J on Mac) and
    navigate to the Console tab.
 1. Paste the Javascript code and hit enter.
+1. Your browser may warn you about pasting untrusted code into the console and
+   prompt you to type `allow pasting`. If so, do as it says then paste the code again.
 1. Click the Start button.
 1. Do not close the browser window or navigate away from the page while the script is running!
 
    It will take anywhere from a few minutes to an hour or more to run. For my
    library with just over 1,000 titles, it takes about 20 minutes.
 1. When it is finished a dialog will pop up where you can choose your download format.
+
+Browser Support
+---------------
+
+Tested successfully in:
+
+| OS                | Browser                                     |
+|-------------------|---------------------------------------------|
+| Windows 10        | Edge     105, 127                           |
+| MacOS Sonoma 14.6 | Chrome   133.0                              |
+| MacOS Sonoma 14.6 | Firefox  136                                |
+| MacOS Sonoma 14.6 | Brave    1.75, 1.76 (Chromium 133.0, 134.0) |
+
+Known to be broken in:
+
+| OS                | Browser          |
+|-------------------|------------------|
+| MacOS Sonoma 14.6 | Safari   17.6    |
+| Windows 10        | Edge     100-104 |
 
 Credits
 -------

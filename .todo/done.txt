@@ -71,3 +71,7 @@ x 2025-03-08 2025-03-05 @qa Look into JS style guides and linters: https://javas
 x 2025-03-08 2025-03-05 @qa @testing Try Babel https://babeljs.io/docs
 x 2025-03-09 2025-02-27 @ux Add modal at beginning with start button and waring not to close or navigate away.
 x 2025-03-09 2025-03-09 @qa Add Element.appendChild(), have it take multiple arguments.
+x 2025-03-09 2025-03-05 @qa @testing Look into browserling https://www.browserling.com/
+x 2025-03-09 2025-03-05 @qa @testing Try playwright https://playwright.dev/
+x 2025-03-09 2025-03-05 @qa @testing Try blisk https://blisk.io/
+x 2025-03-09 2025-03-09 @readme Add note about 'allow pasting'

@@ -43,9 +43,6 @@
 (A) 2025-03-05 @qa @testing Try autoprefixer https://github.com/postcss/autoprefixer#browsers
 (D) 2025-03-05 @qa Look into polyfills and transpilers https://javascript.info/polyfills
 (D) 2025-03-05 @qa @accessibility Try jest-axe https://maxrozen.com/automatic-a11y-testing-with-jest-axe https://dev.to/bdougieyo/accessibility-testing-in-react-with-jest-axe-l7k
-(D) 2025-03-05 @qa @testing Try playwright https://playwright.dev/
-(D) 2025-03-05 @qa @testing Try blisk https://blisk.io/
-(D) 2025-03-05 @qa @testing Look into browserling https://www.browserling.com/
 (D) 2025-03-05 @qa @testing Try testcafe https://testcafe.io/
 (D) 2025-03-05 @qa @testing Look into snapshot testing https://jestjs.io/docs/snapshot-testing
 2025-03-05 @qa @detail-notifier Add error handling for if .item_no and/or .total is not set.
@@ -64,7 +61,7 @@
 (B) 2025-03-08 @bug fix bug when compiled with babel (see: babel-bug.txt) https://babeljs.io/docs
 (C) 2025-03-08 @qa Move .show() and .hide() from modal/notifier to DOM. Use the .hidden class, not style.visibility.
 (C) 2025-03-08 @qa DOM Make sure all .create() functions check to make sure it doesn't exist first.
-(C) 2025-03-08 @qa DOM Get rid of individual css accessors and just combine it all into one style tag.
+(A) 2025-03-08 @qa DOM Get rid of individual css accessors and just combine it all into one style tag.
 (B) 2025-03-09 @ux Check to make sure the current wep page is on audible.com.
 (B) 2025-03-09 @ux Check to make sure the user is logged in.
 (B) 2025-03-09 @qa In fetch, check if the current page is the one being fetched, if so use document.body
@@ -72,4 +69,6 @@
 (B) 2025-03-09 @housekeeping look into using requires and see if there's a way to compile everything to a flat file.
 (B) 2025-03-09 @housekeeping Remove build dir from repo, add audible-export.js at top level.
 (C) 2025-03-09 @qa @testing Check to see if it runs on a phone.
-x 2025-03-09 2025-03-09 @qa Add Element.appendChild(), have it take multiple arguments.
+(A) 2025-03-09 @bug In safari, it seems to stall out after Purchase History.
+(B) 2025-03-09 @ux Try design with console docked side, looks funny now.
+(A) 2025-03-09 @bug Fix edge bugs
