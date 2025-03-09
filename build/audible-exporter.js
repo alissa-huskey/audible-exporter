@@ -160,7 +160,18 @@ delay = (ms) =>
     setTimeout(res, ms);
   });
 
+/**
+ * Wraper for HTMLElements.
+ *
+ * @requires util.js
+ * @requires list.js
+ */
 Doc = class {
+  /**
+   * Constructor.
+   *
+   * @params {HTMLElement} [elm]
+   */
   constructor(elm = null) {
     this.element = elm;
 
@@ -179,6 +190,11 @@ Doc = class {
     }
   }
 
+  /**
+   * Create a Doc object from raw HTML.
+   *
+   * @params {string} text
+   */
   static from_html(text) {
     let html = document.createElement("html");
     html.innerHTML = text;
@@ -221,29 +237,59 @@ Doc = class {
     return element;
   }
 
+  /**
+   * Shorthand for document.getElementsByClassName.
+   *
+   * @returns {List}
+   */
   static gc(name) {
     return new List(document.getElementsByClassName(name));
   }
 
+  /**
+   * Shorthand for document.getElementById.
+   *
+   * @returns {Doc}
+   */
   static gi(name) {
     let node = document.getElementById(name);
     return new Doc(node);
   }
 
+  /**
+   * Shorthand for document.getElementsByTagName.
+   *
+   * @returns {List}
+   */
   static gt(name) {
     return new List(document.getElementsByTagName(name));
   }
 
+  /**
+   * Shorthand for document.querySelector.
+   *
+   * @returns {Doc}
+   */
   static qs(query) {
     let res = document.querySelector(query);
     return new Doc(res);
   }
 
+  /**
+   * Shorthand for document.querySelectorAll.
+   *
+   * @returns {List}
+   */
   static qsa(query) {
     let res = document.querySelectorAll(query);
     return new List(res);
   }
 
+  /**
+   * Shorthand for element.getElementsByClassName.
+   *
+   * @returns {List}
+   */
   gc(name) {
     if (!this.element) return [];
 
@@ -251,10 +297,20 @@ Doc = class {
     return new List(res);
   }
 
+  /**
+   * Shorthand for element.getElementById.
+   *
+   * @returns {Doc}
+   */
   gi(name) {
     return Doc.gi(name);
   }
 
+  /**
+   * Shorthand for element.getElementsByTagName.
+   *
+   * @returns {List}
+   */
   gt(name) {
     if (!this.element) return [];
 
@@ -262,19 +318,52 @@ Doc = class {
     return new List(res);
   }
 
-  gcf = (name) => this.gc(name)[0];
-  gtf = (name) => this.gt(name)[0];
-
+  /**
+   * Shorthand for element.querySelectorAll.
+   *
+   * @returns {List}
+   */
   qs(query) {
     let res = this.element.querySelectorAll(query);
     return new List(res);
   }
 
+  /**
+   * First result of element.getElementsByClassName.
+   *
+   * @returns {Doc}
+   */
+  gcf = (name) => this.gc(name)[0];
+
+  /**
+   * First result of element.getElementsByTagName.
+   *
+   * @returns {Doc}
+   */
+  gtf = (name) => this.gt(name)[0];
+
+  /**
+   * Shorthand for element.querySelector.
+   *
+   * @returns {Doc}
+   */
   qsf(query) {
     let res = this.element.querySelector(query);
     return new Doc(res);
   }
 
+  /**
+   * Set attributes.
+   *
+   * @param {string, object} attrs  An object of attr names and values, or a
+   *                                   single attribute name.
+   * @param {string}         value  The value to set, when attrs is a string.
+   *
+   * @example
+   *
+   * doc.set("id", "thing-1");
+   * doc.set({id: "thing-2", "class": "small"});
+   */
   set(attrs, value = null) {
     if (typeof attrs == "string") {
       let key = attrs;
@@ -946,7 +1035,12 @@ LibraryFetcher = class extends Page {
 /**
  * Book page.
  *
- * Parse the book details from the audible book page.
+ * Parse the book details from an audible book page.
+ *
+ * @requires util.js
+ * @requires doc.js
+ * @requires page.js
+ * @requires book-page.js
  */
 BookPage = class extends Page {
   #category_types = ["Fiction", "Nonfiction"];
@@ -1047,6 +1141,13 @@ BookPage = class extends Page {
   #json_audiobook = null;
   #json_product = null;
 
+  /**
+   * Fetch the book page and return the BookPage object.
+   *
+   * @param {string} url
+   *
+   * @returns {BookPage}
+   */
   static async get(url) {
     let page = new Page();
     let doc = await page.fetchDoc(url);
@@ -1389,15 +1490,31 @@ NormalBookPage = class extends BookPage {
   }
 };
 
+/**
+ * Fetch all book details.
+ *
+ * Fetch book pages to gather additional details for all objects in the library
+ * array.
+ */
 DetailsFetcher = class {
   #books = {};
 
+  /**
+   * Constructor.
+   *
+   * @params {object[]} [library]  List of objects that contain a url key.
+   */
   constructor(library = null) {
     this.library = library;
     this.#books = null;
     this.pages = [];
   }
 
+  /**
+   * Fetch the book pages and fire events to update the DetailsNotifier.
+   *
+   * @fires update-ae-notifier
+   */
   async populate() {
     let book, data;
 
@@ -1433,6 +1550,11 @@ DetailsFetcher = class {
     );
   }
 
+  /**
+   * Getter for the list of book data.
+   *
+   * @returns {object}  Book data keyed by audible book ID.
+   */
   get books() {
     if (!this.#books) {
       this.#books = {};
@@ -1448,6 +1570,11 @@ DetailsFetcher = class {
     return this.#books;
   }
 
+  /**
+   * Setter for the list of book data.
+   *
+   * @param {object}  Book data keyed by audible book ID.
+   */
   set books(value) {
     this.#books = value;
   }
@@ -1613,6 +1740,12 @@ Result = class {
   }
 };
 
+/**
+ * Manage elements in the DOM.
+ *
+ * @requires util.js
+ * @requires doc.js
+ */
 DOM = class {
   #style = null;
   #css = null;
@@ -1623,6 +1756,22 @@ DOM = class {
     window.ae ||= {};
   }
 
+  /**
+   * CSS content required for an element.
+   *
+   * @abstract
+   */
+  get css() {
+    return null;
+  }
+
+  /**
+   * A style tag specific to this element.
+   *
+   * The contents come from the css getter defined on subclasses.
+   *
+   * @returns {Doc}
+   */
   get style() {
     if (!this.#style) {
       this.#style = Doc.create("style", {
@@ -1642,22 +1791,181 @@ DOM = class {
     return this.#style;
   }
 
-  // add the element to the DOM
+  /**
+   * Add the element to the DOM.
+   */
   create() {
     let el = Doc.gi(this.selectors.wrapper);
     if (el) el.outerHTML = "";
 
-    document.head.appendChild(this.style.element);
+    if (this.css) {
+      document.head.appendChild(this.style.element);
+    }
+
     document.body.appendChild(this.wrapper.element);
   }
 };
 
+/**
+ * Modal popup windows.
+ *
+ * @requires util.js
+ * @requires doc.js
+ * @requires dom.js
+ */
+Modal = class extends DOM {
+  #css = null;
+  #wrapper = null;
+  #head = null;
+  #content = null;
+  #close_btn = null;
+  #h1 = null;
+
+  title = "";
+
+  selectors = {
+    style: "ae-modal-css",
+    wrapper: "ae-modal",
+    content: "ae-content",
+    head: "ae-head",
+    close_btn: "ae-close-btn",
+  };
+
+  /* Elements
+   ***************************************************************************/
+
+  /**
+   * Construct wrapper div, append all child elements.
+   *
+   * @returns {Doc}
+   */
+  get wrapper() {
+    if (!this.#wrapper) {
+      let wrapper = Doc.create("div", { class: this.selectors.wrapper });
+
+      wrapper.element.appendChild(this.content.element);
+
+      wrapper.style["z-index"] = new Date().getTime();
+
+      this.#wrapper = wrapper;
+    }
+    return this.#wrapper;
+  }
+
+  /**
+   * div element for the head section.
+   */
+  get head() {
+    if (!this.#head) {
+      let head = Doc.create("div", { class: this.selectors.head });
+
+      head.element.appendChild(this.close_btn.element);
+      head.element.appendChild(this.h1.element);
+
+      this.#head = head;
+    }
+    return this.#head;
+  }
+
+  /**
+   * div element for the main content.
+   */
+  get content() {
+    if (!this.#content) {
+      let content = Doc.create("div", { class: this.selectors.content });
+
+      content.element.appendChild(this.head.element);
+
+      this.#content = content;
+    }
+    return this.#content;
+  }
+
+  /**
+   * Close button a element.
+   *
+   * @listens click
+   *
+   * @returns {Doc}
+   */
+  get close_btn() {
+    if (!this.#close_btn) {
+      let btn = Doc.create("a", { id: this.selectors.close_btn });
+      btn.innerHTML = "&times;";
+      btn.attributes.href = "#";
+
+      btn.element.addEventListener(
+        "click",
+        () => {
+          this.hide();
+        },
+        false,
+      );
+      this.#close_btn = btn;
+    }
+    return this.#close_btn;
+  }
+
+  /**
+   * h1 element.
+   *
+   * @returns {Doc}
+   */
+  get h1() {
+    if (!this.#h1) {
+      this.#h1 = Doc.create("h1");
+      this.#h1.innerHTML = this.title;
+    }
+    return this.#h1;
+  }
+
+  /* Methods
+   ***************************************************************************/
+
+  /**
+   * Show the modal.
+   */
+  show() {
+    this.wrapper.style.display = "block";
+  }
+
+  /**
+   * Hide the modal.
+   */
+  hide() {
+    this.wrapper.style.display = "none";
+  }
+
+  /**
+   * Add the wrapper HTML element to the DOM.
+   */
+  create() {
+    window.ae.modal ||= this;
+    let colors = window.ae.colors || new Colors();
+    colors.create();
+    super.create();
+  }
+};
+
+/**
+ * Create a <style> tag for the shared CSS colors.
+ *
+ * @requires dom.js
+ */
 Colors = class extends DOM {
   #style = null;
   #css = null;
 
   selectors = { style: "ae-colors", wrapper: "ae-colors" };
 
+  /**
+   * The CSS.
+   *
+   * On build, the CSS_MARKER line will be replaced with the contents of
+   * notifier.css.
+   *
+   * @returns {string}
+   */
   get css() {
     if (!this.#css) {
       this.#css = `
@@ -1694,17 +2002,25 @@ Colors = class extends DOM {
     return this.#css;
   }
 
+  /**
+   * Construct the style element.
+   *
+   * @returns {Doc}
+   */
   get wrapper() {
     return this.style;
   }
 
+  /**
+   * Add the style HTML element to the DOM.
+   */
   create() {
     super.create();
     window.ae.colors ||= this;
   }
 
   /**
-   * Remove the style HTML element from the DOM and the window.ae object.
+   * Remove the style HTML element from the DOM.
    */
   remove() {
     this.wrapper.element.remove();
@@ -2297,13 +2613,19 @@ StatusNotifier = class extends DOM {
   }
 };
 
-Modal = class extends DOM {
+/**
+ * Modal pop-up window for downloading the export.
+ */
+DownloadModal = class extends Modal {
   #css = null;
   #wrapper = null;
+  #content = null;
   #close_btn = null;
   #ft_select = null;
   #dl_btn = null;
   #file = null;
+
+  title = "Download";
 
   selectors = {
     style: "ae-modal-css",
@@ -2316,6 +2638,109 @@ Modal = class extends DOM {
     actions: "ae-actions",
   };
 
+  /* Elements
+   ***************************************************************************/
+
+  /**
+   * The div element for the main content of the modal.
+   *
+   * @returns {Doc}
+   */
+  get content() {
+    if (!this.#content) {
+      let content = super.content;
+
+      let dl_wrapper = Doc.create("span", { id: this.selectors.dl_btn });
+      let actions = Doc.create("div", { class: this.selectors.actions });
+      let p = Doc.create("p");
+
+      p.innerHTML = "Your export is ready!";
+
+      actions.element.appendChild(this.ft_select.element);
+      actions.element.appendChild(dl_wrapper.element);
+
+      dl_wrapper.element.appendChild(this.dl_btn.element);
+
+      content.element.appendChild(p.element);
+      content.element.appendChild(actions.element);
+
+      this.#content = content;
+    }
+    return this.#content;
+  }
+
+  get ft_select() {
+    if (!this.#ft_select) {
+      // create select tag
+      let select = Doc.create("select", {
+        id: this.selectors.ft_select,
+        name: this.selectors.ft_select,
+      });
+
+      // add options
+      let options = { "": " -- Format -- ", json: "JSON", tsv: "TSV" };
+      for (let [ft, label] of Object.entries(options)) {
+        let option = Doc.create("option", { value: ft });
+        option.innerText = label;
+        select.element.append(option.element);
+      }
+
+      // add event listener to disable/enable the button when a filetype is
+      // selected
+      select.element.addEventListener("change", () => {
+        let btn = window.ae.modal.dl_btn;
+        if (select.value) {
+          btn.classList.remove("disabled");
+        } else {
+          btn.classList.add("disabled");
+        }
+      });
+
+      this.#ft_select = select;
+    }
+    return this.#ft_select;
+  }
+
+  get close_btn() {
+    if (!this.#close_btn) {
+      this.#close_btn = Doc.create("a", { id: this.selectors.close_btn });
+      this.#close_btn.innerHTML = "&times;";
+      this.#close_btn.attributes.href = "#";
+      this.#close_btn.element.addEventListener(
+        "click",
+        () => {
+          this.hide();
+        },
+        false,
+      );
+    }
+    return this.#close_btn;
+  }
+
+  get dl_btn() {
+    if (!this.#dl_btn) {
+      let btn = Doc.create("a", {
+        id: this.selectors.dl_btn,
+        class: "disabled",
+      });
+      btn.attributes.href = "#";
+      btn.innerHTML = "Download";
+      this.#dl_btn = btn;
+    }
+    return this.#dl_btn;
+  }
+
+  /* Static getters.
+   ***************************************************************************/
+
+  /**
+   * The CSS required to render this element.
+   *
+   * On build, the CSS_MARKER line will be replaced with the contents of
+   * notifier.css.
+   *
+   * @returns {string}
+   */
   get css() {
     if (!this.#css) {
       this.#css = `
@@ -2496,107 +2921,28 @@ Modal = class extends DOM {
     return this.#css;
   }
 
-  // Construct wrapper div, append all child elements, and return
-  get wrapper() {
-    if (!this.#wrapper) {
-      this.#wrapper = Doc.create("div", { class: this.selectors.wrapper });
-      let content = Doc.create("div", { class: this.selectors.content });
-      let head = Doc.create("div", { class: this.selectors.head });
-      let h1 = Doc.create("h1");
-      let p = Doc.create("p");
-      let dl_wrapper = Doc.create("span", { id: this.selectors.dl_btn });
-      let actions = Doc.create("div", { class: this.selectors.actions });
-
-      h1.innerHTML = "Download";
-      p.innerHTML = "Your export is ready!";
-
-      this.wrapper.element.appendChild(content.element);
-      head.element.appendChild(this.close_btn.element);
-      head.element.appendChild(h1.element);
-
-      actions.element.appendChild(this.ft_select.element);
-      actions.element.appendChild(dl_wrapper.element);
-
-      dl_wrapper.element.appendChild(this.dl_btn.element);
-
-      content.element.appendChild(head.element);
-      content.element.appendChild(p.element);
-      content.element.appendChild(actions.element);
-
-      this.#wrapper.style["z-index"] = new Date().getTime();
-    }
-    return this.#wrapper;
-  }
-
-  get ft_select() {
-    if (!this.#ft_select) {
-      // create select tag
-      let select = Doc.create("select", {
-        id: this.selectors.select,
-        name: this.selectors.select,
-      });
-
-      // add options
-      let options = { "": " -- Format -- ", json: "JSON", tsv: "TSV" };
-      for (let [ft, label] of Object.entries(options)) {
-        let option = Doc.create("option", { value: ft });
-        option.innerText = label;
-        select.element.append(option.element);
-      }
-
-      // add event listener to disable/enable the button when a filetype is
-      // selected
-      select.element.addEventListener("change", () => {
-        let btn = window.ae.modal.dl_btn;
-        if (select.value) {
-          btn.classList.remove("disabled");
-        } else {
-          btn.classList.add("disabled");
-        }
-      });
-
-      this.#ft_select = select;
-    }
-    return this.#ft_select;
-  }
-
-  get close_btn() {
-    if (!this.#close_btn) {
-      this.#close_btn = Doc.create("a", { id: this.selectors.close_btn });
-      this.#close_btn.innerHTML = "&times;";
-      this.#close_btn.attributes.href = "#";
-      this.#close_btn.element.addEventListener(
-        "click",
-        () => {
-          this.hide();
-        },
-        false,
-      );
-    }
-    return this.#close_btn;
-  }
-
-  get dl_btn() {
-    if (!this.#dl_btn) {
-      let btn = Doc.create("a", {
-        id: this.selectors.dl_btn,
-        class: "disabled",
-      });
-      btn.attributes.href = "#";
-      btn.innerHTML = "Download";
-      this.#dl_btn = btn;
-    }
-    return this.#dl_btn;
-  }
-
   get filetype() {
     return this.ft_select.value;
   }
 
+  /**
+   * Getter for the file that will be downloaded.
+   *
+   * @returns {VirtualFile}
+   */
   get file() {
     return this.#file;
   }
 
+  /**
+   * Setter for the file that will be downloaded.
+   *
+   * Set the file, set the attributes on the download button to make it work,
+   * and add the event listener to get rid of the generated URL once it has
+   * been used.
+   *
+   * @param {VirtualFile} file
+   */
   set file(file) {
     this.#file = file;
     this.dl_btn.element.href = file.url;
@@ -2606,24 +2952,6 @@ Modal = class extends DOM {
         window.URL.revokeObjectURL(file.url);
       }, 10);
     });
-  }
-
-  show() {
-    this.#wrapper.style.display = "block";
-  }
-
-  hide() {
-    this.#wrapper.style.display = "none";
-  }
-
-  /**
-   * Add the wrapper HTML element to the DOM.
-   */
-  create() {
-    window.ae.modal ||= this;
-    let colors = window.ae.colors || new Colors();
-    colors.create();
-    super.create();
   }
 };
 
@@ -2852,12 +3180,23 @@ LibraryNotifier = class extends StatusNotifier {
   }
 };
 
+/**
+ * Status notifier displayed to the user during the "Additional details"
+ * step.
+ *
+ * @requires status-notifier.js
+ */
 DetailsNotifier = class extends StatusNotifier {
   #item_no = null;
   #total = null;
 
   step_no = 4;
 
+  /**
+   * Description of this step.
+   *
+   * @returns {string}
+   */
   get step_desc() {
     let message = "Additional details";
 
@@ -2912,7 +3251,6 @@ Exporter = class {
     this.timer = new Timer();
     this.notifier = new StatusNotifier();
     this.colors = new Colors();
-    this.modal = new Modal();
     this.orders = new OrdersFetcher();
     this.library = new LibraryFetcher();
     this.details = new DetailsFetcher();
@@ -3022,7 +3360,9 @@ Exporter = class {
    */
   downloadReady() {
     this.notifier.remove();
+    this.modal = new DownloadModal();
     this.modal.dl_btn.element.addEventListener("click", download);
+    this.modal.create();
     this.modal.show();
   }
 
@@ -3033,7 +3373,6 @@ Exporter = class {
 
       this.colors.create();
       this.notifier.create();
-      this.modal.create();
 
       await this.getPurchaseHistory();
       await this.getOrders();

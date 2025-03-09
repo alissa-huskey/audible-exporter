@@ -24,6 +24,7 @@ require("../src/orders-fetcher.js");
 require("../src/dom.js");
 require("../src/colors.js");
 require("../src/modal.js");
+require("../src/download-modal.js");
 require("../src/status-notifier.js");
 require("../src/purchase-history-notifier.js");
 require("../src/order-notifier.js");
@@ -164,7 +165,6 @@ describe("Exporter", () => {
 
   test("downloadReady()", () => {
     exporter = new Exporter();
-    exporter.modal.create();
     exporter.downloadReady();
 
     expect(exporter.modal.wrapper.style.display).toBe("block");
@@ -174,6 +174,7 @@ describe("Exporter", () => {
     exporter = new Exporter();
     exporter.results = ["a", "b", "c"];
 
+    exporter.modal = new DownloadModal();
     exporter.modal.create();
     exporter.modal.ft_select.selectedIndex = 2;
 

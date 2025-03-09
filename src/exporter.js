@@ -22,7 +22,6 @@ Exporter = class {
     this.timer = new Timer();
     this.notifier = new StatusNotifier();
     this.colors = new Colors();
-    this.modal = new Modal();
     this.orders = new OrdersFetcher();
     this.library = new LibraryFetcher();
     this.details = new DetailsFetcher();
@@ -132,7 +131,9 @@ Exporter = class {
    */
   downloadReady() {
     this.notifier.remove();
+    this.modal = new DownloadModal();
     this.modal.dl_btn.element.addEventListener("click", download);
+    this.modal.create();
     this.modal.show();
   }
 
@@ -143,7 +144,6 @@ Exporter = class {
 
       this.colors.create();
       this.notifier.create();
-      this.modal.create();
 
       await this.getPurchaseHistory();
       await this.getOrders();

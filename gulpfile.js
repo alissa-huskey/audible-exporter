@@ -18,7 +18,7 @@ let dirs = {
  * (b.) have a standalone file including all dependencies saved in build/
  * (c.) (may be) the base for other standalone files
  */
-let components = ["status-notifier", "modal"];
+let components = ["status-notifier", "download-modal"];
 
 /**
  * Notifier compoenents that depend on build/status-notifier.js and have a
@@ -51,6 +51,7 @@ let sources = [
   "json-file",
   "result",
   "dom",
+  "modal",
 ];
 
 /**
@@ -89,7 +90,7 @@ buildComponents = function (done) {
     log(`generated task: buildComponents->${name}.js`);
     return () =>
       src([
-        ...["dev", "util", "timer", "doc", "dom"].map((d) => `src/${d}.js`),
+        ...["dev", "util", "timer", "doc", "dom", "modal"].map((d) => `src/${d}.js`),
         `${dirs.tmp}/colors.js`,
         `${dirs.tmp}/${name}.js`,
       ])

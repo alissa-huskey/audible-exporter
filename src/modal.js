@@ -1,10 +1,19 @@
+/**
+ * Modal popup windows.
+ *
+ * @requires util.js
+ * @requires doc.js
+ * @requires dom.js
+ */
 Modal = class extends DOM {
   #css = null;
   #wrapper = null;
+  #head = null;
+  #content = null;
   #close_btn = null;
-  #ft_select = null;
-  #dl_btn = null;
-  #file = null;
+  #h1 = null;
+
+  title = "";
 
   selectors = {
     style: "ae-modal-css",
@@ -12,138 +21,111 @@ Modal = class extends DOM {
     content: "ae-content",
     head: "ae-head",
     close_btn: "ae-close-btn",
-    dl_btn: "ae-download-btn",
-    ft_select: "ae-filetype",
-    actions: "ae-actions",
   };
 
-  get css() {
-    if (!this.#css) {
-      this.#css = `
-        /* CSS_MARKER modal */
-      `;
-    }
-    return this.#css;
-  }
+  /* Elements
+   ***************************************************************************/
 
-  // Construct wrapper div, append all child elements, and return
+  /**
+   * Construct wrapper div, append all child elements.
+   *
+   * @returns {Doc}
+   */
   get wrapper() {
     if (!this.#wrapper) {
-      this.#wrapper = Doc.create("div", { class: this.selectors.wrapper });
-      let content = Doc.create("div", { class: this.selectors.content });
-      let head = Doc.create("div", { class: this.selectors.head });
-      let h1 = Doc.create("h1");
-      let p = Doc.create("p");
-      let dl_wrapper = Doc.create("span", { id: this.selectors.dl_btn });
-      let actions = Doc.create("div", { class: this.selectors.actions });
+      let wrapper = Doc.create("div", { class: this.selectors.wrapper });
 
-      h1.innerHTML = "Download";
-      p.innerHTML = "Your export is ready!";
+      wrapper.element.appendChild(this.content.element);
 
-      this.wrapper.element.appendChild(content.element);
-      head.element.appendChild(this.close_btn.element);
-      head.element.appendChild(h1.element);
+      wrapper.style["z-index"] = new Date().getTime();
 
-      actions.element.appendChild(this.ft_select.element);
-      actions.element.appendChild(dl_wrapper.element);
-
-      dl_wrapper.element.appendChild(this.dl_btn.element);
-
-      content.element.appendChild(head.element);
-      content.element.appendChild(p.element);
-      content.element.appendChild(actions.element);
-
-      this.#wrapper.style["z-index"] = new Date().getTime();
+      this.#wrapper = wrapper;
     }
     return this.#wrapper;
   }
 
-  get ft_select() {
-    if (!this.#ft_select) {
-      // create select tag
-      let select = Doc.create("select", {
-        id: this.selectors.select,
-        name: this.selectors.select,
-      });
+  /**
+   * div element for the head section.
+   */
+  get head() {
+    if (!this.#head) {
+      let head = Doc.create("div", { class: this.selectors.head });
 
-      // add options
-      let options = { "": " -- Format -- ", json: "JSON", tsv: "TSV" };
-      for (let [ft, label] of Object.entries(options)) {
-        let option = Doc.create("option", { value: ft });
-        option.innerText = label;
-        select.element.append(option.element);
-      }
+      head.element.appendChild(this.close_btn.element);
+      head.element.appendChild(this.h1.element);
 
-      // add event listener to disable/enable the button when a filetype is
-      // selected
-      select.element.addEventListener("change", () => {
-        let btn = window.ae.modal.dl_btn;
-        if (select.value) {
-          btn.classList.remove("disabled");
-        } else {
-          btn.classList.add("disabled");
-        }
-      });
-
-      this.#ft_select = select;
+      this.#head = head;
     }
-    return this.#ft_select;
+    return this.#head;
   }
 
+  /**
+   * div element for the main content.
+   */
+  get content() {
+    if (!this.#content) {
+      let content = Doc.create("div", { class: this.selectors.content });
+
+      content.element.appendChild(this.head.element);
+
+      this.#content = content;
+    }
+    return this.#content;
+  }
+
+  /**
+   * Close button a element.
+   *
+   * @listens click
+   *
+   * @returns {Doc}
+   */
   get close_btn() {
     if (!this.#close_btn) {
-      this.#close_btn = Doc.create("a", { id: this.selectors.close_btn });
-      this.#close_btn.innerHTML = "&times;";
-      this.#close_btn.attributes.href = "#";
-      this.#close_btn.element.addEventListener(
+      let btn = Doc.create("a", { id: this.selectors.close_btn });
+      btn.innerHTML = "&times;";
+      btn.attributes.href = "#";
+
+      btn.element.addEventListener(
         "click",
         () => {
           this.hide();
         },
         false,
       );
+      this.#close_btn = btn;
     }
     return this.#close_btn;
   }
 
-  get dl_btn() {
-    if (!this.#dl_btn) {
-      let btn = Doc.create("a", {
-        id: this.selectors.dl_btn,
-        class: "disabled",
-      });
-      btn.attributes.href = "#";
-      btn.innerHTML = "Download";
-      this.#dl_btn = btn;
+  /**
+   * h1 element.
+   *
+   * @returns {Doc}
+   */
+  get h1() {
+    if (!this.#h1) {
+      this.#h1 = Doc.create("h1");
+      this.#h1.innerHTML = this.title;
     }
-    return this.#dl_btn;
+    return this.#h1;
   }
 
-  get filetype() {
-    return this.ft_select.value;
-  }
+  /* Methods
+   ***************************************************************************/
 
-  get file() {
-    return this.#file;
-  }
-
-  set file(file) {
-    this.#file = file;
-    this.dl_btn.element.href = file.url;
-    this.dl_btn.element.download = file.filename;
-    this.dl_btn.element.addEventListener("click", () => {
-      setTimeout(() => {
-        window.URL.revokeObjectURL(file.url);
-      }, 10);
-    });
-  }
-
+  /**
+   * Show the modal.
+   */
   show() {
-    this.#wrapper.style.display = "block";
+    this.wrapper.style.display = "block";
   }
 
+  /**
+   * Hide the modal.
+   */
   hide() {
-    this.#wrapper.style.display = "none";
+    this.wrapper.style.display = "none";
   }
 
   /**
