@@ -1,4 +1,15 @@
+/**
+ * Wraper for HTMLElements.
+ *
+ * @requires util.js
+ * @requires list.js
+ */
 Doc = class {
+  /**
+   * Constructor.
+   *
+   * @params {HTMLElement} [elm]
+   */
   constructor(elm = null) {
     this.element = elm;
 
@@ -17,6 +28,11 @@ Doc = class {
     }
   }
 
+  /**
+   * Create a Doc object from raw HTML.
+   *
+   * @params {string} text
+   */
   static from_html(text) {
     let html = document.createElement("html");
     html.innerHTML = text;
@@ -59,29 +75,59 @@ Doc = class {
     return element;
   }
 
+  /**
+   * Shorthand for document.getElementsByClassName.
+   *
+   * @returns {List}
+   */
   static gc(name) {
     return new List(document.getElementsByClassName(name));
   }
 
+  /**
+   * Shorthand for document.getElementById.
+   *
+   * @returns {Doc}
+   */
   static gi(name) {
     let node = document.getElementById(name);
     return new Doc(node);
   }
 
+  /**
+   * Shorthand for document.getElementsByTagName.
+   *
+   * @returns {List}
+   */
   static gt(name) {
     return new List(document.getElementsByTagName(name));
   }
 
+  /**
+   * Shorthand for document.querySelector.
+   *
+   * @returns {Doc}
+   */
   static qs(query) {
     let res = document.querySelector(query);
     return new Doc(res);
   }
 
+  /**
+   * Shorthand for document.querySelectorAll.
+   *
+   * @returns {List}
+   */
   static qsa(query) {
     let res = document.querySelectorAll(query);
     return new List(res);
   }
 
+  /**
+   * Shorthand for element.getElementsByClassName.
+   *
+   * @returns {List}
+   */
   gc(name) {
     if (!this.element) return [];
 
@@ -89,10 +135,20 @@ Doc = class {
     return new List(res);
   }
 
+  /**
+   * Shorthand for element.getElementById.
+   *
+   * @returns {Doc}
+   */
   gi(name) {
     return Doc.gi(name);
   }
 
+  /**
+   * Shorthand for element.getElementsByTagName.
+   *
+   * @returns {List}
+   */
   gt(name) {
     if (!this.element) return [];
 
@@ -100,19 +156,52 @@ Doc = class {
     return new List(res);
   }
 
-  gcf = (name) => this.gc(name)[0];
-  gtf = (name) => this.gt(name)[0];
-
+  /**
+   * Shorthand for element.querySelectorAll.
+   *
+   * @returns {List}
+   */
   qs(query) {
     let res = this.element.querySelectorAll(query);
     return new List(res);
   }
 
+  /**
+   * First result of element.getElementsByClassName.
+   *
+   * @returns {Doc}
+   */
+  gcf = (name) => this.gc(name)[0];
+
+  /**
+   * First result of element.getElementsByTagName.
+   *
+   * @returns {Doc}
+   */
+  gtf = (name) => this.gt(name)[0];
+
+  /**
+   * Shorthand for element.querySelector.
+   *
+   * @returns {Doc}
+   */
   qsf(query) {
     let res = this.element.querySelector(query);
     return new Doc(res);
   }
 
+  /**
+   * Set attributes.
+   *
+   * @param {string, object} attrs  An object of attr names and values, or a
+   *                                   single attribute name.
+   * @param {string}         value  The value to set, when attrs is a string.
+   *
+   * @example
+   *
+   * doc.set("id", "thing-1");
+   * doc.set({id: "thing-2", "class": "small"});
+   */
   set(attrs, value = null) {
     if (typeof attrs == "string") {
       let key = attrs;

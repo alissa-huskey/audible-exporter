@@ -1,12 +1,28 @@
+/**
+ * Fetch all book details.
+ *
+ * Fetch book pages to gather additional details for all objects in the library
+ * array.
+ */
 DetailsFetcher = class {
   #books = {};
 
+  /**
+   * Constructor.
+   *
+   * @params {object[]} [library]  List of objects that contain a url key.
+   */
   constructor(library = null) {
     this.library = library;
     this.#books = null;
     this.pages = [];
   }
 
+  /**
+   * Fetch the book pages and fire events to update the DetailsNotifier.
+   *
+   * @fires update-ae-notifier
+   */
   async populate() {
     let book, data;
 
@@ -42,6 +58,11 @@ DetailsFetcher = class {
     );
   }
 
+  /**
+   * Getter for the list of book data.
+   *
+   * @returns {object}  Book data keyed by audible book ID.
+   */
   get books() {
     if (!this.#books) {
       this.#books = {};
@@ -57,6 +78,11 @@ DetailsFetcher = class {
     return this.#books;
   }
 
+  /**
+   * Setter for the list of book data.
+   *
+   * @param {object}  Book data keyed by audible book ID.
+   */
   set books(value) {
     this.#books = value;
   }

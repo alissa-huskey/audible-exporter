@@ -1,9 +1,22 @@
+/**
+ * Create a <style> tag for the shared CSS colors.
+ *
+ * @requires dom.js
+ */
 Colors = class extends DOM {
   #style = null;
   #css = null;
 
   selectors = { style: "ae-colors", wrapper: "ae-colors" };
 
+  /**
+   * The CSS.
+   *
+   * On build, the CSS_MARKER line will be replaced with the contents of
+   * notifier.css.
+   *
+   * @returns {string}
+   */
   get css() {
     if (!this.#css) {
       this.#css = `
@@ -13,17 +26,25 @@ Colors = class extends DOM {
     return this.#css;
   }
 
+  /**
+   * Construct the style element.
+   *
+   * @returns {Doc}
+   */
   get wrapper() {
     return this.style;
   }
 
+  /**
+   * Add the style HTML element to the DOM.
+   */
   create() {
     super.create();
     window.ae.colors ||= this;
   }
 
   /**
-   * Remove the style HTML element from the DOM and the window.ae object.
+   * Remove the style HTML element from the DOM.
    */
   remove() {
     this.wrapper.element.remove();

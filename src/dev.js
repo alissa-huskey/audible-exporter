@@ -1,3 +1,7 @@
+/**
+ * Convenience functions for development.
+ */
+
 log = function (...msg) {
   console.log("--->", ...msg);
 };

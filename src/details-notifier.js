@@ -1,9 +1,20 @@
+/**
+ * Status notifier displayed to the user during the "Additional details"
+ * step.
+ *
+ * @requires status-notifier.js
+ */
 DetailsNotifier = class extends StatusNotifier {
   #item_no = null;
   #total = null;
 
   step_no = 4;
 
+  /**
+   * Description of this step.
+   *
+   * @returns {string}
+   */
   get step_desc() {
     let message = "Additional details";
 

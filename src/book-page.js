@@ -1,7 +1,12 @@
 /**
  * Book page.
  *
- * Parse the book details from the audible book page.
+ * Parse the book details from an audible book page.
+ *
+ * @requires util.js
+ * @requires doc.js
+ * @requires page.js
+ * @requires book-page.js
  */
 BookPage = class extends Page {
   #category_types = ["Fiction", "Nonfiction"];
@@ -102,6 +107,13 @@ BookPage = class extends Page {
   #json_audiobook = null;
   #json_product = null;
 
+  /**
+   * Fetch the book page and return the BookPage object.
+   *
+   * @param {string} url
+   *
+   * @returns {BookPage}
+   */
   static async get(url) {
     let page = new Page();
     let doc = await page.fetchDoc(url);

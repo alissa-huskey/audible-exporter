@@ -1,3 +1,9 @@
+/**
+ * Manage elements in the DOM.
+ *
+ * @requires util.js
+ * @requires doc.js
+ */
 DOM = class {
   #style = null;
   #css = null;
@@ -8,6 +14,22 @@ DOM = class {
     window.ae ||= {};
   }
 
+  /**
+   * CSS content required for an element.
+   *
+   * @abstract
+   */
+  get css() {
+    return null;
+  }
+
+  /**
+   * A style tag specific to this element.
+   *
+   * The contents come from the css getter defined on subclasses.
+   *
+   * @returns {Doc}
+   */
   get style() {
     if (!this.#style) {
       this.#style = Doc.create("style", {
@@ -27,12 +49,17 @@ DOM = class {
     return this.#style;
   }
 
-  // add the element to the DOM
+  /**
+   * Add the element to the DOM.
+   */
   create() {
     let el = Doc.gi(this.selectors.wrapper);
     if (el) el.outerHTML = "";
 
-    document.head.appendChild(this.style.element);
+    if (this.css) {
+      document.head.appendChild(this.style.element);
+    }
+
     document.body.appendChild(this.wrapper.element);
   }
 };
