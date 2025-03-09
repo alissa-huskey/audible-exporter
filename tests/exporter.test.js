@@ -35,6 +35,13 @@ require("../src/result.js");
 require("../src/exporter.js");
 
 describe("Exporter", () => {
+  test("new Exporter()", () => {
+    exporter = new Exporter();
+
+    expect(exporter).toBeA(Exporter);
+    expect(window.ae).toEqual(exporter);
+  });
+
   test(".getPurchaseHistory()", async () => {
     let mockFn = mockFetchDocs([
       fixtureDoc("order-page.html"),

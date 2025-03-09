@@ -10,6 +10,7 @@ DOM = class {
   constructor() {
     this.#style = null;
     this.#css = null;
+    window.ae ||= {};
   }
 
   get style() {

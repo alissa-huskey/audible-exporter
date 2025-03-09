@@ -475,8 +475,9 @@ StatusNotifier = class extends DOM {
    * listener, and set the intital status text.
    */
   create() {
+    let colors = window.ae.colors || new Colors();
+    colors.create();
     super.create();
-    new Colors().create();
 
     document.addEventListener(this.event_name, this.listen);
     window.ae.notifier = this;
@@ -501,9 +502,6 @@ StatusNotifier = class extends DOM {
    */
   remove() {
     document.removeEventListener(this.event_name, this.listen);
-    if (window.ae) {
-      window.ae.notifier = null;
-    }
     this.wrapper.element.remove();
 
     this.#wrapper = null;

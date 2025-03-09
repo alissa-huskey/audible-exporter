@@ -5,7 +5,7 @@
   "main": "src/exporter.js",
   "scripts": {
     "test": "jest",
-    "lint": "eslint --quiet --config .eslint.config.js",
+    "lint": "eslint --quiet",
     "build": "gulp"
   },
   "repository": {

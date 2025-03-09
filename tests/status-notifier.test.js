@@ -267,7 +267,6 @@ describe("StatusNotifier", () => {
       notifier.create();
       notifier.remove();
 
-      expect(window.ae.notifier).toBeNull;
       expect($(`#${s.wrapper}`).length).toBe(0);
     });
 

@@ -14,6 +14,8 @@ Exporter = class {
     this.library = new LibraryFetcher();
     this.details = new DetailsFetcher();
     this.results = [];
+
+    window.ae = this;
   }
 
   async getPurchaseHistory() {

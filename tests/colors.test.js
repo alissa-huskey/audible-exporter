@@ -29,7 +29,5 @@ describe("Colors", () => {
 
     let element = new Colors();
     element.remove();
-
-    expect(window.ae.colors).toBeNull();
   });
 });

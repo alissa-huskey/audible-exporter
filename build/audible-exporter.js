@@ -1697,6 +1697,7 @@ DOM = class {
   constructor() {
     this.#style = null;
     this.#css = null;
+    window.ae ||= {};
   }
 
   get style() {
@@ -1781,17 +1782,13 @@ Colors = class extends DOM {
 
   create() {
     super.create();
-    window.ae = window.ae || {};
-    window.ae.colors = this;
+    window.ae.colors ||= this;
   }
 
   /**
    * Remove the style HTML element from the DOM and the window.ae object.
    */
   remove() {
-    if (window.ae) {
-      window.ae.colors = null;
-    }
     this.wrapper.element.remove();
   }
 };
@@ -2351,8 +2348,9 @@ StatusNotifier = class extends DOM {
    * listener, and set the intital status text.
    */
   create() {
+    let colors = window.ae.colors || new Colors();
+    colors.create();
     super.create();
-    new Colors().create();
 
     document.addEventListener(this.event_name, this.listen);
     window.ae.notifier = this;
@@ -2377,9 +2375,6 @@ StatusNotifier = class extends DOM {
    */
   remove() {
     document.removeEventListener(this.event_name, this.listen);
-    if (window.ae) {
-      window.ae.notifier = null;
-    }
     this.wrapper.element.remove();
 
     this.#wrapper = null;
@@ -2599,7 +2594,7 @@ Modal = class extends DOM {
       let head = Doc.create("div", { class: this.selectors.head });
       let h1 = Doc.create("h1");
       let p = Doc.create("p");
-      let dl_wrapper = Doc.create("span", {id: this.selectors.dl_btn});
+      let dl_wrapper = Doc.create("span", { id: this.selectors.dl_btn });
 
       h1.innerHTML = "Download";
       p.innerHTML = "Your export is ready!";
@@ -2608,7 +2603,7 @@ Modal = class extends DOM {
       head.element.appendChild(this.close_btn.element);
       head.element.appendChild(h1.element);
 
-      dl_wrapper.element.appendChild(this.dl_btn.element)
+      dl_wrapper.element.appendChild(this.dl_btn.element);
 
       content.element.appendChild(head.element);
       content.element.appendChild(p.element);
@@ -2671,8 +2666,9 @@ Modal = class extends DOM {
    * Add the wrapper HTML element to the DOM.
    */
   create() {
+    let colors = window.ae.colors || new Colors();
+    colors.create();
     super.create();
-    new Colors().create();
   }
 };
 
@@ -2973,6 +2969,8 @@ Exporter = class {
     this.library = new LibraryFetcher();
     this.details = new DetailsFetcher();
     this.results = [];
+
+    window.ae = this;
   }
 
   async getPurchaseHistory() {
@@ -3073,10 +3071,9 @@ Exporter = class {
 
   downloadReady(books) {
     this.notifier.remove();
-    this.modal.show()
-  }
-
-  listener() {
+    let file = new TSVFile(books);
+    this.modal.file = file;
+    this.modal.show();
   }
 
   async run(limit = null) {

@@ -387,6 +387,7 @@ DOM = class {
   constructor() {
     this.#style = null;
     this.#css = null;
+    window.ae ||= {};
   }
 
   get style() {
@@ -471,17 +472,13 @@ Colors = class extends DOM {
 
   create() {
     super.create();
-    window.ae = window.ae || {};
-    window.ae.colors = this;
+    window.ae.colors ||= this;
   }
 
   /**
    * Remove the style HTML element from the DOM and the window.ae object.
    */
   remove() {
-    if (window.ae) {
-      window.ae.colors = null;
-    }
     this.wrapper.element.remove();
   }
 };
@@ -1041,8 +1038,9 @@ StatusNotifier = class extends DOM {
    * listener, and set the intital status text.
    */
   create() {
+    let colors = window.ae.colors || new Colors();
+    colors.create();
     super.create();
-    new Colors().create();
 
     document.addEventListener(this.event_name, this.listen);
     window.ae.notifier = this;
@@ -1067,9 +1065,6 @@ StatusNotifier = class extends DOM {
    */
   remove() {
     document.removeEventListener(this.event_name, this.listen);
-    if (window.ae) {
-      window.ae.notifier = null;
-    }
     this.wrapper.element.remove();
 
     this.#wrapper = null;

@@ -36,7 +36,7 @@ Modal = class extends DOM {
       let head = Doc.create("div", { class: this.selectors.head });
       let h1 = Doc.create("h1");
       let p = Doc.create("p");
-      let dl_wrapper = Doc.create("span", {id: this.selectors.dl_btn});
+      let dl_wrapper = Doc.create("span", { id: this.selectors.dl_btn });
 
       h1.innerHTML = "Download";
       p.innerHTML = "Your export is ready!";
@@ -45,7 +45,7 @@ Modal = class extends DOM {
       head.element.appendChild(this.close_btn.element);
       head.element.appendChild(h1.element);
 
-      dl_wrapper.element.appendChild(this.dl_btn.element)
+      dl_wrapper.element.appendChild(this.dl_btn.element);
 
       content.element.appendChild(head.element);
       content.element.appendChild(p.element);
@@ -108,7 +108,8 @@ Modal = class extends DOM {
    * Add the wrapper HTML element to the DOM.
    */
   create() {
+    let colors = window.ae.colors || new Colors();
+    colors.create();
     super.create();
-    new Colors().create();
   }
 };

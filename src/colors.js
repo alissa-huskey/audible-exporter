@@ -24,17 +24,13 @@ Colors = class extends DOM {
 
   create() {
     super.create();
-    window.ae = window.ae || {};
-    window.ae.colors = this;
+    window.ae.colors ||= this;
   }
 
   /**
    * Remove the style HTML element from the DOM and the window.ae object.
    */
   remove() {
-    if (window.ae) {
-      window.ae.colors = null;
-    }
     this.wrapper.element.remove();
   }
 };
