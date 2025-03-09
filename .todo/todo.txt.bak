@@ -1,4 +1,3 @@
-x 2025-03-08 2025-02-14 @feature Add an option to download as TSV/JSON.
 (Z) 2025-02-14 @feature Add my review if it exists.
 (Z) 2025-02-14 @feature add option to download goodreads CSV importable file
 (Z) 2025-02-14 @feature add stop button
@@ -26,7 +25,7 @@ x 2025-03-08 2025-02-14 @feature Add an option to download as TSV/JSON.
 (A) 2025-02-27 @ux Add modal at beginning with start button and waring not to close or navigate away.
 (C) 2025-02-27 @qa Rename *Fetcher.populate() -> *Fetcher.get()
 (Z) 2025-02-27 @ux Display error message dialog on fatal error.
-(A) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
+(B) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
 (D) 2025-02-27 Add to readme https://developer.chrome.com/docs/devtools/console/log
 (C) 2025-02-27 @qa Have Page.fetchDoc() set this.url = url
 (D) 2025-02-28 @ux @download In TSV download, join categories.
@@ -48,8 +47,7 @@ x 2025-03-08 2025-02-14 @feature Add an option to download as TSV/JSON.
 (D) 2025-03-05 @qa @testing Try autoprefixer https://github.com/postcss/autoprefixer#browsers
 (D) 2025-03-05 @qa Look into polyfills and transpilers https://javascript.info/polyfills
 (D) 2025-03-05 @qa Look into JS style guides and linters: https://javascript.info/coding-style
-(B) 2025-03-05 @qa @compatability Look into webcomponents polyfills https://github.com/webcomponents/polyfills?tab=readme-ov-file
-(B) 2025-03-05 @qa @compatability Look into Modernizr: https://modernizr.com/docs/
+x 2025-03-08 2025-03-05 @qa @compatability Look into webcomponents polyfills https://github.com/webcomponents/polyfills?tab=readme-ov-file
 (D) 2025-03-05 @qa @accessibility Try jest-axe https://maxrozen.com/automatic-a11y-testing-with-jest-axe https://dev.to/bdougieyo/accessibility-testing-in-react-with-jest-axe-l7k
 (D) 2025-03-05 @qa @testing Try playwright https://playwright.dev/
 (D) 2025-03-05 @qa @testing Try blisk https://blisk.io/
@@ -67,4 +65,4 @@ x 2025-03-08 2025-02-14 @feature Add an option to download as TSV/JSON.
 (D) 2025-03-07 @notifiers .reset() should reset timers, item_no and total
 (C) 2025-03-07 @qa Make all requests from / instead of audible.com/
 (D) 2025-03-07 @qa look into preformance (memory specifically) testing
-(Z) 2025-03-08 @feature Add an option to download as CSV.
+(Z) 2025-03-08 @feature Add an option to download as CSV. https://stackoverflow.com/questions/14964035/how-to-export-javascript-array-info-to-csv-on-client-side
