@@ -11,7 +11,6 @@ Modal = class extends DOM {
   #head = null;
   #content = null;
   #close_btn = null;
-  #h1 = null;
 
   title = "";
 
@@ -52,7 +51,6 @@ Modal = class extends DOM {
       let head = Doc.create("div", { class: this.selectors.head });
 
       head.element.appendChild(this.close_btn.element);
-      head.element.appendChild(this.h1.element);
 
       this.#head = head;
     }
@@ -98,19 +96,6 @@ Modal = class extends DOM {
     return this.#close_btn;
   }
 
-  /**
-   * h1 element.
-   *
-   * @returns {Doc}
-   */
-  get h1() {
-    if (!this.#h1) {
-      this.#h1 = Doc.create("h1");
-      this.#h1.innerHTML = this.title;
-    }
-    return this.#h1;
-  }
-
   /* Methods
    ***************************************************************************/
 
@@ -136,5 +121,15 @@ Modal = class extends DOM {
     let colors = window.ae.colors || new Colors();
     colors.create();
     super.create();
+  }
+
+  /**
+   * Add the wrapper HTML element to the DOM.
+   */
+  remove() {
+    super.remove();
+    if (window.ae?.modal) {
+      window.ae.modal = null;
+    }
   }
 };

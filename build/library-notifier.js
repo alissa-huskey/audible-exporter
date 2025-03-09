@@ -506,11 +506,15 @@ DOM = class {
     let el = Doc.gi(this.selectors.wrapper);
     if (el) el.outerHTML = "";
 
-    if (this.css) {
-      document.head.appendChild(this.style.element);
-    }
-
+    document.head.appendChild(this.style.element);
     document.body.appendChild(this.wrapper.element);
+  }
+
+  /**
+   * Remove the wrapper HTML element from the DOM.
+   */
+  remove() {
+    this.wrapper.element.remove();
   }
 };
 
@@ -527,7 +531,6 @@ Modal = class extends DOM {
   #head = null;
   #content = null;
   #close_btn = null;
-  #h1 = null;
 
   title = "";
 
@@ -568,7 +571,6 @@ Modal = class extends DOM {
       let head = Doc.create("div", { class: this.selectors.head });
 
       head.element.appendChild(this.close_btn.element);
-      head.element.appendChild(this.h1.element);
 
       this.#head = head;
     }
@@ -614,19 +616,6 @@ Modal = class extends DOM {
     return this.#close_btn;
   }
 
-  /**
-   * h1 element.
-   *
-   * @returns {Doc}
-   */
-  get h1() {
-    if (!this.#h1) {
-      this.#h1 = Doc.create("h1");
-      this.#h1.innerHTML = this.title;
-    }
-    return this.#h1;
-  }
-
   /* Methods
    ***************************************************************************/
 
@@ -652,6 +641,16 @@ Modal = class extends DOM {
     let colors = window.ae.colors || new Colors();
     colors.create();
     super.create();
+  }
+
+  /**
+   * Add the wrapper HTML element to the DOM.
+   */
+  remove() {
+    super.remove();
+    if (window.ae?.modal) {
+      window.ae.modal = null;
+    }
   }
 };
 
@@ -1312,7 +1311,7 @@ StatusNotifier = class extends DOM {
    */
   remove() {
     document.removeEventListener(this.event_name, this.listen);
-    this.wrapper.element.remove();
+    super.remove();
 
     this.#wrapper = null;
     this.#bar = null;

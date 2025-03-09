@@ -734,309 +734,150 @@ Colors = class extends DOM {
   }
 };
 
-StatusNotifier = class extends DOM {
+/**
+ * Modal pop-up window for starting the exporter.
+ *
+ * @requires modal.js
+ */
+StartModal = class extends Modal {
+  #css = null;
   #wrapper = null;
-  #bar = null;
-  #status = null;
-  #percentage = null;
-  #messages = null;
-  #context = null;
-  #steps = null;
-  #estimate = null;
-  #style = null;
-  #percent = null;
+  #content = null;
+  #close_btn = null;
+  #ft_select = null;
+  #start_btn = null;
+  #file = null;
 
-  #item_no = null;
-  #total = null;
-
-  step_no = null;
-  total_steps = 4;
-  estimate_padding = 1.05;
-  event_name = "update-ae-notifier";
-
-  times = [];
+  title = "Export your audible library.";
 
   selectors = {
-    wrapper: "ae-notifier",
-    bar: "ae-bar",
-    messages: "ae-messages",
-    status: "ae-status-text",
-    percentage: "ae-percent-text",
-    context: "ae-context",
-    steps: "ae-steps-text",
-    estimate: "ae-estimate-text",
+    style: "ae-modal-css",
+    wrapper: "ae-modal",
+    content: "ae-content",
+    head: "ae-head",
+    close_btn: "ae-close-btn",
+
+    start_btn: "ae-start-btn",
   };
 
   /* Elements
    ***************************************************************************/
 
   /**
-   * Construct HTML elements.
+   * Construct wrapper div, append all child elements.
    *
    * @returns {Doc}
    */
   get wrapper() {
     if (!this.#wrapper) {
-      this.#wrapper = Doc.create("div", {
-        id: this.selectors.wrapper,
-        style: {
-          width: `${this.bar_width}px`,
-          left: `${(this.body_width - this.bar_width) / 2}px`,
-          "z-index": new Date().getTime(),
-        },
-      });
-
-      this.wrapper.element.appendChild(this.bar.element);
-      this.wrapper.element.appendChild(this.context.element);
+      this.#wrapper = super.wrapper;
+      this.#wrapper.id = "ae-start-modal";
     }
     return this.#wrapper;
   }
 
   /**
-   * Progress bar element.
+   * The div element for the main content of the modal.
    *
    * @returns {Doc}
    */
-  get bar() {
-    if (!this.#bar) {
-      this.#bar = Doc.create("div", { id: this.selectors.bar });
-      this.#bar.element.appendChild(this.messages.element);
+  get content() {
+    if (!this.#content) {
+      let content = super.content;
+      let copy = Doc.create("div", { class: "ae-copy" });
+
+      let btn_wrapper = Doc.create("span", { id: "ae-start-btn" });
+      let ul = Doc.create("ul");
+
+      btn_wrapper.element.appendChild(this.start_btn.element);
+
+      content.element.appendChild(copy.element);
+
+      copy.element.appendChild(
+        this.p("This will export your audible library. It might take awhile.")
+          .element,
+      );
+
+      copy.element.appendChild(this.p("Until it's done, you must:").element);
+
+      copy.element.appendChild(ul.element);
+
+      let need = [
+        "be on audible.com and logged in.",
+        "not close this browser window.",
+        "not navigate away from this page.",
+        "stay online (avoid sleep mode).",
+      ];
+
+      need.forEach((text) => ul.element.appendChild(this.li(text).element));
+
+      copy.element.appendChild(
+        this.p("Click the button to get started!").element,
+      );
+
+      copy.element.appendChild(btn_wrapper.element);
+
+      this.#content = content;
     }
-    return this.#bar;
+    return this.#content;
   }
 
   /**
-   * Div that contains text elements.
+   * Create a paragraph element.
    *
-   * @returns {Doc}
+   * @params {string} text  Inner text
+   *
+   * returns {Doc}
    */
-  get messages() {
-    if (!this.#messages) {
-      this.#messages = Doc.create("div", {
-        id: this.selectors.messages,
-        class: "ae-row",
-        style: { width: `${this.bar_width}px` },
+  p(text) {
+    let p = Doc.create("p");
+    p.innerHTML = text;
+    return p;
+  }
+
+  /**
+   * Create a list element.
+   *
+   * @params {string} text  Inner text
+   *
+   * returns {Doc}
+   */
+  li(text) {
+    let li = Doc.create("li");
+    li.innerHTML = text;
+    return li;
+  }
+
+  get start_btn() {
+    if (!this.#start_btn) {
+      let btn = Doc.create("a", {
+        id: this.selectors.start_btn,
+        class: "ae-btn",
       });
-      this.#messages.element.appendChild(this.status.element);
-      this.#messages.element.appendChild(this.percentage.element);
+      btn.attributes.href = "#";
+      btn.innerHTML = "Start";
+
+      btn.element.addEventListener(
+        "click",
+        async (evt) => {
+          if (window.ae) {
+            window.ae.modal.remove();
+          }
+
+          if (window.ae?.run) {
+            await window.ae.run();
+          }
+        },
+        false,
+      );
+
+      this.#start_btn = btn;
     }
-    return this.#messages;
+    return this.#start_btn;
   }
 
-  /**
-   * Div that contains status message.
-   *
-   * @returns {Doc}
-   */
-  get status() {
-    if (!this.#status) {
-      this.#status = Doc.create("div", { id: this.selectors.status });
-    }
-    return this.#status;
-  }
-
-  /**
-   * Span element that contains percentage text.
-   */
-  get percentage() {
-    if (!this.#percentage) {
-      this.#percentage = Doc.create("span", {
-        id: this.selectors.percentage,
-      });
-    }
-    return this.#percentage;
-  }
-
-  /**
-   * Div under the progress bar.
-   *
-   * @returns {Doc}
-   */
-  get context() {
-    if (!this.#context) {
-      this.#context = Doc.create("div", {
-        id: this.selectors.context,
-        class: "ae-row empty",
-      });
-
-      this.#context.element.appendChild(this.steps.element);
-      this.#context.element.appendChild(this.estimate.element);
-    }
-    return this.#context;
-  }
-
-  /**
-   * Span that contains the "Step x of y" text.
-   *
-   * @returns {Doc}
-   */
-  get steps() {
-    if (!this.#steps) {
-      this.#steps = Doc.create("span", { id: this.selectors.steps });
-    }
-    return this.#steps;
-  }
-
-  /**
-   * Span that contains the estimated remaining time.
-   *
-   * @returns {Doc}
-   */
-  get estimate() {
-    if (!this.#estimate) {
-      this.#estimate = Doc.create("span", { id: this.selectors.estimate });
-    }
-    return this.#estimate;
-  }
-
-  /* Accessors
+  /* Static getters.
    ***************************************************************************/
-
-  /**
-   * The number of the current item being processed.
-   *
-   * @returns {number}
-   */
-  get item_no() {
-    return this.#item_no;
-  }
-
-  /**
-   * Set .item_no and update .text and .percent.
-   *
-   * @param   {number} value  The number of the current item being processed.
-   *
-   * @returns {number}
-   */
-  set item_no(value) {
-    this.#item_no = value;
-    this.text = this.message;
-    this.percent = this.ratio;
-    this.time = this.time_left;
-  }
-
-  /**
-   * The total number of items to process.
-   */
-  get total() {
-    return this.#total;
-  }
-
-  /**
-   * Set .total and update text and percent.
-   */
-  set total(value) {
-    this.#total = value;
-    this.text = this.message;
-    this.percent = this.ratio;
-    this.time = this.time_left;
-    this.step = this.step_text;
-  }
-
-  /**
-   * Get the status message text.
-   *
-   * @returns {string}
-   */
-  get text() {
-    return this.status.innerText;
-  }
-
-  /**
-   * Set the status message text.
-   *
-   * @param {string} message  Message to display.
-   */
-  set text(message) {
-    this.status.innerText = message;
-  }
-
-  /**
-   * The current percent complete.
-   *
-   * @returns {float} A value between 0 and 1.0
-   */
-  get percent() {
-    return this.#percent;
-  }
-
-  /**
-   * Set the percent complete.
-   *
-   * Set the modal.percent value, the progress bar width, and the percentage
-   * text.
-   */
-  set percent(decimal) {
-    if (isNaN(decimal) || !isFinite(decimal)) {
-      return;
-    }
-    this.#percent = decimal;
-    let amount = Math.ceil(decimal * 100);
-    this.percentage.innerText = `${amount}%`;
-
-    let width = this.bar_width * decimal;
-    this.bar.style.width = `${width}px`;
-  }
-
-  /**
-   * Get the step message text.
-   *
-   * @returns {string}
-   */
-  get step() {
-    return this.steps.innerText;
-  }
-
-  /**
-   * Set the step message text.
-   *
-   * @param {string} message  Message to display.
-   */
-  set step(message) {
-    this.context.classList.remove("empty");
-    this.steps.innerText = message;
-  }
-
-  /**
-   * Get the remaining time message text.
-   *
-   * @returns {string}
-   */
-  get time() {
-    return this.estimate.innerText;
-  }
-
-  /**
-   * Set the time message text.
-   *
-   * @param {string} message  Message to display.
-   */
-  set time(message) {
-    this.context.classList.remove("empty");
-    this.estimate.innerText = message;
-  }
-
-  /**
-   * Add a Timer object to the list of times.
-   *
-   * @param {Timer} value
-   */
-  set timer(value) {
-    this.times.push(value);
-    this.time = this.time_left;
-  }
-
-  /* Static getters
-   ***************************************************************************/
-
-  /**
-   * The message to display to the user.
-   *
-   * @returns {string}
-   */
-  get message() {
-    return "Initializing...";
-  }
 
   /**
    * The CSS required to render this element.
@@ -1047,322 +888,242 @@ StatusNotifier = class extends DOM {
    * @returns {string}
    */
   get css() {
-    return `
+    if (!this.#css) {
+      this.#css = `
 :root {
-  --ae-transparent-black: rgba(0, 0, 0, 0.05);
-  --ae-blur-shadow: 0 0 8px 8px var(--ae-transparent-black);
+  --ae-box-shadow: 3px 3px 10px 3px;
+  --ae-box-shadow-light-bg: var(--ae-box-shadow) var(--ae-dim-gray);
+  --ae-box-shadow-dark-bg: var(--ae-box-shadow) var(--ae-carbon);
 }
 
-#ae-notifier {
+.ae-modal {
+  box-sizing: border-box;
   position: fixed;
-  top: 100px;
-  border-radius: 0.2em;
-  font-family: system-ui;
-  border: 1px solid var(--ae-light-green);
-  background-color: var(--ae-near-black);
+  font-family: "Cantarell", sans-serif;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
 }
 
-#ae-notifier.hidden {
-  display: none;
-}
+.ae-modal .ae-content {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 
-#ae-bar {
-  width: 0;
-  height: 50px;
-  border-bottom-right-radius: 0.2em;
-  border-top-right-radius: 0.2em;
-  transition: all 1s;
-  border-width: 1px;
-  border-style: solid;
-  background-color: var(--ae-dark-green);
-  border-color: var(--ae-light-green);
-  -webkit-animation: pulse 1s linear alternate;
-  -webkit-animation-iteration-count: infinite; 
-}
+  width: 50%;
+  height: 300px;
 
-#ae-messages {
-  padding: 14px;
-  color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 3px 15px -2px #222;
+  padding: 20px;
+
+  background-color: var(--ae-black-russian);
+  color: var(--ae-near-white);
   font-size: 1.1em;
+}
+
+.ae-modal .ae-head {
+  background-color: var(--ae-near-black);
+  padding: 10px;
+  border-radius: 10px 10px 0px 0px;
+}
+
+.ae-modal h1 {
+  color: var(--ae-mystic-white);
+  font-size: 1.2rem;
   font-weight: 600;
-
+  line-height: normal;
+  margin: 0;
+  padding-bottom: 10px;
+  text-transform: uppercase;
 }
 
-#ae-status-text {
-  text-wrap: nowrap;
-
-  -webkit-text-stroke: 0.2px var(--ae-dim-gray);
-
-  background-color: var(--ae-transparent-black);
-  box-shadow: var(--ae-blur-shadow);
-  -webkit-box-shadow: var(--ae-blur-shadow);
-  -moz-box-shadow: var(--ae-blur-shadow);
+.ae-modal #ae-close-btn {
+  color: var(--ae-basalt-gray);
+  font-size: 28px;
+  font-weight: bold;
+  text-decoration: none;
+  margin: 0;
+  margin-top: -10px;
+  align-self: flex-end;
+  float: right;
 }
 
-#ae-percent-text {
-  color: var(--ae-bright-green);
+#ae-start-modal .ae-head {
+  background-color: unset;
 }
 
-#ae-context.empty {
-  height: 0px;
-  padding: 0px;
-  border-top: 0px;
+#ae-start-modal .ae-content {
+  width: 60%;
+  height: unset;
 }
 
-#ae-context{
-  font-size: .9em;
-  color: #999;
-  background: var(--ae-black-russian);
-  border-top: 1px solid var(--ae-dim-gray);
-  padding: 3px;
+.ae-modal .ae-copy {
+  background-color: var(--ae-near-black);
+  padding: 25px;
+  margin: 20px;
+  border-radius: 15px;
 }
 
-.ae-row {
+#ae-close-btn:hover,
+#ae-close-btn:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ae-actions {
   display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-between;
+  gap: 15px;
+  margin: 30px 20px;
 }
 
-@-webkit-keyframes pulse {
-  from { background-color: var(--ae-dark-green); }
-  to { background-color: var(--ae-light-green); }
+#ae-start-modal ul {
+  margin: 30px 0;
+
+  ::marker {
+    font-size: 1.3em;
+    color: var(--ae-light-green);
+
+    /* NOTE: Double-escaped here because this will be embedded in JS. */
+		content: "\\027B2   ";  /* ➲ */
+  }
 }
-    `;
+
+#ae-start-modal li {
+  line-height: 1.7em;
+}
+
+#ae-start-modal span#ae-start-btn {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+a.ae-btn {
+  background-color: var(--ae-emerald-green);
+  color: #000;
+  cursor: pointer;
+
+  font-size: 1em;
+  font-family: system-ui;
+  font-weight: 600;
+  text-transform: uppercase;
+
+  text-decoration: none;
+  text-align: center;
+  padding: 10px 25px;
+
+  display: inline-block;
+
+  border-radius: 4px;
+  box-shadow: var(--ae-box-shadow-light-bg);
+  -webkit-box-shadow: var(--ae-box-shadow-light-bg);
+  -moz-box-shadow: var(--ae-box-shadow-light-bg);
+}
+
+a.ae-btn:hover {
+  background-color: var(--ae-near-black);
+  color: var(--ae-near-white);
+  text-decoration: none;
+
+  box-shadow: var(--ae-box-shadow-dark-bg);
+  -webkit-box-shadow: var(--ae-box-shadow-dark-bg);
+  -moz-box-shadow: var(--ae-box-shadow-dark-bg);
+}
+
+a.ae-btn.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  color: white;
+}
+
+#ae-start-modal .ae-content {
+  width: 60%;
+  height: unset;
+}
+
+#ae-download-btn {
+  position: relative;
+}
+
+#ae-download-btn a {
+  padding: 10px 25px;
+  text-indent: 15px;
+}
+
+#ae-download-btn a:before,
+#ae-download-btn a:after {
+  content: " ";
+  display: block;
+  position: absolute;
+  left: 14px;
+  top: 52%;
+}
+
+/* Download box shape  */
+#ae-download-btn a:before {
+  width: 10px;
+  height: 2px;
+  border-style: solid;
+  border-width: 0 2px 2px;
+}
+
+/* Download arrow shape */
+#ae-download-btn a:after {
+  width: 0;
+  height: 0;
+  margin-left: 1px;
+  margin-top: -7px;
+
+  border-style: solid;
+  border-width: 4px 4px 0 4px;
+  border-color: transparent;
+  border-top-color: inherit;
+}
+
+#ae-download-btn a:hover:before {
+  border-color: var(--ae-emerald-green);
+}
+
+#ae-download-btn a:hover:after {
+  animation: downloadArrow 2s linear infinite;
+  animation-play-state: running;
+  border-top-color: var(--ae-emerald-green);
+}
+
+@keyframes downloadArrow {
+  /* 0% and 0.001% keyframes used as a hackish way of having the button frozen
+   * on a nice looking frame by default */
+
+  0% {
+    margin-top: -7px;
+    opacity: 1;
   }
 
-  /* Calculated properties
-   ***************************************************************************/
-
-  /**
-   * The body width.
-   *
-   * @returns {number}
-   */
-  get body_width() {
-    return document.body.getBoundingClientRect().width;
+  0.001% {
+    margin-top: -15px;
+    opacity: 0;
   }
 
-  /**
-   * The overall width of the progress bar.
-   *
-   * @returns {number}
-   */
-  get bar_width() {
-    return this.body_width * 0.8;
+  50% {
+    opacity: 1;
   }
 
-  /**
-   * The "Step x of y" text to display to the user.
-   *
-   * @returns {string}
-   */
-  get step_text() {
-    if (!this.step_no) {
-      return "";
+  100% {
+    margin-top: 0;
+    opacity: 0;
+  }
+}
+
+      `;
     }
-
-    let text = `Step ${this.step_no} of ${this.total_steps}`;
-
-    if (this.step_desc) {
-      text += `: ${this.step_desc}`;
-    }
-
-    return `[${text}]`;
+    return this.#css;
   }
 
-  /**
-   * The calculated percent complete.
-   */
-  get ratio() {
-    if (!(this.item_no && this.item_no >= 0 && this.total)) {
-      return null;
-    }
-    return this.item_no / this.total;
-  }
-
-  /**
-   * The number of items still to be processed.
-   *
-   * @returns {number}
-   */
-  get remaining() {
-    return this.total - this.item_no;
-  }
-
-  /**
-   * Amount of time it takes to process each item.
-   *
-   * Calculated as average of elapsed time in all timer objects in .times in
-   * milliseconds.
-   *
-   * @returns {number}
-   */
-  get per_item() {
-    let total = this.times.reduce((sum, t) => sum + t.elapsed, 0);
-    return total / this.times.length;
-  }
-
-  /**
-   * Estimate time left to process remaining items in milliseconds.
-   *
-   * @return {number}
-   */
-  get ms_left() {
-    return this.remaining * this.per_item * this.estimate_padding;
-  }
-
-  /**
-   * Estimate time left to process remaining items in minutes.
-   *
-   * @returns {string}
-   */
-  get minutes_left() {
-    let minutes = (this.ms_left / 1000 / 60).toFixed(1);
-    if (minutes == parseInt(minutes)) {
-      minutes = parseInt(minutes).toString();
-    }
-    return minutes;
-  }
-
-  /**
-   * Message to display to the user of the estimated time left.
-   *
-   * @returns {string}
-   */
-  get time_left() {
-    if (!(this.times.length && this.item_no != null && this.total)) {
-      return "";
-    }
-
-    let minutes = this.minutes_left;
-    let text;
-    if (minutes <= 0.5) {
-      text = "less than a minute remaining";
-    } else if (minutes <= 1) {
-      text = "about a minute remaining";
-    } else {
-      text = `about ${minutes} minutes remaining`;
-    }
-
-    return `${text}`;
-  }
-
-  /* Methods
-   ***************************************************************************/
-
-  /**
-   * Event listener.
-   *
-   * For each item in the event.detail object, set the window.ae.notifier
-   * attribute named key to value.
-   */
-  listen(evt) {
-    let notifier = window.ae.notifier;
-    for (let [k, v] of Object.entries(evt.detail)) {
-      notifier[k] = v;
-    }
-  }
-
-  /**
-   * Hide the modal element.
-   */
-  hide() {
-    this.wrapper.classList.add("hidden");
-  }
-
-  /**
-   * Show the modal element.
-   */
-  show() {
-    this.wrapper.classList.remove("hidden");
-  }
-
-  /**
-   * Add the wrapper HTML element to the DOM.
-   *
-   * Add the .wrapper element to the DOM, add the update-ae-notifier event
-   * listener, and set the intital status text.
-   */
   create() {
-    let colors = window.ae.colors || new Colors();
-    colors.create();
     super.create();
-
-    document.addEventListener(this.event_name, this.listen);
-    window.ae.notifier = this;
-    this.text = this.message;
-    this.step = this.step_text;
-  }
-
-  /**
-   * Clear all user-visible values and set the percent to zero.
-   */
-  reset() {
-    this.text = "";
-    this.percent = 0;
-    this.percentage.innerText = "";
-    this.estimate.innerText = "";
-    this.steps.innerText = "";
-  }
-
-  /**
-   * Remove the wrapper HTML element from the DOM and remove the event
-   * listener.
-   */
-  remove() {
-    document.removeEventListener(this.event_name, this.listen);
-    super.remove();
-
-    this.#wrapper = null;
-    this.#bar = null;
-    this.#status = null;
-    this.#percentage = null;
-  }
-};
-
-/**
- * Status notifier displayed to the user during the "Additional details"
- * step.
- *
- * @requires status-notifier.js
- */
-DetailsNotifier = class extends StatusNotifier {
-  #item_no = null;
-  #total = null;
-
-  step_no = 4;
-
-  /**
-   * Description of this step.
-   *
-   * @returns {string}
-   */
-  get step_desc() {
-    let message = "Additional details";
-
-    if (this.total) {
-      message += `, ${this.total} books`;
-    }
-
-    return message;
-  }
-
-  /**
-   * Status message to display to the user.
-   *
-   * Depending on status of progress bar may include:
-   *
-   * - Initial message.
-   * - item_no of total
-   * - Estimated minutes remaining
-   *
-   * @returns {string}
-   */
-  get message() {
-    if (!this.item_no) {
-      return "Retrieving additional information on titles...";
-    }
-
-    return `Retrieving book ${this.item_no} of ${this.total}`;
   }
 };

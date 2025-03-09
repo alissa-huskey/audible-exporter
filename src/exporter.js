@@ -28,6 +28,9 @@ Exporter = class {
     this.results = [];
 
     window.ae = this;
+
+    this.modal = new StartModal();
+    this.modal.create();
   }
 
   async getPurchaseHistory() {
@@ -137,10 +140,9 @@ Exporter = class {
     this.modal.show();
   }
 
-  async run(limit = null) {
+  async run() {
     try {
       this.timer.start();
-      this.limit = limit;
 
       this.colors.create();
       this.notifier.create();

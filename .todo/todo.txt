@@ -22,7 +22,6 @@
 (Z) 2025-02-26 Implement some sort of pause/resume.
 (A) 2025-02-26 @qa document functions, classes and methods https://developer.wordpress.org/coding-standards/inline-documentation-standards/javascript/
 (D) 2025-02-26 @qa @book-details Parse author from json_details instead of HTML.
-(A) 2025-02-27 @ux Add modal at beginning with start button and waring not to close or navigate away.
 (C) 2025-02-27 @qa Rename *Fetcher.populate() -> *Fetcher.get()
 (Z) 2025-02-27 @ux Display error message dialog on fatal error.
 (B) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
@@ -71,3 +70,6 @@
 (B) 2025-03-09 @qa In fetch, check if the current page is the one being fetched, if so use document.body
 (C) 2025-03-09 @qa look into switching everything to query selectors.
 (B) 2025-03-09 @housekeeping look into using requires and see if there's a way to compile everything to a flat file.
+(B) 2025-03-09 @housekeeping Remove build dir from repo, add audible-export.js at top level.
+(C) 2025-03-09 @qa @testing Check to see if it runs on a phone.
+(A) 2025-03-09 @qa Add Element.appendChild(), have it take multiple arguments.

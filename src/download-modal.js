@@ -4,13 +4,12 @@
 DownloadModal = class extends Modal {
   #css = null;
   #wrapper = null;
+  #head = null;
   #content = null;
-  #close_btn = null;
   #ft_select = null;
   #dl_btn = null;
+  #h1 = null;
   #file = null;
-
-  title = "Download";
 
   selectors = {
     style: "ae-modal-css",
@@ -18,6 +17,7 @@ DownloadModal = class extends Modal {
     content: "ae-content",
     head: "ae-head",
     close_btn: "ae-close-btn",
+
     dl_btn: "ae-download-btn",
     ft_select: "ae-filetype",
     actions: "ae-actions",
@@ -25,6 +25,20 @@ DownloadModal = class extends Modal {
 
   /* Elements
    ***************************************************************************/
+
+  /**
+   * div element for the head section.
+   */
+  get head() {
+    if (!this.#head) {
+      let head = super.head;
+
+      head.element.appendChild(this.h1.element);
+
+      this.#head = head;
+    }
+    return this.#head;
+  }
 
   /**
    * The div element for the main content of the modal.
@@ -52,6 +66,19 @@ DownloadModal = class extends Modal {
       this.#content = content;
     }
     return this.#content;
+  }
+
+  /**
+   * h1 element.
+   *
+   * @returns {Doc}
+   */
+  get h1() {
+    if (!this.#h1) {
+      this.#h1 = Doc.create("h1");
+      this.#h1.innerHTML = "Download";
+    }
+    return this.#h1;
   }
 
   get ft_select() {
@@ -86,53 +113,17 @@ DownloadModal = class extends Modal {
     return this.#ft_select;
   }
 
-  get close_btn() {
-    if (!this.#close_btn) {
-      this.#close_btn = Doc.create("a", { id: this.selectors.close_btn });
-      this.#close_btn.innerHTML = "&times;";
-      this.#close_btn.attributes.href = "#";
-      this.#close_btn.element.addEventListener(
-        "click",
-        () => {
-          this.hide();
-        },
-        false,
-      );
-    }
-    return this.#close_btn;
-  }
-
   get dl_btn() {
     if (!this.#dl_btn) {
       let btn = Doc.create("a", {
         id: this.selectors.dl_btn,
-        class: "disabled",
+        class: "ae-btn disabled",
       });
       btn.attributes.href = "#";
       btn.innerHTML = "Download";
       this.#dl_btn = btn;
     }
     return this.#dl_btn;
-  }
-
-  /* Static getters.
-   ***************************************************************************/
-
-  /**
-   * The CSS required to render this element.
-   *
-   * On build, the CSS_MARKER line will be replaced with the contents of
-   * notifier.css.
-   *
-   * @returns {string}
-   */
-  get css() {
-    if (!this.#css) {
-      this.#css = `
-        /* CSS_MARKER modal */
-      `;
-    }
-    return this.#css;
   }
 
   get filetype() {
@@ -166,5 +157,25 @@ DownloadModal = class extends Modal {
         window.URL.revokeObjectURL(file.url);
       }, 10);
     });
+  }
+
+  /* Static getters.
+   ***************************************************************************/
+
+  /**
+   * The CSS required to render this element.
+   *
+   * On build, the CSS_MARKER line will be replaced with the contents of
+   * notifier.css.
+   *
+   * @returns {string}
+   */
+  get css() {
+    if (!this.#css) {
+      this.#css = `
+        /* CSS_MARKER modal */
+      `;
+    }
+    return this.#css;
   }
 };

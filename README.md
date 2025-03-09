@@ -18,7 +18,8 @@ Usage
 1. Open [audible.com](http://audible.com) and log into your account.
 1. Open your browser developer tools. (usually ⌃⇧J on Windows/Linux, or ⌘⌥J on Mac) and
    navigate to the Console tab.
-1. Paste the Javascript code and hit enter to run.
+1. Paste the Javascript code and hit enter.
+1. Click the Start button.
 1. Do not close the browser window or navigate away from the page while the script is running!
 
    It will take anywhere from a few minutes to an hour or more to run. For my

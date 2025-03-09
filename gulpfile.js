@@ -18,7 +18,7 @@ let dirs = {
  * (b.) have a standalone file including all dependencies saved in build/
  * (c.) (may be) the base for other standalone files
  */
-let components = ["status-notifier", "download-modal"];
+let components = ["status-notifier", "start-modal", "download-modal"];
 
 /**
  * Notifier compoenents that depend on build/status-notifier.js and have a

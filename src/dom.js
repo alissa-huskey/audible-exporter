@@ -56,10 +56,14 @@ DOM = class {
     let el = Doc.gi(this.selectors.wrapper);
     if (el) el.outerHTML = "";
 
-    if (this.css) {
-      document.head.appendChild(this.style.element);
-    }
-
+    document.head.appendChild(this.style.element);
     document.body.appendChild(this.wrapper.element);
+  }
+
+  /**
+   * Remove the wrapper HTML element from the DOM.
+   */
+  remove() {
+    this.wrapper.element.remove();
   }
 };

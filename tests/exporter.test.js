@@ -24,6 +24,7 @@ require("../src/orders-fetcher.js");
 require("../src/dom.js");
 require("../src/colors.js");
 require("../src/modal.js");
+require("../src/start-modal.js");
 require("../src/download-modal.js");
 require("../src/status-notifier.js");
 require("../src/purchase-history-notifier.js");

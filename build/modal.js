@@ -506,15 +506,11 @@ DOM = class {
     let el = Doc.gi(this.selectors.wrapper);
     if (el) el.outerHTML = "";
 
-    document.head.appendChild(this.style.element);
-    document.body.appendChild(this.wrapper.element);
-  }
+    if (this.css) {
+      document.head.appendChild(this.style.element);
+    }
 
-  /**
-   * Remove the wrapper HTML element from the DOM.
-   */
-  remove() {
-    this.wrapper.element.remove();
+    document.body.appendChild(this.wrapper.element);
   }
 };
 
@@ -531,6 +527,7 @@ Modal = class extends DOM {
   #head = null;
   #content = null;
   #close_btn = null;
+  #h1 = null;
 
   title = "";
 
@@ -571,6 +568,7 @@ Modal = class extends DOM {
       let head = Doc.create("div", { class: this.selectors.head });
 
       head.element.appendChild(this.close_btn.element);
+      head.element.appendChild(this.h1.element);
 
       this.#head = head;
     }
@@ -616,6 +614,39 @@ Modal = class extends DOM {
     return this.#close_btn;
   }
 
+  /**
+   * h1 element.
+   *
+   * @returns {Doc}
+   */
+  get h1() {
+    if (!this.#h1) {
+      this.#h1 = Doc.create("h1");
+      this.#h1.innerHTML = this.title;
+    }
+    return this.#h1;
+  }
+
+  /* Static getters.
+   ***************************************************************************/
+
+  /**
+   * The CSS required to render this element.
+   *
+   * On build, the CSS_MARKER line will be replaced with the contents of
+   * notifier.css.
+   *
+   * @returns {string}
+   */
+  get css() {
+    if (!this.#css) {
+      this.#css = `
+        /* CSS_MARKER modal */
+      `;
+    }
+    return this.#css;
+  }
+
   /* Methods
    ***************************************************************************/
 
@@ -641,16 +672,6 @@ Modal = class extends DOM {
     let colors = window.ae.colors || new Colors();
     colors.create();
     super.create();
-  }
-
-  /**
-   * Add the wrapper HTML element to the DOM.
-   */
-  remove() {
-    super.remove();
-    if (window.ae?.modal) {
-      window.ae.modal = null;
-    }
   }
 };
 
@@ -734,309 +755,121 @@ Colors = class extends DOM {
   }
 };
 
-StatusNotifier = class extends DOM {
+/**
+ * Modal popup windows.
+ *
+ * @requires util.js
+ * @requires doc.js
+ * @requires dom.js
+ */
+Modal = class extends DOM {
+  #css = null;
   #wrapper = null;
-  #bar = null;
-  #status = null;
-  #percentage = null;
-  #messages = null;
-  #context = null;
-  #steps = null;
-  #estimate = null;
-  #style = null;
-  #percent = null;
+  #head = null;
+  #content = null;
+  #close_btn = null;
+  #h1 = null;
 
-  #item_no = null;
-  #total = null;
-
-  step_no = null;
-  total_steps = 4;
-  estimate_padding = 1.05;
-  event_name = "update-ae-notifier";
-
-  times = [];
+  title = "";
 
   selectors = {
-    wrapper: "ae-notifier",
-    bar: "ae-bar",
-    messages: "ae-messages",
-    status: "ae-status-text",
-    percentage: "ae-percent-text",
-    context: "ae-context",
-    steps: "ae-steps-text",
-    estimate: "ae-estimate-text",
+    style: "ae-modal-css",
+    wrapper: "ae-modal",
+    content: "ae-content",
+    head: "ae-head",
+    close_btn: "ae-close-btn",
   };
 
   /* Elements
    ***************************************************************************/
 
   /**
-   * Construct HTML elements.
+   * Construct wrapper div, append all child elements.
    *
    * @returns {Doc}
    */
   get wrapper() {
     if (!this.#wrapper) {
-      this.#wrapper = Doc.create("div", {
-        id: this.selectors.wrapper,
-        style: {
-          width: `${this.bar_width}px`,
-          left: `${(this.body_width - this.bar_width) / 2}px`,
-          "z-index": new Date().getTime(),
-        },
-      });
+      let wrapper = Doc.create("div", { class: this.selectors.wrapper });
 
-      this.wrapper.element.appendChild(this.bar.element);
-      this.wrapper.element.appendChild(this.context.element);
+      wrapper.element.appendChild(this.content.element);
+
+      wrapper.style["z-index"] = new Date().getTime();
+
+      this.#wrapper = wrapper;
     }
     return this.#wrapper;
   }
 
   /**
-   * Progress bar element.
-   *
-   * @returns {Doc}
+   * div element for the head section.
    */
-  get bar() {
-    if (!this.#bar) {
-      this.#bar = Doc.create("div", { id: this.selectors.bar });
-      this.#bar.element.appendChild(this.messages.element);
+  get head() {
+    if (!this.#head) {
+      let head = Doc.create("div", { class: this.selectors.head });
+
+      head.element.appendChild(this.close_btn.element);
+      head.element.appendChild(this.h1.element);
+
+      this.#head = head;
     }
-    return this.#bar;
+    return this.#head;
   }
 
   /**
-   * Div that contains text elements.
-   *
-   * @returns {Doc}
+   * div element for the main content.
    */
-  get messages() {
-    if (!this.#messages) {
-      this.#messages = Doc.create("div", {
-        id: this.selectors.messages,
-        class: "ae-row",
-        style: { width: `${this.bar_width}px` },
-      });
-      this.#messages.element.appendChild(this.status.element);
-      this.#messages.element.appendChild(this.percentage.element);
+  get content() {
+    if (!this.#content) {
+      let content = Doc.create("div", { class: this.selectors.content });
+
+      content.element.appendChild(this.head.element);
+
+      this.#content = content;
     }
-    return this.#messages;
+    return this.#content;
   }
 
   /**
-   * Div that contains status message.
+   * Close button a element.
+   *
+   * @listens click
    *
    * @returns {Doc}
    */
-  get status() {
-    if (!this.#status) {
-      this.#status = Doc.create("div", { id: this.selectors.status });
+  get close_btn() {
+    if (!this.#close_btn) {
+      let btn = Doc.create("a", { id: this.selectors.close_btn });
+      btn.innerHTML = "&times;";
+      btn.attributes.href = "#";
+
+      btn.element.addEventListener(
+        "click",
+        () => {
+          this.hide();
+        },
+        false,
+      );
+      this.#close_btn = btn;
     }
-    return this.#status;
+    return this.#close_btn;
   }
 
   /**
-   * Span element that contains percentage text.
-   */
-  get percentage() {
-    if (!this.#percentage) {
-      this.#percentage = Doc.create("span", {
-        id: this.selectors.percentage,
-      });
-    }
-    return this.#percentage;
-  }
-
-  /**
-   * Div under the progress bar.
+   * h1 element.
    *
    * @returns {Doc}
    */
-  get context() {
-    if (!this.#context) {
-      this.#context = Doc.create("div", {
-        id: this.selectors.context,
-        class: "ae-row empty",
-      });
-
-      this.#context.element.appendChild(this.steps.element);
-      this.#context.element.appendChild(this.estimate.element);
+  get h1() {
+    if (!this.#h1) {
+      this.#h1 = Doc.create("h1");
+      this.#h1.innerHTML = this.title;
     }
-    return this.#context;
+    return this.#h1;
   }
 
-  /**
-   * Span that contains the "Step x of y" text.
-   *
-   * @returns {Doc}
-   */
-  get steps() {
-    if (!this.#steps) {
-      this.#steps = Doc.create("span", { id: this.selectors.steps });
-    }
-    return this.#steps;
-  }
-
-  /**
-   * Span that contains the estimated remaining time.
-   *
-   * @returns {Doc}
-   */
-  get estimate() {
-    if (!this.#estimate) {
-      this.#estimate = Doc.create("span", { id: this.selectors.estimate });
-    }
-    return this.#estimate;
-  }
-
-  /* Accessors
+  /* Static getters.
    ***************************************************************************/
-
-  /**
-   * The number of the current item being processed.
-   *
-   * @returns {number}
-   */
-  get item_no() {
-    return this.#item_no;
-  }
-
-  /**
-   * Set .item_no and update .text and .percent.
-   *
-   * @param   {number} value  The number of the current item being processed.
-   *
-   * @returns {number}
-   */
-  set item_no(value) {
-    this.#item_no = value;
-    this.text = this.message;
-    this.percent = this.ratio;
-    this.time = this.time_left;
-  }
-
-  /**
-   * The total number of items to process.
-   */
-  get total() {
-    return this.#total;
-  }
-
-  /**
-   * Set .total and update text and percent.
-   */
-  set total(value) {
-    this.#total = value;
-    this.text = this.message;
-    this.percent = this.ratio;
-    this.time = this.time_left;
-    this.step = this.step_text;
-  }
-
-  /**
-   * Get the status message text.
-   *
-   * @returns {string}
-   */
-  get text() {
-    return this.status.innerText;
-  }
-
-  /**
-   * Set the status message text.
-   *
-   * @param {string} message  Message to display.
-   */
-  set text(message) {
-    this.status.innerText = message;
-  }
-
-  /**
-   * The current percent complete.
-   *
-   * @returns {float} A value between 0 and 1.0
-   */
-  get percent() {
-    return this.#percent;
-  }
-
-  /**
-   * Set the percent complete.
-   *
-   * Set the modal.percent value, the progress bar width, and the percentage
-   * text.
-   */
-  set percent(decimal) {
-    if (isNaN(decimal) || !isFinite(decimal)) {
-      return;
-    }
-    this.#percent = decimal;
-    let amount = Math.ceil(decimal * 100);
-    this.percentage.innerText = `${amount}%`;
-
-    let width = this.bar_width * decimal;
-    this.bar.style.width = `${width}px`;
-  }
-
-  /**
-   * Get the step message text.
-   *
-   * @returns {string}
-   */
-  get step() {
-    return this.steps.innerText;
-  }
-
-  /**
-   * Set the step message text.
-   *
-   * @param {string} message  Message to display.
-   */
-  set step(message) {
-    this.context.classList.remove("empty");
-    this.steps.innerText = message;
-  }
-
-  /**
-   * Get the remaining time message text.
-   *
-   * @returns {string}
-   */
-  get time() {
-    return this.estimate.innerText;
-  }
-
-  /**
-   * Set the time message text.
-   *
-   * @param {string} message  Message to display.
-   */
-  set time(message) {
-    this.context.classList.remove("empty");
-    this.estimate.innerText = message;
-  }
-
-  /**
-   * Add a Timer object to the list of times.
-   *
-   * @param {Timer} value
-   */
-  set timer(value) {
-    this.times.push(value);
-    this.time = this.time_left;
-  }
-
-  /* Static getters
-   ***************************************************************************/
-
-  /**
-   * The message to display to the user.
-   *
-   * @returns {string}
-   */
-  get message() {
-    return "Initializing...";
-  }
 
   /**
    * The CSS required to render this element.
@@ -1047,322 +880,209 @@ StatusNotifier = class extends DOM {
    * @returns {string}
    */
   get css() {
-    return `
+    if (!this.#css) {
+      this.#css = `
 :root {
-  --ae-transparent-black: rgba(0, 0, 0, 0.05);
-  --ae-blur-shadow: 0 0 8px 8px var(--ae-transparent-black);
+  --ae-box-shadow: 3px 3px 10px 3px;
+  --ae-box-shadow-light-bg: var(--ae-box-shadow) var(--ae-dim-gray);
+  --ae-box-shadow-dark-bg: var(--ae-box-shadow) var(--ae-carbon);
 }
 
-#ae-notifier {
+.ae-modal {
+  box-sizing: border-box;
   position: fixed;
-  top: 100px;
-  border-radius: 0.2em;
-  font-family: system-ui;
-  border: 1px solid var(--ae-light-green);
-  background-color: var(--ae-near-black);
-}
-
-#ae-notifier.hidden {
+  font-family: "Cantarell", sans-serif;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
   display: none;
 }
 
-#ae-bar {
-  width: 0;
-  height: 50px;
-  border-bottom-right-radius: 0.2em;
-  border-top-right-radius: 0.2em;
-  transition: all 1s;
-  border-width: 1px;
-  border-style: solid;
-  background-color: var(--ae-dark-green);
-  border-color: var(--ae-light-green);
-  -webkit-animation: pulse 1s linear alternate;
-  -webkit-animation-iteration-count: infinite; 
+.ae-modal .ae-content {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 50%;
+  height: 300px;
+
+  border-radius: 15px;
+  box-shadow: 0 3px 15px -2px #222;
+  padding: 20px;
+  background-color: var(--ae-black-russian);
+  color: var(--ae-near-white);
 }
 
-#ae-messages {
-  padding: 14px;
-  color: #fff;
-  font-size: 1.1em;
+.ae-modal .ae-head {
+  background-color: var(--ae-near-black);
+  padding: 10px;
+  border-radius: 10px 10px 0px 0px;
+}
+
+.ae-modal h1 {
+  color: var(--ae-mystic-white);
+  font-size: 1.1rem;
   font-weight: 600;
-
+  line-height: normal;
+  margin: 0;
+  padding-bottom: 10px;
+  text-transform: uppercase;
 }
 
-#ae-status-text {
-  text-wrap: nowrap;
-
-  -webkit-text-stroke: 0.2px var(--ae-dim-gray);
-
-  background-color: var(--ae-transparent-black);
-  box-shadow: var(--ae-blur-shadow);
-  -webkit-box-shadow: var(--ae-blur-shadow);
-  -moz-box-shadow: var(--ae-blur-shadow);
+.ae-modal #ae-close-btn {
+  color: var(--ae-basalt-gray);
+  font-size: 28px;
+  font-weight: bold;
+  text-decoration: none;
+  margin: 0;
+  margin-top: -10px;
+  align-self: flex-end;
+  float: right;
 }
 
-#ae-percent-text {
-  color: var(--ae-bright-green);
+#ae-close-btn:hover,
+#ae-close-btn:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
 }
 
-#ae-context.empty {
-  height: 0px;
-  padding: 0px;
-  border-top: 0px;
+#ae-download-btn {
+  position: relative;
 }
 
-#ae-context{
-  font-size: .9em;
-  color: #999;
-  background: var(--ae-black-russian);
-  border-top: 1px solid var(--ae-dim-gray);
-  padding: 3px;
-}
-
-.ae-row {
+.ae-actions {
   display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-between;
+  gap: 10px;
 }
 
-@-webkit-keyframes pulse {
-  from { background-color: var(--ae-dark-green); }
-  to { background-color: var(--ae-light-green); }
+#ae-download-btn a.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  color: white;
 }
-    `;
+
+#ae-download-btn a {
+  background-color: var(--ae-emerald-green);
+  color: #000;
+  cursor: pointer;
+
+  text-decoration: none;
+  font-family: sans-serif;
+  text-align: center;
+  font-size: 0.9em;
+
+  display: inline-block;
+  padding: 10px 25px;
+  text-indent: 15px;
+
+  box-shadow: var(--ae-box-shadow-light-bg);
+  -webkit-box-shadow: var(--ae-box-shadow-light-bg);
+  -moz-box-shadow: var(--ae-box-shadow-light-bg);
+}
+
+#ae-download-btn a:hover {
+  background-color: var(--ae-near-black);
+  color: var(--ae-near-white);
+
+  box-shadow: var(--ae-box-shadow-dark-bg);
+  -webkit-box-shadow: var(--ae-box-shadow-dark-bg);
+  -moz-box-shadow: var(--ae-box-shadow-dark-bg);
+}
+
+#ae-download-btn a:before, #ae-download-btn a:after {
+  content: ' ';
+  display: block;
+  position: absolute;
+  left: 14px;
+  top: 52%;
+}
+
+/* Download box shape  */
+#ae-download-btn a:before {
+  width: 10px;
+  height: 2px;
+  border-style: solid;
+  border-width: 0 2px 2px;
+}
+
+#ae-download-btn a:hover:before {
+  border-color: var(--ae-emerald-green);
+}
+
+/* Download arrow shape */
+#ae-download-btn a:after {
+  width: 0;
+  height: 0;
+  margin-left: 1px;
+  margin-top: -7px;
+
+  border-style: solid;
+  border-width: 4px 4px 0 4px;
+  border-color: transparent;
+  border-top-color: inherit;
+}
+
+#ae-download-btn a:hover:after {
+  animation: downloadArrow 2s linear infinite;
+  animation-play-state: running;
+  border-top-color: var(--ae-emerald-green);
+}
+
+@keyframes downloadArrow {
+  /* 0% and 0.001% keyframes used as a hackish way of having the button frozen
+   * on a nice looking frame by default */
+
+  0% {
+    margin-top: -7px;
+    opacity: 1;
   }
 
-  /* Calculated properties
-   ***************************************************************************/
-
-  /**
-   * The body width.
-   *
-   * @returns {number}
-   */
-  get body_width() {
-    return document.body.getBoundingClientRect().width;
+  0.001% {
+    margin-top: -15px;
+    opacity: 0;
   }
 
-  /**
-   * The overall width of the progress bar.
-   *
-   * @returns {number}
-   */
-  get bar_width() {
-    return this.body_width * 0.8;
+  50% {
+    opacity: 1;
   }
 
-  /**
-   * The "Step x of y" text to display to the user.
-   *
-   * @returns {string}
-   */
-  get step_text() {
-    if (!this.step_no) {
-      return "";
+  100% {
+    margin-top: 0;
+    opacity: 0;
+  }
+}
+      `;
     }
-
-    let text = `Step ${this.step_no} of ${this.total_steps}`;
-
-    if (this.step_desc) {
-      text += `: ${this.step_desc}`;
-    }
-
-    return `[${text}]`;
-  }
-
-  /**
-   * The calculated percent complete.
-   */
-  get ratio() {
-    if (!(this.item_no && this.item_no >= 0 && this.total)) {
-      return null;
-    }
-    return this.item_no / this.total;
-  }
-
-  /**
-   * The number of items still to be processed.
-   *
-   * @returns {number}
-   */
-  get remaining() {
-    return this.total - this.item_no;
-  }
-
-  /**
-   * Amount of time it takes to process each item.
-   *
-   * Calculated as average of elapsed time in all timer objects in .times in
-   * milliseconds.
-   *
-   * @returns {number}
-   */
-  get per_item() {
-    let total = this.times.reduce((sum, t) => sum + t.elapsed, 0);
-    return total / this.times.length;
-  }
-
-  /**
-   * Estimate time left to process remaining items in milliseconds.
-   *
-   * @return {number}
-   */
-  get ms_left() {
-    return this.remaining * this.per_item * this.estimate_padding;
-  }
-
-  /**
-   * Estimate time left to process remaining items in minutes.
-   *
-   * @returns {string}
-   */
-  get minutes_left() {
-    let minutes = (this.ms_left / 1000 / 60).toFixed(1);
-    if (minutes == parseInt(minutes)) {
-      minutes = parseInt(minutes).toString();
-    }
-    return minutes;
-  }
-
-  /**
-   * Message to display to the user of the estimated time left.
-   *
-   * @returns {string}
-   */
-  get time_left() {
-    if (!(this.times.length && this.item_no != null && this.total)) {
-      return "";
-    }
-
-    let minutes = this.minutes_left;
-    let text;
-    if (minutes <= 0.5) {
-      text = "less than a minute remaining";
-    } else if (minutes <= 1) {
-      text = "about a minute remaining";
-    } else {
-      text = `about ${minutes} minutes remaining`;
-    }
-
-    return `${text}`;
+    return this.#css;
   }
 
   /* Methods
    ***************************************************************************/
 
   /**
-   * Event listener.
-   *
-   * For each item in the event.detail object, set the window.ae.notifier
-   * attribute named key to value.
-   */
-  listen(evt) {
-    let notifier = window.ae.notifier;
-    for (let [k, v] of Object.entries(evt.detail)) {
-      notifier[k] = v;
-    }
-  }
-
-  /**
-   * Hide the modal element.
-   */
-  hide() {
-    this.wrapper.classList.add("hidden");
-  }
-
-  /**
-   * Show the modal element.
+   * Show the modal.
    */
   show() {
-    this.wrapper.classList.remove("hidden");
+    this.wrapper.style.display = "block";
+  }
+
+  /**
+   * Hide the modal.
+   */
+  hide() {
+    this.wrapper.style.display = "none";
   }
 
   /**
    * Add the wrapper HTML element to the DOM.
-   *
-   * Add the .wrapper element to the DOM, add the update-ae-notifier event
-   * listener, and set the intital status text.
    */
   create() {
+    window.ae.modal ||= this;
     let colors = window.ae.colors || new Colors();
     colors.create();
     super.create();
-
-    document.addEventListener(this.event_name, this.listen);
-    window.ae.notifier = this;
-    this.text = this.message;
-    this.step = this.step_text;
-  }
-
-  /**
-   * Clear all user-visible values and set the percent to zero.
-   */
-  reset() {
-    this.text = "";
-    this.percent = 0;
-    this.percentage.innerText = "";
-    this.estimate.innerText = "";
-    this.steps.innerText = "";
-  }
-
-  /**
-   * Remove the wrapper HTML element from the DOM and remove the event
-   * listener.
-   */
-  remove() {
-    document.removeEventListener(this.event_name, this.listen);
-    super.remove();
-
-    this.#wrapper = null;
-    this.#bar = null;
-    this.#status = null;
-    this.#percentage = null;
-  }
-};
-
-/**
- * Status notifier displayed to the user during the "Additional details"
- * step.
- *
- * @requires status-notifier.js
- */
-DetailsNotifier = class extends StatusNotifier {
-  #item_no = null;
-  #total = null;
-
-  step_no = 4;
-
-  /**
-   * Description of this step.
-   *
-   * @returns {string}
-   */
-  get step_desc() {
-    let message = "Additional details";
-
-    if (this.total) {
-      message += `, ${this.total} books`;
-    }
-
-    return message;
-  }
-
-  /**
-   * Status message to display to the user.
-   *
-   * Depending on status of progress bar may include:
-   *
-   * - Initial message.
-   * - item_no of total
-   * - Estimated minutes remaining
-   *
-   * @returns {string}
-   */
-  get message() {
-    if (!this.item_no) {
-      return "Retrieving additional information on titles...";
-    }
-
-    return `Retrieving book ${this.item_no} of ${this.total}`;
   }
 };

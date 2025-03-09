@@ -497,7 +497,7 @@ StatusNotifier = class extends DOM {
    */
   remove() {
     document.removeEventListener(this.event_name, this.listen);
-    this.wrapper.element.remove();
+    super.remove();
 
     this.#wrapper = null;
     this.#bar = null;

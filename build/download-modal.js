@@ -506,11 +506,15 @@ DOM = class {
     let el = Doc.gi(this.selectors.wrapper);
     if (el) el.outerHTML = "";
 
-    if (this.css) {
-      document.head.appendChild(this.style.element);
-    }
-
+    document.head.appendChild(this.style.element);
     document.body.appendChild(this.wrapper.element);
+  }
+
+  /**
+   * Remove the wrapper HTML element from the DOM.
+   */
+  remove() {
+    this.wrapper.element.remove();
   }
 };
 
@@ -527,7 +531,6 @@ Modal = class extends DOM {
   #head = null;
   #content = null;
   #close_btn = null;
-  #h1 = null;
 
   title = "";
 
@@ -568,7 +571,6 @@ Modal = class extends DOM {
       let head = Doc.create("div", { class: this.selectors.head });
 
       head.element.appendChild(this.close_btn.element);
-      head.element.appendChild(this.h1.element);
 
       this.#head = head;
     }
@@ -614,19 +616,6 @@ Modal = class extends DOM {
     return this.#close_btn;
   }
 
-  /**
-   * h1 element.
-   *
-   * @returns {Doc}
-   */
-  get h1() {
-    if (!this.#h1) {
-      this.#h1 = Doc.create("h1");
-      this.#h1.innerHTML = this.title;
-    }
-    return this.#h1;
-  }
-
   /* Methods
    ***************************************************************************/
 
@@ -652,6 +641,16 @@ Modal = class extends DOM {
     let colors = window.ae.colors || new Colors();
     colors.create();
     super.create();
+  }
+
+  /**
+   * Add the wrapper HTML element to the DOM.
+   */
+  remove() {
+    super.remove();
+    if (window.ae?.modal) {
+      window.ae.modal = null;
+    }
   }
 };
 
@@ -741,13 +740,12 @@ Colors = class extends DOM {
 DownloadModal = class extends Modal {
   #css = null;
   #wrapper = null;
+  #head = null;
   #content = null;
-  #close_btn = null;
   #ft_select = null;
   #dl_btn = null;
+  #h1 = null;
   #file = null;
-
-  title = "Download";
 
   selectors = {
     style: "ae-modal-css",
@@ -755,6 +753,7 @@ DownloadModal = class extends Modal {
     content: "ae-content",
     head: "ae-head",
     close_btn: "ae-close-btn",
+
     dl_btn: "ae-download-btn",
     ft_select: "ae-filetype",
     actions: "ae-actions",
@@ -762,6 +761,20 @@ DownloadModal = class extends Modal {
 
   /* Elements
    ***************************************************************************/
+
+  /**
+   * div element for the head section.
+   */
+  get head() {
+    if (!this.#head) {
+      let head = super.head;
+
+      head.element.appendChild(this.h1.element);
+
+      this.#head = head;
+    }
+    return this.#head;
+  }
 
   /**
    * The div element for the main content of the modal.
@@ -789,6 +802,19 @@ DownloadModal = class extends Modal {
       this.#content = content;
     }
     return this.#content;
+  }
+
+  /**
+   * h1 element.
+   *
+   * @returns {Doc}
+   */
+  get h1() {
+    if (!this.#h1) {
+      this.#h1 = Doc.create("h1");
+      this.#h1.innerHTML = "Download";
+    }
+    return this.#h1;
   }
 
   get ft_select() {
@@ -823,224 +849,17 @@ DownloadModal = class extends Modal {
     return this.#ft_select;
   }
 
-  get close_btn() {
-    if (!this.#close_btn) {
-      this.#close_btn = Doc.create("a", { id: this.selectors.close_btn });
-      this.#close_btn.innerHTML = "&times;";
-      this.#close_btn.attributes.href = "#";
-      this.#close_btn.element.addEventListener(
-        "click",
-        () => {
-          this.hide();
-        },
-        false,
-      );
-    }
-    return this.#close_btn;
-  }
-
   get dl_btn() {
     if (!this.#dl_btn) {
       let btn = Doc.create("a", {
         id: this.selectors.dl_btn,
-        class: "disabled",
+        class: "ae-btn disabled",
       });
       btn.attributes.href = "#";
       btn.innerHTML = "Download";
       this.#dl_btn = btn;
     }
     return this.#dl_btn;
-  }
-
-  /* Static getters.
-   ***************************************************************************/
-
-  /**
-   * The CSS required to render this element.
-   *
-   * On build, the CSS_MARKER line will be replaced with the contents of
-   * notifier.css.
-   *
-   * @returns {string}
-   */
-  get css() {
-    if (!this.#css) {
-      this.#css = `
-:root {
-  --ae-box-shadow: 3px 3px 10px 3px;
-  --ae-box-shadow-light-bg: var(--ae-box-shadow) var(--ae-dim-gray);
-  --ae-box-shadow-dark-bg: var(--ae-box-shadow) var(--ae-carbon);
-}
-
-.ae-modal {
-  box-sizing: border-box;
-  position: fixed;
-  font-family: "Cantarell", sans-serif;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-  display: none;
-}
-
-.ae-modal .ae-content {
-  position: fixed;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  width: 50%;
-  height: 300px;
-
-  border-radius: 15px;
-  box-shadow: 0 3px 15px -2px #222;
-  padding: 20px;
-  background-color: var(--ae-black-russian);
-  color: var(--ae-near-white);
-}
-
-.ae-modal .ae-head {
-  background-color: var(--ae-near-black);
-  padding: 10px;
-  border-radius: 10px 10px 0px 0px;
-}
-
-.ae-modal h1 {
-  color: var(--ae-mystic-white);
-  font-size: 1.1rem;
-  font-weight: 600;
-  line-height: normal;
-  margin: 0;
-  padding-bottom: 10px;
-  text-transform: uppercase;
-}
-
-.ae-modal #ae-close-btn {
-  color: var(--ae-basalt-gray);
-  font-size: 28px;
-  font-weight: bold;
-  text-decoration: none;
-  margin: 0;
-  margin-top: -10px;
-  align-self: flex-end;
-  float: right;
-}
-
-#ae-close-btn:hover,
-#ae-close-btn:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-#ae-download-btn {
-  position: relative;
-}
-
-.ae-actions {
-  display: flex;
-  gap: 10px;
-}
-
-#ae-download-btn a.disabled {
-  opacity: 0.5;
-  pointer-events: none;
-  color: white;
-}
-
-#ae-download-btn a {
-  background-color: var(--ae-emerald-green);
-  color: #000;
-  cursor: pointer;
-
-  text-decoration: none;
-  font-family: sans-serif;
-  text-align: center;
-  font-size: 0.9em;
-
-  display: inline-block;
-  padding: 10px 25px;
-  text-indent: 15px;
-
-  box-shadow: var(--ae-box-shadow-light-bg);
-  -webkit-box-shadow: var(--ae-box-shadow-light-bg);
-  -moz-box-shadow: var(--ae-box-shadow-light-bg);
-}
-
-#ae-download-btn a:hover {
-  background-color: var(--ae-near-black);
-  color: var(--ae-near-white);
-
-  box-shadow: var(--ae-box-shadow-dark-bg);
-  -webkit-box-shadow: var(--ae-box-shadow-dark-bg);
-  -moz-box-shadow: var(--ae-box-shadow-dark-bg);
-}
-
-#ae-download-btn a:before, #ae-download-btn a:after {
-  content: ' ';
-  display: block;
-  position: absolute;
-  left: 14px;
-  top: 52%;
-}
-
-/* Download box shape  */
-#ae-download-btn a:before {
-  width: 10px;
-  height: 2px;
-  border-style: solid;
-  border-width: 0 2px 2px;
-}
-
-#ae-download-btn a:hover:before {
-  border-color: var(--ae-emerald-green);
-}
-
-/* Download arrow shape */
-#ae-download-btn a:after {
-  width: 0;
-  height: 0;
-  margin-left: 1px;
-  margin-top: -7px;
-
-  border-style: solid;
-  border-width: 4px 4px 0 4px;
-  border-color: transparent;
-  border-top-color: inherit;
-}
-
-#ae-download-btn a:hover:after {
-  animation: downloadArrow 2s linear infinite;
-  animation-play-state: running;
-  border-top-color: var(--ae-emerald-green);
-}
-
-@keyframes downloadArrow {
-  /* 0% and 0.001% keyframes used as a hackish way of having the button frozen
-   * on a nice looking frame by default */
-
-  0% {
-    margin-top: -7px;
-    opacity: 1;
-  }
-
-  0.001% {
-    margin-top: -15px;
-    opacity: 0;
-  }
-
-  50% {
-    opacity: 1;
-  }
-
-  100% {
-    margin-top: 0;
-    opacity: 0;
-  }
-}
-      `;
-    }
-    return this.#css;
   }
 
   get filetype() {
@@ -1074,5 +893,252 @@ DownloadModal = class extends Modal {
         window.URL.revokeObjectURL(file.url);
       }, 10);
     });
+  }
+
+  /* Static getters.
+   ***************************************************************************/
+
+  /**
+   * The CSS required to render this element.
+   *
+   * On build, the CSS_MARKER line will be replaced with the contents of
+   * notifier.css.
+   *
+   * @returns {string}
+   */
+  get css() {
+    if (!this.#css) {
+      this.#css = `
+:root {
+  --ae-box-shadow: 3px 3px 10px 3px;
+  --ae-box-shadow-light-bg: var(--ae-box-shadow) var(--ae-dim-gray);
+  --ae-box-shadow-dark-bg: var(--ae-box-shadow) var(--ae-carbon);
+}
+
+.ae-modal {
+  box-sizing: border-box;
+  position: fixed;
+  font-family: "Cantarell", sans-serif;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.ae-modal .ae-content {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 50%;
+  height: 300px;
+
+  border-radius: 15px;
+  box-shadow: 0 3px 15px -2px #222;
+  padding: 20px;
+
+  background-color: var(--ae-black-russian);
+  color: var(--ae-near-white);
+  font-size: 1.1em;
+}
+
+.ae-modal .ae-head {
+  background-color: var(--ae-near-black);
+  padding: 10px;
+  border-radius: 10px 10px 0px 0px;
+}
+
+.ae-modal h1 {
+  color: var(--ae-mystic-white);
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: normal;
+  margin: 0;
+  padding-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.ae-modal #ae-close-btn {
+  color: var(--ae-basalt-gray);
+  font-size: 28px;
+  font-weight: bold;
+  text-decoration: none;
+  margin: 0;
+  margin-top: -10px;
+  align-self: flex-end;
+  float: right;
+}
+
+#ae-start-modal .ae-head {
+  background-color: unset;
+}
+
+#ae-start-modal .ae-content {
+  width: 60%;
+  height: unset;
+}
+
+.ae-modal .ae-copy {
+  background-color: var(--ae-near-black);
+  padding: 25px;
+  margin: 20px;
+  border-radius: 15px;
+}
+
+#ae-close-btn:hover,
+#ae-close-btn:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ae-actions {
+  display: flex;
+  gap: 15px;
+  margin: 30px 20px;
+}
+
+#ae-start-modal ul {
+  margin: 30px 0;
+
+  ::marker {
+    font-size: 1.3em;
+    color: var(--ae-light-green);
+
+    /* NOTE: Double-escaped here because this will be embedded in JS. */
+		content: "\\027B2   ";  /* ➲ */
+  }
+}
+
+#ae-start-modal li {
+  line-height: 1.7em;
+}
+
+#ae-start-modal span#ae-start-btn {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+a.ae-btn {
+  background-color: var(--ae-emerald-green);
+  color: #000;
+  cursor: pointer;
+
+  font-size: 1em;
+  font-family: system-ui;
+  font-weight: 600;
+  text-transform: uppercase;
+
+  text-decoration: none;
+  text-align: center;
+  padding: 10px 25px;
+
+  display: inline-block;
+
+  border-radius: 4px;
+  box-shadow: var(--ae-box-shadow-light-bg);
+  -webkit-box-shadow: var(--ae-box-shadow-light-bg);
+  -moz-box-shadow: var(--ae-box-shadow-light-bg);
+}
+
+a.ae-btn:hover {
+  background-color: var(--ae-near-black);
+  color: var(--ae-near-white);
+  text-decoration: none;
+
+  box-shadow: var(--ae-box-shadow-dark-bg);
+  -webkit-box-shadow: var(--ae-box-shadow-dark-bg);
+  -moz-box-shadow: var(--ae-box-shadow-dark-bg);
+}
+
+a.ae-btn.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  color: white;
+}
+
+#ae-start-modal .ae-content {
+  width: 60%;
+  height: unset;
+}
+
+#ae-download-btn {
+  position: relative;
+}
+
+#ae-download-btn a {
+  padding: 10px 25px;
+  text-indent: 15px;
+}
+
+#ae-download-btn a:before,
+#ae-download-btn a:after {
+  content: " ";
+  display: block;
+  position: absolute;
+  left: 14px;
+  top: 52%;
+}
+
+/* Download box shape  */
+#ae-download-btn a:before {
+  width: 10px;
+  height: 2px;
+  border-style: solid;
+  border-width: 0 2px 2px;
+}
+
+/* Download arrow shape */
+#ae-download-btn a:after {
+  width: 0;
+  height: 0;
+  margin-left: 1px;
+  margin-top: -7px;
+
+  border-style: solid;
+  border-width: 4px 4px 0 4px;
+  border-color: transparent;
+  border-top-color: inherit;
+}
+
+#ae-download-btn a:hover:before {
+  border-color: var(--ae-emerald-green);
+}
+
+#ae-download-btn a:hover:after {
+  animation: downloadArrow 2s linear infinite;
+  animation-play-state: running;
+  border-top-color: var(--ae-emerald-green);
+}
+
+@keyframes downloadArrow {
+  /* 0% and 0.001% keyframes used as a hackish way of having the button frozen
+   * on a nice looking frame by default */
+
+  0% {
+    margin-top: -7px;
+    opacity: 1;
+  }
+
+  0.001% {
+    margin-top: -15px;
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    margin-top: 0;
+    opacity: 0;
+  }
+}
+
+      `;
+    }
+    return this.#css;
   }
 };
