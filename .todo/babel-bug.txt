@@ -1,0 +1,48 @@
+[audible-exporter] TypeError: Cannot read properties of undefined (reading 'data-order-item-asin')
+    at <anonymous>:604:43
+    at Array.map (<anonymous>)
+    at Purchase.data (<anonymous>:600:62)
+    at <anonymous>:802:34
+    at List.map (<anonymous>)
+    at OrderPage.get (<anonymous>:801:31)
+    at OrderPage.get (<anonymous>:815:52)
+    at OrdersFetcher.get (<anonymous>:1063:62)
+    at Exporter._callee11$ (<anonymous>:3592:50)
+    at tryCatch (<anonymous>:5:1062)
+error	@	VM449:63
+get	@	VM449:829
+get	@	VM449:1063
+_callee11$	@	VM449:3592
+tryCatch	@	VM449:5
+(anonymous)	@	VM449:5
+(anonymous)	@	VM449:5
+asyncGeneratorStep	@	VM449:6
+_next	@	VM449:7
+Promise.then		
+asyncGeneratorStep	@	VM449:6
+_next	@	VM449:7
+(anonymous)	@	VM449:7
+(anonymous)	@	VM449:7
+getOrders	@	VM449:3606
+_callee14$	@	VM449:3732
+tryCatch	@	VM449:5
+(anonymous)	@	VM449:5
+(anonymous)	@	VM449:5
+asyncGeneratorStep	@	VM449:6
+_next	@	VM449:7
+Promise.then		
+asyncGeneratorStep	@	VM449:6
+_next	@	VM449:7
+(anonymous)	@	VM449:7
+(anonymous)	@	VM449:7
+run	@	VM449:3764
+_callee15$	@	VM449:3784
+tryCatch	@	VM449:5
+(anonymous)	@	VM449:5
+(anonymous)	@	VM449:5
+asyncGeneratorStep	@	VM449:6
+_next	@	VM449:7
+(anonymous)	@	VM449:7
+(anonymous)	@	VM449:7
+main	@	VM449:3792
+(anonymous)	@	VM449:3795

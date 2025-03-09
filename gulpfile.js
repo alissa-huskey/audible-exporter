@@ -133,7 +133,6 @@ buildNotifiers = function (done) {
 task("audible-exporter", (done) => {
   log("task: audible-exporter");
   return src([
-    "node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js",
     ...sources.map((f) => `${dirs.src}/${f}.js`),
     `${dirs.tmp}/colors.js`,
     ...components.map((f) => `${dirs.tmp}/${f}.js`),

@@ -67,3 +67,5 @@ x 2025-03-08 2025-03-08 @qa rename File, due to eslint error
 x 2025-03-08 2025-02-14 @feature Add an option to download as TSV/JSON.
 x 2025-03-08 2025-03-05 @qa @compatability Look into Modernizr: https://modernizr.com/docs/
 x 2025-03-08 2025-03-05 @qa @compatability Look into webcomponents polyfills https://github.com/webcomponents/polyfills?tab=readme-ov-file
+x 2025-03-08 2025-03-05 @qa Look into JS style guides and linters: https://javascript.info/coding-style
+x 2025-03-08 2025-03-05 @qa @testing Try Babel https://babeljs.io/docs

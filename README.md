@@ -30,7 +30,6 @@ Credits
 
 * Originally forked from [andrebradshaw/audible](https://github.com/andrebradshaw/audible)
 * Fix merged from [jakubbares/audible-library-export](https://github.com/jakubbares/audible-library-export)
-* Uses [webcomponents/polyfills](https://github.com/webcomponents/polyfills/tree/master/packages/webcomponentsjs) for browser compatability.
 
 Meta
 ----
