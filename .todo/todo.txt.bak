@@ -1,4 +1,4 @@
-(A) 2025-02-14 @feature Add an option to download as CSV/TSV/JSON.
+x 2025-03-08 2025-02-14 @feature Add an option to download as TSV/JSON.
 (Z) 2025-02-14 @feature Add my review if it exists.
 (Z) 2025-02-14 @feature add option to download goodreads CSV importable file
 (Z) 2025-02-14 @feature add stop button
@@ -67,4 +67,4 @@
 (D) 2025-03-07 @notifiers .reset() should reset timers, item_no and total
 (C) 2025-03-07 @qa Make all requests from / instead of audible.com/
 (D) 2025-03-07 @qa look into preformance (memory specifically) testing
-x 2025-03-08 2025-03-08 @qa rename File, due to eslint error
+(Z) 2025-03-08 @feature Add an option to download as CSV.

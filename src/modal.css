@@ -124,6 +124,10 @@
   border-width: 0 2px 2px;
 }
 
+#ae-download-btn a:hover:before {
+  border-color: var(--ae-emerald-green);
+}
+
 /* Download arrow shape */
 #ae-download-btn a:after {
   width: 0;
@@ -135,23 +139,18 @@
   border-width: 4px 4px 0 4px;
   border-color: transparent;
   border-top-color: inherit;
-
-  animation: downloadArrow 2s linear infinite;
-  animation-play-state: paused;
-}
-
-#ae-download-btn a:hover:before {
-  border-color: var(--ae-emerald-green);
 }
 
 #ae-download-btn a:hover:after {
-  border-top-color: var(--ae-emerald-green);
+  animation: downloadArrow 2s linear infinite;
   animation-play-state: running;
+  border-top-color: var(--ae-emerald-green);
 }
 
-/* keyframes for the download icon anim */
 @keyframes downloadArrow {
-  /* 0% and 0.001% keyframes used as a hackish way of having the button frozen on a nice looking frame by default */
+  /* 0% and 0.001% keyframes used as a hackish way of having the button frozen
+   * on a nice looking frame by default */
+
   0% {
     margin-top: -7px;
     opacity: 1;

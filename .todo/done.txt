@@ -64,3 +64,4 @@ x 2025-03-08 2025-03-05 @qa @testing Try eslint: https://dev.to/shivambmgupta/es
 x 2025-03-08 2025-03-08 @qa Rename function dispatchEvent
 x 2025-03-08 2025-03-08 @qa Rename Element, due to eslint error
 x 2025-03-08 2025-03-08 @qa rename File, due to eslint error
+x 2025-03-08 2025-02-14 @feature Add an option to download as TSV/JSON.

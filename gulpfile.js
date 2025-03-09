@@ -48,6 +48,7 @@ let sources = [
   "details-fetcher",
   "virtual-file",
   "tsv-file",
+  "json-file",
   "result",
   "dom",
 ];

@@ -1623,6 +1623,29 @@ TSVFile = class extends VirtualFile {
 };
 
 /**
+ * json-file.js
+ * ************************************************************************************
+ */
+
+JSONFile = class extends VirtualFile {
+  #headers = null;
+  #rows = null;
+
+  mimetype = "text/json";
+  extension = "json";
+
+  constructor(records = null) {
+    super();
+    this.records = records;
+  }
+
+  get contents() {
+    if (!this.records || isEmpty(this.records)) return null;
+    return JSON.stringify(this.records);
+  }
+};
+
+/**
  * result.js
  * ************************************************************************************
  */
@@ -2393,6 +2416,7 @@ Modal = class extends DOM {
   #css = null;
   #wrapper = null;
   #close_btn = null;
+  #ft_select = null;
   #dl_btn = null;
   #file = null;
 
@@ -2403,6 +2427,8 @@ Modal = class extends DOM {
     head: "ae-head",
     close_btn: "ae-close-btn",
     dl_btn: "ae-download-btn",
+    ft_select: "ae-filetype",
+    actions: "ae-actions",
   };
 
   get css() {
@@ -2534,6 +2560,10 @@ Modal = class extends DOM {
   border-width: 0 2px 2px;
 }
 
+#ae-download-btn a:hover:before {
+  border-color: var(--ae-emerald-green);
+}
+
 /* Download arrow shape */
 #ae-download-btn a:after {
   width: 0;
@@ -2545,23 +2575,18 @@ Modal = class extends DOM {
   border-width: 4px 4px 0 4px;
   border-color: transparent;
   border-top-color: inherit;
-
-  animation: downloadArrow 2s linear infinite;
-  animation-play-state: paused;
-}
-
-#ae-download-btn a:hover:before {
-  border-color: var(--ae-emerald-green);
 }
 
 #ae-download-btn a:hover:after {
-  border-top-color: var(--ae-emerald-green);
+  animation: downloadArrow 2s linear infinite;
   animation-play-state: running;
+  border-top-color: var(--ae-emerald-green);
 }
 
-/* keyframes for the download icon anim */
 @keyframes downloadArrow {
-  /* 0% and 0.001% keyframes used as a hackish way of having the button frozen on a nice looking frame by default */
+  /* 0% and 0.001% keyframes used as a hackish way of having the button frozen
+   * on a nice looking frame by default */
+
   0% {
     margin-top: -7px;
     opacity: 1;
@@ -2595,6 +2620,7 @@ Modal = class extends DOM {
       let h1 = Doc.create("h1");
       let p = Doc.create("p");
       let dl_wrapper = Doc.create("span", { id: this.selectors.dl_btn });
+      let actions = Doc.create("div", { class: this.selectors.actions });
 
       h1.innerHTML = "Download";
       p.innerHTML = "Your export is ready!";
@@ -2603,15 +2629,50 @@ Modal = class extends DOM {
       head.element.appendChild(this.close_btn.element);
       head.element.appendChild(h1.element);
 
+      actions.element.appendChild(this.ft_select.element);
+      actions.element.appendChild(dl_wrapper.element);
+
       dl_wrapper.element.appendChild(this.dl_btn.element);
 
       content.element.appendChild(head.element);
       content.element.appendChild(p.element);
-      content.element.appendChild(dl_wrapper.element);
+      content.element.appendChild(actions.element);
 
       this.#wrapper.style["z-index"] = new Date().getTime();
     }
     return this.#wrapper;
+  }
+
+  get ft_select() {
+    if (!this.#ft_select) {
+      // create select tag
+      let select = Doc.create("select", {
+        id: this.selectors.select,
+        name: this.selectors.select,
+      });
+
+      // add options
+      let options = { "": " -- Format -- ", json: "JSON", tsv: "TSV" };
+      for (let [ft, label] of Object.entries(options)) {
+        let option = Doc.create("option", { value: ft });
+        option.innerText = label;
+        select.element.append(option.element);
+      }
+
+      // add event listener to disable/enable the button when a filetype is
+      // selected
+      select.element.addEventListener("change", () => {
+        let btn = window.ae.modal.dl_btn;
+        if (select.value) {
+          btn.classList.remove("disabled");
+        } else {
+          btn.classList.add("disabled");
+        }
+      });
+
+      this.#ft_select = select;
+    }
+    return this.#ft_select;
   }
 
   get close_btn() {
@@ -2632,11 +2693,19 @@ Modal = class extends DOM {
 
   get dl_btn() {
     if (!this.#dl_btn) {
-      this.#dl_btn = Doc.create("a", { id: this.selectors.dl_btn });
-      this.#dl_btn.attributes.href = "#";
-      this.#dl_btn.innerHTML = "Download";
+      let btn = Doc.create("a", {
+        id: this.selectors.dl_btn,
+        class: "disabled",
+      });
+      btn.attributes.href = "#";
+      btn.innerHTML = "Download";
+      this.#dl_btn = btn;
     }
     return this.#dl_btn;
+  }
+
+  get filetype() {
+    return this.ft_select.value;
   }
 
   get file() {
@@ -2666,6 +2735,7 @@ Modal = class extends DOM {
    * Add the wrapper HTML element to the DOM.
    */
   create() {
+    window.ae.modal ||= this;
     let colors = window.ae.colors || new Colors();
     colors.create();
     super.create();
@@ -2958,7 +3028,25 @@ DetailsNotifier = class extends StatusNotifier {
  * ************************************************************************************
  */
 
+/**
+ * Event listener to create the export file and start the download.
+ */
+download = () => {
+  let exporter = window.ae;
+  let modal = exporter.modal;
+  if (!modal.filetype) return;
+  let klass = exporter.formats[modal.filetype];
+  let file = new klass(exporter.results);
+  modal.file = file;
+  modal.hide();
+};
+
+/**
+ * Exporter class.
+ */
 Exporter = class {
+  formats = { json: JSONFile, tsv: TSVFile };
+
   constructor(limit = null) {
     this.limit = limit;
     this.timer = new Timer();
@@ -3069,10 +3157,12 @@ Exporter = class {
     return results;
   }
 
-  downloadReady(books) {
+  /**
+   * Display the download modal.
+   */
+  downloadReady() {
     this.notifier.remove();
-    let file = new TSVFile(books);
-    this.modal.file = file;
+    this.modal.dl_btn.element.addEventListener("click", download);
     this.modal.show();
   }
 
@@ -3102,7 +3192,7 @@ Exporter = class {
         `Done. (${this.results.length} results, ${this.timer.minutes} minutes)`,
       );
 
-      this.downloadReady(this.results);
+      this.downloadReady();
     } catch (err) {
       error("Fatal error:", err, err.name, err.message);
     }

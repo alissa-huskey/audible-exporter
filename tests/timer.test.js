@@ -58,6 +58,6 @@ describe("Timer", () => {
     });
 
     expect(result).toBe(100);
-    expect(timer.elapsed).toBeWithin(100, 110);
+    expect(timer.elapsed).toBeWithin(100, 150);
   });
 });

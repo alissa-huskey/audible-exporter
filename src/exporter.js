@@ -3,7 +3,25 @@
  * ************************************************************************************
  */
 
+/**
+ * Event listener to create the export file and start the download.
+ */
+download = () => {
+  let exporter = window.ae;
+  let modal = exporter.modal;
+  if (!modal.filetype) return;
+  let klass = exporter.formats[modal.filetype];
+  let file = new klass(exporter.results);
+  modal.file = file;
+  modal.hide();
+};
+
+/**
+ * Exporter class.
+ */
 Exporter = class {
+  formats = { json: JSONFile, tsv: TSVFile };
+
   constructor(limit = null) {
     this.limit = limit;
     this.timer = new Timer();
@@ -114,10 +132,12 @@ Exporter = class {
     return results;
   }
 
-  downloadReady(books) {
+  /**
+   * Display the download modal.
+   */
+  downloadReady() {
     this.notifier.remove();
-    let file = new TSVFile(books);
-    this.modal.file = file;
+    this.modal.dl_btn.element.addEventListener("click", download);
     this.modal.show();
   }
 
@@ -147,7 +167,7 @@ Exporter = class {
         `Done. (${this.results.length} results, ${this.timer.minutes} minutes)`,
       );
 
-      this.downloadReady(this.results);
+      this.downloadReady();
     } catch (err) {
       error("Fatal error:", err, err.name, err.message);
     }

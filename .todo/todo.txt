@@ -1,4 +1,3 @@
-(A) 2025-02-14 @feature Add an option to download as CSV/TSV/JSON.
 (Z) 2025-02-14 @feature Add my review if it exists.
 (Z) 2025-02-14 @feature add option to download goodreads CSV importable file
 (Z) 2025-02-14 @feature add stop button
@@ -67,3 +66,4 @@
 (D) 2025-03-07 @notifiers .reset() should reset timers, item_no and total
 (C) 2025-03-07 @qa Make all requests from / instead of audible.com/
 (D) 2025-03-07 @qa look into preformance (memory specifically) testing
+(Z) 2025-03-08 @feature Add an option to download as CSV. https://stackoverflow.com/questions/14964035/how-to-export-javascript-array-info-to-csv-on-client-side

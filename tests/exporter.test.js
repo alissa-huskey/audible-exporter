@@ -30,6 +30,7 @@ require("../src/order-notifier.js");
 require("../src/library-notifier.js");
 require("../src/details-notifier.js");
 require("../src/virtual-file.js");
+require("../src/json-file.js");
 require("../src/tsv-file.js");
 require("../src/result.js");
 require("../src/exporter.js");
@@ -164,10 +165,21 @@ describe("Exporter", () => {
   test("downloadReady()", () => {
     exporter = new Exporter();
     exporter.modal.create();
-    exporter.downloadReady(["a", "b", "c"]);
+    exporter.downloadReady();
+
+    expect(exporter.modal.wrapper.style.display).toBe("block");
+  });
+
+  test("download()", async () => {
+    exporter = new Exporter();
+    exporter.results = ["a", "b", "c"];
+
+    exporter.modal.create();
+    exporter.modal.ft_select.selectedIndex = 2;
+
+    download();
 
     expect(exporter.modal.file).toBeA(TSVFile);
-    expect(exporter.modal.wrapper.style.display).toBe("block");
   });
 
   test(".run()", async () => {
