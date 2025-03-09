@@ -34,7 +34,7 @@ Modal = class extends DOM {
     if (!this.#wrapper) {
       let wrapper = Doc.create("div", { class: this.selectors.wrapper });
 
-      wrapper.element.appendChild(this.content.element);
+      wrapper.append(this.content);
 
       wrapper.style["z-index"] = new Date().getTime();
 
@@ -50,7 +50,7 @@ Modal = class extends DOM {
     if (!this.#head) {
       let head = Doc.create("div", { class: this.selectors.head });
 
-      head.element.appendChild(this.close_btn.element);
+      head.append(this.close_btn);
 
       this.#head = head;
     }
@@ -64,7 +64,7 @@ Modal = class extends DOM {
     if (!this.#content) {
       let content = Doc.create("div", { class: this.selectors.content });
 
-      content.element.appendChild(this.head.element);
+      content.append(this.head);
 
       this.#content = content;
     }

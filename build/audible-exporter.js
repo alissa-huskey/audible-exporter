@@ -177,12 +177,9 @@ Doc = class {
 
     if (!elm) return;
 
-    let properties = {};
     for (let k in elm.__proto__) {
       // eslint-disable-next-line no-prototype-builtins
       if (Object.hasOwnProperty(k)) continue;
-
-      properties[k] = k in this;
 
       if (k in this) continue;
 
@@ -192,13 +189,7 @@ Doc = class {
           this.element[k] = v;
         },
       });
-
-      info(properties);
     }
-  }
-
-  append() {
-    info("appending...");
   }
 
   /**
@@ -206,12 +197,11 @@ Doc = class {
    *
    * @params {...Doc,HTMLElement,string}  Child or children to append.
    */
-  add(...children) {
+  append(...children) {
     children.forEach((child) => {
       if (child instanceof Doc) {
         child = child.element;
       }
-      log("appending:", child);
       this.element.append(child);
     });
   }
@@ -1811,7 +1801,7 @@ DOM = class {
       } else {
         // Support for the rest
         let node = document.createTextNode(this.css);
-        this.#style.element.appendChild(node);
+        this.#style.append(node);
       }
     }
     return this.#style;
@@ -1872,7 +1862,7 @@ Modal = class extends DOM {
     if (!this.#wrapper) {
       let wrapper = Doc.create("div", { class: this.selectors.wrapper });
 
-      wrapper.element.appendChild(this.content.element);
+      wrapper.append(this.content);
 
       wrapper.style["z-index"] = new Date().getTime();
 
@@ -1888,7 +1878,7 @@ Modal = class extends DOM {
     if (!this.#head) {
       let head = Doc.create("div", { class: this.selectors.head });
 
-      head.element.appendChild(this.close_btn.element);
+      head.append(this.close_btn);
 
       this.#head = head;
     }
@@ -1902,7 +1892,7 @@ Modal = class extends DOM {
     if (!this.#content) {
       let content = Doc.create("div", { class: this.selectors.content });
 
-      content.element.appendChild(this.head.element);
+      content.append(this.head);
 
       this.#content = content;
     }
@@ -2104,8 +2094,7 @@ StatusNotifier = class extends DOM {
         },
       });
 
-      this.wrapper.element.appendChild(this.bar.element);
-      this.wrapper.element.appendChild(this.context.element);
+      this.wrapper.append(this.bar, this.context);
     }
     return this.#wrapper;
   }
@@ -2118,7 +2107,7 @@ StatusNotifier = class extends DOM {
   get bar() {
     if (!this.#bar) {
       this.#bar = Doc.create("div", { id: this.selectors.bar });
-      this.#bar.element.appendChild(this.messages.element);
+      this.#bar.append(this.messages);
     }
     return this.#bar;
   }
@@ -2135,8 +2124,7 @@ StatusNotifier = class extends DOM {
         class: "ae-row",
         style: { width: `${this.bar_width}px` },
       });
-      this.#messages.element.appendChild(this.status.element);
-      this.#messages.element.appendChild(this.percentage.element);
+      this.#messages.append(this.status, this.percentage);
     }
     return this.#messages;
   }
@@ -2177,8 +2165,7 @@ StatusNotifier = class extends DOM {
         class: "ae-row empty",
       });
 
-      this.#context.element.appendChild(this.steps.element);
-      this.#context.element.appendChild(this.estimate.element);
+      this.#context.append(this.steps, this.estimate);
     }
     return this.#context;
   }
@@ -2693,18 +2680,15 @@ StartModal = class extends Modal {
       let btn_wrapper = Doc.create("span", { id: "ae-start-btn" });
       let ul = Doc.create("ul");
 
-      btn_wrapper.element.appendChild(this.start_btn.element);
+      btn_wrapper.append(this.start_btn);
 
-      content.element.appendChild(copy.element);
+      content.append(copy);
 
-      copy.element.appendChild(
-        this.p("This will export your audible library. It might take awhile.")
-          .element,
+      copy.append(
+        this.p("This will export your audible library. It might take awhile."),
       );
 
-      copy.element.appendChild(this.p("Until it's done, you must:").element);
-
-      copy.element.appendChild(ul.element);
+      copy.append(this.p("Until it's done, you must:"), ul);
 
       let need = [
         "be on audible.com and logged in.",
@@ -2713,13 +2697,12 @@ StartModal = class extends Modal {
         "stay online (avoid sleep mode).",
       ];
 
-      need.forEach((text) => ul.element.appendChild(this.li(text).element));
+      ul.append(...need.map((text) => this.li(text)));
 
-      copy.element.appendChild(
-        this.p("Click the button to get started!").element,
+      copy.append(
+        this.p("Click the button to get started!"),
+        btn_wrapper.element,
       );
-
-      copy.element.appendChild(btn_wrapper.element);
 
       this.#content = content;
     }
@@ -3067,7 +3050,7 @@ DownloadModal = class extends Modal {
     if (!this.#head) {
       let head = super.head;
 
-      head.element.appendChild(this.h1.element);
+      head.append(this.h1);
 
       this.#head = head;
     }
@@ -3089,13 +3072,11 @@ DownloadModal = class extends Modal {
 
       p.innerHTML = "Your export is ready!";
 
-      actions.element.appendChild(this.ft_select.element);
-      actions.element.appendChild(dl_wrapper.element);
+      actions.append(this.ft_select, dl_wrapper);
 
-      dl_wrapper.element.appendChild(this.dl_btn.element);
+      dl_wrapper.append(this.dl_btn);
 
-      content.element.appendChild(p.element);
-      content.element.appendChild(actions.element);
+      content.append(p, actions);
 
       this.#content = content;
     }

@@ -248,12 +248,9 @@ Doc = class {
 
     if (!elm) return;
 
-    let properties = {};
     for (let k in elm.__proto__) {
       // eslint-disable-next-line no-prototype-builtins
       if (Object.hasOwnProperty(k)) continue;
-
-      properties[k] = k in this;
 
       if (k in this) continue;
 
@@ -263,13 +260,7 @@ Doc = class {
           this.element[k] = v;
         },
       });
-
-      info(properties);
     }
-  }
-
-  append() {
-    info("appending...");
   }
 
   /**
@@ -277,12 +268,11 @@ Doc = class {
    *
    * @params {...Doc,HTMLElement,string}  Child or children to append.
    */
-  add(...children) {
+  append(...children) {
     children.forEach((child) => {
       if (child instanceof Doc) {
         child = child.element;
       }
-      log("appending:", child);
       this.element.append(child);
     });
   }
@@ -519,7 +509,7 @@ DOM = class {
       } else {
         // Support for the rest
         let node = document.createTextNode(this.css);
-        this.#style.element.appendChild(node);
+        this.#style.append(node);
       }
     }
     return this.#style;
@@ -580,7 +570,7 @@ Modal = class extends DOM {
     if (!this.#wrapper) {
       let wrapper = Doc.create("div", { class: this.selectors.wrapper });
 
-      wrapper.element.appendChild(this.content.element);
+      wrapper.append(this.content);
 
       wrapper.style["z-index"] = new Date().getTime();
 
@@ -596,7 +586,7 @@ Modal = class extends DOM {
     if (!this.#head) {
       let head = Doc.create("div", { class: this.selectors.head });
 
-      head.element.appendChild(this.close_btn.element);
+      head.append(this.close_btn);
 
       this.#head = head;
     }
@@ -610,7 +600,7 @@ Modal = class extends DOM {
     if (!this.#content) {
       let content = Doc.create("div", { class: this.selectors.content });
 
-      content.element.appendChild(this.head.element);
+      content.append(this.head);
 
       this.#content = content;
     }
@@ -795,7 +785,7 @@ DownloadModal = class extends Modal {
     if (!this.#head) {
       let head = super.head;
 
-      head.element.appendChild(this.h1.element);
+      head.append(this.h1);
 
       this.#head = head;
     }
@@ -817,13 +807,11 @@ DownloadModal = class extends Modal {
 
       p.innerHTML = "Your export is ready!";
 
-      actions.element.appendChild(this.ft_select.element);
-      actions.element.appendChild(dl_wrapper.element);
+      actions.append(this.ft_select, dl_wrapper);
 
-      dl_wrapper.element.appendChild(this.dl_btn.element);
+      dl_wrapper.append(this.dl_btn);
 
-      content.element.appendChild(p.element);
-      content.element.appendChild(actions.element);
+      content.append(p, actions);
 
       this.#content = content;
     }

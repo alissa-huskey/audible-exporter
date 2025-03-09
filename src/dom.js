@@ -43,7 +43,7 @@ DOM = class {
       } else {
         // Support for the rest
         let node = document.createTextNode(this.css);
-        this.#style.element.appendChild(node);
+        this.#style.append(node);
       }
     }
     return this.#style;

@@ -50,8 +50,7 @@ StatusNotifier = class extends DOM {
         },
       });
 
-      this.wrapper.element.appendChild(this.bar.element);
-      this.wrapper.element.appendChild(this.context.element);
+      this.wrapper.append(this.bar, this.context);
     }
     return this.#wrapper;
   }
@@ -64,7 +63,7 @@ StatusNotifier = class extends DOM {
   get bar() {
     if (!this.#bar) {
       this.#bar = Doc.create("div", { id: this.selectors.bar });
-      this.#bar.element.appendChild(this.messages.element);
+      this.#bar.append(this.messages);
     }
     return this.#bar;
   }
@@ -81,8 +80,7 @@ StatusNotifier = class extends DOM {
         class: "ae-row",
         style: { width: `${this.bar_width}px` },
       });
-      this.#messages.element.appendChild(this.status.element);
-      this.#messages.element.appendChild(this.percentage.element);
+      this.#messages.append(this.status, this.percentage);
     }
     return this.#messages;
   }
@@ -123,8 +121,7 @@ StatusNotifier = class extends DOM {
         class: "ae-row empty",
       });
 
-      this.#context.element.appendChild(this.steps.element);
-      this.#context.element.appendChild(this.estimate.element);
+      this.#context.append(this.steps, this.estimate);
     }
     return this.#context;
   }

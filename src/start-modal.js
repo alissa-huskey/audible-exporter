@@ -53,18 +53,15 @@ StartModal = class extends Modal {
       let btn_wrapper = Doc.create("span", { id: "ae-start-btn" });
       let ul = Doc.create("ul");
 
-      btn_wrapper.element.appendChild(this.start_btn.element);
+      btn_wrapper.append(this.start_btn);
 
-      content.element.appendChild(copy.element);
+      content.append(copy);
 
-      copy.element.appendChild(
-        this.p("This will export your audible library. It might take awhile.")
-          .element,
+      copy.append(
+        this.p("This will export your audible library. It might take awhile."),
       );
 
-      copy.element.appendChild(this.p("Until it's done, you must:").element);
-
-      copy.element.appendChild(ul.element);
+      copy.append(this.p("Until it's done, you must:"), ul);
 
       let need = [
         "be on audible.com and logged in.",
@@ -73,13 +70,12 @@ StartModal = class extends Modal {
         "stay online (avoid sleep mode).",
       ];
 
-      need.forEach((text) => ul.element.appendChild(this.li(text).element));
+      ul.append(...need.map((text) => this.li(text)));
 
-      copy.element.appendChild(
-        this.p("Click the button to get started!").element,
+      copy.append(
+        this.p("Click the button to get started!"),
+        btn_wrapper.element,
       );
-
-      copy.element.appendChild(btn_wrapper.element);
 
       this.#content = content;
     }

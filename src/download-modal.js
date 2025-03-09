@@ -33,7 +33,7 @@ DownloadModal = class extends Modal {
     if (!this.#head) {
       let head = super.head;
 
-      head.element.appendChild(this.h1.element);
+      head.append(this.h1);
 
       this.#head = head;
     }
@@ -55,13 +55,11 @@ DownloadModal = class extends Modal {
 
       p.innerHTML = "Your export is ready!";
 
-      actions.element.appendChild(this.ft_select.element);
-      actions.element.appendChild(dl_wrapper.element);
+      actions.append(this.ft_select, dl_wrapper);
 
-      dl_wrapper.element.appendChild(this.dl_btn.element);
+      dl_wrapper.append(this.dl_btn);
 
-      content.element.appendChild(p.element);
-      content.element.appendChild(actions.element);
+      content.append(p, actions);
 
       this.#content = content;
     }
