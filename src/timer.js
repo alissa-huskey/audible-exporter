@@ -27,12 +27,14 @@ Timer = class {
   }
 
   start() {
-    this.beginning = this.ts();
+    this.started_at = new Date();
+    this.beginning = this.started_at.getTime();
     return this.beginning;
   }
 
   stop() {
-    this.end = this.ts();
+    this.stopped_at = new Date();
+    this.end = this.stopped_at.getTime();
     return this.end;
   }
 
@@ -46,10 +48,6 @@ Timer = class {
 
   get minutes() {
     return (this.seconds / 60).toFixed(2);
-  }
-
-  ts() {
-    return new Date().getTime();
   }
 
   async time(callback) {

@@ -160,6 +160,7 @@ Exporter = class {
   async run() {
     try {
       this.timer.start();
+      info(`Started at ${this.timer.started_at.toLocaleTimeString()}`);
 
       this.notifier.create();
 
@@ -177,7 +178,7 @@ Exporter = class {
       this.timer.stop();
 
       info(
-        `Done. (${this.results.length} results, ${this.timer.minutes} minutes)`,
+        `Finished at ${this.timer.stopped_at.toLocaleTimeString()} (${this.results.length} results, ${this.timer.minutes} minutes)`,
       );
 
       this.downloadReady();

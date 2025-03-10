@@ -21,11 +21,6 @@ describe("Timer", () => {
     timer.task = "something";
   });
 
-  test(".ts()", () => {
-    let timer = new Timer();
-    expect(typeof timer.ts()).toBe("number");
-  });
-
   test(".start()", () => {
     let timer = new Timer();
     expect(typeof timer.start()).toBe("number");

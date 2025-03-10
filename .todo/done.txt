@@ -78,3 +78,10 @@ x 2025-03-09 2025-03-09 @readme Add note about 'allow pasting'
 x 2025-03-09 2025-03-08 @qa DOM Get rid of individual css accessors and just combine it all into one style tag.
 x 2025-03-09 2025-03-09 @housekeeping Remove build dir from repo, add audible-export.js at top level.
 x 2025-03-10 2025-03-09 @housekeeping look into using requires and see if there's a way to compile everything to a flat file.
+x 2025-03-10 2025-03-08 @bug fix bug when compiled with babel (see: babel-bug.txt) https://babeljs.io/docs
+x 2025-03-10 2025-03-10 @bug Logging isn't working anymore. Perhaps CONSOLE_OUTPUT needs to be inside the babel build?
+x 2025-03-10 2025-03-05 @qa @accessibility Try jest-axe https://maxrozen.com/automatic-a11y-testing-with-jest-axe https://dev.to/bdougieyo/accessibility-testing-in-react-with-jest-axe-l7k
+x 2025-03-10 2025-03-05 @qa @detail-notifier Add error handling for if .item_no and/or .total is not set.
+x 2025-03-10 2025-03-05 @qa @testing Try testcafe https://testcafe.io/
+x 2025-03-10 2025-03-05 @qa @testing Try testcafe https://testcafe.io/
+x 2025-03-10 2025-03-05 @qa @testing Look into snapshot testing https://jestjs.io/docs/snapshot-testing

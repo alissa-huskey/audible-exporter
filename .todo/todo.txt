@@ -6,7 +6,7 @@
 (Z) 2025-02-21 @feature get finished/not-finished status
 (Z) 2025-02-22 @feature Add my_review
 (Z) 2025-02-22 @feature Add my_rating
-(C) 2025-02-22 @qa set variables for css class names in appropriate places.
+(C) 2025-02-22 @refactor set variables for css class names in appropriate places.
 (Z) 2025-02-23 @feature Add series ID.
 (Z) 2025-02-23 @feature Get collections
 (Z) 2025-02-23 @feature Get wishlist https://www.audible.com/library/wishlist
@@ -16,58 +16,64 @@
 (Z) 2025-02-23 @feature Get if a book has a PDF https://www.audible.com/companion-file/B0CQ3759C3
 (Z) 2025-02-23 @feature Get a list of authors you follow
 (Z) 2025-02-23 @feature Add date downloaded to JSON
-(B) 2025-02-23 @feature Some way to indicate last download, to avoid downloading everything
-(Z) 2025-02-25 @feature @notifier Add cancel button.
-(C) 2025-02-26 @qa Handle failed requests.
+(M) 2025-02-23 @feature Some way to indicate last download, to avoid downloading everything
+(Z) 2025-02-25 @feature Add cancel button.
+(C) 2025-02-26 @error-handling Handle failed requests.
 (Z) 2025-02-26 Implement some sort of pause/resume.
-(A) 2025-02-26 @qa document functions, classes and methods https://developer.wordpress.org/coding-standards/inline-documentation-standards/javascript/
-(D) 2025-02-26 @qa @book-details Parse author from json_details instead of HTML.
-(C) 2025-02-27 @qa Rename *Fetcher.populate() -> *Fetcher.get()
+(B) 2025-02-26 @housekeeping document functions, classes and methods https://developer.wordpress.org/coding-standards/inline-documentation-standards/javascript/
+(D) 2025-02-26 @data book-details: Parse author from json_details in addition to of HTML.
+(C) 2025-02-27 @refactor Rename *Fetcher.populate() -> *Fetcher.get()
 (Z) 2025-02-27 @ux Display error message dialog on fatal error.
-(B) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
-(C) 2025-02-27 @qa Have Page.fetchDoc() set this.url = url
-(A) 2025-02-28 @ux @download In TSV download, join categories.
-(A) 2025-02-28 @ux @download Compare results from original download to current results
+(C) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
+(C) 2025-02-27 @refactor Have Page.fetchDoc() set this.url = url
+(B) 2025-02-28 @ux @download In TSV download, join categories.
+(B) 2025-02-28 @ux @download Compare results from original download to current results
 (D) 2025-03-01 @download Add purchase_timestamp.
-(B) 2025-03-01 @qa @pages Parse data from multiple fields, select the first one that has content.
+(A) 2025-03-01 @refactor @data pages: Parse data from multiple fields, select the first one that has content.
 (M) 2025-03-01 @feature Get a list of collections a book belongs to
-(B) 2025-03-01 @data @book-details Parse/handle multiple series.
-(C) 2025-03-01 @qa Rename NormalBookPage -> LegacyBookPage
+(B) 2025-03-01 @data book-details: Parse/handle multiple series.
+(C) 2025-03-01 @refactor Rename NormalBookPage -> LegacyBookPage
 (B) 2025-03-01 @download Rename audible_oginal -> audible_original
-(D) 2025-03-01 @qa See about getting rid of .data() methods to reduce overhead.
-(C) 2025-03-01 @qa Move LibraryFetcher.fetchPage() -> LibraryPage.get()
-(A) 2025-03-02 @download ensure all URL formats are the same.
-(B) 2025-03-02 @data Parse as much data as possible from every page.
-(B) 2025-03-02 @qa Make the OrderPage constructor not such a mess.
+(D) 2025-03-01 @refactor @performance See about getting rid of .data() methods to reduce overhead.
+(C) 2025-03-01 @refactor Move LibraryFetcher.fetchPage() -> LibraryPage.get()
+(B) 2025-03-02 @download ensure all URL formats are the same.
+(A) 2025-03-02 @data Parse as much data as possible from every page.
+(B) 2025-03-02 @refactor Make the OrderPage constructor not such a mess.
 (D) 2025-03-05 @qa @testing Try Normalize.css https://github.com/necolas/normalize.css/?tab=readme-ov-file
 (A) 2025-03-05 @qa @testing Try autoprefixer https://github.com/postcss/autoprefixer#browsers
-(D) 2025-03-05 @qa Look into polyfills and transpilers https://javascript.info/polyfills
-(D) 2025-03-05 @qa @accessibility Try jest-axe https://maxrozen.com/automatic-a11y-testing-with-jest-axe https://dev.to/bdougieyo/accessibility-testing-in-react-with-jest-axe-l7k
-(D) 2025-03-05 @qa @testing Try testcafe https://testcafe.io/
-(D) 2025-03-05 @qa @testing Look into snapshot testing https://jestjs.io/docs/snapshot-testing
-2025-03-05 @qa @detail-notifier Add error handling for if .item_no and/or .total is not set.
-(C) 2025-03-05 @qa Rename StatusNotifier -> Notifier.
-(C) 2025-03-05 @qa Rename OrderNotifier -> OrdersNotifier.
+(D) 2025-03-05 @compatability Look into polyfills and transpilers https://javascript.info/polyfills
+(C) 2025-03-05 @refactor Rename StatusNotifier -> Notifier.
+(C) 2025-03-05 @refactor Rename OrderNotifier -> OrdersNotifier.
 (B) 2025-03-05 @ux Make some kind of rough estimate of overall time.
-(B) 2025-03-05 @qa @notifiers Consider changing text=, time=, etc to .updateText(), .updateTime()
-(D) 2025-03-07 @notifiers @dom Change most IDs to classes; add IDs for individual notifiers.
-(B) 2025-03-07 @qa @notifier consider renaming all elements ie status -> status_element / status_el
-(D) 2025-03-07 @qa @testing @notifiers check for adding/removing event listeners  https://www.codeguru.co.in/2021/02/testing-javascript-events-with-jest.html
-(D) 2025-03-07 @notifiers .reset() should reset timers, item_no and total
-(B) 2025-03-07 @qa Make all requests from / instead of audible.com/
-(D) 2025-03-07 @qa look into preformance (memory specifically) testing
+(B) 2025-03-05 @refactor notifiers: Consider changing text=, time=, etc to .updateText(), .updateTime()
+(D) 2025-03-07 notifiers: @dom Change most IDs to classes; add IDs for individual notifiers.
+(B) 2025-03-07 @refactor notifier: consider renaming all elements ie status -> status_element / status_el
+(D) 2025-03-07 @qa @testing check for adding/removing event listeners  https://www.codeguru.co.in/2021/02/testing-javascript-events-with-jest.html
+(B) 2025-03-07 @reliability Make all requests from / instead of audible.com/
+(D) 2025-03-07 @performance look intoperformance (memory specifically) testing
 (Z) 2025-03-08 @feature Add an option to download as CSV. https://stackoverflow.com/questions/14964035/how-to-export-javascript-array-info-to-csv-on-client-side
-(B) 2025-03-08 @qa Make getLibrary() the first step. (would help with overall time estimate and quick download option.
-(A) 2025-03-08 @bug fix bug when compiled with babel (see: babel-bug.txt) https://babeljs.io/docs
-(C) 2025-03-08 @qa Move .show() and .hide() from modal/notifier to DOM. Use the .hidden class, not style.visibility.
-(C) 2025-03-08 @qa DOM Make sure all .create() functions check to make sure it doesn't exist first.
+(B) 2025-03-08 @ux Make getLibrary() the first step. (would help with overall time estimate and quick download option.
+(C) 2025-03-08 @refactor Move .show() and .hide() from modal/notifier to DOM. 
+(C) 2025-03-08 @refactor Rethink how .create() functions handles if it exists (.remove(), remove outter HTML?, replace in .ae.notifier/whatever?)
 (B) 2025-03-09 @ux Check to make sure the current wep page is on audible.com.
 (B) 2025-03-09 @ux Check to make sure the user is logged in.
-(B) 2025-03-09 @qa In fetch, check if the current page is the one being fetched, if so use document.body
-(C) 2025-03-09 @qa look into switching everything to query selectors.
-(C) 2025-03-09 @qa @testing Check to see if it runs on a phone.
+(C) 2025-03-09 @reliability In fetch, check if the current page is the one being fetched, if so use document.body
+(B) 2025-03-09 @refactor look into switching everything to query selectors.
+(D) 2025-03-09 @qa @testing Test on phone.
 (A) 2025-03-09 @bug In safari, it seems to stall out after Purchase History.
 (B) 2025-03-09 @ux Try design with console docked side, looks funny now.
 (A) 2025-03-09 @bug Fix edge bugs
-(D) 2025-03-09 @qa @testing Write a simple testcafe test.
-(B) 2025-03-10 @qa @gulpfile Make sure gulp works if build/dist dirs are missing.
+(A) 2025-03-09 @qa @testing Write a simple testcafe test, see if it will catch current safari bug.
+(C) 2025-03-10 @tools Make sure gulp works if build/dist dirs are missing.
+(A) 2025-03-10 @data Remove &amp; from categories in JSON export.
+(A) 2025-03-10 @bug Safari now dies immediately.
+(B) 2025-03-10 @ux @reliability Check navigator.online to make sure the user is online.
+(B) 2025-03-10 @data Use date.toLocaleDate() instead of custom function.
+(B) 2025-03-10 @refactor modals: Make .show() and .hide() add/remove hidden class instead of changing display: none directly
+(B) 2025-03-10 @data Parse/handle multiple authors.
+(C) 2025-03-10 @quality look into PMD, code analysis tool https://pmd.github.io/
+(C) 2025-03-10 @quality look into semgrep, code analysis tool https://github.com/semgrep/semgrep
+(C) 2025-03-10 @quality look into jshint, code analysis tool https://jshint.com/docs/
+(B) 2025-03-10 @housekeeping reconsider code orginization (src/js, src/css; src/js/fetchers, src/js/modals?
+(B) 2025-03-10 @housekeeping Figure out what to do with standalone notifiers. shouldn't be in dist/
+(B) 2025-03-10 @refactor review Timer started_at/ended_at and .started/stopped.toLocaleTimeString()

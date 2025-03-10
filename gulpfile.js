@@ -44,6 +44,7 @@ task("babel", () => {
     .pipe(using({}))
     .pipe(babel({ presets: ["@babel/preset-env"] }))
     .pipe(replace('"use strict";', (_) => ""))
+    .pipe(replace("CONSOLE_OUTPUT = false", (_) => "CONSOLE_OUTPUT = true"))
     .pipe(dest(dirs.build))
 });
 

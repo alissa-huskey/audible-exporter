@@ -1632,41 +1632,42 @@ Exporter = /*#__PURE__*/function () {
             case 0:
               _context5.prev = 0;
               this.timer.start();
+              info("Started at ".concat(this.timer.started_at.toLocaleTimeString()));
               this.notifier.create();
-              _context5.next = 5;
+              _context5.next = 6;
               return this.getPurchaseHistory();
-            case 5:
-              _context5.next = 7;
+            case 6:
+              _context5.next = 8;
               return this.getOrders();
-            case 7:
-              _context5.next = 9;
+            case 8:
+              _context5.next = 10;
               return this.getLibrary();
-            case 9:
-              _context5.next = 11;
+            case 10:
+              _context5.next = 12;
               return this.getBookDetails();
-            case 11:
+            case 12:
               this.getResults();
               if (!(!this.results || this.results.length == 0)) {
-                _context5.next = 15;
+                _context5.next = 16;
                 break;
               }
               error("Failed to download books.");
               return _context5.abrupt("return");
-            case 15:
+            case 16:
               this.timer.stop();
-              info("Done. (".concat(this.results.length, " results, ").concat(this.timer.minutes, " minutes)"));
+              info("Finished at ".concat(this.timer.stopped_at.toLocaleTimeString(), " (").concat(this.results.length, " results, ").concat(this.timer.minutes, " minutes)"));
               this.downloadReady();
-              _context5.next = 23;
+              _context5.next = 24;
               break;
-            case 20:
-              _context5.prev = 20;
+            case 21:
+              _context5.prev = 21;
               _context5.t0 = _context5["catch"](0);
               error("Fatal error:", _context5.t0, _context5.t0.name, _context5.t0.message);
-            case 23:
+            case 24:
             case "end":
               return _context5.stop();
           }
-        }, _callee5, this, [[0, 20]]);
+        }, _callee5, this, [[0, 21]]);
       }));
       function run() {
         return _run.apply(this, arguments);
@@ -4395,13 +4396,15 @@ Timer = /*#__PURE__*/function () {
   return _createClass(Timer, [{
     key: "start",
     value: function start() {
-      this.beginning = this.ts();
+      this.started_at = new Date();
+      this.beginning = this.started_at.getTime();
       return this.beginning;
     }
   }, {
     key: "stop",
     value: function stop() {
-      this.end = this.ts();
+      this.stopped_at = new Date();
+      this.end = this.stopped_at.getTime();
       return this.end;
     }
   }, {
@@ -4418,11 +4421,6 @@ Timer = /*#__PURE__*/function () {
     key: "minutes",
     get: function get() {
       return (this.seconds / 60).toFixed(2);
-    }
-  }, {
-    key: "ts",
-    value: function ts() {
-      return new Date().getTime();
     }
   }, {
     key: "time",
@@ -4553,7 +4551,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-var CONSOLE_OUTPUT = false;
+var CONSOLE_OUTPUT = true;
 var LOG_PREFIX = "[audible-exporter]";
 info = function info() {
   var _console;
@@ -4745,5 +4743,4 @@ VirtualFile = (_contents = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () 
 }());
 },{"./util.js":30}]},{},[7])
 
-CONSOLE_OUTPUT = true;
 exporter = new Exporter();
