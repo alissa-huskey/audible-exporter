@@ -9,7 +9,7 @@ require("../src/util.js");
 require("../src/doc.js");
 require("../src/list.js");
 require("../src/dom.js");
-require("../src/colors.js");
+require("../src/style.js");
 require("../src/modal.js");
 require("../src/start-modal.js");
 

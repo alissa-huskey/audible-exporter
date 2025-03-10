@@ -1,15 +1,3 @@
-/**
- * Convenience functions for development.
- */
-
-log = function (...msg) {
-  console.log("--->", ...msg);
-};
-
-hr = function (...msg) {
-  console.log("****************************************", ...msg);
-};
-
 var CONSOLE_OUTPUT = false;
 const LOG_PREFIX = "[audible-exporter]";
 
@@ -464,6 +452,22 @@ Doc = class {
   }
 };
 
+List = class extends Array {
+  constructor(items) {
+    items = Array.from(items);
+    let elements = items.map((item) => new Doc(item));
+    super(...elements);
+  }
+
+  get first() {
+    return this[0];
+  }
+
+  get last() {
+    return this.slice(-1)[0];
+  }
+};
+
 /**
  * Manage elements in the DOM.
  *
@@ -471,48 +475,8 @@ Doc = class {
  * @requires doc.js
  */
 DOM = class {
-  #style = null;
-  #css = null;
-
   constructor() {
-    this.#style = null;
-    this.#css = null;
     window.ae ||= {};
-  }
-
-  /**
-   * CSS content required for an element.
-   *
-   * @abstract
-   */
-  get css() {
-    return null;
-  }
-
-  /**
-   * A style tag specific to this element.
-   *
-   * The contents come from the css getter defined on subclasses.
-   *
-   * @returns {Doc}
-   */
-  get style() {
-    if (!this.#style) {
-      this.#style = Doc.create("style", {
-        id: this.selectors.style,
-        type: "text/css",
-      });
-
-      if (this.#style.element.styleSheet) {
-        // Support for IE
-        this.#style.element.styleSheet.cssText = this.css;
-      } else {
-        // Support for the rest
-        let node = document.createTextNode(this.css);
-        this.#style.append(node);
-      }
-    }
-    return this.#style;
   }
 
   /**
@@ -522,7 +486,12 @@ DOM = class {
     let el = Doc.gi(this.selectors.wrapper);
     if (el) el.outerHTML = "";
 
-    document.head.appendChild(this.style.element);
+    if (!window.ae.style) {
+      let style = new Style();
+      style.create();
+      window.ae.style = style;
+    }
+
     document.body.appendChild(this.wrapper.element);
   }
 
@@ -535,151 +504,15 @@ DOM = class {
 };
 
 /**
- * Modal popup windows.
+ * Create a <style> tag for CSS.
  *
- * @requires util.js
- * @requires doc.js
  * @requires dom.js
  */
-Modal = class extends DOM {
-  #css = null;
+Style = class extends DOM {
   #wrapper = null;
-  #head = null;
-  #content = null;
-  #close_btn = null;
-
-  title = "";
-
-  selectors = {
-    style: "ae-modal-css",
-    wrapper: "ae-modal",
-    content: "ae-content",
-    head: "ae-head",
-    close_btn: "ae-close-btn",
-  };
-
-  /* Elements
-   ***************************************************************************/
-
-  /**
-   * Construct wrapper div, append all child elements.
-   *
-   * @returns {Doc}
-   */
-  get wrapper() {
-    if (!this.#wrapper) {
-      let wrapper = Doc.create("div", { class: this.selectors.wrapper });
-
-      wrapper.append(this.content);
-
-      wrapper.style["z-index"] = new Date().getTime();
-
-      this.#wrapper = wrapper;
-    }
-    return this.#wrapper;
-  }
-
-  /**
-   * div element for the head section.
-   */
-  get head() {
-    if (!this.#head) {
-      let head = Doc.create("div", { class: this.selectors.head });
-
-      head.append(this.close_btn);
-
-      this.#head = head;
-    }
-    return this.#head;
-  }
-
-  /**
-   * div element for the main content.
-   */
-  get content() {
-    if (!this.#content) {
-      let content = Doc.create("div", { class: this.selectors.content });
-
-      content.append(this.head);
-
-      this.#content = content;
-    }
-    return this.#content;
-  }
-
-  /**
-   * Close button a element.
-   *
-   * @listens click
-   *
-   * @returns {Doc}
-   */
-  get close_btn() {
-    if (!this.#close_btn) {
-      let btn = Doc.create("a", { id: this.selectors.close_btn });
-      btn.innerHTML = "&times;";
-      btn.attributes.href = "#";
-
-      btn.element.addEventListener(
-        "click",
-        () => {
-          this.hide();
-        },
-        false,
-      );
-      this.#close_btn = btn;
-    }
-    return this.#close_btn;
-  }
-
-  /* Methods
-   ***************************************************************************/
-
-  /**
-   * Show the modal.
-   */
-  show() {
-    this.wrapper.style.display = "block";
-  }
-
-  /**
-   * Hide the modal.
-   */
-  hide() {
-    this.wrapper.style.display = "none";
-  }
-
-  /**
-   * Add the wrapper HTML element to the DOM.
-   */
-  create() {
-    window.ae.modal ||= this;
-    let colors = window.ae.colors || new Colors();
-    colors.create();
-    super.create();
-  }
-
-  /**
-   * Add the wrapper HTML element to the DOM.
-   */
-  remove() {
-    super.remove();
-    if (window.ae?.modal) {
-      window.ae.modal = null;
-    }
-  }
-};
-
-/**
- * Create a <style> tag for the shared CSS colors.
- *
- * @requires dom.js
- */
-Colors = class extends DOM {
-  #style = null;
   #css = null;
 
-  selectors = { style: "ae-colors", wrapper: "ae-colors" };
+  selectors = { wrapper: "ae-style" };
 
   /**
    * The CSS.
@@ -692,6 +525,9 @@ Colors = class extends DOM {
   get css() {
     if (!this.#css) {
       this.#css = `
+/* Colors
+ *******************************************************************************/
+
 /*
   #colors = {
     darkGray: "#232530",
@@ -720,209 +556,9 @@ Colors = class extends DOM {
   --ae-near-white: #eaeaea;
 
 }
-      `;
-    }
-    return this.#css;
-  }
+/* Modals
+ *******************************************************************************/
 
-  /**
-   * Construct the style element.
-   *
-   * @returns {Doc}
-   */
-  get wrapper() {
-    return this.style;
-  }
-
-  /**
-   * Add the style HTML element to the DOM.
-   */
-  create() {
-    super.create();
-    window.ae.colors ||= this;
-  }
-
-  /**
-   * Remove the style HTML element from the DOM.
-   */
-  remove() {
-    this.wrapper.element.remove();
-  }
-};
-
-/**
- * Modal pop-up window for downloading the export.
- */
-DownloadModal = class extends Modal {
-  #css = null;
-  #wrapper = null;
-  #head = null;
-  #content = null;
-  #ft_select = null;
-  #dl_btn = null;
-  #h1 = null;
-  #file = null;
-
-  selectors = {
-    style: "ae-modal-css",
-    wrapper: "ae-modal",
-    content: "ae-content",
-    head: "ae-head",
-    close_btn: "ae-close-btn",
-
-    dl_btn: "ae-download-btn",
-    ft_select: "ae-filetype",
-    actions: "ae-actions",
-  };
-
-  /* Elements
-   ***************************************************************************/
-
-  /**
-   * div element for the head section.
-   */
-  get head() {
-    if (!this.#head) {
-      let head = super.head;
-
-      head.append(this.h1);
-
-      this.#head = head;
-    }
-    return this.#head;
-  }
-
-  /**
-   * The div element for the main content of the modal.
-   *
-   * @returns {Doc}
-   */
-  get content() {
-    if (!this.#content) {
-      let content = super.content;
-
-      let dl_wrapper = Doc.create("span", { id: this.selectors.dl_btn });
-      let actions = Doc.create("div", { class: this.selectors.actions });
-      let p = Doc.create("p");
-
-      p.innerHTML = "Your export is ready!";
-
-      actions.append(this.ft_select, dl_wrapper);
-
-      dl_wrapper.append(this.dl_btn);
-
-      content.append(p, actions);
-
-      this.#content = content;
-    }
-    return this.#content;
-  }
-
-  /**
-   * h1 element.
-   *
-   * @returns {Doc}
-   */
-  get h1() {
-    if (!this.#h1) {
-      this.#h1 = Doc.create("h1");
-      this.#h1.innerHTML = "Download";
-    }
-    return this.#h1;
-  }
-
-  get ft_select() {
-    if (!this.#ft_select) {
-      // create select tag
-      let select = Doc.create("select", {
-        id: this.selectors.ft_select,
-        name: this.selectors.ft_select,
-      });
-
-      // add options
-      let options = { "": " -- Format -- ", json: "JSON", tsv: "TSV" };
-      for (let [ft, label] of Object.entries(options)) {
-        let option = Doc.create("option", { value: ft });
-        option.innerText = label;
-        select.element.append(option.element);
-      }
-
-      // add event listener to disable/enable the button when a filetype is
-      // selected
-      select.element.addEventListener("change", () => {
-        let btn = window.ae.modal.dl_btn;
-        if (select.value) {
-          btn.classList.remove("disabled");
-        } else {
-          btn.classList.add("disabled");
-        }
-      });
-
-      this.#ft_select = select;
-    }
-    return this.#ft_select;
-  }
-
-  get dl_btn() {
-    if (!this.#dl_btn) {
-      let btn = Doc.create("a", {
-        id: this.selectors.dl_btn,
-        class: "ae-btn disabled",
-      });
-      btn.attributes.href = "#";
-      btn.innerHTML = "Download";
-      this.#dl_btn = btn;
-    }
-    return this.#dl_btn;
-  }
-
-  get filetype() {
-    return this.ft_select.value;
-  }
-
-  /**
-   * Getter for the file that will be downloaded.
-   *
-   * @returns {VirtualFile}
-   */
-  get file() {
-    return this.#file;
-  }
-
-  /**
-   * Setter for the file that will be downloaded.
-   *
-   * Set the file, set the attributes on the download button to make it work,
-   * and add the event listener to get rid of the generated URL once it has
-   * been used.
-   *
-   * @param {VirtualFile} file
-   */
-  set file(file) {
-    this.#file = file;
-    this.dl_btn.element.href = file.url;
-    this.dl_btn.element.download = file.filename;
-    this.dl_btn.element.addEventListener("click", () => {
-      setTimeout(() => {
-        window.URL.revokeObjectURL(file.url);
-      }, 10);
-    });
-  }
-
-  /* Static getters.
-   ***************************************************************************/
-
-  /**
-   * The CSS required to render this element.
-   *
-   * On build, the CSS_MARKER line will be replaced with the contents of
-   * notifier.css.
-   *
-   * @returns {string}
-   */
-  get css() {
-    if (!this.#css) {
-      this.#css = `
 :root {
   --ae-box-shadow: 3px 3px 10px 3px;
   --ae-box-shadow-light-bg: var(--ae-box-shadow) var(--ae-dim-gray);
@@ -1150,9 +786,416 @@ a.ae-btn.disabled {
     opacity: 0;
   }
 }
+/* Notifiers
+ *******************************************************************************/
 
+:root {
+  --ae-transparent-black: rgba(0, 0, 0, 0.05);
+  --ae-blur-shadow: 0 0 8px 8px var(--ae-transparent-black);
+}
+
+#ae-notifier {
+  position: fixed;
+  top: 100px;
+  border-radius: 0.2em;
+  font-family: system-ui;
+  border: 1px solid var(--ae-light-green);
+  background-color: var(--ae-near-black);
+}
+
+#ae-notifier.hidden {
+  display: none;
+}
+
+#ae-bar {
+  width: 0;
+  height: 50px;
+  border-bottom-right-radius: 0.2em;
+  border-top-right-radius: 0.2em;
+  transition: all 1s;
+  border-width: 1px;
+  border-style: solid;
+  background-color: var(--ae-dark-green);
+  border-color: var(--ae-light-green);
+  -webkit-animation: pulse 1s linear alternate;
+  -webkit-animation-iteration-count: infinite; 
+}
+
+#ae-messages {
+  padding: 14px;
+  color: #fff;
+  font-size: 1.1em;
+  font-weight: 600;
+
+}
+
+#ae-status-text {
+  text-wrap: nowrap;
+
+  -webkit-text-stroke: 0.2px var(--ae-dim-gray);
+
+  background-color: var(--ae-transparent-black);
+  box-shadow: var(--ae-blur-shadow);
+  -webkit-box-shadow: var(--ae-blur-shadow);
+  -moz-box-shadow: var(--ae-blur-shadow);
+}
+
+#ae-percent-text {
+  color: var(--ae-bright-green);
+}
+
+#ae-context.empty {
+  height: 0px;
+  padding: 0px;
+  border-top: 0px;
+}
+
+#ae-context{
+  font-size: .9em;
+  color: #999;
+  background: var(--ae-black-russian);
+  border-top: 1px solid var(--ae-dim-gray);
+  padding: 3px;
+}
+
+.ae-row {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+@-webkit-keyframes pulse {
+  from { background-color: var(--ae-dark-green); }
+  to { background-color: var(--ae-light-green); }
+}
       `;
     }
     return this.#css;
+  }
+
+  /**
+   * Construct the style element.
+   *
+   * The contents come from the css getter defined on subclasses.
+   *
+   * @returns {Doc}
+   */
+  get wrapper() {
+    if (!this.#wrapper) {
+      this.#wrapper = Doc.create("style", {
+        id: this.selectors.wrapper,
+        type: "text/css",
+      });
+
+      if (this.#wrapper.element.styleSheet) {
+        // Support for IE
+        this.#wrapper.element.styleSheet.cssText = this.css;
+      } else {
+        // Support for the rest
+        let node = document.createTextNode(this.css);
+        this.#wrapper.append(node);
+      }
+    }
+    return this.#wrapper;
+  }
+
+  /**
+   * Add the style HTML element to the DOM.
+   *
+   * Special case because this is added to the head, not the body.
+   */
+  create() {
+    document.head.appendChild(this.wrapper.element);
+    window.ae.style ||= this;
+  }
+};
+
+/**
+ * Modal popup windows.
+ *
+ * @requires util.js
+ * @requires doc.js
+ * @requires dom.js
+ */
+Modal = class extends DOM {
+  #wrapper = null;
+  #head = null;
+  #content = null;
+  #close_btn = null;
+
+  title = "";
+
+  selectors = {
+    wrapper: "ae-modal",
+    content: "ae-content",
+    head: "ae-head",
+    close_btn: "ae-close-btn",
+  };
+
+  /* Elements
+   ***************************************************************************/
+
+  /**
+   * Construct wrapper div, append all child elements.
+   *
+   * @returns {Doc}
+   */
+  get wrapper() {
+    if (!this.#wrapper) {
+      let wrapper = Doc.create("div", { class: this.selectors.wrapper });
+
+      wrapper.append(this.content);
+
+      wrapper.style["z-index"] = new Date().getTime();
+
+      this.#wrapper = wrapper;
+    }
+    return this.#wrapper;
+  }
+
+  /**
+   * div element for the head section.
+   */
+  get head() {
+    if (!this.#head) {
+      let head = Doc.create("div", { class: this.selectors.head });
+
+      head.append(this.close_btn);
+
+      this.#head = head;
+    }
+    return this.#head;
+  }
+
+  /**
+   * div element for the main content.
+   */
+  get content() {
+    if (!this.#content) {
+      let content = Doc.create("div", { class: this.selectors.content });
+
+      content.append(this.head);
+
+      this.#content = content;
+    }
+    return this.#content;
+  }
+
+  /**
+   * Close button a element.
+   *
+   * @listens click
+   *
+   * @returns {Doc}
+   */
+  get close_btn() {
+    if (!this.#close_btn) {
+      let btn = Doc.create("a", { id: this.selectors.close_btn });
+      btn.innerHTML = "&times;";
+      btn.attributes.href = "#";
+
+      btn.element.addEventListener(
+        "click",
+        () => {
+          this.hide();
+        },
+        false,
+      );
+      this.#close_btn = btn;
+    }
+    return this.#close_btn;
+  }
+
+  /* Methods
+   ***************************************************************************/
+
+  /**
+   * Show the modal.
+   */
+  show() {
+    this.wrapper.style.display = "block";
+  }
+
+  /**
+   * Hide the modal.
+   */
+  hide() {
+    this.wrapper.style.display = "none";
+  }
+
+  /**
+   * Add the wrapper HTML element to the DOM.
+   */
+  create() {
+    super.create();
+    window.ae.modal ||= this;
+  }
+
+  /**
+   * Add the wrapper HTML element to the DOM.
+   */
+  remove() {
+    super.remove();
+    if (window.ae?.modal) {
+      window.ae.modal = null;
+    }
+  }
+};
+
+/**
+ * Modal pop-up window for downloading the export.
+ */
+DownloadModal = class extends Modal {
+  #wrapper = null;
+  #head = null;
+  #content = null;
+  #ft_select = null;
+  #dl_btn = null;
+  #h1 = null;
+  #file = null;
+
+  selectors = {
+    wrapper: "ae-modal",
+    content: "ae-content",
+    head: "ae-head",
+    close_btn: "ae-close-btn",
+
+    dl_btn: "ae-download-btn",
+    ft_select: "ae-filetype",
+    actions: "ae-actions",
+  };
+
+  /* Elements
+   ***************************************************************************/
+
+  /**
+   * div element for the head section.
+   */
+  get head() {
+    if (!this.#head) {
+      let head = super.head;
+
+      head.append(this.h1);
+
+      this.#head = head;
+    }
+    return this.#head;
+  }
+
+  /**
+   * The div element for the main content of the modal.
+   *
+   * @returns {Doc}
+   */
+  get content() {
+    if (!this.#content) {
+      let content = super.content;
+
+      let dl_wrapper = Doc.create("span", { id: this.selectors.dl_btn });
+      let actions = Doc.create("div", { class: this.selectors.actions });
+      let p = Doc.create("p");
+
+      p.innerHTML = "Your export is ready!";
+
+      actions.append(this.ft_select, dl_wrapper);
+
+      dl_wrapper.append(this.dl_btn);
+
+      content.append(p, actions);
+
+      this.#content = content;
+    }
+    return this.#content;
+  }
+
+  /**
+   * h1 element.
+   *
+   * @returns {Doc}
+   */
+  get h1() {
+    if (!this.#h1) {
+      this.#h1 = Doc.create("h1");
+      this.#h1.innerHTML = "Download";
+    }
+    return this.#h1;
+  }
+
+  get ft_select() {
+    if (!this.#ft_select) {
+      // create select tag
+      let select = Doc.create("select", {
+        id: this.selectors.ft_select,
+        name: this.selectors.ft_select,
+      });
+
+      // add options
+      let options = { "": " -- Format -- ", json: "JSON", tsv: "TSV" };
+      for (let [ft, label] of Object.entries(options)) {
+        let option = Doc.create("option", { value: ft });
+        option.innerText = label;
+        select.element.append(option.element);
+      }
+
+      // add event listener to disable/enable the button when a filetype is
+      // selected
+      select.element.addEventListener("change", () => {
+        let btn = window.ae.modal.dl_btn;
+        if (select.value) {
+          btn.classList.remove("disabled");
+        } else {
+          btn.classList.add("disabled");
+        }
+      });
+
+      this.#ft_select = select;
+    }
+    return this.#ft_select;
+  }
+
+  get dl_btn() {
+    if (!this.#dl_btn) {
+      let btn = Doc.create("a", {
+        id: this.selectors.dl_btn,
+        class: "ae-btn disabled",
+      });
+      btn.attributes.href = "#";
+      btn.innerHTML = "Download";
+      this.#dl_btn = btn;
+    }
+    return this.#dl_btn;
+  }
+
+  get filetype() {
+    return this.ft_select.value;
+  }
+
+  /**
+   * Getter for the file that will be downloaded.
+   *
+   * @returns {VirtualFile}
+   */
+  get file() {
+    return this.#file;
+  }
+
+  /**
+   * Setter for the file that will be downloaded.
+   *
+   * Set the file, set the attributes on the download button to make it work,
+   * and add the event listener to get rid of the generated URL once it has
+   * been used.
+   *
+   * @param {VirtualFile} file
+   */
+  set file(file) {
+    this.#file = file;
+    this.dl_btn.element.href = file.url;
+    this.dl_btn.element.download = file.filename;
+    this.dl_btn.element.addEventListener("click", () => {
+      setTimeout(() => {
+        window.URL.revokeObjectURL(file.url);
+      }, 10);
+    });
   }
 };

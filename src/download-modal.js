@@ -2,7 +2,6 @@
  * Modal pop-up window for downloading the export.
  */
 DownloadModal = class extends Modal {
-  #css = null;
   #wrapper = null;
   #head = null;
   #content = null;
@@ -12,7 +11,6 @@ DownloadModal = class extends Modal {
   #file = null;
 
   selectors = {
-    style: "ae-modal-css",
     wrapper: "ae-modal",
     content: "ae-content",
     head: "ae-head",
@@ -155,25 +153,5 @@ DownloadModal = class extends Modal {
         window.URL.revokeObjectURL(file.url);
       }, 10);
     });
-  }
-
-  /* Static getters.
-   ***************************************************************************/
-
-  /**
-   * The CSS required to render this element.
-   *
-   * On build, the CSS_MARKER line will be replaced with the contents of
-   * notifier.css.
-   *
-   * @returns {string}
-   */
-  get css() {
-    if (!this.#css) {
-      this.#css = `
-        /* CSS_MARKER modal */
-      `;
-    }
-    return this.#css;
   }
 };

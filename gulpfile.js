@@ -2,7 +2,9 @@ const replace = require("gulp-replace");
 const using = require("gulp-using");
 const concat = require("gulp-concat");
 const { src, dest, task, series, parallel, done } = require("gulp");
+
 const fs = require("fs");
+const glob = require("glob").sync;
 
 let log = console.log;
 
@@ -13,18 +15,18 @@ let dirs = {
 };
 
 /**
- * DOM components that:
- * (a.) have CSS injected and saved in build/tmp/
- * (b.) have a standalone file including all dependencies saved in build/
- * (c.) (may be) the base for other standalone files
+ * Modal compoenents that depend on build/modal.js and have a
+ * standalone file including all dependencies saved in build/
  */
-let components = ["status-notifier", "start-modal", "download-modal"];
+let modals = ["start", "download"];
 
 /**
  * Notifier compoenents that depend on build/status-notifier.js and have a
  * standalone file including all dependencies saved in build/
  */
 let notifiers = ["purchase-history", "order", "library", "details"];
+
+let dom_dependencies = ["util", "timer", "doc", "list", "dom"];
 
 /**
  * Files in src/ that the main exporter depends on, in the order they must be
@@ -51,29 +53,21 @@ let sources = [
   "json-file",
   "result",
   "dom",
-  "modal",
 ];
 
 /**
- * Inject the contents of a CSS file in a Javascript file and save to build/tmp/.
- *
- * Look for files with the text "CSS_MARKER <name>" and replace that line with
- * the contents of the file `src/<name>.css`.
+ * Inject the contents of a CSS file in a style.js save to build/tmp/.
  */
-task("inject-css", (cb) => {
-  log("task: inject-css");
-  return src([`${dirs.src}/colors.js`, ...components.map((d) => `src/${d}.js`)])
+task("style", (cb) => {
+  let files = glob(`${dirs.src}/*.css`);
+  let css = files.reduce(
+    (text, filename) => text + fs.readFileSync(filename).toString(),
+    "",
+  );
+
+  return src([`${dirs.src}/style.js`])
     .pipe(using({}))
-    .pipe(
-      replace(/\n\s+\/\* CSS_MARKER (.*) \*\/\n/, (_, stylesheet) => {
-        if (!stylesheet) {
-          cb(new Error("No matching stylesheet found."));
-        }
-        console.log(`injecting stylesheet: src/${stylesheet}.js`);
-        let css = fs.readFileSync(`src/${stylesheet}.css`).toString();
-        return `\n${css}`;
-      }),
-    )
+    .pipe(replace(/\s*\/\* CSS_MARKER \*\/\n/, (_) => `\n${css}`))
     .pipe(dest(dirs.tmp));
 });
 
@@ -85,16 +79,25 @@ task("inject-css", (cb) => {
  *
  * Returns a series with one task for each component.
  */
-buildComponents = function (done) {
-  const tasks = components.map((name) => {
-    log(`generated task: buildComponents->${name}.js`);
+buildModals = function (done) {
+  const tasks = modals.map((name) => {
+    let filename = `${name}-modal.js`;
+    log(`generated task: buildModals->${filename}-modal.js`);
     return () =>
       src([
-        ...["dev", "util", "timer", "doc", "dom", "modal"].map((d) => `src/${d}.js`),
-        `${dirs.tmp}/colors.js`,
-        `${dirs.tmp}/${name}.js`,
+        // the dependencies from src/
+        ...dom_dependencies.map((d) => `src/${d}.js`),
+
+        // the generated style.js including css
+        `${dirs.tmp}/style.js`,
+
+        // the modal base class
+        `${dirs.src}/modal.js`,
+
+        // this modal
+        `${dirs.src}/${filename}`,
       ])
-        .pipe(concat(`${name}.js`))
+        .pipe(concat(filename))
         .pipe(dest(dirs.build));
   });
 
@@ -113,12 +116,24 @@ buildComponents = function (done) {
  * Returns a series with one task for each notifier.
  */
 buildNotifiers = function (done) {
-  const tasks = notifiers.map((label) => {
-    let name = `${label}-notifier.js`;
-    log(`generated task: buildNotifiers->${name}`);
+  const tasks = notifiers.map((name) => {
+    let filename = `${name}-notifier.js`;
+    log(`generated task: buildNotifier->${filename}`);
     return () =>
-      src([`${dirs.build}/status-notifier.js`, `${dirs.src}/${name}`])
-        .pipe(concat(name))
+      src([
+        // the dependencies from src/
+        ...dom_dependencies.map((d) => `src/${d}.js`),
+
+        // the generated style.js including css
+        `${dirs.tmp}/style.js`,
+
+        // the notifier base class
+        `${dirs.src}/status-notifier.js`,
+
+        // this notifier
+        `${dirs.src}/${filename}`,
+      ])
+        .pipe(concat(filename))
         .pipe(dest(dirs.build));
   });
 
@@ -134,10 +149,21 @@ buildNotifiers = function (done) {
 task("audible-exporter", (done) => {
   log("task: audible-exporter");
   return src([
+    // all the regular dependencies
     ...sources.map((f) => `${dirs.src}/${f}.js`),
-    `${dirs.tmp}/colors.js`,
-    ...components.map((f) => `${dirs.tmp}/${f}.js`),
+
+    // generated style.js
+    `${dirs.tmp}/style.js`,
+
+    // all modals
+    `${dirs.src}/modal.js`,
+    ...modals.map((f) => `${dirs.src}/${f}-modal.js`),
+
+    // all notifiers
+    `${dirs.src}/status-notifier.js`,
     ...notifiers.map((f) => `${dirs.src}/${f}-notifier.js`),
+
+    // the exporter and runner
     `${dirs.src}/exporter.js`,
     `${dirs.src}/runner.js`,
   ])
@@ -145,7 +171,7 @@ task("audible-exporter", (done) => {
     .pipe(dest(dirs.build));
 });
 
-task("dom", series("inject-css", buildComponents));
-task("notifiers", series("dom", buildNotifiers));
-task("exporter", series("inject-css", "audible-exporter"));
-task("default", parallel("dom", "notifiers", "exporter"));
+task("modals", series("style", buildModals));
+task("notifiers", series("style", buildNotifiers));
+task("exporter", series("style", "audible-exporter"));
+task("default", parallel("modals", "notifiers", "exporter"));

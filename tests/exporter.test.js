@@ -22,7 +22,7 @@ require("../src/purchase.js");
 require("../src/order-page.js");
 require("../src/orders-fetcher.js");
 require("../src/dom.js");
-require("../src/colors.js");
+require("../src/style.js");
 require("../src/modal.js");
 require("../src/start-modal.js");
 require("../src/download-modal.js");

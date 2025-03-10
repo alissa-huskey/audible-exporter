@@ -5,48 +5,8 @@
  * @requires doc.js
  */
 DOM = class {
-  #style = null;
-  #css = null;
-
   constructor() {
-    this.#style = null;
-    this.#css = null;
     window.ae ||= {};
-  }
-
-  /**
-   * CSS content required for an element.
-   *
-   * @abstract
-   */
-  get css() {
-    return null;
-  }
-
-  /**
-   * A style tag specific to this element.
-   *
-   * The contents come from the css getter defined on subclasses.
-   *
-   * @returns {Doc}
-   */
-  get style() {
-    if (!this.#style) {
-      this.#style = Doc.create("style", {
-        id: this.selectors.style,
-        type: "text/css",
-      });
-
-      if (this.#style.element.styleSheet) {
-        // Support for IE
-        this.#style.element.styleSheet.cssText = this.css;
-      } else {
-        // Support for the rest
-        let node = document.createTextNode(this.css);
-        this.#style.append(node);
-      }
-    }
-    return this.#style;
   }
 
   /**
@@ -56,7 +16,12 @@ DOM = class {
     let el = Doc.gi(this.selectors.wrapper);
     if (el) el.outerHTML = "";
 
-    document.head.appendChild(this.style.element);
+    if (!window.ae.style) {
+      let style = new Style();
+      style.create();
+      window.ae.style = style;
+    }
+
     document.body.appendChild(this.wrapper.element);
   }
 

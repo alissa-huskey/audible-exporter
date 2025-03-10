@@ -6,7 +6,6 @@
  * @requires dom.js
  */
 Modal = class extends DOM {
-  #css = null;
   #wrapper = null;
   #head = null;
   #content = null;
@@ -15,7 +14,6 @@ Modal = class extends DOM {
   title = "";
 
   selectors = {
-    style: "ae-modal-css",
     wrapper: "ae-modal",
     content: "ae-content",
     head: "ae-head",
@@ -117,10 +115,8 @@ Modal = class extends DOM {
    * Add the wrapper HTML element to the DOM.
    */
   create() {
-    window.ae.modal ||= this;
-    let colors = window.ae.colors || new Colors();
-    colors.create();
     super.create();
+    window.ae.modal ||= this;
   }
 
   /**

@@ -9,7 +9,7 @@ require("../src/util.js");
 require("../src/doc.js");
 require("../src/list.js");
 require("../src/dom.js");
-require("../src/colors.js");
+require("../src/style.js");
 require("../src/modal.js");
 
 describe("Modal", () => {
@@ -23,14 +23,14 @@ describe("Modal", () => {
     modal.create();
 
     modals = $(`.${modal.selectors.wrapper}`);
-    colors = $(`#${new Colors().selectors.style}`);
+    style = $(`#${new Style().selectors.wrapper}`);
 
     expect(modals).toHaveLength(1);
     expect(modals[0]).toBeA(HTMLDivElement);
 
-    expect(colors).toHaveLength(1);
-    expect(colors[0]).toBeA(HTMLStyleElement);
-    expect(window.ae.colors).toBeA(Colors);
+    expect(style).toHaveLength(1);
+    expect(style[0]).toBeA(HTMLStyleElement);
+    expect(window.ae.style).toBeA(Style);
   });
 
   test("elements", () => {

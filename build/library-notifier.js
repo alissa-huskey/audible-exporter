@@ -1,15 +1,3 @@
-/**
- * Convenience functions for development.
- */
-
-log = function (...msg) {
-  console.log("--->", ...msg);
-};
-
-hr = function (...msg) {
-  console.log("****************************************", ...msg);
-};
-
 var CONSOLE_OUTPUT = false;
 const LOG_PREFIX = "[audible-exporter]";
 
@@ -464,6 +452,22 @@ Doc = class {
   }
 };
 
+List = class extends Array {
+  constructor(items) {
+    items = Array.from(items);
+    let elements = items.map((item) => new Doc(item));
+    super(...elements);
+  }
+
+  get first() {
+    return this[0];
+  }
+
+  get last() {
+    return this.slice(-1)[0];
+  }
+};
+
 /**
  * Manage elements in the DOM.
  *
@@ -471,48 +475,8 @@ Doc = class {
  * @requires doc.js
  */
 DOM = class {
-  #style = null;
-  #css = null;
-
   constructor() {
-    this.#style = null;
-    this.#css = null;
     window.ae ||= {};
-  }
-
-  /**
-   * CSS content required for an element.
-   *
-   * @abstract
-   */
-  get css() {
-    return null;
-  }
-
-  /**
-   * A style tag specific to this element.
-   *
-   * The contents come from the css getter defined on subclasses.
-   *
-   * @returns {Doc}
-   */
-  get style() {
-    if (!this.#style) {
-      this.#style = Doc.create("style", {
-        id: this.selectors.style,
-        type: "text/css",
-      });
-
-      if (this.#style.element.styleSheet) {
-        // Support for IE
-        this.#style.element.styleSheet.cssText = this.css;
-      } else {
-        // Support for the rest
-        let node = document.createTextNode(this.css);
-        this.#style.append(node);
-      }
-    }
-    return this.#style;
   }
 
   /**
@@ -522,7 +486,12 @@ DOM = class {
     let el = Doc.gi(this.selectors.wrapper);
     if (el) el.outerHTML = "";
 
-    document.head.appendChild(this.style.element);
+    if (!window.ae.style) {
+      let style = new Style();
+      style.create();
+      window.ae.style = style;
+    }
+
     document.body.appendChild(this.wrapper.element);
   }
 
@@ -535,151 +504,15 @@ DOM = class {
 };
 
 /**
- * Modal popup windows.
+ * Create a <style> tag for CSS.
  *
- * @requires util.js
- * @requires doc.js
  * @requires dom.js
  */
-Modal = class extends DOM {
-  #css = null;
+Style = class extends DOM {
   #wrapper = null;
-  #head = null;
-  #content = null;
-  #close_btn = null;
-
-  title = "";
-
-  selectors = {
-    style: "ae-modal-css",
-    wrapper: "ae-modal",
-    content: "ae-content",
-    head: "ae-head",
-    close_btn: "ae-close-btn",
-  };
-
-  /* Elements
-   ***************************************************************************/
-
-  /**
-   * Construct wrapper div, append all child elements.
-   *
-   * @returns {Doc}
-   */
-  get wrapper() {
-    if (!this.#wrapper) {
-      let wrapper = Doc.create("div", { class: this.selectors.wrapper });
-
-      wrapper.append(this.content);
-
-      wrapper.style["z-index"] = new Date().getTime();
-
-      this.#wrapper = wrapper;
-    }
-    return this.#wrapper;
-  }
-
-  /**
-   * div element for the head section.
-   */
-  get head() {
-    if (!this.#head) {
-      let head = Doc.create("div", { class: this.selectors.head });
-
-      head.append(this.close_btn);
-
-      this.#head = head;
-    }
-    return this.#head;
-  }
-
-  /**
-   * div element for the main content.
-   */
-  get content() {
-    if (!this.#content) {
-      let content = Doc.create("div", { class: this.selectors.content });
-
-      content.append(this.head);
-
-      this.#content = content;
-    }
-    return this.#content;
-  }
-
-  /**
-   * Close button a element.
-   *
-   * @listens click
-   *
-   * @returns {Doc}
-   */
-  get close_btn() {
-    if (!this.#close_btn) {
-      let btn = Doc.create("a", { id: this.selectors.close_btn });
-      btn.innerHTML = "&times;";
-      btn.attributes.href = "#";
-
-      btn.element.addEventListener(
-        "click",
-        () => {
-          this.hide();
-        },
-        false,
-      );
-      this.#close_btn = btn;
-    }
-    return this.#close_btn;
-  }
-
-  /* Methods
-   ***************************************************************************/
-
-  /**
-   * Show the modal.
-   */
-  show() {
-    this.wrapper.style.display = "block";
-  }
-
-  /**
-   * Hide the modal.
-   */
-  hide() {
-    this.wrapper.style.display = "none";
-  }
-
-  /**
-   * Add the wrapper HTML element to the DOM.
-   */
-  create() {
-    window.ae.modal ||= this;
-    let colors = window.ae.colors || new Colors();
-    colors.create();
-    super.create();
-  }
-
-  /**
-   * Add the wrapper HTML element to the DOM.
-   */
-  remove() {
-    super.remove();
-    if (window.ae?.modal) {
-      window.ae.modal = null;
-    }
-  }
-};
-
-/**
- * Create a <style> tag for the shared CSS colors.
- *
- * @requires dom.js
- */
-Colors = class extends DOM {
-  #style = null;
   #css = null;
 
-  selectors = { style: "ae-colors", wrapper: "ae-colors" };
+  selectors = { wrapper: "ae-style" };
 
   /**
    * The CSS.
@@ -692,6 +525,9 @@ Colors = class extends DOM {
   get css() {
     if (!this.#css) {
       this.#css = `
+/* Colors
+ *******************************************************************************/
+
 /*
   #colors = {
     darkGray: "#232530",
@@ -720,6 +556,318 @@ Colors = class extends DOM {
   --ae-near-white: #eaeaea;
 
 }
+/* Modals
+ *******************************************************************************/
+
+:root {
+  --ae-box-shadow: 3px 3px 10px 3px;
+  --ae-box-shadow-light-bg: var(--ae-box-shadow) var(--ae-dim-gray);
+  --ae-box-shadow-dark-bg: var(--ae-box-shadow) var(--ae-carbon);
+}
+
+.ae-modal {
+  box-sizing: border-box;
+  position: fixed;
+  font-family: "Cantarell", sans-serif;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.ae-modal .ae-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 50%;
+  height: 300px;
+
+  border-radius: 15px;
+  box-shadow: 0 3px 15px -2px #222;
+  padding: 20px;
+
+  background-color: var(--ae-black-russian);
+  color: var(--ae-near-white);
+  font-size: 1.1em;
+}
+
+.ae-modal .ae-head {
+  background-color: var(--ae-near-black);
+  padding: 10px;
+  border-radius: 10px 10px 0px 0px;
+}
+
+.ae-modal h1 {
+  color: var(--ae-mystic-white);
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: normal;
+  margin: 0;
+  padding-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.ae-modal #ae-close-btn {
+  color: var(--ae-basalt-gray);
+  font-size: 28px;
+  font-weight: bold;
+  text-decoration: none;
+  margin: 0;
+  margin-top: -10px;
+  align-self: flex-end;
+  float: right;
+}
+
+#ae-start-modal .ae-head {
+  background-color: unset;
+}
+
+#ae-start-modal .ae-content {
+  width: 60%;
+  height: unset;
+}
+
+.ae-modal .ae-copy {
+  background-color: var(--ae-near-black);
+  padding: 25px;
+  margin: 20px;
+  border-radius: 15px;
+}
+
+#ae-close-btn:hover,
+#ae-close-btn:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ae-actions {
+  display: flex;
+  gap: 15px;
+  margin: 30px 20px;
+}
+
+#ae-start-modal ul {
+  margin: 30px 0;
+
+  ::marker {
+    font-size: 1.3em;
+    color: var(--ae-light-green);
+
+    /* NOTE: Double-escaped here because this will be embedded in JS. */
+		content: "\\027B2   ";  /* ➲ */
+  }
+}
+
+#ae-start-modal li {
+  line-height: 1.7em;
+}
+
+#ae-start-modal span#ae-start-btn {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+a.ae-btn {
+  background-color: var(--ae-emerald-green);
+  color: #000;
+  cursor: pointer;
+
+  font-size: 1em;
+  font-family: system-ui;
+  font-weight: 600;
+  text-transform: uppercase;
+
+  text-decoration: none;
+  text-align: center;
+  padding: 10px 25px;
+
+  display: inline-block;
+
+  border-radius: 4px;
+  box-shadow: var(--ae-box-shadow-light-bg);
+  -webkit-box-shadow: var(--ae-box-shadow-light-bg);
+  -moz-box-shadow: var(--ae-box-shadow-light-bg);
+}
+
+a.ae-btn:hover {
+  background-color: var(--ae-near-black);
+  color: var(--ae-near-white);
+  text-decoration: none;
+
+  box-shadow: var(--ae-box-shadow-dark-bg);
+  -webkit-box-shadow: var(--ae-box-shadow-dark-bg);
+  -moz-box-shadow: var(--ae-box-shadow-dark-bg);
+}
+
+a.ae-btn.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  color: white;
+}
+
+#ae-start-modal .ae-content {
+  width: 60%;
+  height: unset;
+}
+
+#ae-download-btn {
+  position: relative;
+}
+
+#ae-download-btn a {
+  padding: 10px 25px;
+  text-indent: 15px;
+}
+
+#ae-download-btn a:before,
+#ae-download-btn a:after {
+  content: " ";
+  display: block;
+  position: absolute;
+  left: 14px;
+  top: 52%;
+}
+
+/* Download box shape  */
+#ae-download-btn a:before {
+  width: 10px;
+  height: 2px;
+  border-style: solid;
+  border-width: 0 2px 2px;
+}
+
+/* Download arrow shape */
+#ae-download-btn a:after {
+  width: 0;
+  height: 0;
+  margin-left: 1px;
+  margin-top: -7px;
+
+  border-style: solid;
+  border-width: 4px 4px 0 4px;
+  border-color: transparent;
+  border-top-color: inherit;
+}
+
+#ae-download-btn a:hover:before {
+  border-color: var(--ae-emerald-green);
+}
+
+#ae-download-btn a:hover:after {
+  animation: downloadArrow 2s linear infinite;
+  animation-play-state: running;
+  border-top-color: var(--ae-emerald-green);
+}
+
+@keyframes downloadArrow {
+  /* 0% and 0.001% keyframes used as a hackish way of having the button frozen
+   * on a nice looking frame by default */
+
+  0% {
+    margin-top: -7px;
+    opacity: 1;
+  }
+
+  0.001% {
+    margin-top: -15px;
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    margin-top: 0;
+    opacity: 0;
+  }
+}
+/* Notifiers
+ *******************************************************************************/
+
+:root {
+  --ae-transparent-black: rgba(0, 0, 0, 0.05);
+  --ae-blur-shadow: 0 0 8px 8px var(--ae-transparent-black);
+}
+
+#ae-notifier {
+  position: fixed;
+  top: 100px;
+  border-radius: 0.2em;
+  font-family: system-ui;
+  border: 1px solid var(--ae-light-green);
+  background-color: var(--ae-near-black);
+}
+
+#ae-notifier.hidden {
+  display: none;
+}
+
+#ae-bar {
+  width: 0;
+  height: 50px;
+  border-bottom-right-radius: 0.2em;
+  border-top-right-radius: 0.2em;
+  transition: all 1s;
+  border-width: 1px;
+  border-style: solid;
+  background-color: var(--ae-dark-green);
+  border-color: var(--ae-light-green);
+  -webkit-animation: pulse 1s linear alternate;
+  -webkit-animation-iteration-count: infinite; 
+}
+
+#ae-messages {
+  padding: 14px;
+  color: #fff;
+  font-size: 1.1em;
+  font-weight: 600;
+
+}
+
+#ae-status-text {
+  text-wrap: nowrap;
+
+  -webkit-text-stroke: 0.2px var(--ae-dim-gray);
+
+  background-color: var(--ae-transparent-black);
+  box-shadow: var(--ae-blur-shadow);
+  -webkit-box-shadow: var(--ae-blur-shadow);
+  -moz-box-shadow: var(--ae-blur-shadow);
+}
+
+#ae-percent-text {
+  color: var(--ae-bright-green);
+}
+
+#ae-context.empty {
+  height: 0px;
+  padding: 0px;
+  border-top: 0px;
+}
+
+#ae-context{
+  font-size: .9em;
+  color: #999;
+  background: var(--ae-black-russian);
+  border-top: 1px solid var(--ae-dim-gray);
+  padding: 3px;
+}
+
+.ae-row {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+@-webkit-keyframes pulse {
+  from { background-color: var(--ae-dark-green); }
+  to { background-color: var(--ae-light-green); }
+}
       `;
     }
     return this.#css;
@@ -728,25 +876,37 @@ Colors = class extends DOM {
   /**
    * Construct the style element.
    *
+   * The contents come from the css getter defined on subclasses.
+   *
    * @returns {Doc}
    */
   get wrapper() {
-    return this.style;
+    if (!this.#wrapper) {
+      this.#wrapper = Doc.create("style", {
+        id: this.selectors.wrapper,
+        type: "text/css",
+      });
+
+      if (this.#wrapper.element.styleSheet) {
+        // Support for IE
+        this.#wrapper.element.styleSheet.cssText = this.css;
+      } else {
+        // Support for the rest
+        let node = document.createTextNode(this.css);
+        this.#wrapper.append(node);
+      }
+    }
+    return this.#wrapper;
   }
 
   /**
    * Add the style HTML element to the DOM.
+   *
+   * Special case because this is added to the head, not the body.
    */
   create() {
-    super.create();
-    window.ae.colors ||= this;
-  }
-
-  /**
-   * Remove the style HTML element from the DOM.
-   */
-  remove() {
-    this.wrapper.element.remove();
+    document.head.appendChild(this.wrapper.element);
+    window.ae.style ||= this;
   }
 };
 
@@ -759,7 +919,6 @@ StatusNotifier = class extends DOM {
   #context = null;
   #steps = null;
   #estimate = null;
-  #style = null;
   #percent = null;
 
   #item_no = null;
@@ -1051,98 +1210,6 @@ StatusNotifier = class extends DOM {
     return "Initializing...";
   }
 
-  /**
-   * The CSS required to render this element.
-   *
-   * On build, the CSS_MARKER line will be replaced with the contents of
-   * notifier.css.
-   *
-   * @returns {string}
-   */
-  get css() {
-    return `
-:root {
-  --ae-transparent-black: rgba(0, 0, 0, 0.05);
-  --ae-blur-shadow: 0 0 8px 8px var(--ae-transparent-black);
-}
-
-#ae-notifier {
-  position: fixed;
-  top: 100px;
-  border-radius: 0.2em;
-  font-family: system-ui;
-  border: 1px solid var(--ae-light-green);
-  background-color: var(--ae-near-black);
-}
-
-#ae-notifier.hidden {
-  display: none;
-}
-
-#ae-bar {
-  width: 0;
-  height: 50px;
-  border-bottom-right-radius: 0.2em;
-  border-top-right-radius: 0.2em;
-  transition: all 1s;
-  border-width: 1px;
-  border-style: solid;
-  background-color: var(--ae-dark-green);
-  border-color: var(--ae-light-green);
-  -webkit-animation: pulse 1s linear alternate;
-  -webkit-animation-iteration-count: infinite; 
-}
-
-#ae-messages {
-  padding: 14px;
-  color: #fff;
-  font-size: 1.1em;
-  font-weight: 600;
-
-}
-
-#ae-status-text {
-  text-wrap: nowrap;
-
-  -webkit-text-stroke: 0.2px var(--ae-dim-gray);
-
-  background-color: var(--ae-transparent-black);
-  box-shadow: var(--ae-blur-shadow);
-  -webkit-box-shadow: var(--ae-blur-shadow);
-  -moz-box-shadow: var(--ae-blur-shadow);
-}
-
-#ae-percent-text {
-  color: var(--ae-bright-green);
-}
-
-#ae-context.empty {
-  height: 0px;
-  padding: 0px;
-  border-top: 0px;
-}
-
-#ae-context{
-  font-size: .9em;
-  color: #999;
-  background: var(--ae-black-russian);
-  border-top: 1px solid var(--ae-dim-gray);
-  padding: 3px;
-}
-
-.ae-row {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-}
-
-@-webkit-keyframes pulse {
-  from { background-color: var(--ae-dark-green); }
-  to { background-color: var(--ae-light-green); }
-}
-    `;
-  }
-
   /* Calculated properties
    ***************************************************************************/
 
@@ -1297,8 +1364,6 @@ StatusNotifier = class extends DOM {
    * listener, and set the intital status text.
    */
   create() {
-    let colors = window.ae.colors || new Colors();
-    colors.create();
     super.create();
 
     document.addEventListener(this.event_name, this.listen);

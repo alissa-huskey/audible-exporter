@@ -21,13 +21,15 @@ Exporter = class {
     this.limit = limit;
     this.timer = new Timer();
     this.notifier = new StatusNotifier();
-    this.colors = new Colors();
     this.orders = new OrdersFetcher();
     this.library = new LibraryFetcher();
     this.details = new DetailsFetcher();
     this.results = [];
 
     window.ae = this;
+
+    this.style = new Style();
+    this.style.create();
 
     this.modal = new StartModal();
     this.modal.create();
@@ -144,7 +146,6 @@ Exporter = class {
     try {
       this.timer.start();
 
-      this.colors.create();
       this.notifier.create();
 
       await this.getPurchaseHistory();

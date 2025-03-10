@@ -1,3 +1,6 @@
+/* Modals
+ *******************************************************************************/
+
 :root {
   --ae-box-shadow: 3px 3px 10px 3px;
   --ae-box-shadow-light-bg: var(--ae-box-shadow) var(--ae-dim-gray);
@@ -225,4 +228,3 @@ a.ae-btn.disabled {
     opacity: 0;
   }
 }
-

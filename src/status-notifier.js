@@ -7,7 +7,6 @@ StatusNotifier = class extends DOM {
   #context = null;
   #steps = null;
   #estimate = null;
-  #style = null;
   #percent = null;
 
   #item_no = null;
@@ -299,20 +298,6 @@ StatusNotifier = class extends DOM {
     return "Initializing...";
   }
 
-  /**
-   * The CSS required to render this element.
-   *
-   * On build, the CSS_MARKER line will be replaced with the contents of
-   * notifier.css.
-   *
-   * @returns {string}
-   */
-  get css() {
-    return `
-      /* CSS_MARKER notifier */
-    `;
-  }
-
   /* Calculated properties
    ***************************************************************************/
 
@@ -467,8 +452,6 @@ StatusNotifier = class extends DOM {
    * listener, and set the intital status text.
    */
   create() {
-    let colors = window.ae.colors || new Colors();
-    colors.create();
     super.create();
 
     document.addEventListener(this.event_name, this.listen);

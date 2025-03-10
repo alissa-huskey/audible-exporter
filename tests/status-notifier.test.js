@@ -9,7 +9,7 @@ require("../src/util.js");
 require("../src/timer.js");
 require("../src/doc.js");
 require("../src/dom.js");
-require("../src/colors.js");
+require("../src/style.js");
 require("../src/status-notifier.js");
 
 describe("StatusNotifier", () => {
@@ -240,10 +240,10 @@ describe("StatusNotifier", () => {
       notifier.create();
 
       expect($(`#${s.wrapper}`)).toHaveLength(1);
-      expect($(`#${new Colors().selectors.wrapper}`)).toHaveLength(1);
+      expect($(`#${new Style().selectors.wrapper}`)).toHaveLength(1);
 
       expect(window.ae.notifier).toEqual(notifier);
-      expect(window.ae.colors).not.toBeNull();
+      expect(window.ae.style).not.toBeNull();
     });
 
     test(".reset()", () => {

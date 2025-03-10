@@ -58,10 +58,9 @@
 (D) 2025-03-07 @qa look into preformance (memory specifically) testing
 (Z) 2025-03-08 @feature Add an option to download as CSV. https://stackoverflow.com/questions/14964035/how-to-export-javascript-array-info-to-csv-on-client-side
 (B) 2025-03-08 @qa Make getLibrary() the first step. (would help with overall time estimate and quick download option.
-(B) 2025-03-08 @bug fix bug when compiled with babel (see: babel-bug.txt) https://babeljs.io/docs
+(A) 2025-03-08 @bug fix bug when compiled with babel (see: babel-bug.txt) https://babeljs.io/docs
 (C) 2025-03-08 @qa Move .show() and .hide() from modal/notifier to DOM. Use the .hidden class, not style.visibility.
 (C) 2025-03-08 @qa DOM Make sure all .create() functions check to make sure it doesn't exist first.
-(A) 2025-03-08 @qa DOM Get rid of individual css accessors and just combine it all into one style tag.
 (B) 2025-03-09 @ux Check to make sure the current wep page is on audible.com.
 (B) 2025-03-09 @ux Check to make sure the user is logged in.
 (B) 2025-03-09 @qa In fetch, check if the current page is the one being fetched, if so use document.body

@@ -4,7 +4,6 @@
  * @requires modal.js
  */
 StartModal = class extends Modal {
-  #css = null;
   #wrapper = null;
   #content = null;
   #close_btn = null;
@@ -15,7 +14,6 @@ StartModal = class extends Modal {
   title = "Export your audible library.";
 
   selectors = {
-    style: "ae-modal-css",
     wrapper: "ae-modal",
     content: "ae-content",
     head: "ae-head",
@@ -120,9 +118,7 @@ StartModal = class extends Modal {
       btn.element.addEventListener(
         "click",
         async (evt) => {
-          if (window.ae) {
-            window.ae.modal.remove();
-          }
+          window.ae?.modal?.remove();
 
           if (window.ae?.run) {
             await window.ae.run();
@@ -134,26 +130,6 @@ StartModal = class extends Modal {
       this.#start_btn = btn;
     }
     return this.#start_btn;
-  }
-
-  /* Static getters.
-   ***************************************************************************/
-
-  /**
-   * The CSS required to render this element.
-   *
-   * On build, the CSS_MARKER line will be replaced with the contents of
-   * notifier.css.
-   *
-   * @returns {string}
-   */
-  get css() {
-    if (!this.#css) {
-      this.#css = `
-        /* CSS_MARKER modal */
-      `;
-    }
-    return this.#css;
   }
 
   create() {

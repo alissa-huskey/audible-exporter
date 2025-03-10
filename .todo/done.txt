@@ -75,3 +75,4 @@ x 2025-03-09 2025-03-05 @qa @testing Look into browserling https://www.browserli
 x 2025-03-09 2025-03-05 @qa @testing Try playwright https://playwright.dev/
 x 2025-03-09 2025-03-05 @qa @testing Try blisk https://blisk.io/
 x 2025-03-09 2025-03-09 @readme Add note about 'allow pasting'
+x 2025-03-09 2025-03-08 @qa DOM Get rid of individual css accessors and just combine it all into one style tag.
