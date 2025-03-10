@@ -1,3 +1,6 @@
+require("./util.js");
+require("./parser.js");
+
 Page = class extends Parser {
   async fetchDoc(url) {
     let res;

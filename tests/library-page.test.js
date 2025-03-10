@@ -3,14 +3,7 @@
  */
 
 require("../src/dev.js");
-require("../src/util.js");
-require("../src/doc.js");
-require("../src/list.js");
-require("../src/parser.js");
-require("../src/page.js");
-require("../src/library-book-row.js");
 require("../src/library-page.js");
-require("../src/exporter.js");
 
 describe("LibraryPage", () => {
   let html = getFixtureFile("library-page-1-of-3.html");

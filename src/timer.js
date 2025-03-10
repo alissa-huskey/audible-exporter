@@ -16,6 +16,9 @@
       console.log(`That took: ${timer.seconds} seconds.`);
  *
  */
+
+require("./util.js");
+
 Timer = class {
   constructor(beginning = null, end = null, task = null) {
     this.beginning = beginning;

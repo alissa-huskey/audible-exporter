@@ -3,12 +3,6 @@
  */
 
 require("../src/dev.js");
-require("../src/util.js");
-require("../src/timer.js");
-require("../src/doc.js");
-require("../src/dom.js");
-require("../src/style.js");
-require("../src/status-notifier.js");
 require("../src/purchase-history-notifier.js");
 
 describe("PurchaseHistoryNotifier", () => {

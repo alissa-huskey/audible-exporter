@@ -1,3 +1,6 @@
+require("./library-book-row.js");
+require("./page.js");
+
 LibraryPage = class extends Page {
   #default_page_size = 20;
   #rows = null;

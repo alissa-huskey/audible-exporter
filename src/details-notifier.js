@@ -4,6 +4,10 @@
  *
  * @requires status-notifier.js
  */
+
+require("./util.js");
+require("./status-notifier.js");
+
 DetailsNotifier = class extends StatusNotifier {
   #item_no = null;
   #total = null;

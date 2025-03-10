@@ -6,35 +6,6 @@ const fs = require("fs");
 const path = require("path");
 
 require("../src/dev.js");
-require("../src/util.js");
-require("../src/timer.js");
-require("../src/doc.js");
-require("../src/list.js");
-require("../src/parser.js");
-require("../src/page.js");
-require("../src/book-page.js");
-require("../src/library-page.js");
-require("../src/library-book-row.js");
-require("../src/library-fetcher.js");
-require("../src/details-fetcher.js");
-require("../src/order-row.js");
-require("../src/purchase.js");
-require("../src/order-page.js");
-require("../src/orders-fetcher.js");
-require("../src/dom.js");
-require("../src/style.js");
-require("../src/modal.js");
-require("../src/start-modal.js");
-require("../src/download-modal.js");
-require("../src/status-notifier.js");
-require("../src/purchase-history-notifier.js");
-require("../src/order-notifier.js");
-require("../src/library-notifier.js");
-require("../src/details-notifier.js");
-require("../src/virtual-file.js");
-require("../src/json-file.js");
-require("../src/tsv-file.js");
-require("../src/result.js");
 require("../src/exporter.js");
 
 describe("Exporter", () => {

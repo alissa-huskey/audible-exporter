@@ -1,3 +1,6 @@
+require("./util.js");
+require("./doc.js");
+
 Parser = class {
   #doc = null;
   _fields = [];

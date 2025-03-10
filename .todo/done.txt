@@ -77,3 +77,4 @@ x 2025-03-09 2025-03-05 @qa @testing Try blisk https://blisk.io/
 x 2025-03-09 2025-03-09 @readme Add note about 'allow pasting'
 x 2025-03-09 2025-03-08 @qa DOM Get rid of individual css accessors and just combine it all into one style tag.
 x 2025-03-09 2025-03-09 @housekeeping Remove build dir from repo, add audible-export.js at top level.
+x 2025-03-10 2025-03-09 @housekeeping look into using requires and see if there's a way to compile everything to a flat file.

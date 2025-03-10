@@ -1,6 +1,10 @@
 /**
  * Modal pop-up window for downloading the export.
  */
+
+require("./util.js");
+require("./modal.js");
+
 DownloadModal = class extends Modal {
   #wrapper = null;
   #head = null;

@@ -3,11 +3,11 @@
  *
  * Parse the book details from an audible book page.
  *
- * @requires util.js
- * @requires doc.js
- * @requires page.js
- * @requires book-page.js
  */
+
+require("./util.js");
+require("./page.js");
+
 BookPage = class extends Page {
   #category_types = ["Fiction", "Nonfiction"];
 

@@ -65,9 +65,9 @@
 (B) 2025-03-09 @ux Check to make sure the user is logged in.
 (B) 2025-03-09 @qa In fetch, check if the current page is the one being fetched, if so use document.body
 (C) 2025-03-09 @qa look into switching everything to query selectors.
-(B) 2025-03-09 @housekeeping look into using requires and see if there's a way to compile everything to a flat file.
 (C) 2025-03-09 @qa @testing Check to see if it runs on a phone.
 (A) 2025-03-09 @bug In safari, it seems to stall out after Purchase History.
 (B) 2025-03-09 @ux Try design with console docked side, looks funny now.
 (A) 2025-03-09 @bug Fix edge bugs
 (D) 2025-03-09 @qa @testing Write a simple testcafe test.
+(B) 2025-03-10 @qa @gulpfile Make sure gulp works if build/dist dirs are missing.

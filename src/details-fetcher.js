@@ -4,6 +4,11 @@
  * Fetch book pages to gather additional details for all objects in the library
  * array.
  */
+
+require("./util.js");
+require("./timer.js");
+require("./book-page.js");
+
 DetailsFetcher = class {
   #books = {};
 

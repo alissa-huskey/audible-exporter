@@ -1,3 +1,6 @@
+require("./util.js");
+require("./parser.js");
+
 LibraryBookRow = class extends Parser {
   _fields = ["id", "url", "title", "author", "narrator", "series"];
   _identifers = ["page_num", "row_num"];

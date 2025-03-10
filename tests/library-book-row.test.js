@@ -3,10 +3,6 @@
  */
 
 require("../src/dev.js");
-require("../src/util.js");
-require("../src/doc.js");
-require("../src/list.js");
-require("../src/parser.js");
 require("../src/library-book-row.js");
 
 describe("LibraryBookRow", () => {

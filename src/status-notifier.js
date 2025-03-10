@@ -1,3 +1,4 @@
+require("./timer.js");
 require("./styled.js");
 
 StatusNotifier = class extends Styled {

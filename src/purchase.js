@@ -1,3 +1,6 @@
+require("./util.js");
+require("./parser.js");
+
 Purchase = class extends Parser {
   _fields = {
     id: "data-order-item-asin",

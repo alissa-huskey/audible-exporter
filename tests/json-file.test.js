@@ -3,8 +3,6 @@
  */
 
 require("../src/dev.js");
-require("../src/util.js");
-require("../src/virtual-file.js");
 require("../src/json-file.js");
 
 describe("JSONFile", () => {

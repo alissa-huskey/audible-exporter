@@ -1,3 +1,18 @@
+require("./util.js");
+require("./timer.js");
+require("./library-fetcher.js");
+require("./details-fetcher.js");
+require("./orders-fetcher.js");
+require("./start-modal.js");
+require("./download-modal.js");
+require("./purchase-history-notifier.js");
+require("./order-notifier.js");
+require("./library-notifier.js");
+require("./details-notifier.js");
+require("./json-file.js");
+require("./tsv-file.js");
+require("./result.js");
+
 /**
  * Event listener to create the export file and start the download.
  */

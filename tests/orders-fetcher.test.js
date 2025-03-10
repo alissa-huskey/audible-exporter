@@ -5,15 +5,6 @@
 const glob = require("glob").sync;
 
 require("../src/dev.js");
-require("../src/util.js");
-require("../src/doc.js");
-require("../src/list.js");
-require("../src/timer.js");
-require("../src/parser.js");
-require("../src/page.js");
-require("../src/purchase.js");
-require("../src/order-row.js");
-require("../src/order-page.js");
 require("../src/orders-fetcher.js");
 
 describe("OrdersFetcher", () => {

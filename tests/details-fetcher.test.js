@@ -3,13 +3,6 @@
  */
 
 require("../src/dev.js");
-require("../src/util.js");
-require("../src/timer.js");
-require("../src/doc.js");
-require("../src/list.js");
-require("../src/parser.js");
-require("../src/page.js");
-require("../src/book-page.js");
 require("../src/details-fetcher.js");
 
 describe("DetailsFetcher", () => {

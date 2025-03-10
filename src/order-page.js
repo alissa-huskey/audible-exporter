@@ -1,3 +1,8 @@
+require("./util.js");
+require("./page.js");
+require("./order-row.js");
+require("./purchase.js");
+
 OrderPage = class extends Page {
   base_url = "https://www.audible.com/account/purchase-history?tf=orders";
 

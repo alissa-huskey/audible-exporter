@@ -1,3 +1,6 @@
+require("./util.js");
+require("./virtual-file.js");
+
 TSVFile = class extends VirtualFile {
   #headers = null;
   #rows = null;

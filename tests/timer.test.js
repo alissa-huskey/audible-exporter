@@ -1,5 +1,4 @@
 require("../src/dev.js");
-require("../src/util.js");
 require("../src/timer.js");
 
 describe("Timer", () => {

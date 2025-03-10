@@ -1,3 +1,6 @@
+require("./util.js");
+require("./status-notifier.js");
+
 PurchaseHistoryNotifier = class extends StatusNotifier {
   #year = null;
   #years = null;

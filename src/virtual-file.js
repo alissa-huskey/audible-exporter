@@ -1,3 +1,5 @@
+require("./util.js");
+
 VirtualFile = class {
   #contents = null;
 

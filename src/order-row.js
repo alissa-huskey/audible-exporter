@@ -1,3 +1,6 @@
+require("./util.js");
+require("./parser.js");
+
 OrderRow = class extends Parser {
   _fields = ["id", "date", "total"];
 
