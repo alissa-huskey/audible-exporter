@@ -3,6 +3,11 @@
  *
  * @requires dom.js
  */
+
+require("./util.js");
+require("./doc.js");
+require("./dom.js");
+
 Colors = class extends DOM {
   #style = null;
   #css = null;
@@ -40,7 +45,7 @@ Colors = class extends DOM {
    */
   create() {
     super.create();
-    window.ae.colors ||= this;
+    window.ae.colors = window.ae.colors || this;
   }
 
   /**

@@ -1,10 +1,11 @@
 /**
  * Modal popup windows.
- *
- * @requires util.js
- * @requires doc.js
- * @requires dom.js
  */
+
+require("./util.js");
+require("./dom.js");
+require("./colors.js");
+
 Modal = class extends DOM {
   #css = null;
   #wrapper = null;
@@ -117,7 +118,7 @@ Modal = class extends DOM {
    * Add the wrapper HTML element to the DOM.
    */
   create() {
-    window.ae.modal ||= this;
+    window.ae.modal = window.ae.modal || this;
     let colors = window.ae.colors || new Colors();
     colors.create();
     super.create();

@@ -4,12 +4,6 @@
 
 const $ = require("jquery");
 
-require("../src/dev.js");
-require("../src/util.js");
-require("../src/doc.js");
-require("../src/list.js");
-require("../src/dom.js");
-require("../src/colors.js");
 require("../src/modal.js");
 
 describe("Modal", () => {

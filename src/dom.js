@@ -4,6 +4,10 @@
  * @requires util.js
  * @requires doc.js
  */
+
+require("./util.js");
+require("./doc.js");
+
 DOM = class {
   #style = null;
   #css = null;
@@ -11,7 +15,7 @@ DOM = class {
   constructor() {
     this.#style = null;
     this.#css = null;
-    window.ae ||= {};
+    window.ae = window.ae || {};
   }
 
   /**
