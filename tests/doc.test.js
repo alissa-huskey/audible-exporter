@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-require("../src/dev.js");
-require("../src/util.js");
-require("../src/list.js");
 require("../src/doc.js");
 
 describe("Doc", () => {

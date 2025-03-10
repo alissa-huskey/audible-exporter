@@ -1,3 +1,6 @@
+require("./util.js");
+require("./doc.js");
+
 List = class extends Array {
   constructor(items) {
     items = Array.from(items);

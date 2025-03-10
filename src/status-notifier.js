@@ -1,4 +1,6 @@
-StatusNotifier = class extends DOM {
+require("./styled.js");
+
+StatusNotifier = class extends Styled {
   #wrapper = null;
   #bar = null;
   #status = null;

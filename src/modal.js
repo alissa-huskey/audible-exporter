@@ -1,11 +1,11 @@
 /**
  * Modal popup windows.
- *
- * @requires util.js
- * @requires doc.js
- * @requires dom.js
  */
-Modal = class extends DOM {
+
+require("./util.js");
+require("./styled.js");
+
+Modal = class extends Styled {
   #wrapper = null;
   #head = null;
   #content = null;

@@ -3,6 +3,10 @@
  *
  * @requires modal.js
  */
+
+require("./util.js");
+require("./modal.js");
+
 StartModal = class extends Modal {
   #wrapper = null;
   #content = null;

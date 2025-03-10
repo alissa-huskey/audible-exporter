@@ -4,6 +4,10 @@
  * @requires util.js
  * @requires list.js
  */
+
+require("./util.js");
+require("./list.js");
+
 Doc = class {
   /**
    * Constructor.

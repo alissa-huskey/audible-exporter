@@ -1,8 +1,9 @@
 /**
  * Create a <style> tag for CSS.
- *
- * @requires dom.js
  */
+
+require("./dom.js");
+
 Style = class extends DOM {
   #wrapper = null;
   #css = null;

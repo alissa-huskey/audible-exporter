@@ -24,3 +24,14 @@ Colors
 
 * [](https://www.digitalocean.com/community/tutorials/getting-started-with-data-visualization-using-javascript-and-the-d3-library)
   A nice color scheme in the code examples.
+
+Browserify
+----------
+
+https://browserify.org/
+
+`browserify main.js -o bundle.js`
+
+`browserify src/start-modal.js -o dist/start-modal.js`
+
+Pending refactoring CSS so that only one inject-css task will be needed.
