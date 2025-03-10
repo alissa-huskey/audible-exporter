@@ -1,7 +1,5 @@
 /**
  * Modal pop-up window for starting the exporter.
- *
- * @requires modal.js
  */
 
 require("./util.js");

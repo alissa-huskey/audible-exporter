@@ -1,12 +1,8 @@
 /**
  * Wraper for HTMLElements.
- *
- * @requires util.js
- * @requires list.js
  */
 
 require("./util.js");
-require("./list.js");
 
 Doc = class {
   /**
@@ -35,30 +31,15 @@ Doc = class {
   }
 
   /**
-   * Shortcut for this.element.append().
+   * Convert a HTMLCollection of HTMLElements to an Array of Docs.
    *
-   * @params {...Doc,HTMLElement,string}  Child or children to append.
-   */
-  append(...children) {
-    children.forEach((child) => {
-      if (child instanceof Doc) {
-        child = child.element;
-      }
-      this.element.append(child);
-    });
-  }
-
-  /**
-   * Create a Doc object from raw HTML.
+   * @param {HTMLCollection} collection
    *
-   * @params {string} text
+   * @returns {Doc[]}
    */
-  static from_html(text) {
-    let html = document.createElement("html");
-    html.innerHTML = text;
-
-    let elm = new Doc(html);
-    return elm;
+  static toArray(collection) {
+    let elements = Array.from(collection);
+    return elements.map((item) => new Doc(item));
   }
 
   /**
@@ -98,10 +79,10 @@ Doc = class {
   /**
    * Shorthand for document.getElementsByClassName.
    *
-   * @returns {List}
+   * @returns {Array}
    */
   static gc(name) {
-    return new List(document.getElementsByClassName(name));
+    return Doc.toArray(document.getElementsByClassName(name));
   }
 
   /**
@@ -117,10 +98,10 @@ Doc = class {
   /**
    * Shorthand for document.getElementsByTagName.
    *
-   * @returns {List}
+   * @returns {Array}
    */
   static gt(name) {
-    return new List(document.getElementsByTagName(name));
+    return Doc.toArray(document.getElementsByTagName(name));
   }
 
   /**
@@ -136,23 +117,23 @@ Doc = class {
   /**
    * Shorthand for document.querySelectorAll.
    *
-   * @returns {List}
+   * @returns {Array}
    */
   static qsa(query) {
     let res = document.querySelectorAll(query);
-    return new List(res);
+    return Doc.toArray(res);
   }
 
   /**
    * Shorthand for element.getElementsByClassName.
    *
-   * @returns {List}
+   * @returns {Array}
    */
   gc(name) {
     if (!this.element) return [];
 
     let res = this.element.getElementsByClassName(name);
-    return new List(res);
+    return Doc.toArray(res);
   }
 
   /**
@@ -167,23 +148,23 @@ Doc = class {
   /**
    * Shorthand for element.getElementsByTagName.
    *
-   * @returns {List}
+   * @returns {Array}
    */
   gt(name) {
     if (!this.element) return [];
 
     let res = this.element.getElementsByTagName(name);
-    return new List(res);
+    return Doc.toArray(res);
   }
 
   /**
    * Shorthand for element.querySelectorAll.
    *
-   * @returns {List}
+   * @returns {Array}
    */
   qs(query) {
     let res = this.element.querySelectorAll(query);
-    return new List(res);
+    return Doc.toArray(res);
   }
 
   /**
@@ -208,6 +189,20 @@ Doc = class {
   qsf(query) {
     let res = this.element.querySelector(query);
     return new Doc(res);
+  }
+
+  /**
+   * Shortcut for this.element.append().
+   *
+   * @params {...Doc,HTMLElement,string}  Child or children to append.
+   */
+  append(...children) {
+    children.forEach((child) => {
+      if (child instanceof Doc) {
+        child = child.element;
+      }
+      this.element.append(child);
+    });
   }
 
   /**

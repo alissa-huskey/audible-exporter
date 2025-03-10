@@ -1,8 +1,6 @@
 /**
  * Status notifier displayed to the user during the "Additional details"
  * step.
- *
- * @requires status-notifier.js
  */
 
 require("./util.js");

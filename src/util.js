@@ -41,10 +41,6 @@ isEmpty = function (o) {
 
   let type = o.constructor.name;
 
-  if (type == "List") {
-    return o.length == 0;
-  }
-
   if (!(type in EMPTIES)) {
     throw new Error(`isEmpty() does not support type: ${type} (value: ${o}).`);
   }
@@ -159,3 +155,15 @@ delay = (ms) =>
   new Promise((res) => {
     setTimeout(res, ms);
   });
+
+Object.defineProperty(Array.prototype, "first", {
+  get: function () {
+    return this[0];
+  },
+});
+
+Object.defineProperty(Array.prototype, "last", {
+  get: function () {
+    return this.slice(-1)[0];
+  },
+});

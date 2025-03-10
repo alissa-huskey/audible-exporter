@@ -17,7 +17,7 @@ describe("Doc", () => {
     `;
   });
 
-  test("Doc()", () => {
+  test("new Doc()", () => {
     let e = new Doc();
     expect(e).toBeA(Doc);
   });
@@ -55,20 +55,30 @@ describe("Doc", () => {
     expect(e.element.innerHTML).toBe("hello");
   });
 
+  test("Doc.toArray()", () => {
+    let items = document.getElementsByTagName("li");
+    let arr = Doc.toArray(items);
+
+    expect(arr).toBeA(Array);
+    expect(arr).toHaveLength(3);
+    expect(arr[0]).toBeA(Doc);
+    expect(arr[0].element).toBeA(HTMLLIElement);
+  });
+
   test("Doc.gt()", () => {
     let items = Doc.gt("ul");
 
-    expect(items).toBeA(List);
-    expect(items.length).toBe(1);
-    expect(items[0].element.tagName).toBe("UL");
+    expect(items).toBeA(Array);
+    expect(items).toHaveLength(1);
+    expect(items[0].element).toBeA(HTMLUListElement);
   });
 
   test("Doc.gc()", () => {
     let items = Doc.gc("selected");
 
-    expect(items).toBeA(List);
-    expect(items.length).toBe(1);
-    expect(items[0].element.tagName).toBe("LI");
+    expect(items).toBeA(Array);
+    expect(items).toHaveLength(1);
+    expect(items[0].element).toBeA(HTMLLIElement);
   });
 
   test("Doc.gi()", () => {
@@ -89,20 +99,6 @@ describe("Doc", () => {
     expect(element.element.id).toBe("nav");
   });
 
-  test("Doc.from_html()", () => {
-    let element = Doc.from_html(
-      "<html><head></head><body><p>hello</p></body></html>",
-    );
-    expect(element.element.tagName).toBe("HTML");
-    expect(element.element.lastChild?.lastChild?.tagName).toBe("P");
-    expect(element.element.lastChild?.lastChild?.innerHTML).toBe("hello");
-
-    element = Doc.from_html("<p>hello</p>", "p");
-    expect(element.element.tagName).toBe("HTML");
-    expect(element.element.lastChild?.lastChild?.tagName).toBe("P");
-    expect(element.element.lastChild?.lastChild?.innerHTML).toBe("hello");
-  });
-
   test(".gi()", () => {
     let element = new Doc(document.getElementById("wrapper"));
     let res = element.gi("list");
@@ -115,8 +111,8 @@ describe("Doc", () => {
     let element = new Doc(document.getElementById("wrapper"));
     let res = element.gt("li");
 
-    expect(res).toBeA(List);
-    expect(res.length).toBe(3);
+    expect(res).toBeA(Array);
+    expect(res).toHaveLength(3);
     expect(res[0]).toBeA(Doc);
   });
 
@@ -124,7 +120,7 @@ describe("Doc", () => {
     let element = new Doc(document.getElementById("wrapper"));
     let res = element.gc("selected");
 
-    expect(res).toBeA(List);
+    expect(res).toBeA(Array);
     expect(res[0].attributes["class"].value).toBe("selected");
   });
 
@@ -157,8 +153,8 @@ describe("Doc", () => {
     let element = new Doc(document.getElementById("wrapper"));
     let res = element.qs("li");
 
-    expect(res).toBeA(List);
-    expect(res.length).toBe(3);
+    expect(res).toBeA(Array);
+    expect(res).toHaveLength(3);
   });
 
   test(".set()", () => {
