@@ -22,7 +22,7 @@ describe("OrderNotifier", () => {
   });
 
   test(".year =", () => {
-    notifier = new OrderNotifier(5, ["2025", "2024", "2023"]);
+    let notifier = new OrderNotifier(5, ["2025", "2024", "2023"]);
     notifier.year = "2024";
 
     expect(notifier.year).toBe("2024");
@@ -30,7 +30,7 @@ describe("OrderNotifier", () => {
   });
 
   test(".year_page = ", () => {
-    notifier = new OrderNotifier(5, ["2025", "2024", "2023"]);
+    let notifier = new OrderNotifier(5, ["2025", "2024", "2023"]);
     notifier.year_page = 2;
 
     expect(notifier.year_page).toBe(2);
@@ -38,7 +38,7 @@ describe("OrderNotifier", () => {
   });
 
   test(".item_no =", () => {
-    notifier = new OrderNotifier(5, ["2025", "2024", "2023"]);
+    let notifier = new OrderNotifier(5, ["2025", "2024", "2023"]);
     notifier.item_no = 2;
 
     expect(notifier.item_no).toBe(2);
@@ -47,7 +47,7 @@ describe("OrderNotifier", () => {
   });
 
   test(".page_count = ", () => {
-    notifier = new OrderNotifier(5, ["2025", "2024", "2023"]);
+    let notifier = new OrderNotifier(5, ["2025", "2024", "2023"]);
     notifier.page_count = 2;
 
     expect(notifier.page_count).toBe(2);
@@ -55,7 +55,7 @@ describe("OrderNotifier", () => {
   });
 
   test(".message", () => {
-    notifier = new OrderNotifier(5, ["2025", "2024", "2023"]);
+    let notifier = new OrderNotifier(5, ["2025", "2024", "2023"]);
     expect(notifier.message).toBe("Retrieving purchases...");
 
     notifier.year = "2024";
@@ -90,7 +90,7 @@ describe("OrderNotifier", () => {
     fireEvent({ page_count: 2 });
     expect(notifier.page_count).toBe(2);
 
-    timer = new Timer();
+    let timer = new Timer();
     fireEvent({ timer: timer });
     expect(notifier.times).toEqual([timer]);
 

@@ -17,9 +17,9 @@ describe("List", () => {
     </div>
   `;
 
-  doc = toDoc(document.body.innerHTML);
-  elements = document.getElementsByTagName("li");
-  items = new List(elements);
+  let doc = toDoc(document.body.innerHTML);
+  let elements = document.getElementsByTagName("li");
+  let items = new List(elements);
 
   test("constructor", () => {
     expect(elements.length).toBe(3);

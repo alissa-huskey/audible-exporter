@@ -39,7 +39,7 @@ require("../src/exporter.js");
 
 describe("Exporter", () => {
   test("new Exporter()", () => {
-    exporter = new Exporter();
+    let exporter = new Exporter();
 
     expect(exporter).toBeA(Exporter);
     expect(window.ae).toEqual(exporter);
@@ -165,14 +165,14 @@ describe("Exporter", () => {
   });
 
   test("downloadReady()", () => {
-    exporter = new Exporter();
+    let exporter = new Exporter();
     exporter.downloadReady();
 
     expect(exporter.modal.wrapper.style.display).toBe("block");
   });
 
   test("download()", async () => {
-    exporter = new Exporter();
+    let exporter = new Exporter();
     exporter.results = ["a", "b", "c"];
 
     exporter.modal = new DownloadModal();

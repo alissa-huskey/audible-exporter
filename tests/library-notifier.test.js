@@ -51,7 +51,7 @@ describe("LibraryNotifier", () => {
     fireEvent({ item_no: 3 });
     expect(notifier.item_no).toBe(3);
 
-    timer = new Timer();
+    let timer = new Timer();
     fireEvent({ timer: timer });
     expect(notifier.times).toEqual([timer]);
 

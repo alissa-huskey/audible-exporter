@@ -20,7 +20,7 @@ describe("OrdersFetcher", () => {
   let base_url = new OrderPage().base_url;
 
   test("new OrdersFetcher()", () => {
-    orders = new OrdersFetcher();
+    let orders = new OrdersFetcher();
     expect(orders).toBeA(OrdersFetcher);
   });
 
@@ -35,7 +35,7 @@ describe("OrdersFetcher", () => {
 
     Page.prototype.fetchDoc = mockFn;
 
-    orders = new OrdersFetcher();
+    let orders = new OrdersFetcher();
     await orders.init();
 
     expect(mockFn.mock.calls).toHaveLength(4);
@@ -64,7 +64,7 @@ describe("OrdersFetcher", () => {
 
     Page.prototype.fetchDoc = mockFn;
 
-    orders = new OrdersFetcher();
+    let orders = new OrdersFetcher();
     await orders.init(1);
 
     expect(mockFn.mock.calls).toHaveLength(2);
@@ -90,7 +90,7 @@ describe("OrdersFetcher", () => {
 
     Page.prototype.fetchDoc = mockFetchDocs(docs);
 
-    orders = new OrdersFetcher();
+    let orders = new OrdersFetcher();
     orders.pages = [
       new OrderPage(fixtureDoc("order-page-2025-1-of-1.html")),
       new OrderPage(fixtureDoc("order-page-2024-1-of-2.html")),
@@ -110,7 +110,7 @@ describe("OrdersFetcher", () => {
     let mockFn = mockFetchDocs([doc]);
     Page.prototype.fetchDoc = mockFn;
 
-    orders = new OrdersFetcher();
+    let orders = new OrdersFetcher();
     orders.pages = [
       new OrderPage(doc),
       new OrderPage(2024, 1),
@@ -141,7 +141,7 @@ describe("OrdersFetcher", () => {
       },
     ];
 
-    orders = new OrdersFetcher();
+    let orders = new OrdersFetcher();
     orders.pages = pages;
 
     expect(orders.count).toBe(6);

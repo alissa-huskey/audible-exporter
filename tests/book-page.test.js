@@ -57,8 +57,10 @@ describe("NormalBookPage", () => {
   });
 
   test(".date", () => {
-    page.date = "09-28-12";
-    expect(page.release_date).toBe("2023 Jan 12");
+    jest
+      .spyOn(NormalBookPage.prototype, "date", "get")
+      .mockReturnValue("09-28-12");
+    expect(page.release_date).toBe("2012 Sep 28");
   });
 
   test(".duration_minutes", () => {

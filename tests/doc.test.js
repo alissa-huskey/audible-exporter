@@ -27,7 +27,7 @@ describe("Doc", () => {
 
   test("Doc(HTMLElement())", () => {
     let elm = document.getElementById("wrapper");
-    element = new Doc(elm);
+    let element = new Doc(elm);
 
     expect(element.id).toBe("wrapper");
     expect(element.element).toBeA(HTMLDivElement);
@@ -108,61 +108,59 @@ describe("Doc", () => {
 
   test(".gi()", () => {
     let element = new Doc(document.getElementById("wrapper"));
-    res = element.gi("list");
+    let res = element.gi("list");
 
-    expect(res.constructor?.name).toBe("Doc");
+    expect(res).toBeA(Doc);
     expect(res.element.tagName).toBe("UL");
   });
 
   test(".gt()", () => {
     let element = new Doc(document.getElementById("wrapper"));
-    res = element.gt("li");
+    let res = element.gt("li");
 
-    expect(res.constructor?.name).toBe("List");
+    expect(res).toBeA(List);
     expect(res.length).toBe(3);
-    expect(res[0].constructor?.name).toBe("Doc");
+    expect(res[0]).toBeA(Doc);
   });
 
   test(".gc()", () => {
     let element = new Doc(document.getElementById("wrapper"));
+    let res = element.gc("selected");
 
-    res = element.gc("selected");
-
-    expect(res.constructor?.name).toBe("List");
+    expect(res).toBeA(List);
     expect(res[0].attributes["class"].value).toBe("selected");
   });
 
   test(".gtf()", () => {
     let element = new Doc(document.getElementById("wrapper"));
-    res = element.gtf("li");
+    let res = element.gtf("li");
 
-    expect(res.constructor?.name).toBe("Doc");
+    expect(res).toBeA(Doc);
     expect(res.element.tagName).toBe("LI");
   });
 
   test(".gc()", () => {
     let element = new Doc(document.getElementById("wrapper"));
+    let res = element.gcf("selected");
 
-    res = element.gcf("selected");
-
-    expect(res.constructor?.name).toBe("Doc");
+    expect(res).toBeA(Doc);
     expect(res.element.attributes["class"].value).toBe("selected");
   });
 
   test(".qsf()", () => {
     let element = new Doc(document.getElementById("wrapper"));
-    res = element.qsf("li");
+    let res = element.qsf("li");
 
-    expect(res.constructor?.name).toBe("Doc");
+    expect(res).toBeA(Doc);
     expect(res.tagName).toBe("LI");
     expect(res.innerHTML).toBe("a");
   });
 
   test(".qs()", () => {
     let element = new Doc(document.getElementById("wrapper"));
-    res = element.qs("li");
+    let res = element.qs("li");
 
-    expect(res.constructor?.name).toBe("List");
+    expect(res).toBeA(List);
     expect(res.length).toBe(3);
   });
 

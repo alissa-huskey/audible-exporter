@@ -11,7 +11,7 @@ Parser = class {
     if (value) {
       if (!value) return;
 
-      if (value.constructor.name != "Doc") {
+      if (!(value instanceof Doc)) {
         value = new Doc(value);
       }
 

@@ -54,7 +54,7 @@ isEmpty = function (o) {
 
 tryFloat = function (o) {
   try {
-    f = parseFloat(o);
+    let f = parseFloat(o);
     return isNaN(f) ? o : f;
   } catch (err) {
     return o;
@@ -422,7 +422,7 @@ Parser = class {
     if (value) {
       if (!value) return;
 
-      if (value.constructor.name != "Doc") {
+      if (!(value instanceof Doc)) {
         value = new Doc(value);
       }
 
@@ -545,7 +545,7 @@ Purchase = class extends Parser {
     return Object.fromEntries(
       Object.entries(this._fields).map(([key, attr]) => [
         key,
-        this.doc.attributes[attr].value,
+        this.doc.attributes?.[attr]?.value,
       ]),
     );
   }

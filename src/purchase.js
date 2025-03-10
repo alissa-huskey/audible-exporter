@@ -17,7 +17,7 @@ Purchase = class extends Parser {
     return Object.fromEntries(
       Object.entries(this._fields).map(([key, attr]) => [
         key,
-        this.doc.attributes[attr].value,
+        this.doc.attributes?.[attr]?.value,
       ]),
     );
   }

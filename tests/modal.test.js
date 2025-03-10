@@ -22,8 +22,8 @@ describe("Modal", () => {
   test(".create()", () => {
     modal.create();
 
-    modals = $(`.${modal.selectors.wrapper}`);
-    style = $(`#${new Style().selectors.wrapper}`);
+    let modals = $(`.${modal.selectors.wrapper}`);
+    let style = $(`#${new Style().selectors.wrapper}`);
 
     expect(modals).toHaveLength(1);
     expect(modals[0]).toBeA(HTMLDivElement);

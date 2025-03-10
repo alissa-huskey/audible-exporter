@@ -54,7 +54,7 @@ isEmpty = function (o) {
 
 tryFloat = function (o) {
   try {
-    f = parseFloat(o);
+    let f = parseFloat(o);
     return isNaN(f) ? o : f;
   } catch (err) {
     return o;
