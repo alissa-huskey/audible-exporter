@@ -172,14 +172,18 @@ Doc = class {
    *
    * @returns {Doc}
    */
-  gcf = (name) => this.gc(name)[0];
+  gcf(name) {
+    return this.gc(name)[0];
+  }
 
   /**
    * First result of element.getElementsByTagName.
    *
    * @returns {Doc}
    */
-  gtf = (name) => this.gt(name)[0];
+  gtf(name) {
+    return this.gt(name)[0];
+  }
 
   /**
    * Shorthand for element.querySelector.

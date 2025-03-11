@@ -85,3 +85,4 @@ x 2025-03-10 2025-03-05 @qa @detail-notifier Add error handling for if .item_no 
 x 2025-03-10 2025-03-05 @qa @testing Try testcafe https://testcafe.io/
 x 2025-03-10 2025-03-05 @qa @testing Try testcafe https://testcafe.io/
 x 2025-03-10 2025-03-05 @qa @testing Look into snapshot testing https://jestjs.io/docs/snapshot-testing
+x 2025-03-10 2025-03-10 @tools Make sure gulp works if build/dist dirs are missing.
