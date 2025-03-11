@@ -3,3 +3,5 @@ tmp
 .vim-bookmarks
 .gutctags
 build/*
+tests/integration/runners/*
+tests/integration/scripts/*

@@ -9,6 +9,7 @@ const { src, dest, task, series, parallel, done } = require("gulp");
 
 const fs = require("fs");
 const glob = require("glob").sync;
+const path = require("path");
 
 let log = console.log;
 
@@ -18,6 +19,8 @@ let dirs = {
   tmp: "build/tmp",
   dist: "dist",
   comp: "build/components",
+  test: "tests/integration/scripts",
+  run: "tests/integration/runners",
 };
 
 /**
@@ -99,3 +102,35 @@ task("final", () => {
 task("components", series("copy", "style", "dom"));
 task("exporter", series("copy", "style", "bundle", "final"));
 task("default", parallel("components", "exporter"));
+
+appendRunners = function (done) {
+  let files = glob(`${dirs.test}/*.js`).filter((filename) => {
+    let name = path.basename(filename);
+    let runner = `${dirs.run}/${name}`;
+    return fs.existsSync(runner);
+  });
+
+  const tasks = files.map((filename) => {
+    let name = path.basename(filename);
+    let runner = fs.readFileSync(`${dirs.run}/${name}`, "utf8");
+    return () => src(filename)
+      .pipe(using({}))
+      .pipe(replace(/\/\/ __RUNNER__/, (_) => `${runner}`))
+      .pipe(dest(dirs.test));
+  });
+
+  return series(...tasks, (seriesDone) => {
+    seriesDone();
+    done();
+  })();
+};
+
+task("test-scripts", () => {
+  return src([`${dirs.comp}/*.js`, `${dirs.dist}/*.js`])
+    .pipe(using({}))
+    .pipe(replace(/^/, (_) => "window.addEventListener('DOMContentLoaded', function () {"))
+    .pipe(replace(/$/, (_) => "// __RUNNER__\n});"))
+    .pipe(dest(dirs.test))
+});
+
+task("test", series("components", "test-scripts", appendRunners));
