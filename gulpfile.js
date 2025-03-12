@@ -1,136 +1,185 @@
-const babel = require("gulp-babel");
-const concat = require("gulp-concat");
-const esbuild = require('gulp-esbuild')
-const rename = require("gulp-rename");
-const replace = require("gulp-replace");
-const using = require("gulp-using");
+var fs      = require("fs"),
+    path    = require("path"),
+    Tree    = require("dependency-tree");
 
-const { src, dest, task, series, parallel, done } = require("gulp");
+var clean   = require("gulp-clean"),
+    concat  = require("gulp-concat"),
+    rename  = require("gulp-rename"),
+    replace = require("gulp-replace"),
+    through = require("gulp-through2"),
+    using   = require("gulp-using");
 
-const fs = require("fs");
-const glob = require("glob").sync;
-const path = require("path");
+var {
+  src,
+  dest,
+  task,
+  series,
+  parallel,
+  done
+}           = require("gulp");
 
-let log = console.log;
+/* GLOBAL VARIABLES
+ ******************************************************************************/
 
-let dirs = {
-  src: "src",
-  build: "build",
-  tmp: "build/tmp",
-  dist: "dist",
-  comp: "build/components",
-  test: "tests/integration/scripts",
-  run: "tests/integration/runners",
+var log = console.log;
+
+var dirs = {
+  src    : "src",               // source code
+  build  : "build",             // root build directory
+  prep   : "build/prepped",     // injected source code
+  dev    : "build/dev",         // bundled files testing
+  dist   : "dist",              // for release
 };
 
-/**
- * Inject the contents of a CSS file in a style.js save to build/tmp/.
- */
-task("style", (cb) => {
-  let files = glob(`${dirs.src}/*.css`);
-  let css = files.reduce(
-    (text, filename) => text + fs.readFileSync(filename).toString(),
-    "",
-  );
+/* PLUGINS
+ ******************************************************************************/
 
-  return src([`${dirs.src}/style.js`])
-    .pipe(using({}))
-    .pipe(replace(/\s*\/\* CSS_MARKER \*\/\n/, (_) => `\n${css}`))
-    .pipe(dest(dirs.build));
-});
-
-/**
- * Compile all Javascript source code with babel for backwards compatibility
- * and save to build/.
+/*
+ * Plugin to replace a pattern in a file with the contents of another file.
  *
- * Out of date and not currently used.
+ * @param {string, regex}  pattern       The pattern to search for.
+ * @param {string, object, array} file_pattern  A string of the file to replace with
+ *                                       or an object containing any of the
+ *                                       following keys:
+ *
+ *                                       dirname, prefix, stem, suffix, extname
+ *
  */
-task("babel", () => {
-  return src([`${dirs.src}/*.js`, `${dirs.tmp}/style.js`])
-    .pipe(using({}))
-    .pipe(babel({ presets: ["@babel/preset-env"] }))
-    .pipe(replace('"use strict";', (_) => ""))
-    .pipe(replace("CONSOLE_OUTPUT = false", (_) => "CONSOLE_OUTPUT = true"))
-    .pipe(dest(dirs.build))
-});
+var inject = (pattern, file_pattern) => through(
+  (content, file) => {
+    if (typeof file_pattern == "string") {
+      source = file_pattern;
+    } else {
+      filename = [
+        file_pattern.prefix || "",
+        file_pattern.stem || file.stem,
+        file_pattern.suffix || "",
+        file_pattern.extname || file.extname,
+      ].join("");
 
+      source = path.join(
+        file_pattern.dirname || file.dirname,
+        filename,
+      );
+    }
+
+    replacement = fs.readFileSync(source);
+    text = content.replace(pattern, `\n${replacement}`);
+    return text;
+  },
+);
 
 /**
- * Copy all javascript to the build directory.
+ * Plugin to bundle all files the dependency tree of a given entry point into
+ * one file.
+ */
+var bundle = () => through(
+  (content, file) => {
+    let tree = Tree.toList({
+      filename: file.path,
+      directory: file.dirname,
+    });
+
+    let js = tree.reduce(
+      (text, fn) => text + fs.readFileSync(fn),
+      ""
+    );
+
+    return js;
+  },
+);
+
+/* TASKS
+ ******************************************************************************/
+
+/**
+ * No-op to make sure the gulpfile has no errors.
+ */
+task("ok", (done) => { done(); });
+
+/**
+ * Remove the build directory.
+ */
+task("clean", () => {
+  return src(dirs.build).pipe(clean());
+});
+
+/**
+ * Copy all javascript source code to the prep directory.
  */
 task("copy", () => {
   return src(`${dirs.src}/*.js`)
-    .pipe(dest(dirs.build));
+    .pipe(using())
+    .pipe(dest(dirs.prep));
 });
 
 /**
- * Generate standalone modals and notifiers using browserify and save to dist/.
+ * Concatenate all CSS source code into style.css.
  */
-task("dom", () => {
+task("style.css", (cb) => {
+  return src(`${dirs.src}/*.css`)
+    .pipe(using({}))
+    .pipe(concat("style.css"))
+    .pipe(dest(dirs.prep));
+});
+
+/**
+ * Inject the contents of style.css into style.js.
+ */
+task("style.js", (cb) => {
+  return src([`${dirs.src}/style.js`])
+    .pipe(using({}))
+    .pipe(inject(/\s*\/\* CSS_MARKER \*\/\n/, `${dirs.prep}/style.css`))
+    .pipe(dest(dirs.prep));
+});
+
+/**
+ * Bundle all modals, notifiers, and the exporter into a single flat file each
+ * and save them in build/dev/.
+ */
+task("bundles", () => {
   return src([
-    `${dirs.build}/*-modal.js`,
-    `${dirs.build}/*-notifier.js`,
+    `${dirs.prep}/*-modal.js`,
+    `${dirs.prep}/*-notifier.js`,
+    `${dirs.prep}/exporter.js`,
   ])
     .pipe(using({}))
-    .pipe(esbuild({bundle: true}))
-    .pipe(dest(dirs.comp));
+    .pipe(bundle())
+    .pipe(replace(/require\(["'].+['"]\)[;]?\s*\n/g, () => ""))
+    .pipe(dest(dirs.dev));
 });
 
 /**
- * Generate single-file audible-exporter.js using browserify and save to build/.
+ * Add the two line runner script at the end and save to
+ * dist/audible-exporter.js.
  */
-task("bundle", () => {
-  return src(`${dirs.build}/exporter.js`)
-    .pipe(using({}))
-    .pipe(esbuild({bundle: true}))
-    // .pipe(replace(/$/, () => "\n"))
-    .pipe(rename("audible-exporter.js"))
-    .pipe(dest(dirs.build));
-});
-
-/**
- * Add the two line runner script at the end and save to dist/.
- */
-task("final", () => {
-  return src([`${dirs.build}/audible-exporter.js`, `${dirs.src}/runner.js`])
+task("audible-export.js", () => {
+  return src([`${dirs.dev}/exporter.js`, `${dirs.prep}/runner.js`])
     .pipe(using({}))
     .pipe(concat("audible-exporter.js"))
     .pipe(replace("CONSOLE_OUTPUT = false", (_) => "CONSOLE_OUTPUT = true"))
+    .pipe(dest(dirs.dev))
     .pipe(dest(dirs.dist))
 });
 
-task("components", series("copy", "style", "dom"));
-task("exporter", series("copy", "style", "bundle", "final"));
-task("default", parallel("components", "exporter"));
-
-appendRunners = function (done) {
-  let files = glob(`${dirs.test}/*.js`).filter((filename) => {
-    let name = path.basename(filename);
-    let runner = `${dirs.run}/${name}`;
-    return fs.existsSync(runner);
-  });
-
-  const tasks = files.map((filename) => {
-    let name = path.basename(filename);
-    let runner = fs.readFileSync(`${dirs.run}/${name}`, "utf8");
-    return () => src(filename)
-      .pipe(using({}))
-      .pipe(replace(/\/\/ __RUNNER__/, (_) => `${runner}`))
-      .pipe(dest(dirs.test));
-  });
-
-  return series(...tasks, (seriesDone) => {
-    seriesDone();
-    done();
-  })();
-};
-
-task("test-scripts", () => {
-  return src([`${dirs.comp}/*.js`, `${dirs.dist}/*.js`])
+/*
+ * Generate the scripts to use in testcafe integration testing.
+ */
+task("_test-scripts", () => {
+  return src([
+    `${dirs.dev}/*-modal.js`,
+    `${dirs.dev}/*-notifier.js`,
+    `${dirs.dev}/audible-exporter.js`,
+  ])
     .pipe(using({}))
-    .pipe(replace(/^/, (_) => "window.addEventListener('DOMContentLoaded', function () {"))
-    .pipe(replace(/$/, (_) => "// __RUNNER__\n});"))
-    .pipe(dest(dirs.test))
+    .pipe(inject(/$/, {dirname: "tests/integration/runners"}))
+    .pipe(replace(/^/, (_) => "\nwindow.addEventListener('DOMContentLoaded', function () {\n"))
+    .pipe(replace(/$/, (_) => "\n});"))
+    .pipe(dest("build/test-scripts"));
 });
 
-task("test", series("components", "test-scripts", appendRunners));
+
+task("dev", series("copy", "style.css", "style.js", "bundles"));
+task("exporter", series("dev", "audible-export.js"));
+task("test-scripts", series("dev", "exporter", "_test-scripts"));
+task("default", parallel("dev", "exporter", "test-scripts"));

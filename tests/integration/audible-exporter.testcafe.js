@@ -3,7 +3,7 @@ import { Selector } from "testcafe";
 fixture("Audible Exporter")
   .page("http://audible.com/categories")
   .clientScripts(
-    "./scripts/audible-exporter.js",
+    "../../build/test-scripts/audible-exporter.js",
   )
 
 test("should be visible", async t => {
