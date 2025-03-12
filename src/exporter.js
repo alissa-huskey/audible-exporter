@@ -50,6 +50,10 @@ Exporter = class {
     this.modal.create();
   }
 
+  doChecks() {
+    return /audible.com/.test(window.location.href);
+  }
+
   async getPurchaseHistory() {
     let timer = new Timer(null, null, "getPurchaseHistory");
     timer.start();

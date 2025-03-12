@@ -16,6 +16,21 @@ describe("Exporter", () => {
     expect(window.ae).toEqual(exporter);
   });
 
+  test(".doChecks()", () => {
+    let location = window.location;
+    delete window.location;
+    window.location = { href: "http://google.com" };
+
+    let exporter = new Exporter();
+
+    expect(exporter.doChecks()).toBe(false);
+
+    window.location = { href: "http://audible.com" };
+    expect(exporter.doChecks()).toBe(true);
+
+    window.location = location;
+  });
+
   test(".getPurchaseHistory()", async () => {
     let mockFn = mockFetchDocs([
       fixtureDoc("order-page.html"),
