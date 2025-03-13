@@ -1,7 +1,7 @@
 require("./util.js");
-require("./status-notifier.js");
+require("./notifier.js");
 
-LibraryNotifier = class extends StatusNotifier {
+LibraryNotifier = class extends Notifier {
   #item_no = null;
   #total = null;
 

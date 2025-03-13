@@ -1,7 +1,7 @@
 require("./timer.js");
 require("./styled.js");
 
-StatusNotifier = class extends Styled {
+Notifier = class extends Styled {
   #wrapper = null;
   #bar = null;
   #status = null;
@@ -45,6 +45,7 @@ StatusNotifier = class extends Styled {
     if (!this.#wrapper) {
       this.#wrapper = Doc.create("div", {
         id: this.selectors.wrapper,
+        class: "ae-wrapper",
         style: {
           width: `${this.bar_width}px`,
           left: `${(this.body_width - this.bar_width) / 2}px`,

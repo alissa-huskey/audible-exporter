@@ -1,12 +1,12 @@
 /**
- * Status notifier displayed to the user during the "Additional details"
+ * Notifier displayed to the user during the "Additional details"
  * step.
  */
 
 require("./util.js");
-require("./status-notifier.js");
+require("./notifier.js");
 
-DetailsNotifier = class extends StatusNotifier {
+DetailsNotifier = class extends Notifier {
   #item_no = null;
   #total = null;
 

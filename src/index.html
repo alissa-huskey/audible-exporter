@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <script src="audible-exporter.js"></script>
+  </head>
+  <body style="background-color: #999;">
+    <script>
+      window.addEventListener("DOMContentLoaded", function () {
+        timer = new Timer();
+        timer.start();
+        info(timer.start_time, "hello");
+
+        exporter = new Exporter();
+
+        timer.stop();
+        info(timer.stop_time, "goodbye");
+      });
+    </script>
+  </body>
+</html>

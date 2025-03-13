@@ -50,6 +50,14 @@ Timer = class {
     return (this.seconds / 60).toFixed(2);
   }
 
+  get start_time() {
+    return this.started_at?.toLocaleTimeString();
+  }
+
+  get stop_time() {
+    return this.stopped_at?.toLocaleTimeString();
+  }
+
   async time(callback) {
     this.start();
     let result = await callback();

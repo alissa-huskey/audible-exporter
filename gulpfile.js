@@ -108,7 +108,7 @@ task("clean", () => {
  * Copy all javascript source code to the prep directory.
  */
 task("copy", () => {
-  return src(`${dirs.src}/*.js`)
+  return src([`${dirs.src}/*.js`])
     .pipe(using())
     .pipe(dest(dirs.prep));
 });
@@ -117,7 +117,7 @@ task("copy", () => {
  * Concatenate all CSS source code into style.css.
  */
 task("style.css", (cb) => {
-  return src(`${dirs.src}/*.css`)
+  return src(`${dirs.src}/css/*.css`)
     .pipe(using({}))
     .pipe(concat("style.css"))
     .pipe(dest(dirs.prep));
@@ -165,6 +165,15 @@ task("audible-export.js", () => {
 /*
  * Generate the scripts to use in testcafe integration testing.
  */
+task("index.html", () => {
+  return src(`${dirs.src}/index.html`)
+    .pipe(using({}))
+    .pipe(dest(dirs.dev));
+});
+
+/*
+ * Generate the scripts to use in testcafe integration testing.
+ */
 task("_test-scripts", () => {
   return src([
     `${dirs.dev}/*-modal.js`,
@@ -179,7 +188,7 @@ task("_test-scripts", () => {
 });
 
 
-task("dev", series("copy", "style.css", "style.js", "bundles"));
+task("dev", series("copy", "index.html", "style.css", "style.js", "bundles"));
 task("exporter", series("dev", "audible-export.js"));
 task("test-scripts", series("dev", "exporter", "_test-scripts"));
 task("default", parallel("dev", "exporter", "test-scripts"));

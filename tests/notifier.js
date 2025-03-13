@@ -5,22 +5,22 @@
 const $ = require("jquery");
 
 require("../src/dev.js");
-require("../src/status-notifier.js");
+require("../src/notifier.js");
 
-describe("StatusNotifier", () => {
-  test("new StatusNotifier", () => {
-    let notifier = new StatusNotifier();
+describe("Notifier", () => {
+  test("new Notifier", () => {
+    let notifier = new Notifier();
 
-    expect(notifier).toBeA(StatusNotifier);
+    expect(notifier).toBeA(Notifier);
   });
 
   test.todo("listen(event)");
 
   describe("Progress calculation", () => {
     test(".item_no =", () => {
-      jest.spyOn(StatusNotifier.prototype, "total", "get").mockReturnValue(100);
+      jest.spyOn(Notifier.prototype, "total", "get").mockReturnValue(100);
 
-      let notifier = new StatusNotifier();
+      let notifier = new Notifier();
       notifier.item_no = 10;
 
       expect(notifier.item_no).toBe(10);
@@ -29,11 +29,9 @@ describe("StatusNotifier", () => {
     });
 
     test(".total =", () => {
-      jest
-        .spyOn(StatusNotifier.prototype, "item_no", "get")
-        .mockReturnValue(10);
+      jest.spyOn(Notifier.prototype, "item_no", "get").mockReturnValue(10);
 
-      let notifier = new StatusNotifier();
+      let notifier = new Notifier();
       notifier.total = 100;
 
       expect(notifier.total).toBe(100);
@@ -43,7 +41,7 @@ describe("StatusNotifier", () => {
     });
 
     test(".ratio", () => {
-      let notifier = new StatusNotifier();
+      let notifier = new Notifier();
       expect(notifier.ratio).toBeNull();
 
       notifier.total = 100;
@@ -55,7 +53,7 @@ describe("StatusNotifier", () => {
   });
 
   describe("Elements", () => {
-    let notifier = new StatusNotifier();
+    let notifier = new Notifier();
     let s = notifier.selectors;
 
     test(".status", () => {
@@ -119,7 +117,7 @@ describe("StatusNotifier", () => {
   });
 
   describe("Content attributes", () => {
-    let notifier = new StatusNotifier();
+    let notifier = new Notifier();
 
     afterEach(() => {
       notifier.reset();
@@ -165,7 +163,7 @@ describe("StatusNotifier", () => {
 
   describe("Time estimation", () => {
     let timers = [new Timer(0, 1000), new Timer(0, 1500), new Timer(0, 2000)];
-    let notifier = new StatusNotifier();
+    let notifier = new Notifier();
 
     afterEach(() => {
       notifier.times = [];
@@ -207,7 +205,7 @@ describe("StatusNotifier", () => {
     });
 
     test(".time_left", () => {
-      let notifier = new StatusNotifier();
+      let notifier = new Notifier();
       expect(notifier.time_left).toBe("");
 
       notifier.total = 100;
@@ -230,7 +228,7 @@ describe("StatusNotifier", () => {
 
   describe("DOM", () => {
     test(".create()", () => {
-      let notifier = new StatusNotifier();
+      let notifier = new Notifier();
       let s = notifier.selectors;
       notifier.create();
 
@@ -242,7 +240,7 @@ describe("StatusNotifier", () => {
     });
 
     test(".reset()", () => {
-      let notifier = new StatusNotifier();
+      let notifier = new Notifier();
       notifier.percent = 0.5;
       notifier.text = "loading...";
       notifier.step = "Step 1 of 4: Retrieving purchase history";
@@ -257,7 +255,7 @@ describe("StatusNotifier", () => {
     });
 
     test(".remove()", () => {
-      let notifier = new StatusNotifier();
+      let notifier = new Notifier();
       let s = notifier.selectors;
       notifier.create();
       notifier.remove();
@@ -266,14 +264,14 @@ describe("StatusNotifier", () => {
     });
 
     test(".hide()", () => {
-      let notifier = new StatusNotifier();
+      let notifier = new Notifier();
       notifier.hide();
 
       expect(notifier.wrapper.classList).toContain("hidden");
     });
 
     test(".show()", () => {
-      let notifier = new StatusNotifier();
+      let notifier = new Notifier();
       notifier.wrapper.classList.add("hidden");
       notifier.show();
 

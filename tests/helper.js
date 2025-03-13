@@ -55,10 +55,10 @@ global.delay = jest.fn();
  * Return the milliseconds per item to process the number of remaining items in
  * the desired minutes.
  *
- * @params notifier {StatusNotifier}  the notifier object
- * @params minutes  {number}          the desired number of minutes
+ * @params notifier {Notifier}  the notifier object
+ * @params minutes  {number}    the desired number of minutes
  *
- * @returns         {number}          milliseconds per item
+ * @returns         {number}    milliseconds per item
  */
 global.timePerItem = function (notifier, minutes) {
   // multiplier to reduce the amount of time to account for padding

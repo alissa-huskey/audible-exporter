@@ -1,7 +1,7 @@
 require("./util.js");
-require("./status-notifier.js");
+require("./notifier.js");
 
-OrderNotifier = class extends StatusNotifier {
+OrderNotifier = class extends Notifier {
   #year = null;
   #year_page = null;
   #item_no = null;
