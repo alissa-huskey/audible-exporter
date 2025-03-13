@@ -16,6 +16,7 @@
   --ae-near-black: #1A191B;
   --ae-black-russian: #25242A;
 
+  --ae-red: #bf1d25;
   --ae-dark-green: #07ba5b;
   --ae-emerald-green: #14B762;
   --ae-light-green: #20D174;
@@ -27,5 +28,4 @@
   --ae-basalt-gray: #9a99a1;  /* very close to #999999 */
   --ae-mystic-white: #dce6ef;
   --ae-near-white: #eaeaea;
-
 }

@@ -117,24 +117,21 @@ StartModal = class extends Modal {
       btn.attributes.href = "#";
       btn.innerHTML = "Start";
 
-      btn.element.addEventListener(
-        "click",
-        async (evt) => {
-          window.ae?.modal?.remove();
-
-          if (window.ae?.run) {
-            await window.ae.run();
-          }
-        },
-        false,
-      );
+      btn.element.addEventListener("click", this.start, false);
 
       this.#start_btn = btn;
     }
     return this.#start_btn;
   }
 
-  create() {
-    super.create();
+  /**
+   * Event listner to start the exporter.
+   */
+  async start(evt) {
+    window.ae?.modal?.hide();
+
+    if (window.ae?.run) {
+      await window.ae.run();
+    }
   }
 };

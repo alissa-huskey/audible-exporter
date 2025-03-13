@@ -1,5 +1,6 @@
 require("./util.js");
 require("./timer.js");
+require("./domain.js");
 require("./library-fetcher.js");
 require("./details-fetcher.js");
 require("./orders-fetcher.js");
@@ -50,8 +51,32 @@ Exporter = class {
     this.modal.create();
   }
 
-  doChecks() {
-    return /audible.com/.test(window.location.href);
+  isAudible() {
+    let domain = Domain.fromURL(window.location.href);
+    return domain.name == "audible";
+  }
+
+  showError(...sentences) {
+    let modal = this.modal;
+    modal.wrapper.classList.add("ae-error");
+    modal.start_btn.element.removeEventListener("click", modal.start);
+    modal.start_btn.element.addEventListener("click", () => {
+      modal.start_btn.href = "//audible.com";
+      modal.hide();
+    });
+
+    let copy = modal.content.gcf("ae-copy");
+    let btn = Doc.create("span", { id: "ae-start-btn" });
+    let h1 = Doc.create("h1");
+    h1.innerText = "Oh no!";
+
+    copy.element.innerHTML = "";
+    modal.start_btn.innerText = "Go";
+    btn.append(modal.start_btn);
+
+    copy.append(h1, ...sentences.map((text) => modal.p(text)), btn);
+
+    modal.show();
   }
 
   async getPurchaseHistory() {
@@ -162,6 +187,14 @@ Exporter = class {
   }
 
   async run() {
+    if (!this.isAudible()) {
+      this.showError(
+        "Sorry, you must be on the audible website to continue.",
+        "Go there and try again.",
+      );
+      return;
+    }
+
     try {
       this.timer.start();
       info(`Started at ${this.timer.started_at.toLocaleTimeString()}`);

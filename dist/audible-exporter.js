@@ -156,17 +156,21 @@ delay = (ms) =>
     setTimeout(res, ms);
   });
 
-Object.defineProperty(Array.prototype, "first", {
-  get: function () {
-    return this[0];
-  },
-});
+if (!("first" in Array.prototype)) {
+  Object.defineProperty(Array.prototype, "first", {
+    get: function () {
+      return this[0];
+    },
+  });
+}
 
-Object.defineProperty(Array.prototype, "last", {
-  get: function () {
-    return this.slice(-1)[0];
-  },
-});
+if (!("last" in Array.prototype)) {
+  Object.defineProperty(Array.prototype, "last", {
+    get: function () {
+      return this.slice(-1)[0];
+    },
+  });
+}
 /**
  * Measure how long a block of code takes to execute.
  *
@@ -223,6 +227,267 @@ Timer = class {
     this.stop();
     return result;
   }
+};
+/**
+ * Domain class.
+ *
+ * Parses the subdomain, name, second level domain, and top level domain from a
+ * host.
+ */
+Domain = class {
+  /**
+   * Create a Domain object.
+   *
+   * @param {string} host  The host portion of the URL.
+   *
+   * @example
+   *
+   * new Domain("example.co.uk");
+   */
+  constructor(host = null) {
+    this.host = host;
+  }
+
+  /**
+   * Create a domain object from a URL.
+   *
+   * @param {string} address  URL
+   * @example
+   *
+   * Domain.fromURL("http://www.google.com/")
+   */
+  static fromURL(address) {
+    let url = new URL(address);
+    let domain = new Domain(url.host);
+    domain.url = url;
+    return domain;
+  }
+
+  /**
+   * Array of dot seperated labels that make up the domain name.
+   *
+   * @example
+   * new Domain("example.com").labels == ["example", "com"];
+   */
+  get labels() {
+    return this.host.split(".");
+  }
+
+  /**
+   * Array of second level domains available for this top level domain.
+   */
+  get ok_slds() {
+    return this.SLDS[this.tld] || [];
+  }
+
+  /**
+   * Top level domain.
+   *
+   * @example
+   * new Domain("example.com").tld == "com";
+   */
+  get tld() {
+    return this.labels.slice(-1)[0];
+  }
+
+  /**
+   * Second level domain(s).
+   *
+   * @example
+   * new Domain("example.co.uk").sld == "co";
+   */
+  get sld() {
+    if (!this.ok_slds.length) return "";
+
+    let labels = this.labels.slice(0, -1);
+    let i = labels.length - 1;
+    let sld;
+
+    do {
+      let attempt = labels.slice(i).join(".");
+
+      if (!this.ok_slds.includes(attempt)) {
+        break;
+      }
+
+      sld = attempt;
+      i--;
+    } while (i > 0);
+
+    return sld || "";
+  }
+
+  /**
+   * Domain name.
+   *
+   * @example
+   * new Domain("example.com").name == "example";
+   */
+  get name() {
+    // count of slds + 1 (tld)
+    let suffixes = (this.sld ? this.sld.split(".").length : 0) + 1;
+    // name is one backwards from there
+    let idx = this.labels.length - suffixes - 1;
+    return this.labels[idx];
+  }
+
+  /**
+   * Subdomain(s).
+   *
+   * @example
+   * new Domain("help.example.com").labels == "help";
+   */
+  get subdomain() {
+    let labels = this.labels.slice();
+    // number of slds + 1 (tld) + 1 (name)
+    let suffixes = (this.sld ? this.sld.split(".").length : 0) + 2;
+
+    // chop off everything starting at the name
+    labels.splice(-suffixes);
+
+    // whatever is left is the subdomain
+    let subdomain = labels.join(".");
+    return subdomain;
+  }
+};
+
+Domain.prototype.TLDS = [
+  "asia",
+  "blue",
+  "ca",
+  "ceo",
+  "ch",
+  "club",
+  "cm",
+  "co",
+  "com",
+  "de",
+  "es",
+  "fr",
+  "in",
+  "international",
+  "it",
+  "jp",
+  "lu",
+  "mobi",
+  "mp",
+  "name",
+  "net",
+  "nyc",
+  "org",
+  "pink",
+  "pk",
+  "red",
+  "se",
+  "si",
+  "ws",
+];
+
+Domain.prototype.SLDS = {
+  es: ["com", "edu", "gob", "nom", "org"],
+  fr: [
+    "aeroport",
+    "avoues",
+    "cci",
+    "chambagri",
+    "chirurgiens-dentistes",
+    "experts-comptables",
+    "geometre-expert",
+    "greta",
+    "huissier-justice",
+    "medecin",
+    "notaires",
+    "pharmacien",
+    "port",
+    "prd",
+    "veterinaire",
+  ],
+  in: [
+    "5g",
+    "6g",
+    "ac",
+    "ai",
+    "am",
+    "bihar",
+    "biz",
+    "business",
+    "ca",
+    "cn",
+    "co",
+    "com",
+    "com",
+    "coop",
+    "cs",
+    "delhi",
+    "dr",
+    "edu",
+    "er",
+    "ernet",
+    "firm",
+    "gen",
+    "gov",
+    "gujarat",
+    "ind",
+    "info",
+    "int",
+    "internet",
+    "io",
+    "me",
+    "mil",
+    "net",
+    "org",
+    "pg",
+    "post",
+    "pro",
+    "res",
+    "travel",
+    "tv",
+    "uk",
+    "up",
+    "us",
+  ],
+  jp: ["ac", "ad", "co", "ed", "go", "gr", "lg", "ne", "or"],
+  pk: [
+    "biz",
+    "com",
+    "edu",
+    "fam",
+    "gkp",
+    "gob",
+    "gog",
+    "gok",
+    "gop",
+    "gos",
+    "gov",
+    "ltd",
+    "mil",
+    "net",
+    "org",
+    "res",
+    "web",
+  ],
+  uk: [
+    "ac",
+    "bl",
+    "co",
+    "gov",
+    "judiciary",
+    "ltd",
+    "me",
+    "mod",
+    "net",
+    "nhs",
+    "nic",
+    "org",
+    "parliament",
+    "plc",
+    "police",
+    "rct",
+    "royal",
+    "sch",
+    "ukaea",
+  ],
+  us: ["dni", "fed", "isa", "nsn"],
 };
 /**
  * Wraper for HTMLElements.
@@ -1637,6 +1902,7 @@ Style = class extends DOM {
   --ae-near-black: #1A191B;
   --ae-black-russian: #25242A;
 
+  --ae-red: #bf1d25;
   --ae-dark-green: #07ba5b;
   --ae-emerald-green: #14B762;
   --ae-light-green: #20D174;
@@ -1648,7 +1914,6 @@ Style = class extends DOM {
   --ae-basalt-gray: #9a99a1;  /* very close to #999999 */
   --ae-mystic-white: #dce6ef;
   --ae-near-white: #eaeaea;
-
 }
 
 /* Modals
@@ -1688,6 +1953,10 @@ Style = class extends DOM {
   font-size: 1.1em;
 }
 
+.ae-modal.ae-error .ae-content {
+  border: 1px solid var(--ae-red);
+}
+
 .ae-modal .ae-head {
   background-color: var(--ae-near-black);
   padding: 10px;
@@ -1702,6 +1971,12 @@ Style = class extends DOM {
   margin: 0;
   padding-bottom: 10px;
   text-transform: uppercase;
+}
+
+.ae-modal.ae-error h1 {
+  color: var(--ae-red);
+  text-transform: none;
+  font-weight: normal;
 }
 
 .ae-modal #ae-close-btn {
@@ -1807,6 +2082,10 @@ a.ae-btn.disabled {
 #ae-start-modal .ae-content {
   width: 60%;
   height: unset;
+}
+
+#ae-start-modal.ae-content.ae-error {
+  width: unset;
 }
 
 #ae-download-btn {
@@ -2259,25 +2538,22 @@ StartModal = class extends Modal {
       btn.attributes.href = "#";
       btn.innerHTML = "Start";
 
-      btn.element.addEventListener(
-        "click",
-        async (evt) => {
-          window.ae?.modal?.remove();
-
-          if (window.ae?.run) {
-            await window.ae.run();
-          }
-        },
-        false,
-      );
+      btn.element.addEventListener("click", this.start, false);
 
       this.#start_btn = btn;
     }
     return this.#start_btn;
   }
 
-  create() {
-    super.create();
+  /**
+   * Event listner to start the exporter.
+   */
+  async start(evt) {
+    window.ae?.modal?.hide();
+
+    if (window.ae?.run) {
+      await window.ae.run();
+    }
   }
 };
 /**
@@ -3385,6 +3661,34 @@ Exporter = class {
     this.modal.create();
   }
 
+  isAudible() {
+    let domain = Domain.fromURL(window.location.href);
+    return domain.name == "audible";
+  }
+
+  showError(...sentences) {
+    let modal = this.modal;
+    modal.wrapper.classList.add("ae-error");
+    modal.start_btn.element.removeEventListener("click", modal.start);
+    modal.start_btn.element.addEventListener("click", () => {
+      modal.start_btn.href = "//audible.com";
+      modal.hide();
+    });
+
+    let copy = modal.content.gcf("ae-copy");
+    let btn = Doc.create("span", { id: "ae-start-btn" });
+    let h1 = Doc.create("h1");
+    h1.innerText = "Oh no!";
+
+    copy.element.innerHTML = "";
+    modal.start_btn.innerText = "Go";
+    btn.append(modal.start_btn);
+
+    copy.append(h1, ...sentences.map((text) => modal.p(text)), btn);
+
+    modal.show();
+  }
+
   async getPurchaseHistory() {
     let timer = new Timer(null, null, "getPurchaseHistory");
     timer.start();
@@ -3493,6 +3797,14 @@ Exporter = class {
   }
 
   async run() {
+    if (!this.isAudible()) {
+      this.showError(
+        "Sorry, you must be on the audible website to continue.",
+        "Go there and try again.",
+      );
+      return;
+    }
+
     try {
       this.timer.start();
       info(`Started at ${this.timer.started_at.toLocaleTimeString()}`);

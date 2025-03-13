@@ -76,3 +76,4 @@
 (B) 2025-03-10 @housekeeping reconsider code orginization (src/js, src/css; src/js/fetchers, src/js/modals?
 (B) 2025-03-10 @housekeeping Figure out what to do with standalone notifiers. shouldn't be in dist/
 (B) 2025-03-10 @refactor review Timer started_at/ended_at and .started/stopped.toLocaleTimeString()
+(B) 2025-03-12 @quality Move StartModal.p() somewhere else.

@@ -64,7 +64,6 @@
 (B) 2025-03-09 @ux Try design with console docked side, looks funny now.
 (A) 2025-03-09 @bug Fix edge bugs
 (A) 2025-03-09 @qa @testing Write a simple testcafe test, see if it will catch current safari bug.
-x 2025-03-10 2025-03-10 @tools Make sure gulp works if build/dist dirs are missing.
 (A) 2025-03-10 @data Remove &amp; from categories in JSON export.
 (A) 2025-03-10 @bug Safari now dies immediately.
 (B) 2025-03-10 @ux @reliability Check navigator.online to make sure the user is online.

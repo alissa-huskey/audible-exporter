@@ -156,14 +156,18 @@ delay = (ms) =>
     setTimeout(res, ms);
   });
 
-Object.defineProperty(Array.prototype, "first", {
-  get: function () {
-    return this[0];
-  },
-});
+if (!("first" in Array.prototype)) {
+  Object.defineProperty(Array.prototype, "first", {
+    get: function () {
+      return this[0];
+    },
+  });
+}
 
-Object.defineProperty(Array.prototype, "last", {
-  get: function () {
-    return this.slice(-1)[0];
-  },
-});
+if (!("last" in Array.prototype)) {
+  Object.defineProperty(Array.prototype, "last", {
+    get: function () {
+      return this.slice(-1)[0];
+    },
+  });
+}

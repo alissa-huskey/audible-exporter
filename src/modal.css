@@ -35,6 +35,10 @@
   font-size: 1.1em;
 }
 
+.ae-modal.ae-error .ae-content {
+  border: 1px solid var(--ae-red);
+}
+
 .ae-modal .ae-head {
   background-color: var(--ae-near-black);
   padding: 10px;
@@ -49,6 +53,12 @@
   margin: 0;
   padding-bottom: 10px;
   text-transform: uppercase;
+}
+
+.ae-modal.ae-error h1 {
+  color: var(--ae-red);
+  text-transform: none;
+  font-weight: normal;
 }
 
 .ae-modal #ae-close-btn {
@@ -154,6 +164,10 @@ a.ae-btn.disabled {
 #ae-start-modal .ae-content {
   width: 60%;
   height: unset;
+}
+
+#ae-start-modal.ae-content.ae-error {
+  width: unset;
 }
 
 #ae-download-btn {
