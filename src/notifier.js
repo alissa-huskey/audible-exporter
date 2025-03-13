@@ -45,7 +45,7 @@ Notifier = class extends Styled {
     if (!this.#wrapper) {
       this.#wrapper = Doc.create("div", {
         id: this.selectors.wrapper,
-        class: "ae-wrapper",
+        class: "ae-wrapper ae-notifier",
         style: {
           width: `${this.bar_width}px`,
           left: `${(this.body_width - this.bar_width) / 2}px`,
@@ -65,7 +65,7 @@ Notifier = class extends Styled {
    */
   get bar() {
     if (!this.#bar) {
-      this.#bar = Doc.create("div", { id: this.selectors.bar });
+      this.#bar = Doc.create("div", { class: this.selectors.bar });
       this.#bar.append(this.messages);
     }
     return this.#bar;
@@ -79,8 +79,7 @@ Notifier = class extends Styled {
   get messages() {
     if (!this.#messages) {
       this.#messages = Doc.create("div", {
-        id: this.selectors.messages,
-        class: "ae-row",
+        class: `${this.selectors.messages} ae-row`,
         style: { width: `${this.bar_width}px` },
       });
       this.#messages.append(this.status, this.percentage);
@@ -95,7 +94,7 @@ Notifier = class extends Styled {
    */
   get status() {
     if (!this.#status) {
-      this.#status = Doc.create("div", { id: this.selectors.status });
+      this.#status = Doc.create("div", { class: this.selectors.status });
     }
     return this.#status;
   }
@@ -106,7 +105,7 @@ Notifier = class extends Styled {
   get percentage() {
     if (!this.#percentage) {
       this.#percentage = Doc.create("span", {
-        id: this.selectors.percentage,
+        class: this.selectors.percentage,
       });
     }
     return this.#percentage;
@@ -120,8 +119,7 @@ Notifier = class extends Styled {
   get context() {
     if (!this.#context) {
       this.#context = Doc.create("div", {
-        id: this.selectors.context,
-        class: "ae-row empty",
+        class: `${this.selectors.context} ae-row empty`,
       });
 
       this.#context.append(this.steps, this.estimate);

@@ -42,6 +42,17 @@ DownloadModal = class extends Modal {
     return this.#head;
   }
 
+  get wrapper() {
+    if (!this.#wrapper) {
+      let wrapper = super.wrapper;
+      wrapper.id = "ae-download-modal";
+
+      this.#wrapper = wrapper;
+    }
+
+    return this.#wrapper;
+  }
+
   /**
    * The div element for the main content of the modal.
    *

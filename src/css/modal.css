@@ -7,217 +7,236 @@
   --ae-box-shadow-dark-bg: var(--ae-box-shadow) var(--ae-carbon);
 }
 
-.ae-modal {
-  box-sizing: border-box;
-  position: fixed;
-  font-family: "Cantarell", sans-serif;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-}
+.ae-wrapper {
 
-.ae-modal .ae-content {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  &.ae-modal {
 
-  width: 50%;
-  height: 300px;
+    /* Shared
+     ------------------------------------------------------------------------------*/
 
-  border-radius: 15px;
-  box-shadow: 0 3px 15px -2px #222;
-  padding: 20px;
+    box-sizing: border-box;
+    position: fixed;
+    font-family: "Cantarell", sans-serif;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
 
-  background-color: var(--ae-black-russian);
-  color: var(--ae-near-white);
-  font-size: 1.1em;
-}
+    h1 {
+      color: var(--ae-mystic-white);
+      font-size: 1.2rem;
+      font-weight: 600;
+      line-height: normal;
+      margin: 0;
+      padding-bottom: 10px;
+      text-transform: uppercase;
+    }
 
-.ae-modal.ae-error .ae-content {
-  border: 1px solid var(--ae-red);
-}
+    a.ae-btn {
+      background-color: var(--ae-emerald-green);
+      color: #000;
+      cursor: pointer;
 
-.ae-modal .ae-head {
-  background-color: var(--ae-near-black);
-  padding: 10px;
-  border-radius: 10px 10px 0px 0px;
-}
+      font-size: 1em;
+      font-family: system-ui;
+      font-weight: 600;
+      text-transform: uppercase;
 
-.ae-modal h1 {
-  color: var(--ae-mystic-white);
-  font-size: 1.2rem;
-  font-weight: 600;
-  line-height: normal;
-  margin: 0;
-  padding-bottom: 10px;
-  text-transform: uppercase;
-}
+      text-decoration: none;
+      text-align: center;
+      padding: 10px 25px;
 
-.ae-modal.ae-error h1 {
-  color: var(--ae-red);
-  text-transform: none;
-  font-weight: normal;
-}
+      display: inline-block;
 
-.ae-modal #ae-close-btn {
-  color: var(--ae-basalt-gray);
-  font-size: 28px;
-  font-weight: bold;
-  text-decoration: none;
-  margin: 0;
-  margin-top: -10px;
-  align-self: flex-end;
-  float: right;
-}
+      border-radius: 4px;
+      box-shadow: var(--ae-box-shadow-light-bg);
+      -webkit-box-shadow: var(--ae-box-shadow-light-bg);
+      -moz-box-shadow: var(--ae-box-shadow-light-bg);
 
-#ae-start-modal .ae-head {
-  background-color: unset;
-}
+      &:hover {
+        background-color: var(--ae-near-black);
+        color: var(--ae-near-white);
+        text-decoration: none;
 
-#ae-start-modal .ae-content {
-  width: 60%;
-  height: unset;
-}
+        box-shadow: var(--ae-box-shadow-dark-bg);
+        -webkit-box-shadow: var(--ae-box-shadow-dark-bg);
+        -moz-box-shadow: var(--ae-box-shadow-dark-bg);
+      }
 
-.ae-modal .ae-copy {
-  background-color: var(--ae-near-black);
-  padding: 25px;
-  margin: 20px;
-  border-radius: 15px;
-}
+      &.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+        color: white;
+      }
+    }
 
-#ae-close-btn:hover,
-#ae-close-btn:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
-}
+    .ae-close-btn {
 
-.ae-actions {
-  display: flex;
-  gap: 15px;
-  margin: 30px 20px;
-}
+      color: var(--ae-basalt-gray);
+      font-size: 28px;
+      font-weight: bold;
+      text-decoration: none;
+      margin: 0;
+      margin-top: -10px;
+      align-self: flex-end;
+      float: right;
 
-#ae-start-modal ul {
-  margin: 30px 0;
+      &:hover, &:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+      }
+    }
 
-  ::marker {
-    font-size: 1.3em;
-    color: var(--ae-light-green);
+    .ae-content {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
 
-    /* NOTE: Double-escaped here because this will be embedded in JS. */
-		content: "\\027B2   ";  /* ➲ */
+      width: 50%;
+      height: 300px;
+
+      border-radius: 15px;
+      box-shadow: 0 3px 15px -2px #222;
+      padding: 20px;
+
+      background-color: var(--ae-black-russian);
+      color: var(--ae-near-white);
+      font-size: 1.1em;
+    }
+
+    .ae-head {
+      background-color: var(--ae-near-black);
+      padding: 10px;
+      border-radius: 10px 10px 0px 0px;
+    }
+
+    .ae-copy {
+      background-color: var(--ae-near-black);
+      padding: 25px;
+      margin: 20px;
+      border-radius: 15px;
+    }
+
+    .ae-actions {
+      display: flex;
+      gap: 15px;
+      margin: 30px 20px;
+    }
+
+    /* Error Modal
+     ------------------------------------------------------------------------------*/
+
+    &.ae-error {
+      .ae-content {
+        border: 1px solid var(--ae-red);
+      }
+
+      h1 {
+        color: var(--ae-red);
+        text-transform: none;
+        font-weight: normal;
+      }
+
+    }
+
+    /* Start Modal
+     ------------------------------------------------------------------------------*/
+
+    &#ae-start-modal {
+
+      &.ae-content.ae-error {
+        width: unset;
+      }
+
+      .ae-head {
+        background-color: unset;
+      }
+
+      .ae-content {
+        width: 60%;
+        height: unset;
+      }
+
+      ul {
+        margin: 30px 0;
+
+        ::marker {
+          font-size: 1.3em;
+          color: var(--ae-light-green);
+
+          /* NOTE: Double-escaped here because this will be embedded in JS. */
+          content: "\\027B2   ";  /* ➲ */
+        }
+      }
+
+      li {
+        line-height: 1.7em;
+      }
+
+      span#ae-start-btn {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      }
+    }
+
+    /* Download Modal
+     ------------------------------------------------------------------------------*/
+
+    &#ae-download-modal {
+      #ae-download-btn a {
+        position: relative;
+        padding: 10px 25px;
+        text-indent: 15px;
+
+        &:before,
+        &:after {
+          content: " ";
+          display: block;
+          position: absolute;
+          left: 14px;
+          top: 52%;
+        }
+
+        /* Download box shape  */
+        &:before {
+          width: 10px;
+          height: 2px;
+          border-style: solid;
+          border-width: 0 2px 2px;
+        }
+
+        /* Download arrow shape */
+        &:after {
+          width: 0;
+          height: 0;
+          margin-left: 1px;
+          margin-top: -7px;
+
+          border-style: solid;
+          border-width: 4px 4px 0 4px;
+          border-color: transparent;
+          border-top-color: inherit;
+        }
+
+        &:hover:before {
+          border-color: var(--ae-emerald-green);
+        }
+
+        &:hover:after {
+          animation: downloadArrow 2s linear infinite;
+          animation-play-state: running;
+          border-top-color: var(--ae-emerald-green);
+        }
+      }
+    }
   }
 }
 
-#ae-start-modal li {
-  line-height: 1.7em;
-}
-
-#ae-start-modal span#ae-start-btn {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-a.ae-btn {
-  background-color: var(--ae-emerald-green);
-  color: #000;
-  cursor: pointer;
-
-  font-size: 1em;
-  font-family: system-ui;
-  font-weight: 600;
-  text-transform: uppercase;
-
-  text-decoration: none;
-  text-align: center;
-  padding: 10px 25px;
-
-  display: inline-block;
-
-  border-radius: 4px;
-  box-shadow: var(--ae-box-shadow-light-bg);
-  -webkit-box-shadow: var(--ae-box-shadow-light-bg);
-  -moz-box-shadow: var(--ae-box-shadow-light-bg);
-}
-
-a.ae-btn:hover {
-  background-color: var(--ae-near-black);
-  color: var(--ae-near-white);
-  text-decoration: none;
-
-  box-shadow: var(--ae-box-shadow-dark-bg);
-  -webkit-box-shadow: var(--ae-box-shadow-dark-bg);
-  -moz-box-shadow: var(--ae-box-shadow-dark-bg);
-}
-
-a.ae-btn.disabled {
-  opacity: 0.5;
-  pointer-events: none;
-  color: white;
-}
-
-#ae-start-modal .ae-content {
-  width: 60%;
-  height: unset;
-}
-
-#ae-start-modal.ae-content.ae-error {
-  width: unset;
-}
-
-#ae-download-btn {
-  position: relative;
-}
-
-#ae-download-btn a {
-  padding: 10px 25px;
-  text-indent: 15px;
-}
-
-#ae-download-btn a:before,
-#ae-download-btn a:after {
-  content: " ";
-  display: block;
-  position: absolute;
-  left: 14px;
-  top: 52%;
-}
-
-/* Download box shape  */
-#ae-download-btn a:before {
-  width: 10px;
-  height: 2px;
-  border-style: solid;
-  border-width: 0 2px 2px;
-}
-
-/* Download arrow shape */
-#ae-download-btn a:after {
-  width: 0;
-  height: 0;
-  margin-left: 1px;
-  margin-top: -7px;
-
-  border-style: solid;
-  border-width: 4px 4px 0 4px;
-  border-color: transparent;
-  border-top-color: inherit;
-}
-
-#ae-download-btn a:hover:before {
-  border-color: var(--ae-emerald-green);
-}
-
-#ae-download-btn a:hover:after {
-  animation: downloadArrow 2s linear infinite;
-  animation-play-state: running;
-  border-top-color: var(--ae-emerald-green);
-}
+/* Keyframes
+ ------------------------------------------------------------------------------*/
 
 @keyframes downloadArrow {
   /* 0% and 0.001% keyframes used as a hackish way of having the button frozen

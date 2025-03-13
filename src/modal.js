@@ -30,7 +30,9 @@ Modal = class extends Styled {
    */
   get wrapper() {
     if (!this.#wrapper) {
-      let wrapper = Doc.create("div", { class: this.selectors.wrapper });
+      let wrapper = Doc.create("div", {
+        class: `${this.selectors.wrapper} ae-wrapper`,
+      });
 
       wrapper.append(this.content);
 
@@ -78,7 +80,7 @@ Modal = class extends Styled {
    */
   get close_btn() {
     if (!this.#close_btn) {
-      let btn = Doc.create("a", { id: this.selectors.close_btn });
+      let btn = Doc.create("a", { class: this.selectors.close_btn });
       btn.innerHTML = "&times;";
       btn.attributes.href = "#";
 

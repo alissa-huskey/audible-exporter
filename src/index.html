@@ -1,15 +1,27 @@
 <html>
   <head>
     <script src="audible-exporter.js"></script>
+    <style type="text/css">
+      body {
+        margin: 0px;
+        background-color: #333;
+      }
+    </style>
   </head>
-  <body style="background-color: #999;">
+  <body>
     <script>
       window.addEventListener("DOMContentLoaded", function () {
         timer = new Timer();
         timer.start();
         info(timer.start_time, "hello");
 
-        exporter = new Exporter();
+        sm = new StartModal();
+        dm = new DownloadModal();
+
+        pn = new PurchaseHistoryNotifier();
+        on = new OrderNotifier();
+        ln = new LibraryNotifier();
+        dn = new DetailsNotifier();
 
         timer.stop();
         info(timer.stop_time, "goodbye");

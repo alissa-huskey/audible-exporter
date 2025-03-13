@@ -221,6 +221,14 @@ Timer = class {
     return (this.seconds / 60).toFixed(2);
   }
 
+  get start_time() {
+    return this.started_at?.toLocaleTimeString();
+  }
+
+  get stop_time() {
+    return this.stopped_at?.toLocaleTimeString();
+  }
+
   async time(callback) {
     this.start();
     let result = await callback();
@@ -1916,6 +1924,25 @@ Style = class extends DOM {
   --ae-near-white: #eaeaea;
 }
 
+.ae-wrapper {
+
+  *,:after,:before {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+
+  &.hidden, .hidden {
+    display: none;
+  }
+
+  .ae-row {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  }
+}
+
 /* Modals
  *******************************************************************************/
 
@@ -1925,217 +1952,236 @@ Style = class extends DOM {
   --ae-box-shadow-dark-bg: var(--ae-box-shadow) var(--ae-carbon);
 }
 
-.ae-modal {
-  box-sizing: border-box;
-  position: fixed;
-  font-family: "Cantarell", sans-serif;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-}
+.ae-wrapper {
 
-.ae-modal .ae-content {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  &.ae-modal {
 
-  width: 50%;
-  height: 300px;
+    /* Shared
+     ------------------------------------------------------------------------------*/
 
-  border-radius: 15px;
-  box-shadow: 0 3px 15px -2px #222;
-  padding: 20px;
+    box-sizing: border-box;
+    position: fixed;
+    font-family: "Cantarell", sans-serif;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
 
-  background-color: var(--ae-black-russian);
-  color: var(--ae-near-white);
-  font-size: 1.1em;
-}
+    h1 {
+      color: var(--ae-mystic-white);
+      font-size: 1.2rem;
+      font-weight: 600;
+      line-height: normal;
+      margin: 0;
+      padding-bottom: 10px;
+      text-transform: uppercase;
+    }
 
-.ae-modal.ae-error .ae-content {
-  border: 1px solid var(--ae-red);
-}
+    a.ae-btn {
+      background-color: var(--ae-emerald-green);
+      color: #000;
+      cursor: pointer;
 
-.ae-modal .ae-head {
-  background-color: var(--ae-near-black);
-  padding: 10px;
-  border-radius: 10px 10px 0px 0px;
-}
+      font-size: 1em;
+      font-family: system-ui;
+      font-weight: 600;
+      text-transform: uppercase;
 
-.ae-modal h1 {
-  color: var(--ae-mystic-white);
-  font-size: 1.2rem;
-  font-weight: 600;
-  line-height: normal;
-  margin: 0;
-  padding-bottom: 10px;
-  text-transform: uppercase;
-}
+      text-decoration: none;
+      text-align: center;
+      padding: 10px 25px;
 
-.ae-modal.ae-error h1 {
-  color: var(--ae-red);
-  text-transform: none;
-  font-weight: normal;
-}
+      display: inline-block;
 
-.ae-modal #ae-close-btn {
-  color: var(--ae-basalt-gray);
-  font-size: 28px;
-  font-weight: bold;
-  text-decoration: none;
-  margin: 0;
-  margin-top: -10px;
-  align-self: flex-end;
-  float: right;
-}
+      border-radius: 4px;
+      box-shadow: var(--ae-box-shadow-light-bg);
+      -webkit-box-shadow: var(--ae-box-shadow-light-bg);
+      -moz-box-shadow: var(--ae-box-shadow-light-bg);
 
-#ae-start-modal .ae-head {
-  background-color: unset;
-}
+      &:hover {
+        background-color: var(--ae-near-black);
+        color: var(--ae-near-white);
+        text-decoration: none;
 
-#ae-start-modal .ae-content {
-  width: 60%;
-  height: unset;
-}
+        box-shadow: var(--ae-box-shadow-dark-bg);
+        -webkit-box-shadow: var(--ae-box-shadow-dark-bg);
+        -moz-box-shadow: var(--ae-box-shadow-dark-bg);
+      }
 
-.ae-modal .ae-copy {
-  background-color: var(--ae-near-black);
-  padding: 25px;
-  margin: 20px;
-  border-radius: 15px;
-}
+      &.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+        color: white;
+      }
+    }
 
-#ae-close-btn:hover,
-#ae-close-btn:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
-}
+    .ae-close-btn {
 
-.ae-actions {
-  display: flex;
-  gap: 15px;
-  margin: 30px 20px;
-}
+      color: var(--ae-basalt-gray);
+      font-size: 28px;
+      font-weight: bold;
+      text-decoration: none;
+      margin: 0;
+      margin-top: -10px;
+      align-self: flex-end;
+      float: right;
 
-#ae-start-modal ul {
-  margin: 30px 0;
+      &:hover, &:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+      }
+    }
 
-  ::marker {
-    font-size: 1.3em;
-    color: var(--ae-light-green);
+    .ae-content {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
 
-    /* NOTE: Double-escaped here because this will be embedded in JS. */
-		content: "\\027B2   ";  /* ➲ */
+      width: 50%;
+      height: 300px;
+
+      border-radius: 15px;
+      box-shadow: 0 3px 15px -2px #222;
+      padding: 20px;
+
+      background-color: var(--ae-black-russian);
+      color: var(--ae-near-white);
+      font-size: 1.1em;
+    }
+
+    .ae-head {
+      background-color: var(--ae-near-black);
+      padding: 10px;
+      border-radius: 10px 10px 0px 0px;
+    }
+
+    .ae-copy {
+      background-color: var(--ae-near-black);
+      padding: 25px;
+      margin: 20px;
+      border-radius: 15px;
+    }
+
+    .ae-actions {
+      display: flex;
+      gap: 15px;
+      margin: 30px 20px;
+    }
+
+    /* Error Modal
+     ------------------------------------------------------------------------------*/
+
+    &.ae-error {
+      .ae-content {
+        border: 1px solid var(--ae-red);
+      }
+
+      h1 {
+        color: var(--ae-red);
+        text-transform: none;
+        font-weight: normal;
+      }
+
+    }
+
+    /* Start Modal
+     ------------------------------------------------------------------------------*/
+
+    &#ae-start-modal {
+
+      &.ae-content.ae-error {
+        width: unset;
+      }
+
+      .ae-head {
+        background-color: unset;
+      }
+
+      .ae-content {
+        width: 60%;
+        height: unset;
+      }
+
+      ul {
+        margin: 30px 0;
+
+        ::marker {
+          font-size: 1.3em;
+          color: var(--ae-light-green);
+
+          /* NOTE: Double-escaped here because this will be embedded in JS. */
+          content: "\\027B2   ";  /* ➲ */
+        }
+      }
+
+      li {
+        line-height: 1.7em;
+      }
+
+      span#ae-start-btn {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      }
+    }
+
+    /* Download Modal
+     ------------------------------------------------------------------------------*/
+
+    &#ae-download-modal {
+      #ae-download-btn a {
+        position: relative;
+        padding: 10px 25px;
+        text-indent: 15px;
+
+        &:before,
+        &:after {
+          content: " ";
+          display: block;
+          position: absolute;
+          left: 14px;
+          top: 52%;
+        }
+
+        /* Download box shape  */
+        &:before {
+          width: 10px;
+          height: 2px;
+          border-style: solid;
+          border-width: 0 2px 2px;
+        }
+
+        /* Download arrow shape */
+        &:after {
+          width: 0;
+          height: 0;
+          margin-left: 1px;
+          margin-top: -7px;
+
+          border-style: solid;
+          border-width: 4px 4px 0 4px;
+          border-color: transparent;
+          border-top-color: inherit;
+        }
+
+        &:hover:before {
+          border-color: var(--ae-emerald-green);
+        }
+
+        &:hover:after {
+          animation: downloadArrow 2s linear infinite;
+          animation-play-state: running;
+          border-top-color: var(--ae-emerald-green);
+        }
+      }
+    }
   }
 }
 
-#ae-start-modal li {
-  line-height: 1.7em;
-}
-
-#ae-start-modal span#ae-start-btn {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-a.ae-btn {
-  background-color: var(--ae-emerald-green);
-  color: #000;
-  cursor: pointer;
-
-  font-size: 1em;
-  font-family: system-ui;
-  font-weight: 600;
-  text-transform: uppercase;
-
-  text-decoration: none;
-  text-align: center;
-  padding: 10px 25px;
-
-  display: inline-block;
-
-  border-radius: 4px;
-  box-shadow: var(--ae-box-shadow-light-bg);
-  -webkit-box-shadow: var(--ae-box-shadow-light-bg);
-  -moz-box-shadow: var(--ae-box-shadow-light-bg);
-}
-
-a.ae-btn:hover {
-  background-color: var(--ae-near-black);
-  color: var(--ae-near-white);
-  text-decoration: none;
-
-  box-shadow: var(--ae-box-shadow-dark-bg);
-  -webkit-box-shadow: var(--ae-box-shadow-dark-bg);
-  -moz-box-shadow: var(--ae-box-shadow-dark-bg);
-}
-
-a.ae-btn.disabled {
-  opacity: 0.5;
-  pointer-events: none;
-  color: white;
-}
-
-#ae-start-modal .ae-content {
-  width: 60%;
-  height: unset;
-}
-
-#ae-start-modal.ae-content.ae-error {
-  width: unset;
-}
-
-#ae-download-btn {
-  position: relative;
-}
-
-#ae-download-btn a {
-  padding: 10px 25px;
-  text-indent: 15px;
-}
-
-#ae-download-btn a:before,
-#ae-download-btn a:after {
-  content: " ";
-  display: block;
-  position: absolute;
-  left: 14px;
-  top: 52%;
-}
-
-/* Download box shape  */
-#ae-download-btn a:before {
-  width: 10px;
-  height: 2px;
-  border-style: solid;
-  border-width: 0 2px 2px;
-}
-
-/* Download arrow shape */
-#ae-download-btn a:after {
-  width: 0;
-  height: 0;
-  margin-left: 1px;
-  margin-top: -7px;
-
-  border-style: solid;
-  border-width: 4px 4px 0 4px;
-  border-color: transparent;
-  border-top-color: inherit;
-}
-
-#ae-download-btn a:hover:before {
-  border-color: var(--ae-emerald-green);
-}
-
-#ae-download-btn a:hover:after {
-  animation: downloadArrow 2s linear infinite;
-  animation-play-state: running;
-  border-top-color: var(--ae-emerald-green);
-}
+/* Keyframes
+ ------------------------------------------------------------------------------*/
 
 @keyframes downloadArrow {
   /* 0% and 0.001% keyframes used as a hackish way of having the button frozen
@@ -2161,6 +2207,330 @@ a.ae-btn.disabled {
   }
 }
 
+/*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
+
+.ae-wrapper {
+
+  /* Sections
+     ========================================================================== */
+
+  /**
+   * Correct the font size and margin on 'h1' elements within 'section' and
+   * 'article' contexts in Chrome, Firefox, and Safari.
+   */
+
+  h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+  }
+
+  /* Grouping content
+     ========================================================================== */
+
+  /**
+   * 1. Add the correct box sizing in Firefox.
+   * 2. Show the overflow in Edge and IE.
+   */
+
+  hr {
+    box-sizing: content-box; /* 1 */
+    height: 0; /* 1 */
+    overflow: visible; /* 2 */
+  }
+
+  /**
+   * 1. Correct the inheritance and scaling of font size in all browsers.
+   * 2. Correct the odd 'em' font sizing in all browsers.
+   */
+
+  pre {
+    font-family: monospace, monospace; /* 1 */
+    font-size: 1em; /* 2 */
+  }
+
+  /* Text-level semantics
+     ========================================================================== */
+
+  /**
+   * Remove the gray background on active links in IE 10.
+   */
+
+  a {
+    background-color: transparent;
+  }
+
+  /**
+   * 1. Remove the bottom border in Chrome 57-
+   * 2. Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari.
+   */
+
+  abbr[title] {
+    border-bottom: none; /* 1 */
+    text-decoration: underline; /* 2 */
+    text-decoration: underline dotted; /* 2 */
+  }
+
+  /**
+   * Add the correct font weight in Chrome, Edge, and Safari.
+   */
+
+  b,
+  strong {
+    font-weight: bolder;
+  }
+
+  /**
+   * 1. Correct the inheritance and scaling of font size in all browsers.
+   * 2. Correct the odd 'em' font sizing in all browsers.
+   */
+
+  code,
+  kbd,
+  samp {
+    font-family: monospace, monospace; /* 1 */
+    font-size: 1em; /* 2 */
+  }
+
+  /**
+   * Add the correct font size in all browsers.
+   */
+
+  small {
+    font-size: 80%;
+  }
+
+  /**
+   * Prevent 'sub' and 'sup' elements from affecting the line height in
+   * all browsers.
+   */
+
+  sub,
+  sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+
+  sub {
+    bottom: -0.25em;
+  }
+
+  sup {
+    top: -0.5em;
+  }
+
+  /* Embedded content
+     ========================================================================== */
+
+  /**
+   * Remove the border on images inside links in IE 10.
+   */
+
+  img {
+    border-style: none;
+  }
+
+  /* Forms
+     ========================================================================== */
+
+  /**
+   * 1. Change the font styles in all browsers.
+   * 2. Remove the margin in Firefox and Safari.
+   */
+
+  button,
+  input,
+  optgroup,
+  select,
+  textarea {
+    font-family: inherit; /* 1 */
+    font-size: 100%; /* 1 */
+    line-height: 1.15; /* 1 */
+    margin: 0; /* 2 */
+  }
+
+  /**
+   * Show the overflow in IE.
+   * 1. Show the overflow in Edge.
+   */
+
+  button,
+  input { /* 1 */
+    overflow: visible;
+  }
+
+  /**
+   * Remove the inheritance of text transform in Edge, Firefox, and IE.
+   * 1. Remove the inheritance of text transform in Firefox.
+   */
+
+  button,
+  select { /* 1 */
+    text-transform: none;
+  }
+
+  /**
+   * Correct the inability to style clickable types in iOS and Safari.
+   */
+
+  button,
+  [type="button"],
+  [type="reset"],
+  [type="submit"] {
+    -webkit-appearance: button;
+  }
+
+  /**
+   * Remove the inner border and padding in Firefox.
+   */
+
+  button::-moz-focus-inner,
+  [type="button"]::-moz-focus-inner,
+  [type="reset"]::-moz-focus-inner,
+  [type="submit"]::-moz-focus-inner {
+    border-style: none;
+    padding: 0;
+  }
+
+  /**
+   * Restore the focus styles unset by the previous rule.
+   */
+
+  button:-moz-focusring,
+  [type="button"]:-moz-focusring,
+  [type="reset"]:-moz-focusring,
+  [type="submit"]:-moz-focusring {
+    outline: 1px dotted ButtonText;
+  }
+
+  /**
+   * Correct the padding in Firefox.
+   */
+
+  fieldset {
+    padding: 0.35em 0.75em 0.625em;
+  }
+
+  /**
+   * 1. Correct the text wrapping in Edge and IE.
+   * 2. Correct the color inheritance from 'fieldset' elements in IE.
+   * 3. Remove the padding so developers are not caught out when they zero out
+   *    'fieldset' elements in all browsers.
+   */
+
+  legend {
+    box-sizing: border-box; /* 1 */
+    color: inherit; /* 2 */
+    display: table; /* 1 */
+    max-width: 100%; /* 1 */
+    padding: 0; /* 3 */
+    white-space: normal; /* 1 */
+  }
+
+  /**
+   * Add the correct vertical alignment in Chrome, Firefox, and Opera.
+   */
+
+  progress {
+    vertical-align: baseline;
+  }
+
+  /**
+   * Remove the default vertical scrollbar in IE 10+.
+   */
+
+  textarea {
+    overflow: auto;
+  }
+
+  /**
+   * 1. Add the correct box sizing in IE 10.
+   * 2. Remove the padding in IE 10.
+   */
+
+  [type="checkbox"],
+  [type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+  }
+
+  /**
+   * Correct the cursor style of increment and decrement buttons in Chrome.
+   */
+
+  [type="number"]::-webkit-inner-spin-button,
+  [type="number"]::-webkit-outer-spin-button {
+    height: auto;
+  }
+
+  /**
+   * 1. Correct the odd appearance in Chrome and Safari.
+   * 2. Correct the outline style in Safari.
+   */
+
+  [type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    outline-offset: -2px; /* 2 */
+  }
+
+  /**
+   * Remove the inner padding in Chrome and Safari on macOS.
+   */
+
+  [type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+
+  /**
+   * 1. Correct the inability to style clickable types in iOS and Safari.
+   * 2. Change font properties to 'inherit' in Safari.
+   */
+
+  ::-webkit-file-upload-button {
+    -webkit-appearance: button; /* 1 */
+    font: inherit; /* 2 */
+  }
+
+  /* Interactive
+     ========================================================================== */
+
+  /*
+   * Add the correct display in Edge, IE 10+, and Firefox.
+   */
+
+  details {
+    display: block;
+  }
+
+  /*
+   * Add the correct display in all browsers.
+   */
+
+  summary {
+    display: list-item;
+  }
+
+  /* Misc
+     ========================================================================== */
+
+  /**
+   * Add the correct display in IE 10+.
+   */
+
+  template {
+    display: none;
+  }
+
+  /**
+   * Add the correct display in IE 10.
+   */
+
+  [hidden] {
+    display: none;
+  }
+}
+
 /* Notifiers
  *******************************************************************************/
 
@@ -2169,74 +2539,63 @@ a.ae-btn.disabled {
   --ae-blur-shadow: 0 0 8px 8px var(--ae-transparent-black);
 }
 
-#ae-notifier {
+.ae-notifier {
   position: fixed;
   top: 100px;
   border-radius: 0.2em;
   font-family: system-ui;
   border: 1px solid var(--ae-light-green);
   background-color: var(--ae-near-black);
-}
 
-#ae-notifier.hidden {
-  display: none;
-}
+  .ae-bar {
+    width: 0;
+    height: 50px;
+    border-bottom-right-radius: 0.2em;
+    border-top-right-radius: 0.2em;
+    transition: all 1s;
+    border-width: 1px;
+    border-style: solid;
+    background-color: var(--ae-dark-green);
+    border-color: var(--ae-light-green);
+    -webkit-animation: pulse 1s linear alternate;
+    -webkit-animation-iteration-count: infinite; 
+  }
 
-#ae-bar {
-  width: 0;
-  height: 50px;
-  border-bottom-right-radius: 0.2em;
-  border-top-right-radius: 0.2em;
-  transition: all 1s;
-  border-width: 1px;
-  border-style: solid;
-  background-color: var(--ae-dark-green);
-  border-color: var(--ae-light-green);
-  -webkit-animation: pulse 1s linear alternate;
-  -webkit-animation-iteration-count: infinite; 
-}
+  .ae-messages {
+    padding: 14px;
+    color: #fff;
+    font-size: 1.1em;
+    font-weight: 600;
+  }
 
-#ae-messages {
-  padding: 14px;
-  color: #fff;
-  font-size: 1.1em;
-  font-weight: 600;
+  .ae-status-text {
+    text-wrap: nowrap;
 
-}
+    -webkit-text-stroke: 0.2px var(--ae-dim-gray);
 
-#ae-status-text {
-  text-wrap: nowrap;
+    background-color: var(--ae-transparent-black);
+    box-shadow: var(--ae-blur-shadow);
+    -webkit-box-shadow: var(--ae-blur-shadow);
+    -moz-box-shadow: var(--ae-blur-shadow);
+  }
 
-  -webkit-text-stroke: 0.2px var(--ae-dim-gray);
+  .ae-percent-text {
+    color: var(--ae-bright-green);
+  }
 
-  background-color: var(--ae-transparent-black);
-  box-shadow: var(--ae-blur-shadow);
-  -webkit-box-shadow: var(--ae-blur-shadow);
-  -moz-box-shadow: var(--ae-blur-shadow);
-}
+  .ae-context {
+    font-size: .9em;
+    color: #999;
+    background: var(--ae-black-russian);
+    border-top: 1px solid var(--ae-dim-gray);
+    padding: 3px;
 
-#ae-percent-text {
-  color: var(--ae-bright-green);
-}
-
-#ae-context.empty {
-  height: 0px;
-  padding: 0px;
-  border-top: 0px;
-}
-
-#ae-context{
-  font-size: .9em;
-  color: #999;
-  background: var(--ae-black-russian);
-  border-top: 1px solid var(--ae-dim-gray);
-  padding: 3px;
-}
-
-.ae-row {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-between;
+    &.empty {
+      height: 0px;
+      padding: 0px;
+      border-top: 0px;
+    }
+  }
 }
 
 @-webkit-keyframes pulse {
@@ -2323,7 +2682,9 @@ Modal = class extends Styled {
    */
   get wrapper() {
     if (!this.#wrapper) {
-      let wrapper = Doc.create("div", { class: this.selectors.wrapper });
+      let wrapper = Doc.create("div", {
+        class: `${this.selectors.wrapper} ae-wrapper`,
+      });
 
       wrapper.append(this.content);
 
@@ -2371,7 +2732,7 @@ Modal = class extends Styled {
    */
   get close_btn() {
     if (!this.#close_btn) {
-      let btn = Doc.create("a", { id: this.selectors.close_btn });
+      let btn = Doc.create("a", { class: this.selectors.close_btn });
       btn.innerHTML = "&times;";
       btn.attributes.href = "#";
 
@@ -2597,6 +2958,17 @@ DownloadModal = class extends Modal {
     return this.#head;
   }
 
+  get wrapper() {
+    if (!this.#wrapper) {
+      let wrapper = super.wrapper;
+      wrapper.id = "ae-download-modal";
+
+      this.#wrapper = wrapper;
+    }
+
+    return this.#wrapper;
+  }
+
   /**
    * The div element for the main content of the modal.
    *
@@ -2714,7 +3086,7 @@ DownloadModal = class extends Modal {
     });
   }
 };
-StatusNotifier = class extends Styled {
+Notifier = class extends Styled {
   #wrapper = null;
   #bar = null;
   #status = null;
@@ -2758,6 +3130,7 @@ StatusNotifier = class extends Styled {
     if (!this.#wrapper) {
       this.#wrapper = Doc.create("div", {
         id: this.selectors.wrapper,
+        class: "ae-wrapper ae-notifier",
         style: {
           width: `${this.bar_width}px`,
           left: `${(this.body_width - this.bar_width) / 2}px`,
@@ -2777,7 +3150,7 @@ StatusNotifier = class extends Styled {
    */
   get bar() {
     if (!this.#bar) {
-      this.#bar = Doc.create("div", { id: this.selectors.bar });
+      this.#bar = Doc.create("div", { class: this.selectors.bar });
       this.#bar.append(this.messages);
     }
     return this.#bar;
@@ -2791,8 +3164,7 @@ StatusNotifier = class extends Styled {
   get messages() {
     if (!this.#messages) {
       this.#messages = Doc.create("div", {
-        id: this.selectors.messages,
-        class: "ae-row",
+        class: `${this.selectors.messages} ae-row`,
         style: { width: `${this.bar_width}px` },
       });
       this.#messages.append(this.status, this.percentage);
@@ -2807,7 +3179,7 @@ StatusNotifier = class extends Styled {
    */
   get status() {
     if (!this.#status) {
-      this.#status = Doc.create("div", { id: this.selectors.status });
+      this.#status = Doc.create("div", { class: this.selectors.status });
     }
     return this.#status;
   }
@@ -2818,7 +3190,7 @@ StatusNotifier = class extends Styled {
   get percentage() {
     if (!this.#percentage) {
       this.#percentage = Doc.create("span", {
-        id: this.selectors.percentage,
+        class: this.selectors.percentage,
       });
     }
     return this.#percentage;
@@ -2832,8 +3204,7 @@ StatusNotifier = class extends Styled {
   get context() {
     if (!this.#context) {
       this.#context = Doc.create("div", {
-        id: this.selectors.context,
-        class: "ae-row empty",
+        class: `${this.selectors.context} ae-row empty`,
       });
 
       this.#context.append(this.steps, this.estimate);
@@ -3201,7 +3572,7 @@ StatusNotifier = class extends Styled {
     this.#percentage = null;
   }
 };
-PurchaseHistoryNotifier = class extends StatusNotifier {
+PurchaseHistoryNotifier = class extends Notifier {
   #year = null;
   #years = null;
 
@@ -3285,7 +3656,7 @@ PurchaseHistoryNotifier = class extends StatusNotifier {
     return `Retrieving purchase history: ${this.year}`;
   }
 };
-OrderNotifier = class extends StatusNotifier {
+OrderNotifier = class extends Notifier {
   #year = null;
   #year_page = null;
   #item_no = null;
@@ -3387,7 +3758,7 @@ OrderNotifier = class extends StatusNotifier {
     return message;
   }
 };
-LibraryNotifier = class extends StatusNotifier {
+LibraryNotifier = class extends Notifier {
   #item_no = null;
   #total = null;
 
@@ -3424,11 +3795,11 @@ LibraryNotifier = class extends StatusNotifier {
   }
 };
 /**
- * Status notifier displayed to the user during the "Additional details"
+ * Notifier displayed to the user during the "Additional details"
  * step.
  */
 
-DetailsNotifier = class extends StatusNotifier {
+DetailsNotifier = class extends Notifier {
   #item_no = null;
   #total = null;
 
@@ -3646,7 +4017,7 @@ Exporter = class {
   constructor(limit = null) {
     this.limit = limit;
     this.timer = new Timer();
-    this.notifier = new StatusNotifier();
+    this.notifier = new Notifier();
     this.orders = new OrdersFetcher();
     this.library = new LibraryFetcher();
     this.details = new DetailsFetcher();

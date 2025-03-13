@@ -29,3 +29,22 @@
   --ae-mystic-white: #dce6ef;
   --ae-near-white: #eaeaea;
 }
+
+.ae-wrapper {
+
+  *,:after,:before {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+
+  &.hidden, .hidden {
+    display: none;
+  }
+
+  .ae-row {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  }
+}

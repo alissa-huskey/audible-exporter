@@ -6,74 +6,63 @@
   --ae-blur-shadow: 0 0 8px 8px var(--ae-transparent-black);
 }
 
-#ae-notifier {
+.ae-notifier {
   position: fixed;
   top: 100px;
   border-radius: 0.2em;
   font-family: system-ui;
   border: 1px solid var(--ae-light-green);
   background-color: var(--ae-near-black);
-}
 
-#ae-notifier.hidden {
-  display: none;
-}
+  .ae-bar {
+    width: 0;
+    height: 50px;
+    border-bottom-right-radius: 0.2em;
+    border-top-right-radius: 0.2em;
+    transition: all 1s;
+    border-width: 1px;
+    border-style: solid;
+    background-color: var(--ae-dark-green);
+    border-color: var(--ae-light-green);
+    -webkit-animation: pulse 1s linear alternate;
+    -webkit-animation-iteration-count: infinite; 
+  }
 
-#ae-bar {
-  width: 0;
-  height: 50px;
-  border-bottom-right-radius: 0.2em;
-  border-top-right-radius: 0.2em;
-  transition: all 1s;
-  border-width: 1px;
-  border-style: solid;
-  background-color: var(--ae-dark-green);
-  border-color: var(--ae-light-green);
-  -webkit-animation: pulse 1s linear alternate;
-  -webkit-animation-iteration-count: infinite; 
-}
+  .ae-messages {
+    padding: 14px;
+    color: #fff;
+    font-size: 1.1em;
+    font-weight: 600;
+  }
 
-#ae-messages {
-  padding: 14px;
-  color: #fff;
-  font-size: 1.1em;
-  font-weight: 600;
+  .ae-status-text {
+    text-wrap: nowrap;
 
-}
+    -webkit-text-stroke: 0.2px var(--ae-dim-gray);
 
-#ae-status-text {
-  text-wrap: nowrap;
+    background-color: var(--ae-transparent-black);
+    box-shadow: var(--ae-blur-shadow);
+    -webkit-box-shadow: var(--ae-blur-shadow);
+    -moz-box-shadow: var(--ae-blur-shadow);
+  }
 
-  -webkit-text-stroke: 0.2px var(--ae-dim-gray);
+  .ae-percent-text {
+    color: var(--ae-bright-green);
+  }
 
-  background-color: var(--ae-transparent-black);
-  box-shadow: var(--ae-blur-shadow);
-  -webkit-box-shadow: var(--ae-blur-shadow);
-  -moz-box-shadow: var(--ae-blur-shadow);
-}
+  .ae-context {
+    font-size: .9em;
+    color: #999;
+    background: var(--ae-black-russian);
+    border-top: 1px solid var(--ae-dim-gray);
+    padding: 3px;
 
-#ae-percent-text {
-  color: var(--ae-bright-green);
-}
-
-#ae-context.empty {
-  height: 0px;
-  padding: 0px;
-  border-top: 0px;
-}
-
-#ae-context{
-  font-size: .9em;
-  color: #999;
-  background: var(--ae-black-russian);
-  border-top: 1px solid var(--ae-dim-gray);
-  padding: 3px;
-}
-
-.ae-row {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-between;
+    &.empty {
+      height: 0px;
+      padding: 0px;
+      border-top: 0px;
+    }
+  }
 }
 
 @-webkit-keyframes pulse {
