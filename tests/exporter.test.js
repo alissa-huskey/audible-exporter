@@ -160,14 +160,14 @@ describe("Exporter", () => {
     let exporter = new Exporter();
     exporter.downloadReady();
 
-    expect(exporter.modal.wrapper.style.display).toBe("block");
+    expect(exporter.modal).toBeA(DownloadDialog);
   });
 
   test("download()", async () => {
     let exporter = new Exporter();
     exporter.results = ["a", "b", "c"];
 
-    exporter.modal = new DownloadModal();
+    exporter.modal = new DownloadDialog();
     exporter.modal.create();
     exporter.modal.ft_select.selectedIndex = 2;
 

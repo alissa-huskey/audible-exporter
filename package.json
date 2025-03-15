@@ -51,6 +51,8 @@
   },
   "jest": {
     "testEnvironment": "jsdom",
+    "restoreMocks": true,
+    "clearMocks": true,
     "setupFiles": [
       "./tests/helper.js"
     ],

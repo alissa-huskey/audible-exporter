@@ -6,7 +6,3 @@ require("../src/dev.js");
 beforeEach(() => {
   global.delay = jest.fn();
 });
-
-afterEach(() => {
-  jest.restoreAllMocks();
-});

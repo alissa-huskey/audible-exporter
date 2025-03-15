@@ -707,6 +707,15 @@ Doc = class {
   }
 
   /**
+   * Shortcut for this.element.addEventListener().
+   *
+   * @params {...args}  args to pass along
+   */
+  listen(...args) {
+    this.element.addEventListener(...args);
+  }
+
+  /**
    * Set attributes.
    *
    * @param {string, object} attrs  An object of attr names and values, or a
@@ -1852,6 +1861,15 @@ OrdersFetcher = class {
 DOM = class {
   constructor() {
     window.ae ||= {};
+
+    ["id", "class", "classList"].forEach((k) => {
+      Object.defineProperty(this, k, {
+        get: () => this.wrapper[k],
+        set: (v) => {
+          this.wrapper[k] = v;
+        },
+      });
+    });
   }
 
   /**
@@ -1869,6 +1887,73 @@ DOM = class {
    */
   remove() {
     this.wrapper.element.remove();
+  }
+
+  /**
+   * Create an element with innerHTML.
+   *
+   * @params   {string}  tag     tag name
+   * @params   {string}  html    inner HTML
+   * @params   {attrs}   object  element attributes
+   *
+   * @returns  {Doc}
+   */
+  elmWithInner(tag, html, attrs = {}) {
+    let elm = Doc.create(tag, attrs);
+    elm.innerHTML = html;
+    return elm;
+  }
+
+  /**
+   * Create a paragraph element.
+   *
+   * @params   {string}  html    inner HTML
+   * @params   {attrs}   object  element attributes
+   *
+   * returns {Doc}
+   */
+  p(html, attrs = {}) {
+    return this.elmWithInner("p", html, attrs);
+  }
+
+  /**
+   * Create a list element.
+   *
+   * @params   {string}  html    inner HTML
+   * @params   {attrs}   object  element attributes
+   *
+   * returns {Doc}
+   */
+  li(html, attrs = {}) {
+    return this.elmWithInner("li", html, attrs);
+  }
+
+  /**
+   * Create a list element.
+   *
+   * @params   {string}  html    inner HTML
+   * @params   {attrs}   object  element attributes
+   *
+   * returns {Doc}
+   */
+  h1(html, attrs = {}) {
+    return this.elmWithInner("h1", html, attrs);
+  }
+
+  /**
+   * Create a button element.
+   *
+   * @params   {string}     text    inner text
+   * @params   {attrs}      object  element attributes
+   *
+   * returns {Doc}
+   */
+  button(text, attrs = {}) {
+    attrs.class = attrs.class ? `ae-btn ${attrs.class}` : "ae-btn";
+
+    let btn = Doc.create("button", attrs);
+    btn.innerText = text;
+    return btn;
   }
 };
 /**
@@ -1926,6 +2011,8 @@ Style = class extends DOM {
 
 .ae-wrapper {
 
+  font-size: 14px;
+
   *,:after,:before {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -1953,6 +2040,10 @@ Style = class extends DOM {
 }
 
 .ae-wrapper {
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
+  border: 0;
 
   &.ae-modal {
 
@@ -1977,7 +2068,7 @@ Style = class extends DOM {
       text-transform: uppercase;
     }
 
-    a.ae-btn {
+    .ae-btn a, .ae-btn button, button.ae-btn {
       background-color: var(--ae-emerald-green);
       color: #000;
       cursor: pointer;
@@ -1993,10 +2084,15 @@ Style = class extends DOM {
 
       display: inline-block;
 
+      border-width: 0;
       border-radius: 4px;
       box-shadow: var(--ae-box-shadow-light-bg);
       -webkit-box-shadow: var(--ae-box-shadow-light-bg);
       -moz-box-shadow: var(--ae-box-shadow-light-bg);
+
+      &:focus-visible {
+        outline-width: 0;
+      }
 
       &:hover {
         background-color: var(--ae-near-black);
@@ -2008,7 +2104,7 @@ Style = class extends DOM {
         -moz-box-shadow: var(--ae-box-shadow-dark-bg);
       }
 
-      &.disabled {
+      &.disabled, &:disabled {
         opacity: 0.5;
         pointer-events: none;
         color: white;
@@ -2016,8 +2112,8 @@ Style = class extends DOM {
     }
 
     .ae-close-btn {
-
       color: var(--ae-basalt-gray);
+      border-width: 0;
       font-size: 28px;
       font-weight: bold;
       text-decoration: none;
@@ -2026,7 +2122,16 @@ Style = class extends DOM {
       align-self: flex-end;
       float: right;
 
-      &:hover, &:focus {
+      /* for buttons */
+      background-color: transparent;
+      padding-inline: 0;
+      padding-block: 0;
+
+      &:focus-visible {
+        outline-width: 0;
+      }
+
+      &:hover, &:active {
         color: #000;
         text-decoration: none;
         cursor: pointer;
@@ -2039,8 +2144,8 @@ Style = class extends DOM {
       left: 50%;
       transform: translate(-50%, -50%);
 
-      width: 50%;
-      height: 300px;
+      width: 500px;
+      max-width: 90%;
 
       border-radius: 15px;
       box-shadow: 0 3px 15px -2px #222;
@@ -2049,12 +2154,9 @@ Style = class extends DOM {
       background-color: var(--ae-black-russian);
       color: var(--ae-near-white);
       font-size: 1.1em;
-    }
 
-    .ae-head {
-      background-color: var(--ae-near-black);
-      padding: 10px;
-      border-radius: 10px 10px 0px 0px;
+      /* form element */
+      block-size: auto;
     }
 
     .ae-copy {
@@ -2074,8 +2176,24 @@ Style = class extends DOM {
      ------------------------------------------------------------------------------*/
 
     &.ae-error {
+      &.ae-content {
+        width: unset;
+      }
+
       .ae-content {
         border: 1px solid var(--ae-red);
+      }
+
+      .ae-actions {
+        justify-content: center;
+
+        a, button {
+          background-color: var(--ae-basalt-gray);
+
+          &:hover {
+            background-color: var(--ae-near-black);
+          }
+        }
       }
 
       h1 {
@@ -2091,20 +2209,20 @@ Style = class extends DOM {
 
     &#ae-start-modal {
 
-      &.ae-content.ae-error {
-        width: unset;
-      }
-
       .ae-head {
         background-color: unset;
       }
 
       .ae-content {
-        width: 60%;
         height: unset;
+
+        .ae-actions {
+          justify-content: center;
+        }
       }
 
       ul {
+        padding-left: 40px;
         margin: 30px 0;
 
         ::marker {
@@ -2131,7 +2249,27 @@ Style = class extends DOM {
      ------------------------------------------------------------------------------*/
 
     &#ae-download-modal {
-      #ae-download-btn a {
+      .ae-head {
+        background-color: var(--ae-near-black);
+        padding: 10px;
+        border-radius: 10px 10px 0px 0px;
+      }
+
+      .ae-copy {
+        background-color: transparent;
+        padding: 0;
+      }
+
+      .ae-actions {
+        flex-wrap: wrap;
+
+        select {
+          padding: 8px;
+        }
+      }
+
+      .ae-download-btn a,
+      .ae-download-btn button:enabled {
         position: relative;
         padding: 10px 25px;
         text-indent: 15px;
@@ -2654,23 +2792,31 @@ Styled = class extends DOM {
   }
 };
 /**
- * Modal popup windows.
+ * Modal dialog box.
  */
 
-Modal = class extends Styled {
+Dialog = class extends Styled {
   #wrapper = null;
   #head = null;
   #content = null;
+  #copy = null
+  #actions = null;
   #close_btn = null;
 
   title = "";
 
-  selectors = {
+  #selectors = {
     wrapper: "ae-modal",
     content: "ae-content",
     head: "ae-head",
+    copy: "ae-copy",
+    actions: "ae-actions",
     close_btn: "ae-close-btn",
   };
+
+  get selectors() {
+    return this.#selectors;
+  }
 
   /* Elements
    ***************************************************************************/
@@ -2680,19 +2826,40 @@ Modal = class extends Styled {
    *
    * @returns {Doc}
    */
+  createWrapper(id) {
+    let wrapper = Doc.create("dialog", {
+      class: "ae-wrapper ae-modal",
+    });
+    if (id) wrapper.id = id;
+
+    wrapper.append(this.content);
+
+    return wrapper;
+  }
+
   get wrapper() {
     if (!this.#wrapper) {
-      let wrapper = Doc.create("div", {
-        class: `${this.selectors.wrapper} ae-wrapper`,
-      });
-
-      wrapper.append(this.content);
-
-      wrapper.style["z-index"] = new Date().getTime();
-
-      this.#wrapper = wrapper;
+      this.#wrapper = this.createWrapper();
     }
     return this.#wrapper;
+  }
+
+  /**
+   * div element for the main content.
+   */
+  get content() {
+    if (!this.#content) {
+      let content = Doc.create("form", {
+        class: this.selectors.content,
+        method: "dialog",
+      });
+
+      content.append(this.head);
+      content.append(this.copy);
+
+      this.#content = content;
+    }
+    return this.#content;
   }
 
   /**
@@ -2710,21 +2877,33 @@ Modal = class extends Styled {
   }
 
   /**
-   * div element for the main content.
+   * div element for the copy section.
+   * 
+   * @returns {Doc}
    */
-  get content() {
-    if (!this.#content) {
-      let content = Doc.create("div", { class: this.selectors.content });
-
-      content.append(this.head);
-
-      this.#content = content;
+  get copy() {
+    if (!this.#copy) {
+      this.#copy = Doc.create("div", { class: this.selectors.copy });
     }
-    return this.#content;
+    return this.#copy;
   }
 
   /**
-   * Close button a element.
+   * div element for the interactive elements.
+   *
+   * @returns {Doc}
+   */
+  get actions() {
+    if (!this.#actions) {
+      let actions = Doc.create("div", { class: this.selectors.actions });
+
+      this.#actions = actions;
+    }
+    return this.#actions;
+  }
+
+  /**
+   * Close button element.
    *
    * @listens click
    *
@@ -2732,17 +2911,11 @@ Modal = class extends Styled {
    */
   get close_btn() {
     if (!this.#close_btn) {
-      let btn = Doc.create("a", { class: this.selectors.close_btn });
+      let btn = Doc.create("button", {
+        class: this.selectors.close_btn,
+        formmethod: "dialog",
+      });
       btn.innerHTML = "&times;";
-      btn.attributes.href = "#";
-
-      btn.element.addEventListener(
-        "click",
-        () => {
-          this.hide();
-        },
-        false,
-      );
       this.#close_btn = btn;
     }
     return this.#close_btn;
@@ -2752,59 +2925,112 @@ Modal = class extends Styled {
    ***************************************************************************/
 
   /**
-   * Show the modal.
+   * Show the dialog.
    */
   show() {
-    this.wrapper.style.display = "block";
+    this.wrapper.element.showModal();
   }
 
   /**
-   * Hide the modal.
+   * Hide the dialog.
    */
   hide() {
-    this.wrapper.style.display = "none";
+    this.wrapper.element.close();
   }
 
   /**
-   * Add the wrapper HTML element to the DOM.
+   * Add the wrapper HTML element to the DOM and display.
    */
   create() {
     super.create();
-    window.ae.modal ||= this;
+    window.ae.modal = this;
+    this.show();
+  }
+};
+/**
+ * Modal dialog box.
+ */
+
+ErrorDialog = class extends Dialog {
+  #wrapper = null;
+  #head = null;
+  #content = null;
+  #close_btn = null;
+  #copy = null
+
+  constructor(paragraphs = []) {
+    super();
+    this.paragraphs = paragraphs;
+  }
+
+  /* Elements
+   ***************************************************************************/
+
+  /**
+   * Construct wrapper dialog element and append all its child elements.
+   *
+   * @returns {Doc}
+   */
+  get wrapper() {
+    if (!this.#wrapper) {
+      let wrapper = super.wrapper;
+      wrapper.classList.add("ae-error");
+      this.#wrapper = wrapper;
+    }
+    return this.#wrapper;
+  }
+
+
+  /**
+   * div element for the head section.
+   */
+  get head() {
+    if (!this.#head) {
+      let head = super.head;
+
+      head.append(this.h1("Oh no!"));
+
+      this.#head = head;
+    }
+    return this.#head;
   }
 
   /**
-   * Add the wrapper HTML element to the DOM.
+   * div element for the copy section.
+   * 
+   * @returns {Doc}
    */
-  remove() {
-    super.remove();
-    if (window.ae?.modal) {
-      window.ae.modal = null;
+  get copy() {
+    if (!this.#copy) {
+      this.#copy = super.copy;
+
+      this.paragraphs.forEach((text) => {
+        this.#copy.append(this.p(text));
+      });
     }
+    return this.#copy;
   }
 };
 /**
  * Modal pop-up window for starting the exporter.
  */
 
-StartModal = class extends Modal {
+StartDialog = class extends Dialog {
   #wrapper = null;
   #content = null;
+  #actions = null;
   #close_btn = null;
   #ft_select = null;
   #start_btn = null;
   #file = null;
 
-  title = "Export your audible library.";
-
-  selectors = {
-    wrapper: "ae-modal",
-    content: "ae-content",
-    head: "ae-head",
-    close_btn: "ae-close-btn",
-
+  #selectors = {
     start_btn: "ae-start-btn",
   };
+
+  get selectors() {
+    return Object.assign({}, super.selectors, this.#selectors);
+  }
 
   /* Elements
    ***************************************************************************/
@@ -2816,8 +3042,7 @@ StartModal = class extends Modal {
    */
   get wrapper() {
     if (!this.#wrapper) {
-      this.#wrapper = super.wrapper;
-      this.#wrapper.id = "ae-start-modal";
+      this.#wrapper = this.createWrapper("ae-start-modal");
     }
     return this.#wrapper;
   }
@@ -2830,20 +3055,10 @@ StartModal = class extends Modal {
   get content() {
     if (!this.#content) {
       let content = super.content;
-      let copy = Doc.create("div", { class: "ae-copy" });
 
-      let btn_wrapper = Doc.create("span", { id: "ae-start-btn" });
       let ul = Doc.create("ul");
 
-      btn_wrapper.append(this.start_btn);
-
-      content.append(copy);
-
-      copy.append(
-        this.p("This will export your audible library. It might take awhile."),
-      );
-
-      copy.append(this.p("Until it's done, you must:"), ul);
+      content.append(this.copy);
 
       let need = [
         "be on audible.com and logged in.",
@@ -2854,9 +3069,12 @@ StartModal = class extends Modal {
 
       ul.append(...need.map((text) => this.li(text)));
 
-      copy.append(
+      this.copy.append(
+        this.p("This will export your audible library. It might take awhile."),
+        this.p("Until it's done, you must:"),
+        ul,
         this.p("Click the button to get started!"),
-        btn_wrapper.element,
+        this.actions,
       );
 
       this.#content = content;
@@ -2864,42 +3082,19 @@ StartModal = class extends Modal {
     return this.#content;
   }
 
-  /**
-   * Create a paragraph element.
-   *
-   * @params {string} text  Inner text
-   *
-   * returns {Doc}
-   */
-  p(text) {
-    let p = Doc.create("p");
-    p.innerHTML = text;
-    return p;
-  }
-
-  /**
-   * Create a list element.
-   *
-   * @params {string} text  Inner text
-   *
-   * returns {Doc}
-   */
-  li(text) {
-    let li = Doc.create("li");
-    li.innerHTML = text;
-    return li;
+  get actions() {
+    if (!this.#actions) {
+      this.#actions = super.actions;
+      this.#actions.append(this.start_btn);
+    }
+    return this.#actions;
   }
 
   get start_btn() {
     if (!this.#start_btn) {
-      let btn = Doc.create("a", {
-        id: this.selectors.start_btn,
-        class: "ae-btn",
-      });
-      btn.attributes.href = "#";
-      btn.innerHTML = "Start";
+      let btn = this.button("Start", { id: this.selectors.start_btn });
 
-      btn.element.addEventListener("click", this.start, false);
+      btn.listen("click", this.start, false);
 
       this.#start_btn = btn;
     }
@@ -2921,25 +3116,24 @@ StartModal = class extends Modal {
  * Modal pop-up window for downloading the export.
  */
 
-DownloadModal = class extends Modal {
+DownloadDialog = class extends Dialog {
   #wrapper = null;
   #head = null;
   #content = null;
+  #copy = null;
+  #actions = null;
   #ft_select = null;
   #dl_btn = null;
-  #h1 = null;
   #file = null;
 
-  selectors = {
-    wrapper: "ae-modal",
-    content: "ae-content",
-    head: "ae-head",
-    close_btn: "ae-close-btn",
-
-    dl_btn: "ae-download-btn",
+  #selectors = {
     ft_select: "ae-filetype",
-    actions: "ae-actions",
+    dl_btn: "ae-download-btn",
   };
+
+  get selectors() {
+    return Object.assign({}, super.selectors, this.#selectors);
+  }
 
   /* Elements
    ***************************************************************************/
@@ -2951,7 +3145,7 @@ DownloadModal = class extends Modal {
     if (!this.#head) {
       let head = super.head;
 
-      head.append(this.h1);
+      head.append(this.h1("Download"));
 
       this.#head = head;
     }
@@ -2960,10 +3154,7 @@ DownloadModal = class extends Modal {
 
   get wrapper() {
     if (!this.#wrapper) {
-      let wrapper = super.wrapper;
-      wrapper.id = "ae-download-modal";
-
-      this.#wrapper = wrapper;
+      this.#wrapper = this.createWrapper("ae-download-modal");
     }
 
     return this.#wrapper;
@@ -2978,17 +3169,7 @@ DownloadModal = class extends Modal {
     if (!this.#content) {
       let content = super.content;
 
-      let dl_wrapper = Doc.create("span", { id: this.selectors.dl_btn });
-      let actions = Doc.create("div", { class: this.selectors.actions });
-      let p = Doc.create("p");
-
-      p.innerHTML = "Your export is ready!";
-
-      actions.append(this.ft_select, dl_wrapper);
-
-      dl_wrapper.append(this.dl_btn);
-
-      content.append(p, actions);
+      content.append(this.copy);
 
       this.#content = content;
     }
@@ -2996,16 +3177,41 @@ DownloadModal = class extends Modal {
   }
 
   /**
-   * h1 element.
+   * Div that contains text content and actions.
    *
    * @returns {Doc}
    */
-  get h1() {
-    if (!this.#h1) {
-      this.#h1 = Doc.create("h1");
-      this.#h1.innerHTML = "Download";
+  get copy() {
+    if (!this.#copy) {
+      this.#copy = super.copy;
+      this.copy.append(
+        this.p("Your export is ready!"),
+        this.actions
+      );
     }
-    return this.#h1;
+    return this.#copy;
+  }
+
+  /**
+   * Div that contains the dropdown and download button.
+   *
+   * @returns {Doc}
+   */
+  get actions() {
+    if (!this.#actions) {
+      this.#actions = super.actions;
+
+      let span = Doc.create("span", {
+        class: `${this.selectors.dl_btn} ae-btn`,
+      });
+      span.append(this.dl_btn);
+
+      this.actions.append(
+        this.ft_select,
+        span,
+      );
+    }
+    return this.#actions;
   }
 
   get ft_select() {
@@ -3030,8 +3236,10 @@ DownloadModal = class extends Modal {
         let btn = window.ae.modal.dl_btn;
         if (select.value) {
           btn.classList.remove("disabled");
+          btn.disabled = false;
         } else {
           btn.classList.add("disabled");
+          btn.disabled = true;
         }
       });
 
@@ -3046,8 +3254,9 @@ DownloadModal = class extends Modal {
         id: this.selectors.dl_btn,
         class: "ae-btn disabled",
       });
-      btn.attributes.href = "#";
-      btn.innerHTML = "Download";
+
+      btn.href = "#";
+      btn.innerText = "Download";
       this.#dl_btn = btn;
     }
     return this.#dl_btn;
@@ -4027,9 +4236,12 @@ Exporter = class {
 
     this.style = new Style();
     this.style.create();
+  }
 
-    this.modal = new StartModal();
+  start() {
+    this.modal = new StartDialog();
     this.modal.create();
+    return this.modal;
   }
 
   isAudible() {
@@ -4038,26 +4250,17 @@ Exporter = class {
   }
 
   showError(...sentences) {
-    let modal = this.modal;
-    modal.wrapper.classList.add("ae-error");
-    modal.start_btn.element.removeEventListener("click", modal.start);
-    modal.start_btn.element.addEventListener("click", () => {
-      modal.start_btn.href = "//audible.com";
-      modal.hide();
-    });
+    let modal = new ErrorDialog([
+      "Sorry, you must be on the audible website to continue.",
+      "Go there and try again.",
+    ]);
 
-    let copy = modal.content.gcf("ae-copy");
-    let btn = Doc.create("span", { id: "ae-start-btn" });
-    let h1 = Doc.create("h1");
-    h1.innerText = "Oh no!";
-
-    copy.element.innerHTML = "";
-    modal.start_btn.innerText = "Go";
-    btn.append(modal.start_btn);
-
-    copy.append(h1, ...sentences.map((text) => modal.p(text)), btn);
-
-    modal.show();
+    modal.content.method = "get";
+    modal.content.action = "//audible.com";
+    modal.copy.append(modal.actions);
+    modal.actions.append(modal.button("Go", {}, {autofocus: true}));
+    modal.create();
+    return modal;
   }
 
   async getPurchaseHistory() {
@@ -4161,10 +4364,11 @@ Exporter = class {
    */
   downloadReady() {
     this.notifier.remove();
-    this.modal = new DownloadModal();
-    this.modal.dl_btn.element.addEventListener("click", download);
+    this.modal = new DownloadDialog();
     this.modal.create();
+    this.modal.dl_btn.element.addEventListener("click", download);
     this.modal.show();
+    return this.modal;
   }
 
   async run() {
@@ -4207,3 +4411,4 @@ Exporter = class {
 };
 
 exporter = new Exporter();
+exporter.start();

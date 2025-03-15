@@ -4,8 +4,9 @@ require("./domain.js");
 require("./library-fetcher.js");
 require("./details-fetcher.js");
 require("./orders-fetcher.js");
-require("./start-modal.js");
-require("./download-modal.js");
+require("./error-dialog.js");
+require("./start-dialog.js");
+require("./download-dialog.js");
 require("./purchase-history-notifier.js");
 require("./order-notifier.js");
 require("./library-notifier.js");
@@ -46,9 +47,12 @@ Exporter = class {
 
     this.style = new Style();
     this.style.create();
+  }
 
-    this.modal = new StartModal();
+  start() {
+    this.modal = new StartDialog();
     this.modal.create();
+    return this.modal;
   }
 
   isAudible() {
@@ -57,26 +61,17 @@ Exporter = class {
   }
 
   showError(...sentences) {
-    let modal = this.modal;
-    modal.wrapper.classList.add("ae-error");
-    modal.start_btn.element.removeEventListener("click", modal.start);
-    modal.start_btn.element.addEventListener("click", () => {
-      modal.start_btn.href = "//audible.com";
-      modal.hide();
-    });
+    let modal = new ErrorDialog([
+      "Sorry, you must be on the audible website to continue.",
+      "Go there and try again.",
+    ]);
 
-    let copy = modal.content.gcf("ae-copy");
-    let btn = Doc.create("span", { id: "ae-start-btn" });
-    let h1 = Doc.create("h1");
-    h1.innerText = "Oh no!";
-
-    copy.element.innerHTML = "";
-    modal.start_btn.innerText = "Go";
-    btn.append(modal.start_btn);
-
-    copy.append(h1, ...sentences.map((text) => modal.p(text)), btn);
-
-    modal.show();
+    modal.content.method = "get";
+    modal.content.action = "//audible.com";
+    modal.copy.append(modal.actions);
+    modal.actions.append(modal.button("Go", {}, {autofocus: true}));
+    modal.create();
+    return modal;
   }
 
   async getPurchaseHistory() {
@@ -180,10 +175,11 @@ Exporter = class {
    */
   downloadReady() {
     this.notifier.remove();
-    this.modal = new DownloadModal();
-    this.modal.dl_btn.element.addEventListener("click", download);
+    this.modal = new DownloadDialog();
     this.modal.create();
+    this.modal.dl_btn.element.addEventListener("click", download);
     this.modal.show();
+    return this.modal;
   }
 
   async run() {

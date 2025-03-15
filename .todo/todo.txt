@@ -39,7 +39,6 @@
 (B) 2025-03-02 @download ensure all URL formats are the same.
 (A) 2025-03-02 @data Parse as much data as possible from every page.
 (B) 2025-03-02 @refactor Make the OrderPage constructor not such a mess.
-(D) 2025-03-05 @qa @testing Try Normalize.css https://github.com/necolas/normalize.css/?tab=readme-ov-file
 (A) 2025-03-05 @qa @testing Try autoprefixer https://github.com/postcss/autoprefixer#browsers
 (D) 2025-03-05 @compatability Look into polyfills and transpilers https://javascript.info/polyfills
 (C) 2025-03-05 @refactor Rename OrderNotifier -> OrdersNotifier.

@@ -68,3 +68,9 @@ global.timePerItem = function (notifier, minutes) {
   let ms = ((minutes * 60 * 1000) / notifier.remaining) * unpad;
   return ms;
 };
+
+global.showModalSpy = jest.fn();
+HTMLDialogElement.prototype.showModal = showModalSpy;
+
+global.closeModalSpy = jest.fn();
+HTMLDialogElement.prototype.close = closeModalSpy;

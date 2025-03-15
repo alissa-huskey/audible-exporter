@@ -5,6 +5,8 @@
       body {
         margin: 0px;
         background-color: #333;
+        color: #eee;
+        padding: 10px;
       }
     </style>
   </head>
@@ -15,17 +17,10 @@
         timer.start();
         info(timer.start_time, "hello");
 
-        sm = new StartModal();
-        dm = new DownloadModal();
-
-        pn = new PurchaseHistoryNotifier();
-        on = new OrderNotifier();
-        ln = new LibraryNotifier();
-        dn = new DetailsNotifier();
-
         timer.stop();
         info(timer.stop_time, "goodbye");
       });
     </script>
+
   </body>
 </html>

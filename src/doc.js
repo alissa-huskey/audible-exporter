@@ -210,6 +210,15 @@ Doc = class {
   }
 
   /**
+   * Shortcut for this.element.addEventListener().
+   *
+   * @params {...args}  args to pass along
+   */
+  listen(...args) {
+    this.element.addEventListener(...args);
+  }
+
+  /**
    * Set attributes.
    *
    * @param {string, object} attrs  An object of attr names and values, or a

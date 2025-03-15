@@ -87,3 +87,4 @@ x 2025-03-10 2025-03-05 @qa @testing Try testcafe https://testcafe.io/
 x 2025-03-10 2025-03-05 @qa @testing Look into snapshot testing https://jestjs.io/docs/snapshot-testing
 x 2025-03-10 2025-03-10 @tools Make sure gulp works if build/dist dirs are missing.
 x 2025-03-13 2025-03-05 @refactor Rename StatusNotifier -> Notifier.
+x 2025-03-13 2025-03-05 @qa @testing Try Normalize.css https://github.com/necolas/normalize.css/?tab=readme-ov-file

@@ -32,6 +32,8 @@
 
 .ae-wrapper {
 
+  font-size: 14px;
+
   *,:after,:before {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;

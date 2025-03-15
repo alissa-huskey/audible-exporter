@@ -8,6 +8,10 @@
 }
 
 .ae-wrapper {
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
+  border: 0;
 
   &.ae-modal {
 
@@ -32,7 +36,7 @@
       text-transform: uppercase;
     }
 
-    a.ae-btn {
+    .ae-btn a, .ae-btn button, button.ae-btn {
       background-color: var(--ae-emerald-green);
       color: #000;
       cursor: pointer;
@@ -48,10 +52,15 @@
 
       display: inline-block;
 
+      border-width: 0;
       border-radius: 4px;
       box-shadow: var(--ae-box-shadow-light-bg);
       -webkit-box-shadow: var(--ae-box-shadow-light-bg);
       -moz-box-shadow: var(--ae-box-shadow-light-bg);
+
+      &:focus-visible {
+        outline-width: 0;
+      }
 
       &:hover {
         background-color: var(--ae-near-black);
@@ -63,7 +72,7 @@
         -moz-box-shadow: var(--ae-box-shadow-dark-bg);
       }
 
-      &.disabled {
+      &.disabled, &:disabled {
         opacity: 0.5;
         pointer-events: none;
         color: white;
@@ -71,8 +80,8 @@
     }
 
     .ae-close-btn {
-
       color: var(--ae-basalt-gray);
+      border-width: 0;
       font-size: 28px;
       font-weight: bold;
       text-decoration: none;
@@ -81,7 +90,16 @@
       align-self: flex-end;
       float: right;
 
-      &:hover, &:focus {
+      /* for buttons */
+      background-color: transparent;
+      padding-inline: 0;
+      padding-block: 0;
+
+      &:focus-visible {
+        outline-width: 0;
+      }
+
+      &:hover, &:active {
         color: #000;
         text-decoration: none;
         cursor: pointer;
@@ -94,8 +112,8 @@
       left: 50%;
       transform: translate(-50%, -50%);
 
-      width: 50%;
-      height: 300px;
+      width: 500px;
+      max-width: 90%;
 
       border-radius: 15px;
       box-shadow: 0 3px 15px -2px #222;
@@ -104,12 +122,9 @@
       background-color: var(--ae-black-russian);
       color: var(--ae-near-white);
       font-size: 1.1em;
-    }
 
-    .ae-head {
-      background-color: var(--ae-near-black);
-      padding: 10px;
-      border-radius: 10px 10px 0px 0px;
+      /* form element */
+      block-size: auto;
     }
 
     .ae-copy {
@@ -129,8 +144,24 @@
      ------------------------------------------------------------------------------*/
 
     &.ae-error {
+      &.ae-content {
+        width: unset;
+      }
+
       .ae-content {
         border: 1px solid var(--ae-red);
+      }
+
+      .ae-actions {
+        justify-content: center;
+
+        a, button {
+          background-color: var(--ae-basalt-gray);
+
+          &:hover {
+            background-color: var(--ae-near-black);
+          }
+        }
       }
 
       h1 {
@@ -146,20 +177,20 @@
 
     &#ae-start-modal {
 
-      &.ae-content.ae-error {
-        width: unset;
-      }
-
       .ae-head {
         background-color: unset;
       }
 
       .ae-content {
-        width: 60%;
         height: unset;
+
+        .ae-actions {
+          justify-content: center;
+        }
       }
 
       ul {
+        padding-left: 40px;
         margin: 30px 0;
 
         ::marker {
@@ -186,7 +217,27 @@
      ------------------------------------------------------------------------------*/
 
     &#ae-download-modal {
-      #ae-download-btn a {
+      .ae-head {
+        background-color: var(--ae-near-black);
+        padding: 10px;
+        border-radius: 10px 10px 0px 0px;
+      }
+
+      .ae-copy {
+        background-color: transparent;
+        padding: 0;
+      }
+
+      .ae-actions {
+        flex-wrap: wrap;
+
+        select {
+          padding: 8px;
+        }
+      }
+
+      .ae-download-btn a,
+      .ae-download-btn button:enabled {
         position: relative;
         padding: 10px 25px;
         text-indent: 15px;

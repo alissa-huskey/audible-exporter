@@ -3,27 +3,26 @@
  */
 
 require("./util.js");
-require("./modal.js");
+require("./dialog.js");
 
-DownloadModal = class extends Modal {
+DownloadDialog = class extends Dialog {
   #wrapper = null;
   #head = null;
   #content = null;
+  #copy = null;
+  #actions = null;
   #ft_select = null;
   #dl_btn = null;
-  #h1 = null;
   #file = null;
 
-  selectors = {
-    wrapper: "ae-modal",
-    content: "ae-content",
-    head: "ae-head",
-    close_btn: "ae-close-btn",
-
-    dl_btn: "ae-download-btn",
+  #selectors = {
     ft_select: "ae-filetype",
-    actions: "ae-actions",
+    dl_btn: "ae-download-btn",
   };
+
+  get selectors() {
+    return Object.assign({}, super.selectors, this.#selectors);
+  }
 
   /* Elements
    ***************************************************************************/
@@ -35,7 +34,7 @@ DownloadModal = class extends Modal {
     if (!this.#head) {
       let head = super.head;
 
-      head.append(this.h1);
+      head.append(this.h1("Download"));
 
       this.#head = head;
     }
@@ -44,10 +43,7 @@ DownloadModal = class extends Modal {
 
   get wrapper() {
     if (!this.#wrapper) {
-      let wrapper = super.wrapper;
-      wrapper.id = "ae-download-modal";
-
-      this.#wrapper = wrapper;
+      this.#wrapper = this.createWrapper("ae-download-modal");
     }
 
     return this.#wrapper;
@@ -62,17 +58,7 @@ DownloadModal = class extends Modal {
     if (!this.#content) {
       let content = super.content;
 
-      let dl_wrapper = Doc.create("span", { id: this.selectors.dl_btn });
-      let actions = Doc.create("div", { class: this.selectors.actions });
-      let p = Doc.create("p");
-
-      p.innerHTML = "Your export is ready!";
-
-      actions.append(this.ft_select, dl_wrapper);
-
-      dl_wrapper.append(this.dl_btn);
-
-      content.append(p, actions);
+      content.append(this.copy);
 
       this.#content = content;
     }
@@ -80,16 +66,41 @@ DownloadModal = class extends Modal {
   }
 
   /**
-   * h1 element.
+   * Div that contains text content and actions.
    *
    * @returns {Doc}
    */
-  get h1() {
-    if (!this.#h1) {
-      this.#h1 = Doc.create("h1");
-      this.#h1.innerHTML = "Download";
+  get copy() {
+    if (!this.#copy) {
+      this.#copy = super.copy;
+      this.copy.append(
+        this.p("Your export is ready!"),
+        this.actions
+      );
     }
-    return this.#h1;
+    return this.#copy;
+  }
+
+  /**
+   * Div that contains the dropdown and download button.
+   *
+   * @returns {Doc}
+   */
+  get actions() {
+    if (!this.#actions) {
+      this.#actions = super.actions;
+
+      let span = Doc.create("span", {
+        class: `${this.selectors.dl_btn} ae-btn`,
+      });
+      span.append(this.dl_btn);
+
+      this.actions.append(
+        this.ft_select,
+        span,
+      );
+    }
+    return this.#actions;
   }
 
   get ft_select() {
@@ -110,12 +121,14 @@ DownloadModal = class extends Modal {
 
       // add event listener to disable/enable the button when a filetype is
       // selected
-      select.element.addEventListener("change", () => {
+      select.listen("change", () => {
         let btn = window.ae.modal.dl_btn;
         if (select.value) {
           btn.classList.remove("disabled");
+          btn.disabled = false;
         } else {
           btn.classList.add("disabled");
+          btn.disabled = true;
         }
       });
 
@@ -124,14 +137,23 @@ DownloadModal = class extends Modal {
     return this.#ft_select;
   }
 
+  /**
+   * Download button element.
+   *
+   * Note: This has to be an <a> instead of a <button> in order to accomidate
+   *       file downloading.
+   *
+   * @returns {Doc}
+   */
   get dl_btn() {
     if (!this.#dl_btn) {
       let btn = Doc.create("a", {
         id: this.selectors.dl_btn,
         class: "ae-btn disabled",
       });
-      btn.attributes.href = "#";
-      btn.innerHTML = "Download";
+
+      btn.href = "#";
+      btn.innerText = "Download";
       this.#dl_btn = btn;
     }
     return this.#dl_btn;

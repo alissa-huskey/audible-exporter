@@ -39,10 +39,9 @@
 (B) 2025-03-02 @download ensure all URL formats are the same.
 (A) 2025-03-02 @data Parse as much data as possible from every page.
 (B) 2025-03-02 @refactor Make the OrderPage constructor not such a mess.
-(D) 2025-03-05 @qa @testing Try Normalize.css https://github.com/necolas/normalize.css/?tab=readme-ov-file
+x 2025-03-13 2025-03-05 @qa @testing Try Normalize.css https://github.com/necolas/normalize.css/?tab=readme-ov-file
 (A) 2025-03-05 @qa @testing Try autoprefixer https://github.com/postcss/autoprefixer#browsers
 (D) 2025-03-05 @compatability Look into polyfills and transpilers https://javascript.info/polyfills
-x 2025-03-13 2025-03-05 @refactor Rename StatusNotifier -> Notifier.
 (C) 2025-03-05 @refactor Rename OrderNotifier -> OrdersNotifier.
 (B) 2025-03-05 @ux Make some kind of rough estimate of overall time.
 (B) 2025-03-05 @refactor notifiers: Consider changing text=, time=, etc to .updateText(), .updateTime()
