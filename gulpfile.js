@@ -1,4 +1,4 @@
-/**
+/*
  * Gulp taskfile.
  */
 
@@ -8,7 +8,8 @@ var fs      = require("fs"),
     path    = require("path"),
     Tree    = require("dependency-tree");
 
-var clean   = require("gulp-clean"),
+var babel   = require("gulp-babel"),
+    clean   = require("gulp-clean"),
     concat  = require("gulp-concat"),
     rename  = require("gulp-rename"),
     replace = require("gulp-replace"),
@@ -77,14 +78,16 @@ var inject = (pattern, file_pattern) =>
  * Plugin to bundle all files the dependency tree of a given entry point into
  * one file.
  */
-var bundle = () =>
+var bundle = (directory = null) =>
   through((content, file) => {
     let tree = Tree.toList({
       filename: file.path,
-      directory: file.dirname,
+      directory: directory || file.dirname,
     });
 
     let js = tree.reduce((text, fn) => text + fs.readFileSync(fn), "");
+
+    js = js.replace(/require\(["'].+['"]\)[;]?\s*\n/g, "");
 
     return js;
   });
@@ -147,23 +150,58 @@ task("bundles", () => {
   ])
     .pipe(using({}))
     .pipe(bundle())
-    .pipe(replace(/require\(["'].+['"]\)[;]?\s*\n/g, () => ""))
     .pipe(dest(dirs.dev));
 });
 
 /**
  * Add the two line runner script at the end and save to
- * dist/audible-exporter.js.
+ * build/dev/audible-exporter.js.
  */
-task("audible-export.js", () => {
+task("audible-exporter.js", () => {
   return src([`${dirs.dev}/exporter.js`, `${dirs.prep}/runner.js`])
     .pipe(using({}))
     .pipe(concat("audible-exporter.js"))
     .pipe(replace("CONSOLE_OUTPUT = false", (_) => "CONSOLE_OUTPUT = true"))
     .pipe(replace("info = function", (_) => "var info = function"))
     .pipe(replace("error = function", (_) => "var error = function"))
-    .pipe(dest(dirs.dev))
+    .pipe(dest(dirs.dev));
+});
+
+/**
+ * Copy from build/dev to dist/
+ */
+task("_dist", () => {
+  return src([`${dirs.dev}/audible-exporter.js`])
+    .pipe(using({}))
     .pipe(dest(dirs.dist));
+});
+
+/**
+ * Compile with babel then save to dist/audible-exporter.js.
+ */
+task("babel", () => {
+  let res = src([`${dirs.dist}/audible-exporter.js`])
+    .pipe(using({}))
+    .pipe(babel({ presets: ["@babel/preset-env"] }))
+    .pipe(replace('"use strict";', (_) => ""))
+    .pipe(dest(dirs.build));
+
+  return res;
+});
+
+/**
+ * Prefix with minified core-js and save to dist/audible-exporter.js.
+ */
+task("corejs", () => {
+  let res = src([
+    "node_modules/core-js-bundle/minified.js",
+    `${dirs.build}/audible-exporter.js`,
+  ])
+    .pipe(using({}))
+    .pipe(concat("audible-exporter-compat.js"))
+    .pipe(dest(dirs.dist));
+
+  return res;
 });
 
 /*
@@ -195,6 +233,8 @@ task("_test-scripts", () => {
 });
 
 task("dev", series("copy", "index.html", "style.css", "style.js", "bundles"));
-task("exporter", series("dev", "audible-export.js"));
+task("dist", series("dev", "_dist"));
+task("exporter", series("dev", "audible-exporter.js"));
+task("compat", series("exporter", "babel", "corejs"));
 task("test-scripts", series("dev", "exporter", "_test-scripts"));
-task("default", parallel("dev", "exporter", "test-scripts"));
+task("default", parallel("dev", "exporter", "test-scripts", "dist", "compat"));

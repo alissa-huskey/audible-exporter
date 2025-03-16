@@ -25,8 +25,13 @@ Usage
 1. Do not close the browser window or navigate away from the page while the script is running!
 
    It will take anywhere from a few minutes to an hour or more to run. For my
-   library with just over 1,000 titles, it takes about 20 minutes.
+   library with just over 1,000 titles it takes about 20 minutes.
 1. When it is finished a dialog will pop up where you can choose your download format.
+
+
+If you have trouble, try
+[audible-exporter-compat.js](dist/audible-exporter-compat.js), which has been
+compiled with support for older browsers.
 
 Browser Support
 ---------------
@@ -36,6 +41,7 @@ Tested successfully in:
 | OS                | Browser                                     |
 |-------------------|---------------------------------------------|
 | Windows 10        | Edge     105, 127                           |
+| MacOS Sonoma 14.6 | Edge     134                                |
 | MacOS Sonoma 14.6 | Chrome   133.0                              |
 | MacOS Sonoma 14.6 | Firefox  136                                |
 | MacOS Sonoma 14.6 | Brave    1.75, 1.76 (Chromium 133.0, 134.0) |
@@ -52,6 +58,9 @@ Credits
 
 * Originally forked from [andrebradshaw/audible](https://github.com/andrebradshaw/audible)
 * Fix merged from [jakubbares/audible-library-export](https://github.com/jakubbares/audible-library-export)
+* Compiled with [babel](https://babeljs.io/) for browser compatability.
+* Includes [necolas/normalize.css](https://github.com/necolas/normalize.css/).
+* Includes [zloirock/core-js](https://github.com/zloirock/core-js) for browser compatability.
 
 Meta
 ----
