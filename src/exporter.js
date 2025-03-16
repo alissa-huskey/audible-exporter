@@ -57,17 +57,22 @@ Exporter = class {
 
   isAudible() {
     let domain = Domain.fromURL(window.location.href);
-    return domain.name == "audible";
+    return domain.name == "audible" && domain.subdomain != "help";
   }
 
-  showError(...sentences) {
+  isLoggedIn() {
+    let res = Doc.gi("navigation-sign-out-link");
+    return !!res.element;
+  }
+
+  showError(target, ...sentences) {
     let modal = new ErrorDialog([
       "Sorry, you must be on the audible website to continue.",
       "Go there and try again.",
     ]);
 
     modal.content.method = "get";
-    modal.content.action = "//audible.com";
+    modal.content.action = target;
     modal.copy.append(modal.actions);
     modal.actions.append(modal.button("Go", {}, { autofocus: true }));
     modal.create();
@@ -185,8 +190,18 @@ Exporter = class {
   async run() {
     if (!this.isAudible()) {
       this.showError(
+        "//audible.com",
         "Sorry, you must be on the audible website to continue.",
         "Go there and try again.",
+      );
+      return;
+    }
+
+    if (!this.isLoggedIn()) {
+      this.showError(
+        "//audible.com/signin",
+        "Sorry, you must be on the logged into audible to continue.",
+        "Please log in and try again.",
       );
       return;
     }

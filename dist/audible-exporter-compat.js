@@ -4189,14 +4189,20 @@ Exporter = /*#__PURE__*/function () {
     key: "isAudible",
     value: function isAudible() {
       var domain = Domain.fromURL(window.location.href);
-      return domain.name == "audible";
+      return domain.name == "audible" && domain.subdomain != "help";
+    }
+  }, {
+    key: "isLoggedIn",
+    value: function isLoggedIn() {
+      var res = Doc.gi("navigation-sign-out-link");
+      return !!res.element;
     }
   }, {
     key: "showError",
-    value: function showError() {
+    value: function showError(target) {
       var modal = new ErrorDialog(["Sorry, you must be on the audible website to continue.", "Go there and try again."]);
       modal.content.method = "get";
-      modal.content.action = "//audible.com";
+      modal.content.action = target;
       modal.copy.append(modal.actions);
       modal.actions.append(modal.button("Go", {}, {
         autofocus: true
@@ -4386,47 +4392,54 @@ Exporter = /*#__PURE__*/function () {
                 _context16.next = 3;
                 break;
               }
-              this.showError("Sorry, you must be on the audible website to continue.", "Go there and try again.");
+              this.showError("//audible.com", "Sorry, you must be on the audible website to continue.", "Go there and try again.");
               return _context16.abrupt("return");
             case 3:
-              _context16.prev = 3;
+              if (this.isLoggedIn()) {
+                _context16.next = 6;
+                break;
+              }
+              this.showError("//audible.com/signin", "Sorry, you must be on the logged into audible to continue.", "Please log in and try again.");
+              return _context16.abrupt("return");
+            case 6:
+              _context16.prev = 6;
               this.timer.start();
               info("Started at ".concat(this.timer.started_at.toLocaleTimeString()));
               this.notifier.create();
-              _context16.next = 9;
+              _context16.next = 12;
               return this.getPurchaseHistory();
-            case 9:
-              _context16.next = 11;
+            case 12:
+              _context16.next = 14;
               return this.getOrders();
-            case 11:
-              _context16.next = 13;
+            case 14:
+              _context16.next = 16;
               return this.getLibrary();
-            case 13:
-              _context16.next = 15;
+            case 16:
+              _context16.next = 18;
               return this.getBookDetails();
-            case 15:
+            case 18:
               this.getResults();
               if (!(!this.results || this.results.length == 0)) {
-                _context16.next = 19;
+                _context16.next = 22;
                 break;
               }
               error("Failed to download books.");
               return _context16.abrupt("return");
-            case 19:
+            case 22:
               this.timer.stop();
               info("Finished at ".concat(this.timer.stopped_at.toLocaleTimeString(), " (").concat(this.results.length, " results, ").concat(this.timer.minutes, " minutes)"));
               this.downloadReady();
-              _context16.next = 27;
+              _context16.next = 30;
               break;
-            case 24:
-              _context16.prev = 24;
-              _context16.t0 = _context16["catch"](3);
-              error("Fatal error:", _context16.t0, _context16.t0.name, _context16.t0.message);
             case 27:
+              _context16.prev = 27;
+              _context16.t0 = _context16["catch"](6);
+              error("Fatal error:", _context16.t0, _context16.t0.name, _context16.t0.message);
+            case 30:
             case "end":
               return _context16.stop();
           }
-        }, _callee15, this, [[3, 24]]);
+        }, _callee15, this, [[6, 27]]);
       }));
       function run() {
         return _run.apply(this, arguments);

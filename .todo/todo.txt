@@ -18,10 +18,8 @@
 (Z) 2025-02-23 @feature Add date downloaded to JSON
 (M) 2025-02-23 @feature Some way to indicate last download, to avoid downloading everything
 (Z) 2025-02-25 @feature Add cancel button.
-(C) 2025-02-26 @error-handling Handle failed requests.
 (Z) 2025-02-26 Implement some sort of pause/resume.
 (B) 2025-02-26 @housekeeping document functions, classes and methods https://developer.wordpress.org/coding-standards/inline-documentation-standards/javascript/
-(D) 2025-02-26 @data book-details: Parse author from json_details in addition to of HTML.
 (C) 2025-02-27 @refactor Rename *Fetcher.populate() -> *Fetcher.get()
 (Z) 2025-02-27 @ux Display error message dialog on fatal error.
 (C) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
@@ -31,13 +29,13 @@
 (D) 2025-03-01 @download Add purchase_timestamp.
 (A) 2025-03-01 @refactor @data pages: Parse data from multiple fields, select the first one that has content.
 (M) 2025-03-01 @feature Get a list of collections a book belongs to
-(B) 2025-03-01 @data book-details: Parse/handle multiple series.
+(A) 2025-03-01 @data book-details: Parse/handle multiple series.
 (C) 2025-03-01 @refactor Rename NormalBookPage -> LegacyBookPage
-(B) 2025-03-01 @download Rename audible_oginal -> audible_original
+(A) 2025-03-01 @download Rename audible_oginal -> audible_original
 (D) 2025-03-01 @refactor @performance See about getting rid of .data() methods to reduce overhead.
 (C) 2025-03-01 @refactor Move LibraryFetcher.fetchPage() -> LibraryPage.get()
-(B) 2025-03-02 @download ensure all URL formats are the same.
-(A) 2025-03-02 @data Parse as much data as possible from every page.
+(A) 2025-03-02 @download ensure all URL formats are the same.
+(B) 2025-03-02 @data Parse as much data as possible from every page.
 (B) 2025-03-02 @refactor Make the OrderPage constructor not such a mess.
 (M) 2025-03-05 @qa @testing Try autoprefixer https://github.com/postcss/autoprefixer#browsers
 (C) 2025-03-05 @refactor Rename OrderNotifier -> OrdersNotifier.
@@ -45,24 +43,21 @@
 (B) 2025-03-05 @refactor notifiers: Consider changing text=, time=, etc to .updateText(), .updateTime()
 (D) 2025-03-07 notifiers: @dom Change most IDs to classes; add IDs for individual notifiers.
 (B) 2025-03-07 @refactor notifier: consider renaming all elements ie status -> status_element / status_el
-(D) 2025-03-07 @qa @testing check for adding/removing event listeners  https://www.codeguru.co.in/2021/02/testing-javascript-events-with-jest.html
-(B) 2025-03-07 @reliability Make all requests from / instead of audible.com/
+(A) 2025-03-07 @reliability Make all requests from / instead of audible.com/
 (D) 2025-03-07 @performance look intoperformance (memory specifically) testing
 (Z) 2025-03-08 @feature Add an option to download as CSV. https://stackoverflow.com/questions/14964035/how-to-export-javascript-array-info-to-csv-on-client-side
 (B) 2025-03-08 @ux Make getLibrary() the first step. (would help with overall time estimate and quick download option.
 (C) 2025-03-08 @refactor Rethink how .create() functions handles if it exists (.remove(), remove outter HTML?, replace in .ae.notifier/whatever?)
-(B) 2025-03-09 @ux Check to make sure the user is logged in.
 (C) 2025-03-09 @reliability In fetch, check if the current page is the one being fetched, if so use document.body
 (B) 2025-03-09 @refactor look into switching everything to query selectors.
-
-(B) 2025-03-09 @ux Try design with console docked side, looks funny now.
-(A) 2025-03-09 @qa @testing Write a simple testcafe test, see if it will catch current safari bug.
 (A) 2025-03-10 @data Remove &amp; from categories in JSON export.
 (B) 2025-03-10 @ux @reliability Check navigator.online to make sure the user is online.
-(B) 2025-03-10 @data Use date.toLocaleDate() instead of custom function.
+(A) 2025-03-10 @data Use date.toLocaleDate() instead of custom function.
 (B) 2025-03-10 @data Parse/handle multiple authors.
 (B) 2025-03-10 @housekeeping reconsider code orginization (src/js, src/css; src/js/fetchers, src/js/modals?
 (B) 2025-03-10 @refactor review Timer started_at/ended_at and .started/stopped.toLocaleTimeString()
 2025-03-15 @bug Fix / detect sign in error.
-(B) 2025-03-15 @ux @bug Close button on error modal still has focus-visible styling (outline).
+(A) 2025-03-15 @ux @bug Close button on error modal still has focus-visible styling (outline). (In safari I think.)
 (D) 2025-03-15 @ux Download file selector looks funny in Safari.
+(B) 2025-03-15 Consider removing testcafe.
+(B) 2025-03-16 @ux When checking if on audible.com, exclude help.audible.com.

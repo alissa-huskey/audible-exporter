@@ -97,3 +97,5 @@ x 2025-03-15 2025-03-10 @housekeeping Figure out what to do with standalone noti
 x 2025-03-15 2025-03-10 @refactor modals: Make .show() and .hide() add/remove hidden class instead of changing display: none directly
 x 2025-03-15 2025-03-12 @quality Move StartModal.p() somewhere else.
 x 2025-03-15 2025-03-05 @compatability Look into polyfills and transpilers https://javascript.info/polyfills
+x 2025-03-15 2025-03-09 @ux Try design with console docked side, looks funny now.
+x 2025-03-16 2025-03-09 @ux Check to make sure the user is logged in.
