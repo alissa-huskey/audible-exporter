@@ -39,7 +39,6 @@
 (B) 2025-03-02 @download ensure all URL formats are the same.
 (A) 2025-03-02 @data Parse as much data as possible from every page.
 (B) 2025-03-02 @refactor Make the OrderPage constructor not such a mess.
-x 2025-03-13 2025-03-05 @qa @testing Try Normalize.css https://github.com/necolas/normalize.css/?tab=readme-ov-file
 (A) 2025-03-05 @qa @testing Try autoprefixer https://github.com/postcss/autoprefixer#browsers
 (D) 2025-03-05 @compatability Look into polyfills and transpilers https://javascript.info/polyfills
 (C) 2025-03-05 @refactor Rename OrderNotifier -> OrdersNotifier.
@@ -59,12 +58,10 @@ x 2025-03-13 2025-03-05 @qa @testing Try Normalize.css https://github.com/necola
 (C) 2025-03-09 @reliability In fetch, check if the current page is the one being fetched, if so use document.body
 (B) 2025-03-09 @refactor look into switching everything to query selectors.
 (D) 2025-03-09 @qa @testing Test on phone.
-(A) 2025-03-09 @bug In safari, it seems to stall out after Purchase History.
 (B) 2025-03-09 @ux Try design with console docked side, looks funny now.
 (A) 2025-03-09 @bug Fix edge bugs
 (A) 2025-03-09 @qa @testing Write a simple testcafe test, see if it will catch current safari bug.
 (A) 2025-03-10 @data Remove &amp; from categories in JSON export.
-(A) 2025-03-10 @bug Safari now dies immediately.
 (B) 2025-03-10 @ux @reliability Check navigator.online to make sure the user is online.
 (B) 2025-03-10 @data Use date.toLocaleDate() instead of custom function.
 (B) 2025-03-10 @refactor modals: Make .show() and .hide() add/remove hidden class instead of changing display: none directly
@@ -76,3 +73,6 @@ x 2025-03-13 2025-03-05 @qa @testing Try Normalize.css https://github.com/necola
 (B) 2025-03-10 @housekeeping Figure out what to do with standalone notifiers. shouldn't be in dist/
 (B) 2025-03-10 @refactor review Timer started_at/ended_at and .started/stopped.toLocaleTimeString()
 (B) 2025-03-12 @quality Move StartModal.p() somewhere else.
+2025-03-15 @bug Fix / detect sign in error.
+(B) 2025-03-15 @ux @bug Close button on error modal still has focus-visible styling (outline).
+x 2025-03-15 2025-03-15 @housekeeping add ctrl+opt+C shortcut on firefox/safari.

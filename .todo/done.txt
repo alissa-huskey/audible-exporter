@@ -88,3 +88,6 @@ x 2025-03-10 2025-03-05 @qa @testing Look into snapshot testing https://jestjs.i
 x 2025-03-10 2025-03-10 @tools Make sure gulp works if build/dist dirs are missing.
 x 2025-03-13 2025-03-05 @refactor Rename StatusNotifier -> Notifier.
 x 2025-03-13 2025-03-05 @qa @testing Try Normalize.css https://github.com/necolas/normalize.css/?tab=readme-ov-file
+x 2025-03-15 2025-03-09 @bug In safari, it seems to stall out after Purchase History.
+x 2025-03-15 2025-03-10 @bug Safari now dies immediately.
+x 2025-03-15 2025-03-15 @housekeeping add ctrl+opt+C shortcut on firefox/safari.

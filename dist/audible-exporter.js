@@ -1,14 +1,14 @@
 var CONSOLE_OUTPUT = true;
 var LOG_PREFIX = "[audible-exporter]";
 
-info = function (...msg) {
+var info = function (...msg) {
   if (!CONSOLE_OUTPUT) {
     return;
   }
   console.log(LOG_PREFIX, ...msg);
 };
 
-error = function (...msg) {
+var error = function (...msg) {
   console.error(LOG_PREFIX, ...msg);
 };
 

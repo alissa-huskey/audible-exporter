@@ -160,6 +160,8 @@ task("audible-export.js", () => {
     .pipe(using({}))
     .pipe(concat("audible-exporter.js"))
     .pipe(replace("CONSOLE_OUTPUT = false", (_) => "CONSOLE_OUTPUT = true"))
+    .pipe(replace("info = function", (_) => "var info = function"))
+    .pipe(replace("error = function", (_) => "var error = function"))
     .pipe(dest(dirs.dev))
     .pipe(dest(dirs.dist));
 });

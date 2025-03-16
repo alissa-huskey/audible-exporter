@@ -1,0 +1,29 @@
+chrome 
+
+fs.js:4 [audible-exporter] Page.fetchDoc("https://www.audible.com/account/purchase-history?tf=orders&df=last_90_days&pn=1&ps=20"):
+ TypeError: Failed to fetch
+    at e (fs.js:4:64869)
+    at m.<computed>.m.<computed> (<anonymous>:20:92)
+    at OrderPage.fetchDoc (<anonymous>:827:19)
+    at OrderPage.get (<anonymous>:1643:27)
+    at OrdersFetcher.init (<anonymous>:1755:16)
+    at Exporter.getPurchaseHistory (<anonymous>:4274:23)
+    at Exporter.run (<anonymous>:4389:18)
+    at HTMLButtonElement.start (<anonymous>:3111:23)
+e	@	fs.js:4
+error	@	VM132:12
+fetchDoc	@	VM132:836
+await in fetchDoc		
+get	@	VM132:1643
+init	@	VM132:1755
+getPurchaseHistory	@	VM132:4274
+run	@	VM132:4389
+start	@	VM132:3111
+
+
+[audible-exporter] Fatal error: TypeError: Cannot read properties of null (reading 'qs')
+    at get years (<anonymous>:1682:28)
+    at OrdersFetcher.init (<anonymous>:1756:23)
+    at async Exporter.getPurchaseHistory (<anonymous>:4274:5)
+    at async Exporter.run (<anonymous>:4389:7)
+    at async HTMLButtonElement.start (<anonymous>:3111:7) TypeError Cannot read properties of null (reading 'qs')
