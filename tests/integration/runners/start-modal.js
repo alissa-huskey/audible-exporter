@@ -1,1 +1,2 @@
-var m = new StartModal() ; m.create();
+var m = new StartModal();
+m.create();

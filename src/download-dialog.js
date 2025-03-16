@@ -73,10 +73,7 @@ DownloadDialog = class extends Dialog {
   get copy() {
     if (!this.#copy) {
       this.#copy = super.copy;
-      this.copy.append(
-        this.p("Your export is ready!"),
-        this.actions
-      );
+      this.copy.append(this.p("Your export is ready!"), this.actions);
     }
     return this.#copy;
   }
@@ -95,10 +92,7 @@ DownloadDialog = class extends Dialog {
       });
       span.append(this.dl_btn);
 
-      this.actions.append(
-        this.ft_select,
-        span,
-      );
+      this.actions.append(this.ft_select, span);
     }
     return this.#actions;
   }

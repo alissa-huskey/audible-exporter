@@ -10,7 +10,7 @@ ErrorDialog = class extends Dialog {
   #head = null;
   #content = null;
   #close_btn = null;
-  #copy = null
+  #copy = null;
 
   constructor(paragraphs = []) {
     super();
@@ -34,7 +34,6 @@ ErrorDialog = class extends Dialog {
     return this.#wrapper;
   }
 
-
   /**
    * div element for the head section.
    */
@@ -51,7 +50,7 @@ ErrorDialog = class extends Dialog {
 
   /**
    * div element for the copy section.
-   * 
+   *
    * @returns {Doc}
    */
   get copy() {

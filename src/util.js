@@ -1,5 +1,5 @@
 var CONSOLE_OUTPUT = false;
-const LOG_PREFIX = "[audible-exporter]";
+var LOG_PREFIX = "[audible-exporter]";
 
 info = function (...msg) {
   if (!CONSOLE_OUTPUT) {

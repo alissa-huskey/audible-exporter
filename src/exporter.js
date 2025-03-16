@@ -69,7 +69,7 @@ Exporter = class {
     modal.content.method = "get";
     modal.content.action = "//audible.com";
     modal.copy.append(modal.actions);
-    modal.actions.append(modal.button("Go", {}, {autofocus: true}));
+    modal.actions.append(modal.button("Go", {}, { autofocus: true }));
     modal.create();
     return modal;
   }

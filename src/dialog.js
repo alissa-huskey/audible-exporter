@@ -9,7 +9,7 @@ Dialog = class extends Styled {
   #wrapper = null;
   #head = null;
   #content = null;
-  #copy = null
+  #copy = null;
   #actions = null;
   #close_btn = null;
 
@@ -88,7 +88,7 @@ Dialog = class extends Styled {
 
   /**
    * div element for the copy section.
-   * 
+   *
    * @returns {Doc}
    */
   get copy() {

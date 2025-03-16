@@ -1,5 +1,5 @@
 var CONSOLE_OUTPUT = true;
-const LOG_PREFIX = "[audible-exporter]";
+var LOG_PREFIX = "[audible-exporter]";
 
 info = function (...msg) {
   if (!CONSOLE_OUTPUT) {
@@ -2799,7 +2799,7 @@ Dialog = class extends Styled {
   #wrapper = null;
   #head = null;
   #content = null;
-  #copy = null
+  #copy = null;
   #actions = null;
   #close_btn = null;
 
@@ -2878,7 +2878,7 @@ Dialog = class extends Styled {
 
   /**
    * div element for the copy section.
-   * 
+   *
    * @returns {Doc}
    */
   get copy() {
@@ -2956,7 +2956,7 @@ ErrorDialog = class extends Dialog {
   #head = null;
   #content = null;
   #close_btn = null;
-  #copy = null
+  #copy = null;
 
   constructor(paragraphs = []) {
     super();
@@ -2980,7 +2980,6 @@ ErrorDialog = class extends Dialog {
     return this.#wrapper;
   }
 
-
   /**
    * div element for the head section.
    */
@@ -2997,7 +2996,7 @@ ErrorDialog = class extends Dialog {
 
   /**
    * div element for the copy section.
-   * 
+   *
    * @returns {Doc}
    */
   get copy() {
@@ -3184,10 +3183,7 @@ DownloadDialog = class extends Dialog {
   get copy() {
     if (!this.#copy) {
       this.#copy = super.copy;
-      this.copy.append(
-        this.p("Your export is ready!"),
-        this.actions
-      );
+      this.copy.append(this.p("Your export is ready!"), this.actions);
     }
     return this.#copy;
   }
@@ -3206,10 +3202,7 @@ DownloadDialog = class extends Dialog {
       });
       span.append(this.dl_btn);
 
-      this.actions.append(
-        this.ft_select,
-        span,
-      );
+      this.actions.append(this.ft_select, span);
     }
     return this.#actions;
   }
@@ -3232,7 +3225,7 @@ DownloadDialog = class extends Dialog {
 
       // add event listener to disable/enable the button when a filetype is
       // selected
-      select.element.addEventListener("change", () => {
+      select.listen("change", () => {
         let btn = window.ae.modal.dl_btn;
         if (select.value) {
           btn.classList.remove("disabled");
@@ -3248,6 +3241,14 @@ DownloadDialog = class extends Dialog {
     return this.#ft_select;
   }
 
+  /**
+   * Download button element.
+   *
+   * Note: This has to be an <a> instead of a <button> in order to accomidate
+   *       file downloading.
+   *
+   * @returns {Doc}
+   */
   get dl_btn() {
     if (!this.#dl_btn) {
       let btn = Doc.create("a", {
@@ -4258,7 +4259,7 @@ Exporter = class {
     modal.content.method = "get";
     modal.content.action = "//audible.com";
     modal.copy.append(modal.actions);
-    modal.actions.append(modal.button("Go", {}, {autofocus: true}));
+    modal.actions.append(modal.button("Go", {}, { autofocus: true }));
     modal.create();
     return modal;
   }

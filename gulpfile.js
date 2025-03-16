@@ -1,3 +1,9 @@
+/**
+ * Gulp taskfile.
+ */
+
+/* eslint-disable prettier/prettier */
+
 var fs      = require("fs"),
     path    = require("path"),
     Tree    = require("dependency-tree");
@@ -31,6 +37,8 @@ var dirs = {
   dist   : "dist",              // for release
 };
 
+/* eslint-enable prettier/prettier */
+
 /* PLUGINS
  ******************************************************************************/
 
@@ -45,8 +53,8 @@ var dirs = {
  *                                       dirname, prefix, stem, suffix, extname
  *
  */
-var inject = (pattern, file_pattern) => through(
-  (content, file) => {
+var inject = (pattern, file_pattern) =>
+  through((content, file) => {
     if (typeof file_pattern == "string") {
       source = file_pattern;
     } else {
@@ -57,37 +65,29 @@ var inject = (pattern, file_pattern) => through(
         file_pattern.extname || file.extname,
       ].join("");
 
-      source = path.join(
-        file_pattern.dirname || file.dirname,
-        filename,
-      );
+      source = path.join(file_pattern.dirname || file.dirname, filename);
     }
 
     replacement = fs.readFileSync(source);
     text = content.replace(pattern, `\n${replacement}`);
     return text;
-  },
-);
+  });
 
 /**
  * Plugin to bundle all files the dependency tree of a given entry point into
  * one file.
  */
-var bundle = () => through(
-  (content, file) => {
+var bundle = () =>
+  through((content, file) => {
     let tree = Tree.toList({
       filename: file.path,
       directory: file.dirname,
     });
 
-    let js = tree.reduce(
-      (text, fn) => text + fs.readFileSync(fn),
-      ""
-    );
+    let js = tree.reduce((text, fn) => text + fs.readFileSync(fn), "");
 
     return js;
-  },
-);
+  });
 
 /* TASKS
  ******************************************************************************/
@@ -95,7 +95,9 @@ var bundle = () => through(
 /**
  * No-op to make sure the gulpfile has no errors.
  */
-task("ok", (done) => { done(); });
+task("ok", (done) => {
+  done();
+});
 
 /**
  * Remove the build directory.
@@ -159,16 +161,14 @@ task("audible-export.js", () => {
     .pipe(concat("audible-exporter.js"))
     .pipe(replace("CONSOLE_OUTPUT = false", (_) => "CONSOLE_OUTPUT = true"))
     .pipe(dest(dirs.dev))
-    .pipe(dest(dirs.dist))
+    .pipe(dest(dirs.dist));
 });
 
 /*
  * Generate the scripts to use in testcafe integration testing.
  */
 task("index.html", () => {
-  return src(`${dirs.src}/index.html`)
-    .pipe(using({}))
-    .pipe(dest(dirs.dev));
+  return src(`${dirs.src}/index.html`).pipe(using({})).pipe(dest(dirs.dev));
 });
 
 /*
@@ -181,12 +181,16 @@ task("_test-scripts", () => {
     `${dirs.dev}/audible-exporter.js`,
   ])
     .pipe(using({}))
-    .pipe(inject(/$/, {dirname: "tests/integration/runners"}))
-    .pipe(replace(/^/, (_) => "\nwindow.addEventListener('DOMContentLoaded', function () {\n"))
+    .pipe(inject(/$/, { dirname: "tests/integration/runners" }))
+    .pipe(
+      replace(
+        /^/,
+        (_) => "\nwindow.addEventListener('DOMContentLoaded', function () {\n",
+      ),
+    )
     .pipe(replace(/$/, (_) => "\n});"))
     .pipe(dest("build/test-scripts"));
 });
-
 
 task("dev", series("copy", "index.html", "style.css", "style.js", "bundles"));
 task("exporter", series("dev", "audible-export.js"));
