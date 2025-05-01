@@ -47,6 +47,10 @@ describe("TSVFile", () => {
     expect(file.sanitize("a ' b ' c")).toEqual("a \\' b \\' c");
     expect(file.sanitize('a " b " c')).toEqual('a \\" b \\" c');
     expect(file.sanitize("a \u0009 b \u0009 c")).toBe("a   b   c");
+    expect(file.sanitize({ a: 1, b: 2 })).toBe('{\\"a\\":1,\\"b\\":2}');
+    expect(file.sanitize([{ a: 1 }, { b: 2 }])).toBe(
+      '[{\\"a\\":1},{\\"b\\":2}]',
+    );
   });
 
   test(".contents", () => {
@@ -66,5 +70,22 @@ describe("TSVFile", () => {
   test(".url", () => {
     let file = new TSVFile([{ a: 1, b: 2, c: 3 }]);
     expect(file.url).toMatch(/^blob:/);
+  });
+
+  test(".preprocess()", () => {
+    let file = new TSVFile([
+      {
+        series: [
+          { name: "The Chronicles of Narnia", number: "1" },
+          { name: "Children's Classics" },
+        ],
+      },
+    ]);
+
+    file.preprocess();
+
+    expect(file.records[0].series).toBe(
+      "The Chronicles of Narnia #1, Children's Classics",
+    );
   });
 });

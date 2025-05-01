@@ -40,6 +40,23 @@ LibraryBookRow = class extends Parser {
   }
 
   get series() {
-    return this.ul.qsf(".seriesLabel a")?.innerHTML?.trim();
+    let i = 1;
+    let series = [];
+    let links = this.ul.qs(".seriesLabel a");
+    for (let link of links) {
+      let [_, url, id] = /(\/series\/.*\/(.*))\?/.exec(link.href) || [null, "", ""];
+
+      let span = this.ul.qsf(`.seriesLabel a:nth-child(${i}) + span`);
+      let number = span?.innerHTML?.trim().replace("Book ", "") || "";
+
+      series.push({
+        id: id,
+        url: url,
+        name: link.innerHTML.trim(),
+        number: number,
+      });
+      i++;
+    }
+    return series;
   }
 };

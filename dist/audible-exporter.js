@@ -739,15 +739,52 @@ Doc = class {
     }
   }
 };
+/*
+ * Parser.
+ *
+ * DOM Element Parser.
+ */
+
+/*
+ * Parser class.
+ *
+ *
+ */
 Parser = class {
   #doc = null;
+
+  /**
+   * List of .data() object properties mapped to class members.
+   *
+   * To be defined in subclasses.
+   *
+   * @access protected
+   */
   _fields = [];
+
+  /*
+   * List of class members to identify an individual page for error messages.
+   *
+   * To be defined in subclasses.
+   *
+   * @access protected
+   */
   _identifiers = [];
 
+  /**
+   * Get #doc.
+   *
+   * @return {Doc}
+   */
   get doc() {
     return this.#doc;
   }
 
+  /**
+   * Set #doc.
+   *
+   * @param {Doc} value
+   */
   set doc(value) {
     if (value) {
       if (!value) return;
@@ -760,6 +797,16 @@ Parser = class {
     }
   }
 
+  /**
+   * Return the data parsed from the .doc.
+   *
+   * Construct data object by mapping list of ._fields to class member values.
+   *
+   * Catch and re-raise exceptions using ._identifiers class member values in
+   * error message.
+   *
+   * @return {Object}
+   */
   data() {
     let f;
     let data = {};
@@ -817,7 +864,24 @@ LibraryBookRow = class extends Parser {
   }
 
   get series() {
-    return this.ul.qsf(".seriesLabel a")?.innerHTML?.trim();
+    let i = 1;
+    let series = [];
+    let links = this.ul.qs(".seriesLabel a");
+    for (let link of links) {
+      let [_, url, id] = /(\/series\/.*\/(.*))\?/.exec(link.href) || [null, "", ""];
+
+      let span = this.ul.qsf(`.seriesLabel a:nth-child(${i}) + span`);
+      let number = span?.innerHTML?.trim().replace("Book ", "") || "";
+
+      series.push({
+        id: id,
+        url: url,
+        name: link.innerHTML.trim(),
+        number: number,
+      });
+      i++;
+    }
+    return series;
   }
 };
 Page = class extends Parser {
@@ -1080,7 +1144,7 @@ BookPage = class extends Page {
     "publisher",
     "publisher_summary",
     "audible_oginal",
-    "book",
+    "series",
     "category_type",
     "main_category",
     "sub_category",
@@ -1235,16 +1299,6 @@ BookPage = class extends Page {
     return null;
   }
 
-  /**
-   * The book number in a series.
-   *
-   * @type      {number}
-   * @abstract
-   */
-  get book() {
-    return null;
-  }
-
   get tags_list() {
     return [];
   }
@@ -1296,13 +1350,13 @@ BookPage = class extends Page {
   }
 
   get main_category() {
-    return this.categories_list[0] || null;
+    return this.categories_list[0]?.trim() || null;
   }
 
   get sub_category() {
     // return the second category if there is one
     if (this.categories_list && this.categories_list.length == 2) {
-      return this.categories_list[1];
+      return this.categories_list[1].trim();
     }
 
     // find the first subgenre listed in tags
@@ -1359,23 +1413,31 @@ ADBLBookPage = class extends BookPage {
   //   return this.info.rating?.count || "";
   // }
 
-  // book number
-  get book() {
-    return /Book (\d+)/i.exec(this.info.series?.[0].part)?.[1] || "";
-  }
-
   // get summary() {
   //   return this.doc.qsf("adbl-text-block[slot='summary']").textContent;
   // }
 
   get categories_list() {
-    return this.info.categories?.map((c) => c.name) || [];
+    return this.info.categories?.map((c) => c.name.trim()) || [];
   }
 
   get tags_list() {
     return this.doc
       .qs("adbl-chip-group.product-topictag-impression adbl-chip")
       .map((c) => c.innerHTML);
+  }
+
+  get series() {
+    let series = [];
+    for (let s of this.info?.series || []) {
+      series.push({
+        id: s.url?.match(/series\/.*\/(.*)\?/)?.[1] || "",
+        url: s.url?.replace(/\?.*$/, "") || "",
+        name: s.name,
+        number: s.part?.replace("Book ", "") || "",
+      });
+    }
+    return series;
   }
 };
 
@@ -1410,13 +1472,6 @@ NormalBookPage = class extends BookPage {
   //   return tryFloat(num);
   // }
 
-  // book number
-  get book() {
-    return (
-      /, Book (\d+)/i.exec(this.doc.gcf("seriesLabel")?.innerHTML)?.[1] || ""
-    );
-  }
-
   // get summary() {
   //   let elm = this.doc.qs("#center-1 .bc-container")[1]?.gcf("bc-text")
 
@@ -1438,9 +1493,42 @@ NormalBookPage = class extends BookPage {
   get categories_list() {
     return (
       this.doc.qs(".categoriesLabel a")?.map((c) => {
-        return entityDecode(c.innerHTML) || "";
+        return entityDecode(c.innerHTML)?.trim() || "";
       }) || []
     );
+  }
+
+  get series() {
+    let li = this.doc.qsf("li.seriesLabel");
+    if (!li) return null;
+
+    let series = [];
+
+    let children = Array.from(li.childNodes);
+    for (let i in children) {
+      let node = children[i];
+      if (!(node instanceof HTMLAnchorElement)) continue;
+
+      let [_, url, id] = /(\/series\/.*\/(.*))\?/.exec(node.href) || [
+        null,
+        "",
+        "",
+      ];
+
+      let number = "";
+      let sibling = node.nextSibling;
+      if (sibling && sibling instanceof Text) {
+        number = sibling.textContent.match(/[\d.]+-/)?.[0] || "";
+      }
+
+      series.push({
+        id: id,
+        url: url,
+        name: node.innerHTML.trim(),
+        number: number,
+      });
+    }
+    return series;
   }
 };
 /**
@@ -4120,6 +4208,7 @@ TSVFile = class extends VirtualFile {
   get rows() {
     if (!this.records || isEmpty(this.records)) return null;
     if (!this.#rows) {
+      this.preprocess();
       this.#rows = this.records.map((row) =>
         Object.values(row).map((v) => this.sanitize(v)),
       );
@@ -4135,8 +4224,25 @@ TSVFile = class extends VirtualFile {
     return text;
   }
 
+  preprocess() {
+    for (let [i, record] of Object.entries(this.records)) {
+      if (!isEmpty(record.series)) {
+        record.series = record.series
+          .map((series) => {
+            return series.name + (series.number ? ` #${series.number}` : "");
+          })
+          .join(", ");
+      }
+    }
+  }
+
   sanitize(text) {
     text = text || "";
+
+    if (typeof text == "object") {
+      text = JSON.stringify(text);
+    }
+
     text = String(text);
 
     return text
@@ -4148,7 +4254,18 @@ TSVFile = class extends VirtualFile {
       .replace(/"/g, '\\"');
   }
 };
+/**
+ * Result.
+ *
+ * Final result set for a book from library data, order data, and book details
+ * data.
+ */
 Result = class {
+  /**
+   * Mapping of header to list of sources in order of precedence.
+   *
+   * @access private
+   */
   #headers = {
     id: ["order", "library", "details"],
     url: ["order", "library"],
@@ -4179,6 +4296,13 @@ Result = class {
     this.order = order || {};
   }
 
+  /**
+   * Get the value for key from the first source that has it defined.
+   *
+   * @param {string} key  Key from .#headers.
+   *
+   * @return {any}
+   */
   first(key) {
     // the objects to look for key in
     let sources = [...this.#headers[key]];
@@ -4197,6 +4321,11 @@ Result = class {
     }, "");
   }
 
+  /**
+   * Mapping of keys from .#headers to the value pulled from source data.
+   *
+   * @return {object}
+   */
   data() {
     return Object.fromEntries(
       Object.keys(this.#headers).map((key) => {

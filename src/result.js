@@ -1,4 +1,15 @@
+/**
+ * Result.
+ *
+ * Final result set for a book from library data, order data, and book details
+ * data.
+ */
 Result = class {
+  /**
+   * Mapping of header to list of sources in order of precedence.
+   *
+   * @access private
+   */
   #headers = {
     id: ["order", "library", "details"],
     url: ["order", "library"],
@@ -29,6 +40,13 @@ Result = class {
     this.order = order || {};
   }
 
+  /**
+   * Get the value for key from the first source that has it defined.
+   *
+   * @param {string} key  Key from .#headers.
+   *
+   * @return {any}
+   */
   first(key) {
     // the objects to look for key in
     let sources = [...this.#headers[key]];
@@ -47,6 +65,11 @@ Result = class {
     }, "");
   }
 
+  /**
+   * Mapping of keys from .#headers to the value pulled from source data.
+   *
+   * @return {object}
+   */
   data() {
     return Object.fromEntries(
       Object.keys(this.#headers).map((key) => {

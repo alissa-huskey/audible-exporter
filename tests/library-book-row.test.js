@@ -55,8 +55,45 @@ describe("LibraryBookRow", () => {
     expect(row.narrator).toBe("Joe Hempel");
   });
 
-  test("series", () => {
-    expect(row.series).toBe("Star Shards Chronicles");
+  test.each([
+    { fixture: "-no-series", desc: "No Series", series: [] },
+    {
+      fixture: "",
+      desc: "One Series",
+      series: [
+        {
+          id: "B08CVC76VZ",
+          url: "/series/Star-Shards-Chronicles-Audiobook/B08CVC76VZ",
+          name: "Star Shards Chronicles",
+          number: "1",
+        },
+      ],
+    },
+    {
+      fixture: "-fav-finished-pdf",
+      desc: "Multiple Series",
+      series: [
+        {
+          id: "B0DMXTJ8WH",
+          url: "/series/The-Cosmere-Audiobook/B0DMXTJ8WH",
+          name: "The Cosmere",
+          number: "",
+        },
+        {
+          id: "B006K1RP8I",
+          url: "/series/The-Stormlight-Archive-Audiobook/B006K1RP8I",
+          name: "The Stormlight Archive",
+          number: "5",
+        },
+      ],
+    },
+  ])("series: $desc", ({ fixture, desc, series }) => {
+    let doc = fixtureElement(
+      `library-book-row${fixture}.html`,
+      ".adbl-library-content-row:first-child",
+    );
+    let row = new LibraryBookRow(doc);
+    expect(row.series).toEqual(series);
   });
 
   test(".data()", () => {
@@ -66,7 +103,14 @@ describe("LibraryBookRow", () => {
       title: "Scorpion Shards: Star Shards Chronicles Series, Book 1",
       author: "Neal Shusterman",
       narrator: "Joe Hempel",
-      series: "Star Shards Chronicles",
+      series: [
+        {
+          id: "B08CVC76VZ",
+          name: "Star Shards Chronicles",
+          number: "1",
+          url: "/series/Star-Shards-Chronicles-Audiobook/B08CVC76VZ",
+        },
+      ],
     };
 
     expect(row.data()).toEqual(data);

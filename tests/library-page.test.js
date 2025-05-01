@@ -28,7 +28,14 @@ describe("LibraryPage", () => {
       title: "Scorpion Shards: Star Shards Chronicles Series, Book 1",
       author: "Neal Shusterman",
       narrator: "Joe Hempel",
-      series: "Star Shards Chronicles",
+      series: [
+        {
+          id: "B08CVC76VZ",
+          name: "Star Shards Chronicles",
+          number: "1",
+          url: "/series/Star-Shards-Chronicles-Audiobook/B08CVC76VZ",
+        },
+      ],
     };
 
     expect(page.books.length).toBe(20);

@@ -24,6 +24,7 @@ TSVFile = class extends VirtualFile {
   get rows() {
     if (!this.records || isEmpty(this.records)) return null;
     if (!this.#rows) {
+      this.preprocess();
       this.#rows = this.records.map((row) =>
         Object.values(row).map((v) => this.sanitize(v)),
       );
@@ -39,8 +40,25 @@ TSVFile = class extends VirtualFile {
     return text;
   }
 
+  preprocess() {
+    for (let [i, record] of Object.entries(this.records)) {
+      if (!isEmpty(record.series)) {
+        record.series = record.series
+          .map((series) => {
+            return series.name + (series.number ? ` #${series.number}` : "");
+          })
+          .join(", ");
+      }
+    }
+  }
+
   sanitize(text) {
     text = text || "";
+
+    if (typeof text == "object") {
+      text = JSON.stringify(text);
+    }
+
     text = String(text);
 
     return text

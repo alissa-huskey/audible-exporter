@@ -92,7 +92,7 @@ BookPage = class extends Page {
     "publisher",
     "publisher_summary",
     "audible_oginal",
-    "book",
+    "series",
     "category_type",
     "main_category",
     "sub_category",
@@ -247,16 +247,6 @@ BookPage = class extends Page {
     return null;
   }
 
-  /**
-   * The book number in a series.
-   *
-   * @type      {number}
-   * @abstract
-   */
-  get book() {
-    return null;
-  }
-
   get tags_list() {
     return [];
   }
@@ -308,13 +298,13 @@ BookPage = class extends Page {
   }
 
   get main_category() {
-    return this.categories_list[0] || null;
+    return this.categories_list[0]?.trim() || null;
   }
 
   get sub_category() {
     // return the second category if there is one
     if (this.categories_list && this.categories_list.length == 2) {
-      return this.categories_list[1];
+      return this.categories_list[1].trim();
     }
 
     // find the first subgenre listed in tags
@@ -371,23 +361,31 @@ ADBLBookPage = class extends BookPage {
   //   return this.info.rating?.count || "";
   // }
 
-  // book number
-  get book() {
-    return /Book (\d+)/i.exec(this.info.series?.[0].part)?.[1] || "";
-  }
-
   // get summary() {
   //   return this.doc.qsf("adbl-text-block[slot='summary']").textContent;
   // }
 
   get categories_list() {
-    return this.info.categories?.map((c) => c.name) || [];
+    return this.info.categories?.map((c) => c.name.trim()) || [];
   }
 
   get tags_list() {
     return this.doc
       .qs("adbl-chip-group.product-topictag-impression adbl-chip")
       .map((c) => c.innerHTML);
+  }
+
+  get series() {
+    let series = [];
+    for (let s of this.info?.series || []) {
+      series.push({
+        id: s.url?.match(/series\/.*\/(.*)\?/)?.[1] || "",
+        url: s.url?.replace(/\?.*$/, "") || "",
+        name: s.name,
+        number: s.part?.replace("Book ", "") || "",
+      });
+    }
+    return series;
   }
 };
 
@@ -422,13 +420,6 @@ NormalBookPage = class extends BookPage {
   //   return tryFloat(num);
   // }
 
-  // book number
-  get book() {
-    return (
-      /, Book (\d+)/i.exec(this.doc.gcf("seriesLabel")?.innerHTML)?.[1] || ""
-    );
-  }
-
   // get summary() {
   //   let elm = this.doc.qs("#center-1 .bc-container")[1]?.gcf("bc-text")
 
@@ -450,8 +441,41 @@ NormalBookPage = class extends BookPage {
   get categories_list() {
     return (
       this.doc.qs(".categoriesLabel a")?.map((c) => {
-        return entityDecode(c.innerHTML) || "";
+        return entityDecode(c.innerHTML)?.trim() || "";
       }) || []
     );
+  }
+
+  get series() {
+    let li = this.doc.qsf("li.seriesLabel");
+    if (!li) return null;
+
+    let series = [];
+
+    let children = Array.from(li.childNodes);
+    for (let i in children) {
+      let node = children[i];
+      if (!(node instanceof HTMLAnchorElement)) continue;
+
+      let [_, url, id] = /(\/series\/.*\/(.*))\?/.exec(node.href) || [
+        null,
+        "",
+        "",
+      ];
+
+      let number = "";
+      let sibling = node.nextSibling;
+      if (sibling && sibling instanceof Text) {
+        number = sibling.textContent.match(/[\d.]+-/)?.[0] || "";
+      }
+
+      series.push({
+        id: id,
+        url: url,
+        name: node.innerHTML.trim(),
+        number: number,
+      });
+    }
+    return series;
   }
 };

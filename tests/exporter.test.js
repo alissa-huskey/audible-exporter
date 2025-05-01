@@ -185,6 +185,10 @@ describe("Exporter", () => {
     ]);
     Page.prototype.fetchDoc = mockFn;
 
+    // evade the login check
+    let giMocker = jest.fn().mockImplementation(() => true);
+    document.getElementById = giMocker;
+
     let exporter = new Exporter();
     await exporter.run();
 
