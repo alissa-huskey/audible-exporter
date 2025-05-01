@@ -1746,7 +1746,7 @@ NormalBookPage = /*#__PURE__*/function (_BookPage2) {
         var sibling = node.nextSibling;
         if (sibling && sibling instanceof Text) {
           var _sibling$textContent$;
-          number = ((_sibling$textContent$ = sibling.textContent.match(/[\d.]+-/)) === null || _sibling$textContent$ === void 0 ? void 0 : _sibling$textContent$[0]) || "";
+          number = ((_sibling$textContent$ = sibling.textContent.match(/[\d.-]+/)) === null || _sibling$textContent$ === void 0 ? void 0 : _sibling$textContent$[0]) || "";
         }
         series.push({
           id: id,
@@ -4331,7 +4331,6 @@ Exporter = /*#__PURE__*/function () {
     value: function start() {
       this.modal = new StartDialog();
       this.modal.create();
-      return this.modal;
     }
   }, {
     key: "isAudible",
@@ -4348,7 +4347,10 @@ Exporter = /*#__PURE__*/function () {
   }, {
     key: "showError",
     value: function showError(target) {
-      var modal = new ErrorDialog(["Sorry, you must be on the audible website to continue.", "Go there and try again."]);
+      for (var _len12 = arguments.length, sentences = new Array(_len12 > 1 ? _len12 - 1 : 0), _key12 = 1; _key12 < _len12; _key12++) {
+        sentences[_key12 - 1] = arguments[_key12];
+      }
+      var modal = new ErrorDialog(sentences);
       modal.content.method = "get";
       modal.content.action = target;
       modal.copy.append(modal.actions);

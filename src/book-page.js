@@ -466,7 +466,7 @@ NormalBookPage = class extends BookPage {
       let number = "";
       let sibling = node.nextSibling;
       if (sibling && sibling instanceof Text) {
-        number = sibling.textContent.match(/[\d.]+-/)?.[0] || "";
+        number = sibling.textContent.match(/[\d.-]+/)?.[0] || "";
       }
 
       series.push({

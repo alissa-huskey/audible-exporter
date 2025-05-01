@@ -52,7 +52,6 @@ Exporter = class {
   start() {
     this.modal = new StartDialog();
     this.modal.create();
-    return this.modal;
   }
 
   isAudible() {
@@ -66,10 +65,7 @@ Exporter = class {
   }
 
   showError(target, ...sentences) {
-    let modal = new ErrorDialog([
-      "Sorry, you must be on the audible website to continue.",
-      "Go there and try again.",
-    ]);
+    let modal = new ErrorDialog(sentences);
 
     modal.content.method = "get";
     modal.content.action = target;

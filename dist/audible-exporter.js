@@ -868,7 +868,11 @@ LibraryBookRow = class extends Parser {
     let series = [];
     let links = this.ul.qs(".seriesLabel a");
     for (let link of links) {
-      let [_, url, id] = /(\/series\/.*\/(.*))\?/.exec(link.href) || [null, "", ""];
+      let [_, url, id] = /(\/series\/.*\/(.*))\?/.exec(link.href) || [
+        null,
+        "",
+        "",
+      ];
 
       let span = this.ul.qsf(`.seriesLabel a:nth-child(${i}) + span`);
       let number = span?.innerHTML?.trim().replace("Book ", "") || "";
@@ -1518,7 +1522,7 @@ NormalBookPage = class extends BookPage {
       let number = "";
       let sibling = node.nextSibling;
       if (sibling && sibling instanceof Text) {
-        number = sibling.textContent.match(/[\d.]+-/)?.[0] || "";
+        number = sibling.textContent.match(/[\d.-]+/)?.[0] || "";
       }
 
       series.push({
@@ -4371,7 +4375,6 @@ Exporter = class {
   start() {
     this.modal = new StartDialog();
     this.modal.create();
-    return this.modal;
   }
 
   isAudible() {
@@ -4385,10 +4388,7 @@ Exporter = class {
   }
 
   showError(target, ...sentences) {
-    let modal = new ErrorDialog([
-      "Sorry, you must be on the audible website to continue.",
-      "Go there and try again.",
-    ]);
+    let modal = new ErrorDialog(sentences);
 
     modal.content.method = "get";
     modal.content.action = target;

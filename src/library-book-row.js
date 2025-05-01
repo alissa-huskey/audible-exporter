@@ -44,7 +44,11 @@ LibraryBookRow = class extends Parser {
     let series = [];
     let links = this.ul.qs(".seriesLabel a");
     for (let link of links) {
-      let [_, url, id] = /(\/series\/.*\/(.*))\?/.exec(link.href) || [null, "", ""];
+      let [_, url, id] = /(\/series\/.*\/(.*))\?/.exec(link.href) || [
+        null,
+        "",
+        "",
+      ];
 
       let span = this.ul.qsf(`.seriesLabel a:nth-child(${i}) + span`);
       let number = span?.innerHTML?.trim().replace("Book ", "") || "";
