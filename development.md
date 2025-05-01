@@ -40,16 +40,16 @@ associated code from `tests/integration/runners` which executes the code.
 Build
 -----
 
-CSS, stored in `src/css`, is bundled `build/prep/style.css` then added to
-Javascript. It is in ijected into the DOM at runtime.
+CSS, stored in `src/css`, is bundled in the file `build/prep/style.css` then
+added to Javascript. It is in injected into the DOM at runtime.
 
 Javascript, stored in `src`, is bundled into flat files by following the
 `require()` statements and CSS is added.
 
-| Task           | Location             | Description                                                        |
+| Gulp Task      | Location             | Description                                                        |
 |----------------|----------------------|--------------------------------------------------------------------|
 | `dev`          | `build/dev`          | bundled component files that can be tested individually in browser |
-| `test-scripts` | `build/test-scripts` | scripts for integration tests (see [Testcafe](#Testcafe)           |
+| `test-scripts` | `build/test-scripts` | scripts for integration tests (see [Testcafe](#Testcafe))           |
 | `prep`         | `build/prepped`      | source files with CSS added into JS                                |
 | `dist`         | `dist`               | release files                                                      |
 
