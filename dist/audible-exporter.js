@@ -826,7 +826,7 @@ Parser = class {
   }
 };
 LibraryBookRow = class extends Parser {
-  _fields = ["id", "url", "title", "author", "narrator", "series"];
+  _fields = ["id", "url", "title", "authors", "narrator", "series"];
   _identifers = ["page_num", "row_num"];
 
   constructor(doc = null, page_num = null, row_num = null) {
@@ -855,8 +855,9 @@ LibraryBookRow = class extends Parser {
     return entityDecode(title);
   }
 
-  get author() {
-    return this.ul.gcf("authorLabel").gcf("bc-color-base").innerHTML.trim();
+  get authors() {
+    let links = this.ul.qs(".authorLabel a.bc-color-base");
+    return links.map((a) => a.innerHTML.trim());
   }
 
   get narrator() {
@@ -1141,6 +1142,7 @@ BookPage = class extends Page {
   _fields = [
     "id",
     "title",
+    "authors",
     "duration_minutes",
     "language",
     "release_date",
@@ -1160,11 +1162,14 @@ BookPage = class extends Page {
   _identifers = ["url"];
 
   #tags = [];
+  #json_scripts = null;
   #json_audiobook = null;
   #json_product = null;
 
   /**
    * Fetch the book page and return the BookPage object.
+   *
+   * Return either an ADBLBookPage or NormalBookPage.
    *
    * @param {string} url
    *
@@ -1201,36 +1206,48 @@ BookPage = class extends Page {
     return parseInt(hours) * 60 + parseInt(mins);
   }
 
+  /**
+   * Get parsed JSON from script tags.
+   *
+   * Parse the JSON from script tags and return an object mapping each objects
+   * "@type" key to the object.
+   *
+   * @return {Object} Object of parsed JSON mapping @type -> object.
+   */
+  get json_scripts() {
+    if (!this.#json_scripts) {
+      let scripts = this.doc.qs("script[type='application/ld+json']");
+      this.#json_scripts = scripts.reduce((obj, doc) => {
+        let json = JSON.parse(doc.innerHTML);
+        if (!(json instanceof Array)) {
+          json = [json];
+        }
+        json.forEach((child) => {
+          obj[child["@type"]] = child;
+        });
+        return obj;
+      }, {});
+    }
+
+    return this.#json_scripts;
+  }
+
   get json_audiobook() {
     if (!this.#json_audiobook) {
-      let scripts = this.doc.qs("script[type='application/ld+json']");
-      let s;
-
-      for (s of scripts) {
-        let json = JSON.parse(s.innerHTML);
-        if (json?.[0]?.["@type"] == "Audiobook") {
-          this.#json_audiobook = json[0];
-          break;
-        }
-      }
+      this.#json_audiobook = this.json_scripts["Audiobook"] || {};
     }
     return this.#json_audiobook;
   }
 
   get json_product() {
     if (!this.#json_product) {
-      let scripts = this.doc.qs("script[type='application/ld+json']");
-      let s;
-
-      for (s of scripts) {
-        let json = JSON.parse(s.innerHTML);
-        if (json?.[0]?.["@type"] == "Product") {
-          this.#json_product = json[0];
-          break;
-        }
-      }
+      this.#json_product = this.json_scripts["Product"] || {};
     }
     return this.#json_product;
+  }
+
+  get authors() {
+    return this.json_audiobook.author?.map((a) => a.name) || [];
   }
 
   get rating() {
@@ -1307,6 +1324,11 @@ BookPage = class extends Page {
     return [];
   }
 
+  /**
+   * Determine fiction or nonfiction.
+   *
+   * @return {string}
+   */
   get category_type() {
     // check if the fiction tag is listed in the tags
     for (var genre of this.#category_types) {
@@ -1340,6 +1362,13 @@ BookPage = class extends Page {
     return null;
   }
 
+  /**
+   * Get tags.
+   *
+   * Filter tags_list to exclude fiction/nonfiction and main_category.
+   *
+   * @returns {Array}
+   */
   get tags() {
     if (!this.#tags.length && this.tags_list) {
       let exclude = [...this.#category_types];
@@ -1405,18 +1434,6 @@ ADBLBookPage = class extends BookPage {
     return this.toMinutes(this.info.duration);
   }
 
-  // get rating() {
-  //   return tryFloat(Number(this.info.rating?.value).toFixed(1));
-  // }
-
-  // get date() {
-  //   return this.info.releaseDate;
-  // }
-
-  // get num_ratings() {
-  //   return this.info.rating?.count || "";
-  // }
-
   // get summary() {
   //   return this.doc.qsf("adbl-text-block[slot='summary']").textContent;
   // }
@@ -1425,10 +1442,15 @@ ADBLBookPage = class extends BookPage {
     return this.info.categories?.map((c) => c.name.trim()) || [];
   }
 
+  /**
+   * Parse list of tags.
+   *
+   * @return {Array}
+   */
   get tags_list() {
     return this.doc
       .qs("adbl-chip-group.product-topictag-impression adbl-chip")
-      .map((c) => c.innerHTML);
+      .map((c) => entityDecode(c.innerHTML));
   }
 
   get series() {
@@ -1453,28 +1475,10 @@ ADBLBookPage = class extends BookPage {
  *
  */
 NormalBookPage = class extends BookPage {
-  // get date() {
-  //   let li = this.doc.gcf("releaseDateLabel");
-  //   return li?.innerHTML?.replace(/Releae date:/, "").trim();
-  // }
-
   get duration_minutes() {
     let text = this.doc.gcf("runtimeLabel").innerHTML.replace(/length:/i, "");
     return this.toMinutes(text);
   }
-
-  // get rating() {
-  //   let elm = this.doc.qsf(".ratingsLabel .bc-pub-offscreen").innerHTML;
-  //   let score = /[\d\.]+/.exec(elm)?.[0]
-  //   return tryFloat(score);
-  // }
-
-  // get num_ratings() {
-  //   let elm = this.doc.qsf(".ratingsLabel .bc-color-link");
-  //   let text = elm.innerHTML?.trim()
-  //   let num = /[\d,]+/.exec(text)[0]?.replace(/\D/, "");
-  //   return tryFloat(num);
-  // }
 
   // get summary() {
   //   let elm = this.doc.qs("#center-1 .bc-container")[1]?.gcf("bc-text")
@@ -1677,18 +1681,20 @@ Purchase = class extends Parser {
     );
   }
 };
+/**
+ * A single purchase history page, usually a year and page ie 2024, page 2
+ *
+ * Each order page has both a list of orders, and a list of purchases (see
+ * purchase.js).
+ *
+ * Example:
+ * https://www.audible.com/account/purchase-history?ref=&tf=orders&df=2024&ps=20
+ */
 OrderPage = class extends Page {
   base_url = "https://www.audible.com/account/purchase-history?tf=orders";
 
   #default_per_page = 40;
-  #purchases_attrs = {
-    id: "data-order-item-asin",
-    order_id: "data-order-id",
-    amount: "data-order-item-cost",
-    credits: "data-order-item-credit-cost",
-    title: "data-order-item-name",
-    author: "data-order-item-author",
-  };
+
   #valid_date_ranges = ["last_90_days", "last_180_days", "last_365_days"];
 
   #orders = {};
@@ -1697,6 +1703,9 @@ OrderPage = class extends Page {
   #page_num = null;
   #year = null;
 
+  /**
+   * Return true if all given attributes are truthy.
+   */
   require(...attrs) {
     let success = true;
     for (let a in attrs) {
@@ -1730,6 +1739,11 @@ OrderPage = class extends Page {
     this.#items = null;
   }
 
+  /**
+   * Fetch the document for the given year, page number, and per_page.
+   *
+   * @return {Doc}
+   */
   async get() {
     let url = `${this.base_url}&df=${this.year}&pn=${this.page_num}&ps=${this.per_page}`;
     this.doc = await this.fetchDoc(url);
@@ -4230,12 +4244,21 @@ TSVFile = class extends VirtualFile {
 
   preprocess() {
     for (let [i, record] of Object.entries(this.records)) {
-      if (!isEmpty(record.series)) {
+      if (record.series === "") {
+        record.series = [];
+      }
+      if (record.authors === "") {
+        record.authors = [];
+      }
+      if (record.series) {
         record.series = record.series
           .map((series) => {
             return series.name + (series.number ? ` #${series.number}` : "");
           })
           .join(", ");
+      }
+      if (record.authors) {
+        record.authors = record.authors.join(", ");
       }
     }
   }
@@ -4274,7 +4297,7 @@ Result = class {
     id: ["order", "library", "details"],
     url: ["order", "library"],
     title: ["order", "details", "library"],
-    author: ["order", "library"],
+    authors: ["library", "details"],
     narrator: ["library"],
     series: ["library", "details"],
     publisher: ["details"],

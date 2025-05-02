@@ -3,18 +3,20 @@ require("./page.js");
 require("./order-row.js");
 require("./purchase.js");
 
+/**
+ * A single purchase history page, usually a year and page ie 2024, page 2
+ *
+ * Each order page has both a list of orders, and a list of purchases (see
+ * purchase.js).
+ *
+ * Example:
+ * https://www.audible.com/account/purchase-history?ref=&tf=orders&df=2024&ps=20
+ */
 OrderPage = class extends Page {
   base_url = "https://www.audible.com/account/purchase-history?tf=orders";
 
   #default_per_page = 40;
-  #purchases_attrs = {
-    id: "data-order-item-asin",
-    order_id: "data-order-id",
-    amount: "data-order-item-cost",
-    credits: "data-order-item-credit-cost",
-    title: "data-order-item-name",
-    author: "data-order-item-author",
-  };
+
   #valid_date_ranges = ["last_90_days", "last_180_days", "last_365_days"];
 
   #orders = {};
@@ -23,6 +25,9 @@ OrderPage = class extends Page {
   #page_num = null;
   #year = null;
 
+  /**
+   * Return true if all given attributes are truthy.
+   */
   require(...attrs) {
     let success = true;
     for (let a in attrs) {
@@ -56,6 +61,11 @@ OrderPage = class extends Page {
     this.#items = null;
   }
 
+  /**
+   * Fetch the document for the given year, page number, and per_page.
+   *
+   * @return {Doc}
+   */
   async get() {
     let url = `${this.base_url}&df=${this.year}&pn=${this.page_num}&ps=${this.per_page}`;
     this.doc = await this.fetchDoc(url);

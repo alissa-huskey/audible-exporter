@@ -101,6 +101,16 @@ describe("NormalBookPage", () => {
   let doc = fixtureDoc("book-details-audible-original.html");
   let page = new NormalBookPage(doc);
 
+  test("json_scripts", () => {
+    expect(page.json_scripts).toBeA(Object);
+    expect(Object.keys(page.json_scripts)).toEqual([
+      "Organization",
+      "Audiobook",
+      "BreadcrumbList",
+      "Product",
+    ]);
+  });
+
   test("json_audiobook", () => {
     expect(page.json_audiobook).toBeTruthy();
     expect(page.json_audiobook["@type"]).toBe("Audiobook");
@@ -117,6 +127,10 @@ describe("NormalBookPage", () => {
 
   test(".title", () => {
     expect(page.title).toBe("Ghosts of Zenith");
+  });
+
+  test(".authors", () => {
+    expect(page.authors).toEqual(["Larry Correia"]);
   });
 
   test(".date", () => {
@@ -171,6 +185,7 @@ describe("NormalBookPage", () => {
     let data = {
       id: "B0BL84CBLZ",
       title: "Ghosts of Zenith",
+      authors: ["Larry Correia"],
       duration_minutes: 145,
       language: "English",
       release_date: "2023 Jan 12",
@@ -246,8 +261,7 @@ describe("NormalBookPage", () => {
 });
 
 describe("ADBLBookPage", () => {
-  let html = getFixtureFile("book-details.html");
-  let doc = toDoc(html);
+  let doc = fixtureDoc("book-details.html");
   let page = new ADBLBookPage(doc);
 
   test(".id", () => {
@@ -256,6 +270,10 @@ describe("ADBLBookPage", () => {
 
   test(".title", () => {
     expect(page.title).toBe("Midnight Riot");
+  });
+
+  test(".authors", () => {
+    expect(page.authors).toEqual(["Ben Aaronovitch"]);
   });
 
   test(".date", () => {
@@ -292,10 +310,6 @@ describe("ADBLBookPage", () => {
     expect(page.audible_oginal).toBe(false);
   });
 
-  test(".data", () => {
-    expect(page.audible_oginal).toBe(false);
-  });
-
   test(".categories_list", () => {
     expect(page.categories_list).toEqual(["Mystery, Thriller & Suspense"]);
   });
@@ -316,6 +330,23 @@ describe("ADBLBookPage", () => {
       "Witty",
       "Suspenseful",
       "England",
+    ]);
+  });
+
+  test(".tags_list (with ampersand)", () => {
+    let doc = fixtureDoc("book-details-no-series.html");
+    let page = new ADBLBookPage(doc);
+
+    expect(page.tags_list).toEqual([
+      "Action & Adventure",
+      "Fantasy",
+      "Literature & Fiction",
+      "Science Fiction & Fantasy",
+      "Young Adult",
+      "Fiction",
+      "Royalty",
+      "King",
+      "Heartfelt",
     ]);
   });
 
@@ -356,6 +387,6 @@ describe("ADBLBookPage", () => {
 
     page.data();
 
-    expect(spy.mock.calls).toHaveLength(10);
+    expect(spy.mock.calls).toHaveLength(11);
   });
 });

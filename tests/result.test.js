@@ -50,9 +50,28 @@ describe("Result", () => {
       id: "006297534X",
       url: "/pd/Honored-Enemy-Audiobook/006297534X",
       title: "Honored Enemy: Legends of the Riftwar, Book 1",
-      author: "Raymond E. Feist",
+      authors: ["Raymond E. Feist", "William R. Forstchen"],
       narrator: "Matt Bates",
-      series: "Riftwar Cycle [Publication Order]",
+      series: [
+        {
+          id: "B0D9HWCMMS",
+          url: "/series/Riftwar-Cycle-Publication-Order-Audiobooks/B0D9HWCMMS",
+          name: "Riftwar Cycle [Publication Order]",
+          number: "17",
+        },
+        {
+          id: "B01LWZA84Q",
+          url: "/series/Riftwar-Cycle-Audiobooks/B01LWZA84Q",
+          name: "Riftwar Cycle [Chronological Order]",
+          number: "4",
+        },
+        {
+          id: "B00UM9FILU",
+          url: "/series/Legends-of-the-Riftwar-Audiobooks/B00UM9FILU",
+          name: "Legends of the Riftwar",
+          number: "1",
+        },
+      ],
     };
 
     let details = {
@@ -78,9 +97,28 @@ describe("Result", () => {
       id: "006297534X",
       url: "http://www.audible.com/pd/006297534X",
       title: "Honored Enemy",
-      author: "Raymond E. Feist, William R. Forstchen",
+      authors: ["Raymond E. Feist", "William R. Forstchen"],
       narrator: "Matt Bates",
-      series: "Riftwar Cycle [Publication Order]",
+      series: [
+        {
+          id: "B0D9HWCMMS",
+          url: "/series/Riftwar-Cycle-Publication-Order-Audiobooks/B0D9HWCMMS",
+          name: "Riftwar Cycle [Publication Order]",
+          number: "17",
+        },
+        {
+          id: "B01LWZA84Q",
+          url: "/series/Riftwar-Cycle-Audiobooks/B01LWZA84Q",
+          name: "Riftwar Cycle [Chronological Order]",
+          number: "4",
+        },
+        {
+          id: "B00UM9FILU",
+          url: "/series/Legends-of-the-Riftwar-Audiobooks/B00UM9FILU",
+          name: "Legends of the Riftwar",
+          number: "1",
+        },
+      ],
       duration_minutes: 797,
       language: "English",
       release_date: "2020 Jul 7",

@@ -26,7 +26,7 @@ describe("LibraryPage", () => {
       id: "1705240569",
       url: "/pd/Scorpion-Shards-Audiobook/1705240569",
       title: "Scorpion Shards: Star Shards Chronicles Series, Book 1",
-      author: "Neal Shusterman",
+      authors: ["Neal Shusterman"],
       narrator: "Joe Hempel",
       series: [
         {

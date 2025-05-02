@@ -85,6 +85,7 @@ BookPage = class extends Page {
   _fields = [
     "id",
     "title",
+    "authors",
     "duration_minutes",
     "language",
     "release_date",
@@ -104,11 +105,14 @@ BookPage = class extends Page {
   _identifers = ["url"];
 
   #tags = [];
+  #json_scripts = null;
   #json_audiobook = null;
   #json_product = null;
 
   /**
    * Fetch the book page and return the BookPage object.
+   *
+   * Return either an ADBLBookPage or NormalBookPage.
    *
    * @param {string} url
    *
@@ -145,36 +149,48 @@ BookPage = class extends Page {
     return parseInt(hours) * 60 + parseInt(mins);
   }
 
+  /**
+   * Get parsed JSON from script tags.
+   *
+   * Parse the JSON from script tags and return an object mapping each objects
+   * "@type" key to the object.
+   *
+   * @return {Object} Object of parsed JSON mapping @type -> object.
+   */
+  get json_scripts() {
+    if (!this.#json_scripts) {
+      let scripts = this.doc.qs("script[type='application/ld+json']");
+      this.#json_scripts = scripts.reduce((obj, doc) => {
+        let json = JSON.parse(doc.innerHTML);
+        if (!(json instanceof Array)) {
+          json = [json];
+        }
+        json.forEach((child) => {
+          obj[child["@type"]] = child;
+        });
+        return obj;
+      }, {});
+    }
+
+    return this.#json_scripts;
+  }
+
   get json_audiobook() {
     if (!this.#json_audiobook) {
-      let scripts = this.doc.qs("script[type='application/ld+json']");
-      let s;
-
-      for (s of scripts) {
-        let json = JSON.parse(s.innerHTML);
-        if (json?.[0]?.["@type"] == "Audiobook") {
-          this.#json_audiobook = json[0];
-          break;
-        }
-      }
+      this.#json_audiobook = this.json_scripts["Audiobook"] || {};
     }
     return this.#json_audiobook;
   }
 
   get json_product() {
     if (!this.#json_product) {
-      let scripts = this.doc.qs("script[type='application/ld+json']");
-      let s;
-
-      for (s of scripts) {
-        let json = JSON.parse(s.innerHTML);
-        if (json?.[0]?.["@type"] == "Product") {
-          this.#json_product = json[0];
-          break;
-        }
-      }
+      this.#json_product = this.json_scripts["Product"] || {};
     }
     return this.#json_product;
+  }
+
+  get authors() {
+    return this.json_audiobook.author?.map((a) => a.name) || [];
   }
 
   get rating() {
@@ -251,6 +267,11 @@ BookPage = class extends Page {
     return [];
   }
 
+  /**
+   * Determine fiction or nonfiction.
+   *
+   * @return {string}
+   */
   get category_type() {
     // check if the fiction tag is listed in the tags
     for (var genre of this.#category_types) {
@@ -284,6 +305,13 @@ BookPage = class extends Page {
     return null;
   }
 
+  /**
+   * Get tags.
+   *
+   * Filter tags_list to exclude fiction/nonfiction and main_category.
+   *
+   * @returns {Array}
+   */
   get tags() {
     if (!this.#tags.length && this.tags_list) {
       let exclude = [...this.#category_types];
@@ -349,18 +377,6 @@ ADBLBookPage = class extends BookPage {
     return this.toMinutes(this.info.duration);
   }
 
-  // get rating() {
-  //   return tryFloat(Number(this.info.rating?.value).toFixed(1));
-  // }
-
-  // get date() {
-  //   return this.info.releaseDate;
-  // }
-
-  // get num_ratings() {
-  //   return this.info.rating?.count || "";
-  // }
-
   // get summary() {
   //   return this.doc.qsf("adbl-text-block[slot='summary']").textContent;
   // }
@@ -369,10 +385,15 @@ ADBLBookPage = class extends BookPage {
     return this.info.categories?.map((c) => c.name.trim()) || [];
   }
 
+  /**
+   * Parse list of tags.
+   *
+   * @return {Array}
+   */
   get tags_list() {
     return this.doc
       .qs("adbl-chip-group.product-topictag-impression adbl-chip")
-      .map((c) => c.innerHTML);
+      .map((c) => entityDecode(c.innerHTML));
   }
 
   get series() {
@@ -397,28 +418,10 @@ ADBLBookPage = class extends BookPage {
  *
  */
 NormalBookPage = class extends BookPage {
-  // get date() {
-  //   let li = this.doc.gcf("releaseDateLabel");
-  //   return li?.innerHTML?.replace(/Releae date:/, "").trim();
-  // }
-
   get duration_minutes() {
     let text = this.doc.gcf("runtimeLabel").innerHTML.replace(/length:/i, "");
     return this.toMinutes(text);
   }
-
-  // get rating() {
-  //   let elm = this.doc.qsf(".ratingsLabel .bc-pub-offscreen").innerHTML;
-  //   let score = /[\d\.]+/.exec(elm)?.[0]
-  //   return tryFloat(score);
-  // }
-
-  // get num_ratings() {
-  //   let elm = this.doc.qsf(".ratingsLabel .bc-color-link");
-  //   let text = elm.innerHTML?.trim()
-  //   let num = /[\d,]+/.exec(text)[0]?.replace(/\D/, "");
-  //   return tryFloat(num);
-  // }
 
   // get summary() {
   //   let elm = this.doc.qs("#center-1 .bc-container")[1]?.gcf("bc-text")

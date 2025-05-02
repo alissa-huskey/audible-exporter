@@ -14,7 +14,7 @@ Result = class {
     id: ["order", "library", "details"],
     url: ["order", "library"],
     title: ["order", "details", "library"],
-    author: ["order", "library"],
+    authors: ["library", "details"],
     narrator: ["library"],
     series: ["library", "details"],
     publisher: ["details"],

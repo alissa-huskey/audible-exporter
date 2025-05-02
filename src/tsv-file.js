@@ -42,12 +42,21 @@ TSVFile = class extends VirtualFile {
 
   preprocess() {
     for (let [i, record] of Object.entries(this.records)) {
-      if (!isEmpty(record.series)) {
+      if (record.series === "") {
+        record.series = [];
+      }
+      if (record.authors === "") {
+        record.authors = [];
+      }
+      if (record.series) {
         record.series = record.series
           .map((series) => {
             return series.name + (series.number ? ` #${series.number}` : "");
           })
           .join(", ");
+      }
+      if (record.authors) {
+        record.authors = record.authors.join(", ");
       }
     }
   }

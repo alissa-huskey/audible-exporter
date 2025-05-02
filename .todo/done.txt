@@ -100,3 +100,5 @@ x 2025-03-15 2025-03-05 @compatability Look into polyfills and transpilers https
 x 2025-03-15 2025-03-09 @ux Try design with console docked side, looks funny now.
 x 2025-03-16 2025-03-09 @ux Check to make sure the user is logged in.
 x 2025-05-01 2025-03-01 @data book-details: Parse/handle multiple series.
+x 2025-05-02 2025-03-10 @data Remove &amp; from categories in JSON export.
+x 2025-05-02 2025-03-10 @data Parse/handle multiple authors.

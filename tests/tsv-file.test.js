@@ -76,16 +76,25 @@ describe("TSVFile", () => {
     let file = new TSVFile([
       {
         series: [
-          { name: "The Chronicles of Narnia", number: "1" },
-          { name: "Children's Classics" },
+          {
+            name: "The Chronicles of Narnia (Publication Order)",
+            number: "1",
+          },
+          {
+            name: "The Chronicles of Narnia (Author's Preferred Order)",
+            number: "2",
+          },
         ],
+        authors: ["C. S. Lewis"],
       },
     ]);
 
     file.preprocess();
 
     expect(file.records[0].series).toBe(
-      "The Chronicles of Narnia #1, Children's Classics",
+      "The Chronicles of Narnia (Publication Order) #1, The Chronicles of Narnia (Author's Preferred Order) #2",
     );
+
+    expect(file.records[0].authors).toBe("C. S. Lewis");
   });
 });
