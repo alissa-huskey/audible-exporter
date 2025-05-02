@@ -92,7 +92,7 @@ BookPage = class extends Page {
     "release_timestamp",
     "publisher",
     "publisher_summary",
-    "audible_oginal",
+    "audible_original",
     "series",
     "category_type",
     "main_category",
@@ -239,7 +239,7 @@ BookPage = class extends Page {
     return stripHTML(text);
   }
 
-  get audible_oginal() {
+  get audible_original() {
     if (!this.publisher) return null;
     return /^Audible Original/.test(this.publisher);
   }

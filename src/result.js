@@ -26,7 +26,7 @@ Result = class {
     publisher_summary: ["details"],
     rating: ["details"],
     num_ratings: ["details"],
-    audible_oginal: ["details"],
+    audible_original: ["details"],
     category_type: ["details"],
     main_category: ["details"],
     sub_category: ["details"],

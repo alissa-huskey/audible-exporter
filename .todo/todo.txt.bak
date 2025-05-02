@@ -30,7 +30,7 @@
 (A) 2025-03-01 @refactor @data pages: Parse data from multiple fields, select the first one that has content.
 (M) 2025-03-01 @feature Get a list of collections a book belongs to
 (C) 2025-03-01 @refactor Rename NormalBookPage -> LegacyBookPage
-(A) 2025-03-01 @download Rename audible_oginal -> audible_original
+x 2025-05-02 2025-03-01 @download Rename audible_oginal -> audible_original
 (D) 2025-03-01 @refactor @performance See about getting rid of .data() methods to reduce overhead.
 (C) 2025-03-01 @refactor Move LibraryFetcher.fetchPage() -> LibraryPage.get()
 (A) 2025-03-02 @download ensure all URL formats are the same.
@@ -72,3 +72,4 @@
 (D) 2025-05-02 Consider renaming OrderPage -> PurchaseHistoryPage since it might be confused with an order detail page (ie https://www.audible.com/account/order-details?orderId=D01-0506818-5008215)
 (A) 2025-05-02 @data Book Page: Parse as much from json_scripts as possible in BookPage.
 (B) 2025-05-02 @refactor Rename Purchase -> PurchaseRow.
+(A) 2025-05-02 @data @tsv Look into not escaping single quotes (look at series: https://www.audible.com/pd/House-of-Blades-Audiobook/B0B29L7HZ8)

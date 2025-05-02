@@ -30,7 +30,6 @@
 (A) 2025-03-01 @refactor @data pages: Parse data from multiple fields, select the first one that has content.
 (M) 2025-03-01 @feature Get a list of collections a book belongs to
 (C) 2025-03-01 @refactor Rename NormalBookPage -> LegacyBookPage
-(A) 2025-03-01 @download Rename audible_oginal -> audible_original
 (D) 2025-03-01 @refactor @performance See about getting rid of .data() methods to reduce overhead.
 (C) 2025-03-01 @refactor Move LibraryFetcher.fetchPage() -> LibraryPage.get()
 (A) 2025-03-02 @download ensure all URL formats are the same.

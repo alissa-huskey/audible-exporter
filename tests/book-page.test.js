@@ -177,8 +177,8 @@ describe("NormalBookPage", () => {
     expect(page.language).toBe("English");
   });
 
-  test(".audible_oginal", () => {
-    expect(page.audible_oginal).toBe(true);
+  test(".audible_original", () => {
+    expect(page.audible_original).toBe(true);
   });
 
   test(".data()", () => {
@@ -193,7 +193,7 @@ describe("NormalBookPage", () => {
       publisher: "Audible Originals",
       publisher_summary:
         "On a nightmare world a thousand light years from Earth, one honest cop won’t rest until he solves the mystery of why his colony was condemned there, in this Audible Original story from best-selling author Larry Correia. On a planet where life is cheap, in a city built on corruption, very few things are considered holy. The Landing Site is one of them. The remains of the century-old habitat pod—which delivered the colonists to the only barely habitable place on the cruel world of Croatoan—has become a monument to the hardscrabble people who somehow survived the unsurvivable. So when blood is shed on that sacred ground, it’s seen as an attack against the entire colony. With a fanatical terrorist group holding hostages inside the monument, DCI Lutero Cade and the Zenith PD have to end the crisis and put the bad guys down. Only there’s far more to this case than meets the eye. The lander may have been carrying a hidden cargo. And a shadowy figure with his own drone army will do anything to make sure the mission’s secrets stay buried—no matter how many nosy detectives he has to kill to do it.",
-      audible_oginal: true,
+      audible_original: true,
       category_type: "fiction",
       main_category: "Science Fiction & Fantasy",
       sub_category: "Science Fiction",
@@ -306,8 +306,8 @@ describe("ADBLBookPage", () => {
     expect(page.language).toBe("English");
   });
 
-  test(".audible_oginal", () => {
-    expect(page.audible_oginal).toBe(false);
+  test(".audible_original", () => {
+    expect(page.audible_original).toBe(false);
   });
 
   test(".categories_list", () => {
