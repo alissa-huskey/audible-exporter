@@ -1504,7 +1504,7 @@ NormalBookPage = class extends BookPage {
 
   get series() {
     let li = this.doc.qsf("li.seriesLabel");
-    if (!li) return null;
+    if (!li?.element) return [];
 
     let series = [];
 
@@ -4276,8 +4276,7 @@ Result = class {
     title: ["order", "details", "library"],
     author: ["order", "library"],
     narrator: ["library"],
-    series: ["library"],
-    book: ["details"],
+    series: ["library", "details"],
     publisher: ["details"],
     duration_minutes: ["details"],
     release_date: ["details"],

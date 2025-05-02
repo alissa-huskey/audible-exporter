@@ -1731,7 +1731,7 @@ NormalBookPage = /*#__PURE__*/function (_BookPage2) {
     key: "series",
     get: function get() {
       var li = this.doc.qsf("li.seriesLabel");
-      if (!li) return null;
+      if (!(li !== null && li !== void 0 && li.element)) return [];
       var series = [];
       var children = Array.from(li.childNodes);
       for (var i in children) {
@@ -4227,8 +4227,7 @@ Result = (_headers3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
       title: ["order", "details", "library"],
       author: ["order", "library"],
       narrator: ["library"],
-      series: ["library"],
-      book: ["details"],
+      series: ["library", "details"],
       publisher: ["details"],
       duration_minutes: ["details"],
       release_date: ["details"],

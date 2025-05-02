@@ -40,6 +40,10 @@ describe("BookPage", () => {
       ],
     },
     {
+      fixture: "book-details-award.html",
+      series: [],
+    },
+    {
       fixture: "book-details-no-series.html",
       series: [],
     },

@@ -32,10 +32,6 @@ describe("Result", () => {
     result = new Result({}, {}, {});
     expect(result.first("title")).toBe("");
 
-    // #headers defines book as only in details, so it's ignored in all others
-    result = new Result({ book: "x" }, {}, {});
-    expect(result.first("book")).toBe("");
-
     // the false value should return false, not ""
     result = new Result({}, { audible_oginal: false }, {});
     expect(result.first("audible_oginal")).toBe(false);
@@ -70,7 +66,6 @@ describe("Result", () => {
       publisher_summary:
         "New York Times Best-Selling Author  In the frozen Northlands of Midkemia, Captain Dennis Hartraft’s Marauders have just had a disastrous encounter with their sworn enemy, the Tsurani. Wounded and disheartened, the Mauraders set out for the shelter of a frontier garrison. They don’t know that a Tsurani patrol is sent to support an assault on that same garrison. Arriving simultaneously, the Marauders and Tsurani find the outpost already overrun by a dark enemy whose ferocity is legendary in Midkemia. In order to survive, the foes must band together and fight as one. As they make their way across the inhospitable climate, the two batallions struggle not only with the elements and their enemy, but also their consciences. Can their hatred for their mutual enemy overcome their distrust of each other? And, with both sides carrying painful scars from past wars, what is more important: one’s life or one’s honor?",
       audible_oginal: false,
-      book: "1",
       category_type: "fiction",
       main_category: "Science Fiction & Fantasy",
       sub_category: "Fantasy",
@@ -95,7 +90,6 @@ describe("Result", () => {
         "New York Times Best-Selling Author  In the frozen Northlands of Midkemia, Captain Dennis Hartraft’s Marauders have just had a disastrous encounter with their sworn enemy, the Tsurani. Wounded and disheartened, the Mauraders set out for the shelter of a frontier garrison. They don’t know that a Tsurani patrol is sent to support an assault on that same garrison. Arriving simultaneously, the Marauders and Tsurani find the outpost already overrun by a dark enemy whose ferocity is legendary in Midkemia. In order to survive, the foes must band together and fight as one. As they make their way across the inhospitable climate, the two batallions struggle not only with the elements and their enemy, but also their consciences. Can their hatred for their mutual enemy overcome their distrust of each other? And, with both sides carrying painful scars from past wars, what is more important: one’s life or one’s honor?",
       purchase_date: "10-19-2024",
       audible_oginal: false,
-      book: "1",
       category_type: "fiction",
       main_category: "Science Fiction & Fantasy",
       sub_category: "Fantasy",

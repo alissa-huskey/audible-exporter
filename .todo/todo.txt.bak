@@ -29,7 +29,6 @@
 (D) 2025-03-01 @download Add purchase_timestamp.
 (A) 2025-03-01 @refactor @data pages: Parse data from multiple fields, select the first one that has content.
 (M) 2025-03-01 @feature Get a list of collections a book belongs to
-(A) 2025-03-01 @data book-details: Parse/handle multiple series.
 (C) 2025-03-01 @refactor Rename NormalBookPage -> LegacyBookPage
 (A) 2025-03-01 @download Rename audible_oginal -> audible_original
 (D) 2025-03-01 @refactor @performance See about getting rid of .data() methods to reduce overhead.
@@ -48,7 +47,6 @@
 (Z) 2025-03-08 @feature Add an option to download as CSV. https://stackoverflow.com/questions/14964035/how-to-export-javascript-array-info-to-csv-on-client-side
 (B) 2025-03-08 @ux Make getLibrary() the first step. (would help with overall time estimate and quick download option.
 (C) 2025-03-08 @refactor Rethink how .create() functions handles if it exists (.remove(), remove outter HTML?, replace in .ae.notifier/whatever?)
-x 2025-03-16 2025-03-09 @ux Check to make sure the user is logged in.
 (C) 2025-03-09 @reliability In fetch, check if the current page is the one being fetched, if so use document.body
 (B) 2025-03-09 @refactor look into switching everything to query selectors.
 (A) 2025-03-10 @data Remove &amp; from categories in JSON export.
@@ -62,3 +60,5 @@ x 2025-03-16 2025-03-09 @ux Check to make sure the user is logged in.
 (D) 2025-03-15 @ux Download file selector looks funny in Safari.
 (B) 2025-03-15 Consider removing testcafe.
 (B) 2025-03-16 @ux When checking if on audible.com, exclude help.audible.com.
+(A) 2025-05-01 @feature Add purchase information to download.
+(M) 2025-05-01 @feature Add option to skip purchase information (check if there's any data from only there.

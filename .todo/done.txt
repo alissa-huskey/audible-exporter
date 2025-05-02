@@ -99,3 +99,4 @@ x 2025-03-15 2025-03-12 @quality Move StartModal.p() somewhere else.
 x 2025-03-15 2025-03-05 @compatability Look into polyfills and transpilers https://javascript.info/polyfills
 x 2025-03-15 2025-03-09 @ux Try design with console docked side, looks funny now.
 x 2025-03-16 2025-03-09 @ux Check to make sure the user is logged in.
+x 2025-05-01 2025-03-01 @data book-details: Parse/handle multiple series.
