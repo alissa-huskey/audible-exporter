@@ -154,7 +154,7 @@ OrderPage = class extends Page {
               url: `http://www.audible.com/pd/${p.id}`,
               title: p.title,
               author: p.author,
-              purchase_date: this.orders[p.order_id].date,
+              purchase_date: dateString(this.orders[p.order_id].date),
             });
           }
           return arr;

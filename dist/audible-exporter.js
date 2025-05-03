@@ -72,24 +72,10 @@ entityDecode = function (text) {
 
 dateString = function (date) {
   if (!date) return "";
-  var months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
   if (date.constructor.name != "Date") {
     date = new Date(date);
   }
-  return `${date.getFullYear()} ${months[date.getMonth()]} ${date.getDate()}`;
+  return date.toLocaleDateString();
 };
 
 cleanObject = function (ob) {
@@ -1716,9 +1702,10 @@ OrderRow = class extends Parser {
   }
 
   get date() {
-    return this.doc
+    let date = this.doc
       .qsf(".ui-it-purchasehistory-item-purchasedate")
       .innerHTML?.trim();
+    return dateString(date);
   }
 
   get total() {
@@ -1900,7 +1887,7 @@ OrderPage = class extends Page {
               url: `http://www.audible.com/pd/${p.id}`,
               title: p.title,
               author: p.author,
-              purchase_date: this.orders[p.order_id].date,
+              purchase_date: dateString(this.orders[p.order_id].date),
             });
           }
           return arr;

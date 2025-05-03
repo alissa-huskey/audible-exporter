@@ -27,7 +27,7 @@ describe("util", () => {
   });
 
   test("dateString()", () => {
-    expect(dateString("01-21-2025")).toBe("2025 Jan 21");
+    expect(dateString("01-21-2025")).toBe("1/21/2025");
   });
 
   test("rando() function", () => {

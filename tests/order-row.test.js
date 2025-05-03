@@ -27,7 +27,7 @@ describe("OrderRow", () => {
   });
 
   test(".date", () => {
-    expect(row.date).toBe("01-21-2025");
+    expect(row.date).toBe("1/21/2025");
   });
 
   test("total", () => {
@@ -37,7 +37,7 @@ describe("OrderRow", () => {
   test(".data()", () => {
     let data = {
       id: "D01-7379715-3760239",
-      date: "01-21-2025",
+      date: "1/21/2025",
       total: "1 Credit",
     };
 

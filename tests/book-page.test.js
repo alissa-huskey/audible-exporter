@@ -241,7 +241,7 @@ describe("NormalBookPage", () => {
     jest
       .spyOn(NormalBookPage.prototype, "date", "get")
       .mockReturnValue("09-28-12");
-    expect(page.release_date).toBe("2012 Sep 28");
+    expect(page.release_date).toBe("9/28/2012");
   });
 
   test(".duration_minutes", () => {
@@ -299,7 +299,7 @@ describe("NormalBookPage", () => {
       narrators: ["Oliver Wyman"],
       duration_minutes: 145,
       language: "English",
-      release_date: "2023 Jan 12",
+      release_date: "1/12/2023",
       release_timestamp: 1673506801000,
       publisher: "Audible Originals",
       publisher_summary:

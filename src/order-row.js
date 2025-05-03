@@ -20,9 +20,10 @@ OrderRow = class extends Parser {
   }
 
   get date() {
-    return this.doc
+    let date = this.doc
       .qsf(".ui-it-purchasehistory-item-purchasedate")
       .innerHTML?.trim();
+    return dateString(date);
   }
 
   get total() {

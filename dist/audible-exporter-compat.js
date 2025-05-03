@@ -134,11 +134,10 @@ entityDecode = function entityDecode(text) {
 };
 dateString = function dateString(date) {
   if (!date) return "";
-  var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   if (date.constructor.name != "Date") {
     date = new Date(date);
   }
-  return "".concat(date.getFullYear(), " ").concat(months[date.getMonth()], " ").concat(date.getDate());
+  return date.toLocaleDateString();
 };
 cleanObject = function cleanObject(ob) {
   return Object.entries(ob).reduce(function (r, _ref) {
@@ -1998,7 +1997,8 @@ OrderRow = /*#__PURE__*/function (_Parser3) {
     key: "date",
     get: function get() {
       var _this$doc$qsf$innerHT;
-      return (_this$doc$qsf$innerHT = this.doc.qsf(".ui-it-purchasehistory-item-purchasedate").innerHTML) === null || _this$doc$qsf$innerHT === void 0 ? void 0 : _this$doc$qsf$innerHT.trim();
+      var date = (_this$doc$qsf$innerHT = this.doc.qsf(".ui-it-purchasehistory-item-purchasedate").innerHTML) === null || _this$doc$qsf$innerHT === void 0 ? void 0 : _this$doc$qsf$innerHT.trim();
+      return dateString(date);
     }
   }, {
     key: "total",
@@ -2213,7 +2213,7 @@ OrderPage = (_default_per_page = /*#__PURE__*/new WeakMap(), _valid_date_ranges 
                 url: "http://www.audible.com/pd/".concat(p.id),
                 title: p.title,
                 author: p.author,
-                purchase_date: _this13.orders[p.order_id].date
+                purchase_date: dateString(_this13.orders[p.order_id].date)
               });
             }
             return arr;

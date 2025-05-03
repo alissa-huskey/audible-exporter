@@ -72,24 +72,10 @@ entityDecode = function (text) {
 
 dateString = function (date) {
   if (!date) return "";
-  var months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
   if (date.constructor.name != "Date") {
     date = new Date(date);
   }
-  return `${date.getFullYear()} ${months[date.getMonth()]} ${date.getDate()}`;
+  return date.toLocaleDateString();
 };
 
 cleanObject = function (ob) {
