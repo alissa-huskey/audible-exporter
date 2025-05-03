@@ -1,9 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-
-require("../src/dev.js");
-require("../src/order-row.js");
+require("../../src/etl/order-row.js");
 
 describe("OrderRow", () => {
   let row = new OrderRow(fixtureElement("order-row.html", "tr"));

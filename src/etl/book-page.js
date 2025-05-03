@@ -5,7 +5,6 @@
  *
  */
 
-require("./util.js");
 require("./page.js");
 
 BookPage = class extends Page {

@@ -1,4 +1,3 @@
-require("./util.js");
 require("./parser.js");
 
 OrderRow = class extends Parser {

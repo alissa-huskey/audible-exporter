@@ -1,5 +1,4 @@
-require("./util.js");
-require("./timer.js");
+require("../timer.js");
 require("./ledger-page.js");
 
 LedgerFetcher = class {

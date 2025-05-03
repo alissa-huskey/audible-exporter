@@ -1,9 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-
-require("../src/dev.js");
-require("../src/ledger-page.js");
+require("../../src/etl/ledger-page.js");
 
 describe("LedgerPage", () => {
   let doc = fixtureDoc("ledger-page.html");

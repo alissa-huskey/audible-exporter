@@ -1,9 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-
-require("../src/dev.js");
-require("../src/details-fetcher.js");
+require("../../src/etl/details-fetcher.js");
 
 describe("DetailsFetcher", () => {
   let library = [

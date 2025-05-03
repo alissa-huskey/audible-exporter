@@ -1,9 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-
-require("../src/dev.js");
-require("../src/purchase-row.js");
+require("../../src/etl/purchase-row.js");
 
 describe("PurchaseRow", () => {
   let row = new PurchaseRow(fixtureElement("purchase.html", "a"));

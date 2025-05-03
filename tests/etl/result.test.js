@@ -1,10 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-
-require("../src/dev.js");
-require("../src/util.js");
-require("../src/result.js");
+require("../../src/etl/result.js");
 
 describe("Result", () => {
   let row = new Result();

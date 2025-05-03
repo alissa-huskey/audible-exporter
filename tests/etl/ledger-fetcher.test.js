@@ -1,11 +1,6 @@
-/**
- * @jest-environment jsdom
- */
-
 const glob = require("glob").sync;
 
-require("../src/dev.js");
-require("../src/ledger-fetcher.js");
+require("../../src/etl/ledger-fetcher.js");
 
 describe("LedgerFetcher", () => {
   let base_url = new LedgerPage().base_url;

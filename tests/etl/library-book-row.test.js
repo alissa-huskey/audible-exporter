@@ -1,9 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-
-require("../src/dev.js");
-require("../src/library-book-row.js");
+require("../../src/etl/library-book-row.js");
 
 describe("LibraryBookRow", () => {
   let doc = fixtureElement(

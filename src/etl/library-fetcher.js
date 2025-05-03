@@ -1,5 +1,4 @@
-require("./util.js");
-require("./timer.js");
+require("../timer.js");
 require("./library-page.js");
 
 LibraryFetcher = class extends Page {

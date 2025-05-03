@@ -1,4 +1,3 @@
-require("./util.js");
 require("./parser.js");
 
 Page = class extends Parser {

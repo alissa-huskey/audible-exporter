@@ -1,10 +1,10 @@
 require("./util.js");
 require("./timer.js");
 
-require("./library-fetcher.js");
-require("./details-fetcher.js");
-require("./ledger-fetcher.js");
-require("./result.js");
+require("./etl/library-fetcher.js");
+require("./etl/details-fetcher.js");
+require("./etl/ledger-fetcher.js");
+require("./etl/result.js");
 
 require("./ui/domain.js");
 require("./ui/error-dialog.js");

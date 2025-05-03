@@ -1,4 +1,3 @@
-require("./util.js");
 require("./virtual-file.js");
 
 TSVFile = class extends VirtualFile {

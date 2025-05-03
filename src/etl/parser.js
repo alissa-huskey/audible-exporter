@@ -4,8 +4,7 @@
  * DOM Element Parser.
  */
 
-require("./util.js");
-require("./doc.js");
+require("../doc.js");
 
 /*
  * Parser class.

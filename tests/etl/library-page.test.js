@@ -1,9 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-
-require("../src/dev.js");
-require("../src/library-page.js");
+require("../../src/etl/library-page.js");
 
 describe("LibraryPage", () => {
   let html = getFixtureFile("library-page-1-of-3.html");

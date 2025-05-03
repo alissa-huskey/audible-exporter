@@ -1,9 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-
-require("../src/dev.js");
-require("../src/book-page.js");
+require("../../src/etl/book-page.js");
 
 let fixtures = [
   "book-details-ace.html",
