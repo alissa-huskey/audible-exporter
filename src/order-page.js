@@ -147,14 +147,14 @@ OrderPage = class extends Page {
       try {
         let seen = {};
         this.#items = this.purchases.reduce((arr, p) => {
-          if (p.title && p.author && !seen[p.id]) {
-            seen[p.id] = true;
+          if (p.title && p.author && !seen[p.asin]) {
+            seen[p.asin] = true;
             arr.push({
-              id: p.id,
-              url: `http://www.audible.com/pd/${p.id}`,
+              asin: p.asin,
+              url: `http://www.audible.com/pd/${p.asin}`,
               title: p.title,
               author: p.author,
-              purchase_date: dateString(this.orders[p.order_id].date),
+              purchased: dateString(this.orders[p.order_id].date),
             });
           }
           return arr;

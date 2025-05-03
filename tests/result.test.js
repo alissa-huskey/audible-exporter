@@ -39,15 +39,15 @@ describe("Result", () => {
 
   test(".data()", () => {
     let order = {
-      id: "006297534X",
+      asin: "006297534X",
       url: "http://www.audible.com/pd/006297534X",
       title: "Honored Enemy",
       author: "Raymond E. Feist, William R. Forstchen",
-      purchase_date: "10-19-2024",
+      purchased: "10-19-2024",
     };
 
     let library = {
-      id: "006297534X",
+      asin: "006297534X",
       url: "/pd/Honored-Enemy-Audiobook/006297534X",
       title: "Honored Enemy: Legends of the Riftwar, Book 1",
       authors: [
@@ -86,12 +86,12 @@ describe("Result", () => {
     };
 
     let details = {
-      id: "006297534X",
+      asin: "006297534X",
       title: "Honored Enemy",
       duration: 797,
       language: "English",
-      release_date: "2020 Jul 7",
-      release_timestamp: 1594101601000,
+      released: "7/7/2020",
+      released_ts: 1594101601000,
       publisher: "HarperAudio",
       summary:
         "New York Times Best-Selling Author  In the frozen Northlands of Midkemia, Captain Dennis Hartraft’s Marauders have just had a disastrous encounter with their sworn enemy, the Tsurani. Wounded and disheartened, the Mauraders set out for the shelter of a frontier garrison. They don’t know that a Tsurani patrol is sent to support an assault on that same garrison. Arriving simultaneously, the Marauders and Tsurani find the outpost already overrun by a dark enemy whose ferocity is legendary in Midkemia. In order to survive, the foes must band together and fight as one. As they make their way across the inhospitable climate, the two batallions struggle not only with the elements and their enemy, but also their consciences. Can their hatred for their mutual enemy overcome their distrust of each other? And, with both sides carrying painful scars from past wars, what is more important: one’s life or one’s honor?",
@@ -106,7 +106,7 @@ describe("Result", () => {
     };
 
     let expected = {
-      id: "006297534X",
+      asin: "006297534X",
       url: "http://www.audible.com/pd/006297534X",
       title: "Honored Enemy",
       authors: [
@@ -144,12 +144,12 @@ describe("Result", () => {
       ],
       duration: 797,
       language: "English",
-      release_date: "2020 Jul 7",
-      release_timestamp: 1594101601000,
+      released: "7/7/2020",
+      released_ts: 1594101601000,
       publisher: "HarperAudio",
       summary:
         "New York Times Best-Selling Author  In the frozen Northlands of Midkemia, Captain Dennis Hartraft’s Marauders have just had a disastrous encounter with their sworn enemy, the Tsurani. Wounded and disheartened, the Mauraders set out for the shelter of a frontier garrison. They don’t know that a Tsurani patrol is sent to support an assault on that same garrison. Arriving simultaneously, the Marauders and Tsurani find the outpost already overrun by a dark enemy whose ferocity is legendary in Midkemia. In order to survive, the foes must band together and fight as one. As they make their way across the inhospitable climate, the two batallions struggle not only with the elements and their enemy, but also their consciences. Can their hatred for their mutual enemy overcome their distrust of each other? And, with both sides carrying painful scars from past wars, what is more important: one’s life or one’s honor?",
-      purchase_date: "10-19-2024",
+      purchased: "10-19-2024",
       audible_original: false,
       type: "Fiction",
       genre: "Science Fiction & Fantasy",

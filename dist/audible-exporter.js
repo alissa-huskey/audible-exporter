@@ -842,7 +842,7 @@ Parser = class {
   }
 };
 LibraryBookRow = class extends Parser {
-  _fields = ["id", "url", "title", "authors", "narrators", "series"];
+  _fields = ["asin", "url", "title", "authors", "narrators", "series"];
   _identifers = ["page_num", "row_num"];
 
   constructor(doc = null, page_num = null, row_num = null) {
@@ -852,7 +852,7 @@ LibraryBookRow = class extends Parser {
     this.row_num = row_num;
   }
 
-  get id() {
+  get asin() {
     return this.doc.id.replace("adbl-library-content-row-", "");
   }
 
@@ -1136,14 +1136,14 @@ BookPage = class extends Page {
   };
 
   _fields = [
-    "id",
+    "asin",
     "title",
     "authors",
     "narrators",
     "duration",
     "language",
-    "release_date",
-    "release_timestamp",
+    "released",
+    "released_ts",
     "publisher",
     "summary",
     "audible_original",
@@ -1317,7 +1317,7 @@ BookPage = class extends Page {
     return tryInt(this.audiobook_data.aggregateRating?.ratingCount);
   }
 
-  get id() {
+  get asin() {
     return this.product_data.productID;
   }
 
@@ -1327,12 +1327,12 @@ BookPage = class extends Page {
     return new Date(`${date}:00:00:01`);
   }
 
-  get release_date() {
+  get released() {
     if (!this.date) return null;
     return dateString(this.date);
   }
 
-  get release_timestamp() {
+  get released_ts() {
     return this.date.getTime();
   }
 
@@ -1590,7 +1590,7 @@ DetailsFetcher = class {
   /**
    * Getter for the list of book data.
    *
-   * @returns {object}  Book data keyed by audible book ID.
+   * @returns {object}  Book data keyed by ASIN.
    */
   get books() {
     if (!this.#books) {
@@ -1601,7 +1601,7 @@ DetailsFetcher = class {
         if (!page) continue;
 
         let data = page.data();
-        this.#books[data.id] = data;
+        this.#books[data.asin] = data;
       }
     }
     return this.#books;
@@ -1610,7 +1610,7 @@ DetailsFetcher = class {
   /**
    * Setter for the list of book data.
    *
-   * @param {object}  Book data keyed by audible book ID.
+   * @param {object}  Book data keyed by ASIN.
    */
   set books(value) {
     this.#books = value;
@@ -1647,7 +1647,7 @@ OrderRow = class extends Parser {
 };
 Purchase = class extends Parser {
   _fields = {
-    id: "data-order-item-asin",
+    asin: "data-order-item-asin",
     order_id: "data-order-id",
     title: "data-order-item-name",
     author: "data-order-item-author",
@@ -1813,14 +1813,14 @@ OrderPage = class extends Page {
       try {
         let seen = {};
         this.#items = this.purchases.reduce((arr, p) => {
-          if (p.title && p.author && !seen[p.id]) {
-            seen[p.id] = true;
+          if (p.title && p.author && !seen[p.asin]) {
+            seen[p.asin] = true;
             arr.push({
-              id: p.id,
-              url: `http://www.audible.com/pd/${p.id}`,
+              asin: p.asin,
+              url: `http://www.audible.com/pd/${p.asin}`,
               title: p.title,
               author: p.author,
-              purchase_date: dateString(this.orders[p.order_id].date),
+              purchased: dateString(this.orders[p.order_id].date),
             });
           }
           return arr;
@@ -1935,7 +1935,7 @@ OrdersFetcher = class {
 
       for (let page of this.pages) {
         for (let item of page.items) {
-          items[item.id] = item;
+          items[item.asin] = item;
         }
       }
 
@@ -4285,7 +4285,7 @@ Result = class {
    * @access private
    */
   #headers = {
-    id: ["order", "library", "details"],
+    asin: ["order", "library", "details"],
     url: ["order", "library"],
     title: ["order", "details", "library"],
     authors: ["details", "library"],
@@ -4293,9 +4293,9 @@ Result = class {
     series: ["library", "details"],
     publisher: ["details"],
     duration: ["details"],
-    release_date: ["details"],
-    release_timestamp: ["details"],
-    purchase_date: ["order"],
+    released: ["details"],
+    released_ts: ["details"],
+    purchased: ["order"],
     language: ["details"],
     summary: ["details"],
     rating: ["details"],
@@ -4496,8 +4496,8 @@ Exporter = class {
     let results = [];
 
     for (library_info of this.library.books) {
-      book_info = this.details.books[library_info.id];
-      order_info = this.orders.items[library_info.id];
+      book_info = this.details.books[library_info.asin];
+      order_info = this.orders.items[library_info.asin];
       let result = new Result(library_info, book_info, order_info);
       results.push(result.data());
     }

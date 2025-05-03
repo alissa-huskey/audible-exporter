@@ -865,7 +865,7 @@ LibraryBookRow = /*#__PURE__*/function (_Parser) {
     var row_num = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
     _classCallCheck(this, LibraryBookRow);
     _this4 = _callSuper(this, LibraryBookRow);
-    _defineProperty(_this4, "_fields", ["id", "url", "title", "authors", "narrators", "series"]);
+    _defineProperty(_this4, "_fields", ["asin", "url", "title", "authors", "narrators", "series"]);
     _defineProperty(_this4, "_identifers", ["page_num", "row_num"]);
     _this4.doc = doc;
     _this4.page_num = page_num;
@@ -874,7 +874,7 @@ LibraryBookRow = /*#__PURE__*/function (_Parser) {
   }
   _inherits(LibraryBookRow, _Parser);
   return _createClass(LibraryBookRow, [{
-    key: "id",
+    key: "asin",
     get: function get() {
       return this.doc.id.replace("adbl-library-content-row-", "");
     }
@@ -1291,7 +1291,7 @@ BookPage = (_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#__PURE__*
       // teen & young adult
       "Travel & Tourism": "nonfiction"
     });
-    _defineProperty(_this7, "_fields", ["id", "title", "authors", "narrators", "duration", "language", "release_date", "release_timestamp", "publisher", "summary", "audible_original", "series", "type", "genre", "subgenre", "tags", "rating", "num_ratings", "is_adult"]);
+    _defineProperty(_this7, "_fields", ["asin", "title", "authors", "narrators", "duration", "language", "released", "released_ts", "publisher", "summary", "audible_original", "series", "type", "genre", "subgenre", "tags", "rating", "num_ratings", "is_adult"]);
     _defineProperty(_this7, "_identifers", ["url"]);
     _classPrivateFieldInitSpec(_this7, _tags, []);
     _classPrivateFieldInitSpec(_this7, _json, null);
@@ -1427,7 +1427,7 @@ BookPage = (_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#__PURE__*
       return tryInt((_this$audiobook_data$2 = this.audiobook_data.aggregateRating) === null || _this$audiobook_data$2 === void 0 ? void 0 : _this$audiobook_data$2.ratingCount);
     }
   }, {
-    key: "id",
+    key: "asin",
     get: function get() {
       return this.product_data.productID;
     }
@@ -1439,13 +1439,13 @@ BookPage = (_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#__PURE__*
       return new Date("".concat(date, ":00:00:01"));
     }
   }, {
-    key: "release_date",
+    key: "released",
     get: function get() {
       if (!this.date) return null;
       return dateString(this.date);
     }
   }, {
-    key: "release_timestamp",
+    key: "released_ts",
     get: function get() {
       return this.date.getTime();
     }
@@ -1858,7 +1858,7 @@ DetailsFetcher = (_books3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function ()
     /**
      * Getter for the list of book data.
      *
-     * @returns {object}  Book data keyed by audible book ID.
+     * @returns {object}  Book data keyed by ASIN.
      */
     )
   }, {
@@ -1874,7 +1874,7 @@ DetailsFetcher = (_books3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function ()
             page = _step6.value;
             if (!page) continue;
             var _data = page.data();
-            _classPrivateFieldGet(_books3, this)[_data.id] = _data;
+            _classPrivateFieldGet(_books3, this)[_data.asin] = _data;
           }
         } catch (err) {
           _iterator6.e(err);
@@ -1888,7 +1888,7 @@ DetailsFetcher = (_books3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function ()
     /**
      * Setter for the list of book data.
      *
-     * @param {object}  Book data keyed by audible book ID.
+     * @param {object}  Book data keyed by ASIN.
      */,
     set: function set(value) {
       _classPrivateFieldSet(_books3, this, value);
@@ -1938,7 +1938,7 @@ Purchase = /*#__PURE__*/function (_Parser4) {
     _classCallCheck(this, Purchase);
     _this10 = _callSuper(this, Purchase);
     _defineProperty(_this10, "_fields", {
-      id: "data-order-item-asin",
+      asin: "data-order-item-asin",
       order_id: "data-order-id",
       title: "data-order-item-name",
       author: "data-order-item-author",
@@ -2130,14 +2130,14 @@ OrderPage = (_default_per_page = /*#__PURE__*/new WeakMap(), _valid_date_ranges 
         try {
           var seen = {};
           _classPrivateFieldSet(_items, this, this.purchases.reduce(function (arr, p) {
-            if (p.title && p.author && !seen[p.id]) {
-              seen[p.id] = true;
+            if (p.title && p.author && !seen[p.asin]) {
+              seen[p.asin] = true;
               arr.push({
-                id: p.id,
-                url: "http://www.audible.com/pd/".concat(p.id),
+                asin: p.asin,
+                url: "http://www.audible.com/pd/".concat(p.asin),
                 title: p.title,
                 author: p.author,
-                purchase_date: dateString(_this13.orders[p.order_id].date)
+                purchased: dateString(_this13.orders[p.order_id].date)
               });
             }
             return arr;
@@ -2374,7 +2374,7 @@ OrdersFetcher = (_count = /*#__PURE__*/new WeakMap(), _items2 = /*#__PURE__*/new
             try {
               for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
                 var item = _step10.value;
-                items[item.id] = item;
+                items[item.asin] = item;
               }
             } catch (err) {
               _iterator10.e(err);
@@ -4246,7 +4246,7 @@ Result = (_headers3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
      * @access private
      */
     _classPrivateFieldInitSpec(this, _headers3, {
-      id: ["order", "library", "details"],
+      asin: ["order", "library", "details"],
       url: ["order", "library"],
       title: ["order", "details", "library"],
       authors: ["details", "library"],
@@ -4254,9 +4254,9 @@ Result = (_headers3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
       series: ["library", "details"],
       publisher: ["details"],
       duration: ["details"],
-      release_date: ["details"],
-      release_timestamp: ["details"],
-      purchase_date: ["order"],
+      released: ["details"],
+      released_ts: ["details"],
+      purchased: ["order"],
       language: ["details"],
       summary: ["details"],
       rating: ["details"],
@@ -4527,8 +4527,8 @@ Exporter = /*#__PURE__*/function () {
       try {
         for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
           library_info = _step11.value;
-          book_info = this.details.books[library_info.id];
-          order_info = this.orders.items[library_info.id];
+          book_info = this.details.books[library_info.asin];
+          order_info = this.orders.items[library_info.asin];
           var result = new Result(library_info, book_info, order_info);
           results.push(result.data());
         }

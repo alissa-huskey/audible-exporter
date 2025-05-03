@@ -11,7 +11,7 @@ Result = class {
    * @access private
    */
   #headers = {
-    id: ["order", "library", "details"],
+    asin: ["order", "library", "details"],
     url: ["order", "library"],
     title: ["order", "details", "library"],
     authors: ["details", "library"],
@@ -19,9 +19,9 @@ Result = class {
     series: ["library", "details"],
     publisher: ["details"],
     duration: ["details"],
-    release_date: ["details"],
-    release_timestamp: ["details"],
-    purchase_date: ["order"],
+    released: ["details"],
+    released_ts: ["details"],
+    purchased: ["order"],
     language: ["details"],
     summary: ["details"],
     rating: ["details"],

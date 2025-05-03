@@ -287,8 +287,8 @@ describe("NormalBookPage", () => {
     });
   });
 
-  test(".id", () => {
-    expect(page.id).toBe("B0BL84CBLZ");
+  test(".asin", () => {
+    expect(page.asin).toBe("B0BL84CBLZ");
   });
 
   test(".title", () => {
@@ -314,7 +314,7 @@ describe("NormalBookPage", () => {
     jest
       .spyOn(NormalBookPage.prototype, "date", "get")
       .mockReturnValue("09-28-12");
-    expect(page.release_date).toBe("9/28/2012");
+    expect(page.released).toBe("9/28/2012");
   });
 
   test(".duration", () => {
@@ -364,7 +364,7 @@ describe("NormalBookPage", () => {
 
   test(".data()", () => {
     let data = {
-      id: "B0BL84CBLZ",
+      asin: "B0BL84CBLZ",
       title: "Ghosts of Zenith",
       authors: [
         {
@@ -376,8 +376,8 @@ describe("NormalBookPage", () => {
       narrators: ["Oliver Wyman"],
       duration: 145,
       language: "English",
-      release_date: "1/12/2023",
-      release_timestamp: 1673506801000,
+      released: "1/12/2023",
+      released_ts: 1673506801000,
       publisher: "Audible Originals",
       summary:
         "On a nightmare world a thousand light years from Earth, one honest cop won’t rest until he solves the mystery of why his colony was condemned there, in this Audible Original story from best-selling author Larry Correia. On a planet where life is cheap, in a city built on corruption, very few things are considered holy. The Landing Site is one of them. The remains of the century-old habitat pod—which delivered the colonists to the only barely habitable place on the cruel world of Croatoan—has become a monument to the hardscrabble people who somehow survived the unsurvivable. So when blood is shed on that sacred ground, it’s seen as an attack against the entire colony. With a fanatical terrorist group holding hostages inside the monument, DCI Lutero Cade and the Zenith PD have to end the crisis and put the bad guys down. Only there’s far more to this case than meets the eye. The lander may have been carrying a hidden cargo. And a shadowy figure with his own drone army will do anything to make sure the mission’s secrets stay buried—no matter how many nosy detectives he has to kill to do it.",
@@ -434,8 +434,8 @@ describe("ADBLBookPage", () => {
   let doc = docs["book-details.html"];
   let page = new ADBLBookPage(doc);
 
-  test(".id", () => {
-    expect(page.id).toBe("B009CZNUGU");
+  test(".asin", () => {
+    expect(page.asin).toBe("B009CZNUGU");
   });
 
   test(".title", () => {

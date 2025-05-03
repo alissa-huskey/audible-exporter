@@ -159,8 +159,8 @@ Exporter = class {
     let results = [];
 
     for (library_info of this.library.books) {
-      book_info = this.details.books[library_info.id];
-      order_info = this.orders.items[library_info.id];
+      book_info = this.details.books[library_info.asin];
+      order_info = this.orders.items[library_info.asin];
       let result = new Result(library_info, book_info, order_info);
       results.push(result.data());
     }

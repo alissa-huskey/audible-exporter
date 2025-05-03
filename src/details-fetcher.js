@@ -66,7 +66,7 @@ DetailsFetcher = class {
   /**
    * Getter for the list of book data.
    *
-   * @returns {object}  Book data keyed by audible book ID.
+   * @returns {object}  Book data keyed by ASIN.
    */
   get books() {
     if (!this.#books) {
@@ -77,7 +77,7 @@ DetailsFetcher = class {
         if (!page) continue;
 
         let data = page.data();
-        this.#books[data.id] = data;
+        this.#books[data.asin] = data;
       }
     }
     return this.#books;
@@ -86,7 +86,7 @@ DetailsFetcher = class {
   /**
    * Setter for the list of book data.
    *
-   * @param {object}  Book data keyed by audible book ID.
+   * @param {object}  Book data keyed by ASIN.
    */
   set books(value) {
     this.#books = value;

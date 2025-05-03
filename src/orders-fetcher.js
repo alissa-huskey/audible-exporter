@@ -105,7 +105,7 @@ OrdersFetcher = class {
 
       for (let page of this.pages) {
         for (let item of page.items) {
-          items[item.id] = item;
+          items[item.asin] = item;
         }
       }
 

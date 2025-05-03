@@ -28,8 +28,8 @@ describe("LibraryBookRow", () => {
     expect(row.row_num).toBe(5);
   });
 
-  test(".id", () => {
-    expect(row.id).toBe("1705240569");
+  test(".asin", () => {
+    expect(row.asin).toBe("1705240569");
   });
 
   test("ul", () => {
@@ -126,7 +126,7 @@ describe("LibraryBookRow", () => {
 
   test(".data()", () => {
     let data = {
-      id: "1705240569",
+      asin: "1705240569",
       url: "/pd/Scorpion-Shards-Audiobook/1705240569",
       title: "Scorpion Shards: Star Shards Chronicles Series, Book 1",
       authors: [

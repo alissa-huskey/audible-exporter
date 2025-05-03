@@ -18,7 +18,7 @@ describe("Purchase", () => {
 
   test(".data()", () => {
     let data = {
-      id: "B0CQ3759C3",
+      asin: "B0CQ3759C3",
       order_id: "D01-7379715-3760239",
       title: "Wind and Truth",
       author: "Brandon Sanderson",

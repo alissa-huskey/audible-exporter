@@ -54,14 +54,14 @@ BookPage = class extends Page {
   };
 
   _fields = [
-    "id",
+    "asin",
     "title",
     "authors",
     "narrators",
     "duration",
     "language",
-    "release_date",
-    "release_timestamp",
+    "released",
+    "released_ts",
     "publisher",
     "summary",
     "audible_original",
@@ -235,7 +235,7 @@ BookPage = class extends Page {
     return tryInt(this.audiobook_data.aggregateRating?.ratingCount);
   }
 
-  get id() {
+  get asin() {
     return this.product_data.productID;
   }
 
@@ -245,12 +245,12 @@ BookPage = class extends Page {
     return new Date(`${date}:00:00:01`);
   }
 
-  get release_date() {
+  get released() {
     if (!this.date) return null;
     return dateString(this.date);
   }
 
-  get release_timestamp() {
+  get released_ts() {
     return this.date.getTime();
   }
 

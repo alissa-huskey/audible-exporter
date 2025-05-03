@@ -2,7 +2,7 @@ require("./util.js");
 require("./parser.js");
 
 LibraryBookRow = class extends Parser {
-  _fields = ["id", "url", "title", "authors", "narrators", "series"];
+  _fields = ["asin", "url", "title", "authors", "narrators", "series"];
   _identifers = ["page_num", "row_num"];
 
   constructor(doc = null, page_num = null, row_num = null) {
@@ -12,7 +12,7 @@ LibraryBookRow = class extends Parser {
     this.row_num = row_num;
   }
 
-  get id() {
+  get asin() {
     return this.doc.id.replace("adbl-library-content-row-", "");
   }
 

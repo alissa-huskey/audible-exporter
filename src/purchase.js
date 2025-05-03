@@ -3,7 +3,7 @@ require("./parser.js");
 
 Purchase = class extends Parser {
   _fields = {
-    id: "data-order-item-asin",
+    asin: "data-order-item-asin",
     order_id: "data-order-id",
     title: "data-order-item-name",
     author: "data-order-item-author",
