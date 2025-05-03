@@ -1,22 +1,22 @@
-require("./util.js");
-require("./timer.js");
+require("../util.js");
+require("../timer.js");
 
-require("./etl/library-fetcher.js");
-require("./etl/details-fetcher.js");
-require("./etl/ledger-fetcher.js");
-require("./etl/result.js");
+require("../etl/library-fetcher.js");
+require("../etl/details-fetcher.js");
+require("../etl/ledger-fetcher.js");
+require("../etl/result.js");
 
-require("./ui/domain.js");
-require("./ui/error-dialog.js");
-require("./ui/start-dialog.js");
-require("./ui/download-dialog.js");
-require("./ui/purchase-history-notifier.js");
-require("./ui/order-notifier.js");
-require("./ui/library-notifier.js");
-require("./ui/details-notifier.js");
+require("./domain.js");
+require("./error-dialog.js");
+require("./start-dialog.js");
+require("./download-dialog.js");
+require("./purchase-history-notifier.js");
+require("./order-notifier.js");
+require("./library-notifier.js");
+require("./details-notifier.js");
 
-require("./json-file.js");
-require("./tsv-file.js");
+require("../json-file.js");
+require("../tsv-file.js");
 
 /**
  * Event listener to create the export file and start the download.

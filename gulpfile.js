@@ -153,7 +153,7 @@ task("ui", () => {
  * Bundle exporter and save in build/dev/.
  */
 task("exporter.js", () => {
-  return src([`${dirs.prep}/exporter.js`])
+  return src([`${dirs.prep}/ui/exporter.js`])
     .pipe(using({}))
     .pipe(bundle())
     .pipe(dest(dirs.dev));
@@ -164,7 +164,7 @@ task("exporter.js", () => {
  * build/dev/audible-exporter.js.
  */
 task("audible-exporter.js", () => {
-  return src([`${dirs.dev}/exporter.js`, `${dirs.prep}/runner.js`])
+  return src([`${dirs.dev}/exporter.js`, `${dirs.prep}/ui/runner.js`])
     .pipe(using({}))
     .pipe(concat("audible-exporter.js"))
     .pipe(replace("CONSOLE_OUTPUT = false", (_) => "CONSOLE_OUTPUT = true"))

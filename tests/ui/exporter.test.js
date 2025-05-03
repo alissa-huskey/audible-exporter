@@ -5,8 +5,7 @@
 const fs = require("fs");
 const path = require("path");
 
-require("../src/dev.js");
-require("../src/exporter.js");
+require("../../src/ui/exporter.js");
 
 var LOCATION = window.location;
 
