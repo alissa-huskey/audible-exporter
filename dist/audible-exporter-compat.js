@@ -15,7 +15,7 @@ forced:!0},{iterateEntries:function iterateEntries(t){return new o(t,"entries")}
 //# sourceMappingURL=minified.js.map
 
 
-var _doc, _default_page_size, _rows, _books, _books2, _page_count, _category_types, _category_genres, _sub_categories, _tags, _json_scripts, _json_audiobook, _json_product, _product_data, _books3, _default_per_page, _valid_date_ranges, _orders, _purchases, _items, _page_num, _year, _count, _items2, _wrapper, _css, _wrapper2, _head, _content, _copy, _actions, _close_btn, _selectors, _wrapper3, _head2, _content2, _close_btn2, _copy2, _wrapper4, _content3, _actions2, _close_btn3, _ft_select, _start_btn, _file, _selectors2, _wrapper5, _head3, _content4, _copy3, _actions3, _ft_select2, _dl_btn, _file2, _selectors3, _wrapper6, _bar, _status, _percentage, _messages, _context11, _steps, _estimate, _percent, _item_no, _total, _year2, _years, _year3, _year_page, _item_no2, _page_count2, _item_no3, _total2, _item_no4, _total3, _contents, _headers, _rows2, _headers2, _rows3, _headers3;
+var _doc, _default_page_size, _rows, _books, _books2, _page_count, _category_types, _category_genres, _sub_categories, _tags, _json_scripts, _json_audiobook, _json_product, _product_data, _digital_data, _books3, _default_per_page, _valid_date_ranges, _orders, _purchases, _items, _page_num, _year, _count, _items2, _wrapper, _css, _wrapper2, _head, _content, _copy, _actions, _close_btn, _selectors, _wrapper3, _head2, _content2, _close_btn2, _copy2, _wrapper4, _content3, _actions2, _close_btn3, _ft_select, _start_btn, _file, _selectors2, _wrapper5, _head3, _content4, _copy3, _actions3, _ft_select2, _dl_btn, _file2, _selectors3, _wrapper6, _bar, _status, _percentage, _messages, _context11, _steps, _estimate, _percent, _item_no, _total, _year2, _years, _year3, _year_page, _item_no2, _page_count2, _item_no3, _total2, _item_no4, _total3, _contents, _headers, _rows2, _headers2, _rows3, _headers3;
 function _superPropGet(t, o, e, r) { var p = _get3(_getPrototypeOf(1 & r ? t.prototype : t), o, e); return 2 & r && "function" == typeof p ? function (t) { return p.apply(e, t); } : p; }
 function _get3() { return _get3 = "undefined" != typeof Reflect && Reflect.get ? Reflect.get.bind() : function (e, t, r) { var p = _superPropBase(e, t); if (p) { var n = Object.getOwnPropertyDescriptor(p, t); return n.get ? n.get.call(arguments.length < 3 ? e : r) : n.value; } }, _get3.apply(null, arguments); }
 function _superPropBase(t, o) { for (; !{}.hasOwnProperty.call(t, o) && null !== (t = _getPrototypeOf(t));); return t; }
@@ -23,14 +23,11 @@ function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArra
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
 function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
-function _wrapRegExp() { _wrapRegExp = function _wrapRegExp(e, r) { return new BabelRegExp(e, void 0, r); }; var e = RegExp.prototype, r = new WeakMap(); function BabelRegExp(e, t, p) { var o = RegExp(e, t); return r.set(o, p || r.get(e)), _setPrototypeOf(o, BabelRegExp.prototype); } function buildGroups(e, t) { var p = r.get(t); return Object.keys(p).reduce(function (r, t) { var o = p[t]; if ("number" == typeof o) r[t] = e[o];else { for (var i = 0; void 0 === e[o[i]] && i + 1 < o.length;) i++; r[t] = e[o[i]]; } return r; }, Object.create(null)); } return _inherits(BabelRegExp, RegExp), BabelRegExp.prototype.exec = function (r) { var t = e.exec.call(this, r); if (t) { t.groups = buildGroups(t, this); var p = t.indices; p && (p.groups = buildGroups(p, this)); } return t; }, BabelRegExp.prototype[Symbol.replace] = function (t, p) { if ("string" == typeof p) { var o = r.get(this); return e[Symbol.replace].call(this, t, p.replace(/\$<([^>]+)>/g, function (e, r) { var t = o[r]; return "$" + (Array.isArray(t) ? t.join("$") : t); })); } if ("function" == typeof p) { var i = this; return e[Symbol.replace].call(this, t, function () { var e = arguments; return "object" != _typeof(e[e.length - 1]) && (e = [].slice.call(e)).push(buildGroups(e, i)), p.apply(this, e); }); } return e[Symbol.replace].call(this, t, p); }, _wrapRegExp.apply(this, arguments); }
 function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
 function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
 function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
 function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _classPrivateFieldInitSpec(e, t, a) { _checkPrivateRedeclaration(e, t), t.set(e, a); }
 function _checkPrivateRedeclaration(e, t) { if (t.has(e)) throw new TypeError("Cannot initialize the same private elements twice on an object"); }
@@ -45,6 +42,9 @@ function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = 
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _wrapRegExp() { _wrapRegExp = function _wrapRegExp(e, r) { return new BabelRegExp(e, void 0, r); }; var e = RegExp.prototype, r = new WeakMap(); function BabelRegExp(e, t, p) { var o = RegExp(e, t); return r.set(o, p || r.get(e)), _setPrototypeOf(o, BabelRegExp.prototype); } function buildGroups(e, t) { var p = r.get(t); return Object.keys(p).reduce(function (r, t) { var o = p[t]; if ("number" == typeof o) r[t] = e[o];else { for (var i = 0; void 0 === e[o[i]] && i + 1 < o.length;) i++; r[t] = e[o[i]]; } return r; }, Object.create(null)); } return _inherits(BabelRegExp, RegExp), BabelRegExp.prototype.exec = function (r) { var t = e.exec.call(this, r); if (t) { t.groups = buildGroups(t, this); var p = t.indices; p && (p.groups = buildGroups(p, this)); } return t; }, BabelRegExp.prototype[Symbol.replace] = function (t, p) { if ("string" == typeof p) { var o = r.get(this); return e[Symbol.replace].call(this, t, p.replace(/\$<([^>]+)>/g, function (e, r) { var t = o[r]; return "$" + (Array.isArray(t) ? t.join("$") : t); })); } if ("function" == typeof p) { var i = this; return e[Symbol.replace].call(this, t, function () { var e = arguments; return "object" != _typeof(e[e.length - 1]) && (e = [].slice.call(e)).push(buildGroups(e, i)), p.apply(this, e); }); } return e[Symbol.replace].call(this, t, p); }, _wrapRegExp.apply(this, arguments); }
+function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
+function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -179,6 +179,38 @@ cleanObject = function cleanObject(ob) {
       return r;
     }
   }, {});
+};
+
+/* Convert duration string to array of hours and minutes.
+ *
+ * @param {string} text  Human readable hours/minutes text.
+ *
+ * @return {Array}       Array of hours/minutes integers.
+ *
+ * @example
+ * parseTime("2 hrs and 25 mins"); // [2, 25]
+ */
+parseTime = function parseTime(text) {
+  var re = /*#__PURE__*/_wrapRegExp(/((\d+)[ ]?hr[s]?)?( and)?[ ]?((\d+)[ ]?min[s]?)?$/, {
+    hrs: 2,
+    mins: 5
+  });
+  var found = text.match(re);
+  var hrs = found.groups.hrs || "0";
+  var mins = found.groups.mins || "0";
+  return [parseInt(hrs), parseInt(mins)];
+};
+
+/* Calculate minutes from hours and minutes.
+ *
+ * @return {number}
+ *
+ * @example
+ * page.toMinutes(2, 25); // 145
+ */
+toMinutes = function toMinutes(hours, minutes) {
+  hours = hours || 0;
+  return parseInt(hours) * 60 + parseInt(minutes);
 };
 delay = function delay(ms) {
   return new Promise(function (res) {
@@ -1199,7 +1231,7 @@ LibraryFetcher = (_books2 = /*#__PURE__*/new WeakMap(), _page_count = /*#__PURE_
  *
  */
 
-BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#__PURE__*/new WeakMap(), _sub_categories = /*#__PURE__*/new WeakMap(), _tags = /*#__PURE__*/new WeakMap(), _json_scripts = /*#__PURE__*/new WeakMap(), _json_audiobook = /*#__PURE__*/new WeakMap(), _json_product = /*#__PURE__*/new WeakMap(), _product_data = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Page3) {
+BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#__PURE__*/new WeakMap(), _sub_categories = /*#__PURE__*/new WeakMap(), _tags = /*#__PURE__*/new WeakMap(), _json_scripts = /*#__PURE__*/new WeakMap(), _json_audiobook = /*#__PURE__*/new WeakMap(), _json_product = /*#__PURE__*/new WeakMap(), _product_data = /*#__PURE__*/new WeakMap(), _digital_data = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Page3) {
   function _class3() {
     var _this7;
     var doc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
@@ -1271,44 +1303,31 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
     "Historical",
     // biographies & Memoiirs
     "Young Adult", "Thriller & Suspense"]);
-    _defineProperty(_this7, "_fields", ["id", "title", "authors", "narrators", "duration_minutes", "language", "release_date", "release_timestamp", "publisher", "publisher_summary", "audible_original", "series", "category_type", "main_category", "sub_category", "categories", "rating", "num_ratings", "is_adult"]);
+    _defineProperty(_this7, "_fields", ["id", "title", "authors", "narrators", "duration", "language", "release_date", "release_timestamp", "publisher", "summary", "audible_original", "series", "category_type", "main_category", "sub_category", "categories", "rating", "num_ratings", "is_adult"]);
     _defineProperty(_this7, "_identifers", ["url"]);
     _classPrivateFieldInitSpec(_this7, _tags, []);
     _classPrivateFieldInitSpec(_this7, _json_scripts, null);
     _classPrivateFieldInitSpec(_this7, _json_audiobook, null);
     _classPrivateFieldInitSpec(_this7, _json_product, null);
     _classPrivateFieldInitSpec(_this7, _product_data, null);
+    _classPrivateFieldInitSpec(_this7, _digital_data, null);
     _this7.doc = doc;
     return _this7;
   }
 
-  /* Convert duration string to minutes int.
+  /**
+   * Get parsed JSON from script tags.
    *
-   * @example
-   * page.toMinutes("2 hrs and 25 mins"); // 145
+   * Parse the JSON from script tags and return an object mapping each objects
+   * "@type" key to the object.
+   *
+   * @return {Object} Object of parsed JSON mapping @type -> object.
    */
   _inherits(_class3, _Page3);
   return _createClass(_class3, [{
-    key: "toMinutes",
-    value: function toMinutes(text) {
-      var _exec, _exec2;
-      var mins = ((_exec = /\d+(?=\smin)/.exec(text)) === null || _exec === void 0 ? void 0 : _exec[0]) || "0";
-      var hours = ((_exec2 = /\d+(?=\shrs)/.exec(text)) === null || _exec2 === void 0 ? void 0 : _exec2[0]) || "0";
-      return parseInt(hours) * 60 + parseInt(mins);
-    }
-
-    /**
-     * Get parsed JSON from script tags.
-     *
-     * Parse the JSON from script tags and return an object mapping each objects
-     * "@type" key to the object.
-     *
-     * @return {Object} Object of parsed JSON mapping @type -> object.
-     */
-  }, {
     key: "json_scripts",
     get: function get() {
-      if (!_classPrivateFieldGet(_json_scripts, this)) {
+      if (!_classPrivateFieldGet(_json_scripts, this) && this.doc) {
         var scripts = this.doc.qs("script[type='application/ld+json']");
         _classPrivateFieldSet(_json_scripts, this, scripts.reduce(function (obj, doc) {
           var json = JSON.parse(doc.innerHTML);
@@ -1326,7 +1345,7 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
   }, {
     key: "json_audiobook",
     get: function get() {
-      if (!_classPrivateFieldGet(_json_audiobook, this)) {
+      if (!_classPrivateFieldGet(_json_audiobook, this) && this.doc) {
         _classPrivateFieldSet(_json_audiobook, this, this.json_scripts["Audiobook"] || {});
       }
       return _classPrivateFieldGet(_json_audiobook, this);
@@ -1334,10 +1353,32 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
   }, {
     key: "json_product",
     get: function get() {
-      if (!_classPrivateFieldGet(_json_product, this)) {
+      if (!_classPrivateFieldGet(_json_product, this) && this.doc) {
         _classPrivateFieldSet(_json_product, this, this.json_scripts["Product"] || {});
       }
       return _classPrivateFieldGet(_json_product, this);
+    }
+
+    /**
+     * Return digitalData value;
+     *
+     * @return {object}
+     */
+  }, {
+    key: "digital_data",
+    get: function get() {
+      if (!_classPrivateFieldGet(_digital_data, this) && this.doc) {
+        var digitalData;
+        var tags = this.doc.qs("script[type='text/javascript']");
+        var script = tags.filter(function (t) {
+          return t.innerHTML.match(/digitalData/);
+        });
+        var js = script[0].innerHTML;
+        js = js.replace("var digitalData = ", "digitalData =");
+        eval(js);
+        _classPrivateFieldSet(_digital_data, this, digitalData);
+      }
+      return _classPrivateFieldGet(_digital_data, this);
     }
 
     /**
@@ -1351,16 +1392,8 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
   }, {
     key: "product_data",
     get: function get() {
-      if (!_classPrivateFieldGet(_product_data, this)) {
-        var digitalData;
-        var tags = this.doc.qs("script[type='text/javascript']");
-        var script = tags.filter(function (t) {
-          return t.innerHTML.match(/digitalData/);
-        });
-        var js = script[0].innerHTML;
-        js = js.replace("var digitalData = ", "digitalData =");
-        eval(js);
-        _classPrivateFieldSet(_product_data, this, digitalData.product[0].productInfo);
+      if (!_classPrivateFieldGet(_product_data, this) && this.doc) {
+        _classPrivateFieldSet(_product_data, this, this.digital_data.product[0].productInfo);
       }
       return _classPrivateFieldGet(_product_data, this);
     }
@@ -1390,28 +1423,20 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
   }, {
     key: "narrators",
     get: function get() {
-      var _this$json_audiobook$;
-      return ((_this$json_audiobook$ = this.json_audiobook.readBy) === null || _this$json_audiobook$ === void 0 ? void 0 : _this$json_audiobook$.map(function (n) {
-        return n.name;
-      })) || [];
+      return this.product_data.narrators;
     }
   }, {
     key: "rating",
     get: function get() {
-      var _this$json_audiobook$2;
-      var rating = tryFloat((_this$json_audiobook$2 = this.json_audiobook.aggregateRating) === null || _this$json_audiobook$2 === void 0 ? void 0 : _this$json_audiobook$2.ratingValue);
+      var _this$json_audiobook$;
+      var rating = tryFloat((_this$json_audiobook$ = this.json_audiobook.aggregateRating) === null || _this$json_audiobook$ === void 0 ? void 0 : _this$json_audiobook$.ratingValue);
       return rating ? +rating.toFixed(1) : "";
     }
   }, {
     key: "num_ratings",
     get: function get() {
-      var _this$json_audiobook$3;
-      return tryInt((_this$json_audiobook$3 = this.json_audiobook.aggregateRating) === null || _this$json_audiobook$3 === void 0 ? void 0 : _this$json_audiobook$3.ratingCount);
-    }
-  }, {
-    key: "is_adult",
-    get: function get() {
-      return this.product_data.isAdultProduct;
+      var _this$json_audiobook$2;
+      return tryInt((_this$json_audiobook$2 = this.json_audiobook.aggregateRating) === null || _this$json_audiobook$2 === void 0 ? void 0 : _this$json_audiobook$2.ratingCount);
     }
   }, {
     key: "id",
@@ -1439,9 +1464,8 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
   }, {
     key: "title",
     get: function get() {
-      var _this$json_audiobook, _this$doc$qsf3;
-      var values = [(_this$json_audiobook = this.json_audiobook) === null || _this$json_audiobook === void 0 ? void 0 : _this$json_audiobook.name, (_this$doc$qsf3 = this.doc.qsf("meta[property='og:title']")) === null || _this$doc$qsf3 === void 0 ? void 0 : _this$doc$qsf3.content];
-      return first(values);
+      var _this$json_audiobook;
+      return (_this$json_audiobook = this.json_audiobook) === null || _this$json_audiobook === void 0 ? void 0 : _this$json_audiobook.name;
     }
   }, {
     key: "publisher",
@@ -1449,7 +1473,7 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
       return this.json_audiobook.publisher;
     }
   }, {
-    key: "publisher_summary",
+    key: "summary",
     get: function get() {
       var text = this.json_audiobook.description;
       if (!text) return null;
@@ -1468,6 +1492,11 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
       return titleCase(lang);
     }
   }, {
+    key: "is_adult",
+    get: function get() {
+      return this.product_data.isAdultProduct;
+    }
+  }, {
     key: "categories_list",
     get: function get() {
       return [];
@@ -1476,13 +1505,19 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
     /**
      * The duration in minutes.
      *
+     * Parsed from a string like: "PT2H25M" or "PT15M".
+     *
      * @type      {number}
-     * @abstract
      */
   }, {
-    key: "duration_minutes",
+    key: "duration",
     get: function get() {
-      return null;
+      var re = /*#__PURE__*/_wrapRegExp(/PT((\d+)H)?(\d+)M/, {
+        hours: 2,
+        minutes: 3
+      });
+      var time = this.json_audiobook.duration.match(re);
+      return toMinutes(time.groups.hours, time.groups.minutes);
     }
   }, {
     key: "tags_list",
@@ -1584,25 +1619,12 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
   }, {
     key: "main_category",
     get: function get() {
-      var _this$categories_list;
-      return ((_this$categories_list = this.categories_list[0]) === null || _this$categories_list === void 0 ? void 0 : _this$categories_list.trim()) || null;
+      return this.digital_data.page.category.primaryCategory;
     }
   }, {
     key: "sub_category",
     get: function get() {
-      // return the second category if there is one
-      if (this.categories_list && this.categories_list.length == 2) {
-        return this.categories_list[1].trim();
-      }
-
-      // find the first subgenre listed in tags
-      var listed_subgenres = _toConsumableArray(new Set(this.tags).intersection(new Set(_classPrivateFieldGet(_sub_categories, this))));
-      if (listed_subgenres.length >= 1) {
-        return listed_subgenres[0];
-      }
-
-      // return the first tag
-      return this.tags[0] || null;
+      return this.digital_data.page.category.subCategory1;
     }
   }, {
     key: "categories",
@@ -1698,15 +1720,6 @@ ADBLBookPage = /*#__PURE__*/function (_BookPage) {
       }))));
     }
   }, {
-    key: "duration_minutes",
-    get: function get() {
-      return this.toMinutes(this.info.duration);
-    }
-
-    // get summary() {
-    //   return this.doc.qsf("adbl-text-block[slot='summary']").textContent;
-    // }
-  }, {
     key: "categories_list",
     get: function get() {
       var _this$info$categories;
@@ -1769,24 +1782,6 @@ NormalBookPage = /*#__PURE__*/function (_BookPage2) {
   }
   _inherits(NormalBookPage, _BookPage2);
   return _createClass(NormalBookPage, [{
-    key: "duration_minutes",
-    get: function get() {
-      var text = this.doc.gcf("runtimeLabel").innerHTML.replace(/length:/i, "");
-      return this.toMinutes(text);
-    }
-
-    // get summary() {
-    //   let elm = this.doc.qs("#center-1 .bc-container")[1]?.gcf("bc-text")
-
-    //   return (
-    //     elm.innerHTML
-    //       ?.replace(/([\n\r\s]+|)©.+/, "")
-    //       ?.replace(/[\n\r]+(\s+|)/g, "<br>")
-    //       ?.replace(/\t/g, " ")
-    //       ?.replace(/"/g, "'")
-    //   );
-    // }
-  }, {
     key: "tags_list",
     get: function get() {
       return this.doc.gc("bc-chip-text").map(function (c) {
@@ -2137,8 +2132,8 @@ OrderPage = (_default_per_page = /*#__PURE__*/new WeakMap(), _valid_date_ranges 
     key: "year",
     get: function get() {
       if (!_classPrivateFieldGet(_year, this) && this.doc) {
-        var _this$doc$qsf4;
-        _classPrivateFieldSet(_year, this, (_this$doc$qsf4 = this.doc.qsf("#ui-it-purchase-history-date-filter option:checked")) === null || _this$doc$qsf4 === void 0 ? void 0 : _this$doc$qsf4.value);
+        var _this$doc$qsf3;
+        _classPrivateFieldSet(_year, this, (_this$doc$qsf3 = this.doc.qsf("#ui-it-purchase-history-date-filter option:checked")) === null || _this$doc$qsf3 === void 0 ? void 0 : _this$doc$qsf3.value);
       }
       return tryInt(_classPrivateFieldGet(_year, this));
     },
@@ -2149,8 +2144,8 @@ OrderPage = (_default_per_page = /*#__PURE__*/new WeakMap(), _valid_date_ranges 
     key: "page_num",
     get: function get() {
       if (!_classPrivateFieldGet(_page_num, this) && this.doc) {
-        var _this$doc$qsf5;
-        _classPrivateFieldSet(_page_num, this, ((_this$doc$qsf5 = this.doc.qsf("span.purchase-history-pagination-button")) === null || _this$doc$qsf5 === void 0 || (_this$doc$qsf5 = _this$doc$qsf5.innerHTML) === null || _this$doc$qsf5 === void 0 ? void 0 : _this$doc$qsf5.trim()) || 1);
+        var _this$doc$qsf4;
+        _classPrivateFieldSet(_page_num, this, ((_this$doc$qsf4 = this.doc.qsf("span.purchase-history-pagination-button")) === null || _this$doc$qsf4 === void 0 || (_this$doc$qsf4 = _this$doc$qsf4.innerHTML) === null || _this$doc$qsf4 === void 0 ? void 0 : _this$doc$qsf4.trim()) || 1);
       }
       return tryInt(_classPrivateFieldGet(_page_num, this));
     },
@@ -4272,12 +4267,6 @@ TSVFile = (_headers2 = /*#__PURE__*/new WeakMap(), _rows3 = /*#__PURE__*/new Wea
         var _Object$entries5$_i = _slicedToArray(_Object$entries5[_i5], 2),
           i = _Object$entries5$_i[0],
           record = _Object$entries5$_i[1];
-        if (record.authors === "") {
-          record.authors = [];
-        }
-        if (record.series === "") {
-          record.series = [];
-        }
         if (record.series) {
           record.series = record.series.map(function (series) {
             return series.name + (series.number ? " #".concat(series.number) : "");
@@ -4288,15 +4277,14 @@ TSVFile = (_headers2 = /*#__PURE__*/new WeakMap(), _rows3 = /*#__PURE__*/new Wea
             return a.name;
           }).join(", ");
         }
-        if ("is_adult" in record) {
-          record.is_adult = record.is_adult ? "true" : "false";
-        }
         Object.entries(record).forEach(function (_ref11) {
           var _ref12 = _slicedToArray(_ref11, 2),
             field = _ref12[0],
             value = _ref12[1];
           if (value instanceof Array) {
             record[field] = value.join(", ");
+          } else if (typeof value == "boolean") {
+            record[field] = JSON.stringify(value);
           }
         });
       };
@@ -4341,12 +4329,12 @@ Result = (_headers3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
       narrators: ["details", "library"],
       series: ["library", "details"],
       publisher: ["details"],
-      duration_minutes: ["details"],
+      duration: ["details"],
       release_date: ["details"],
       release_timestamp: ["details"],
       purchase_date: ["order"],
       language: ["details"],
-      publisher_summary: ["details"],
+      summary: ["details"],
       rating: ["details"],
       num_ratings: ["details"],
       audible_original: ["details"],

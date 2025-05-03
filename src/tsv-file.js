@@ -42,14 +42,6 @@ TSVFile = class extends VirtualFile {
 
   preprocess() {
     for (let [i, record] of Object.entries(this.records)) {
-      if (record.authors === "") {
-        record.authors = [];
-      }
-
-      if (record.series === "") {
-        record.series = [];
-      }
-
       if (record.series) {
         record.series = record.series
           .map((series) => {
@@ -62,13 +54,11 @@ TSVFile = class extends VirtualFile {
         record.authors = record.authors.map((a) => a.name).join(", ");
       }
 
-      if (record.constructor.name == "Object" && "is_adult" in record) {
-        record.is_adult = record.is_adult ? "true" : "false";
-      }
-
       Object.entries(record).forEach(([field, value]) => {
         if (value instanceof Array) {
           record[field] = value.join(", ");
+        } else if (typeof value == "boolean") {
+          record[field] = JSON.stringify(value);
         }
       });
     }

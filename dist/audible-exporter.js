@@ -137,6 +137,35 @@ cleanObject = function (ob) {
   }, {});
 };
 
+/* Convert duration string to array of hours and minutes.
+ *
+ * @param {string} text  Human readable hours/minutes text.
+ *
+ * @return {Array}       Array of hours/minutes integers.
+ *
+ * @example
+ * parseTime("2 hrs and 25 mins"); // [2, 25]
+ */
+parseTime = function (text) {
+  let re = /((?<hrs>\d+)[ ]?hr[s]?)?( and)?[ ]?((?<mins>\d+)[ ]?min[s]?)?$/;
+  let found = text.match(re);
+  let hrs = found.groups.hrs || "0";
+  let mins = found.groups.mins || "0";
+  return [parseInt(hrs), parseInt(mins)];
+};
+
+/* Calculate minutes from hours and minutes.
+ *
+ * @return {number}
+ *
+ * @example
+ * page.toMinutes(2, 25); // 145
+ */
+toMinutes = function (hours, minutes) {
+  hours = hours || 0;
+  return parseInt(hours) * 60 + parseInt(minutes);
+};
+
 delay = (ms) =>
   new Promise((res) => {
     setTimeout(res, ms);
@@ -1139,12 +1168,12 @@ BookPage = class extends Page {
     "title",
     "authors",
     "narrators",
-    "duration_minutes",
+    "duration",
     "language",
     "release_date",
     "release_timestamp",
     "publisher",
-    "publisher_summary",
+    "summary",
     "audible_original",
     "series",
     "category_type",
@@ -1163,6 +1192,7 @@ BookPage = class extends Page {
   #json_audiobook = null;
   #json_product = null;
   #product_data = null;
+  #digital_data = null;
 
   /**
    * Return a BookPage instance of the correct subclass (ADBLBookPage or
@@ -1208,17 +1238,6 @@ BookPage = class extends Page {
     this.doc = doc;
   }
 
-  /* Convert duration string to minutes int.
-   *
-   * @example
-   * page.toMinutes("2 hrs and 25 mins"); // 145
-   */
-  toMinutes(text) {
-    let mins = /\d+(?=\smin)/.exec(text)?.[0] || "0";
-    let hours = /\d+(?=\shrs)/.exec(text)?.[0] || "0";
-    return parseInt(hours) * 60 + parseInt(mins);
-  }
-
   /**
    * Get parsed JSON from script tags.
    *
@@ -1228,7 +1247,7 @@ BookPage = class extends Page {
    * @return {Object} Object of parsed JSON mapping @type -> object.
    */
   get json_scripts() {
-    if (!this.#json_scripts) {
+    if (!this.#json_scripts && this.doc) {
       let scripts = this.doc.qs("script[type='application/ld+json']");
       this.#json_scripts = scripts.reduce((obj, doc) => {
         let json = JSON.parse(doc.innerHTML);
@@ -1246,17 +1265,36 @@ BookPage = class extends Page {
   }
 
   get json_audiobook() {
-    if (!this.#json_audiobook) {
+    if (!this.#json_audiobook && this.doc) {
       this.#json_audiobook = this.json_scripts["Audiobook"] || {};
     }
     return this.#json_audiobook;
   }
 
   get json_product() {
-    if (!this.#json_product) {
+    if (!this.#json_product && this.doc) {
       this.#json_product = this.json_scripts["Product"] || {};
     }
     return this.#json_product;
+  }
+
+  /**
+   * Return digitalData value;
+   *
+   * @return {object}
+   */
+  get digital_data() {
+    if (!this.#digital_data && this.doc) {
+      let digitalData;
+
+      let tags = this.doc.qs("script[type='text/javascript']");
+      let script = tags.filter((t) => t.innerHTML.match(/digitalData/));
+      let js = script[0].innerHTML;
+      js = js.replace("var digitalData = ", "digitalData =");
+      eval(js);
+      this.#digital_data = digitalData;
+    }
+    return this.#digital_data;
   }
 
   /**
@@ -1268,15 +1306,8 @@ BookPage = class extends Page {
    * @return {object}
    */
   get product_data() {
-    if (!this.#product_data) {
-      let digitalData;
-
-      let tags = this.doc.qs("script[type='text/javascript']");
-      let script = tags.filter((t) => t.innerHTML.match(/digitalData/));
-      let js = script[0].innerHTML;
-      js = js.replace("var digitalData = ", "digitalData =");
-      eval(js);
-      this.#product_data = digitalData.product[0].productInfo;
+    if (!this.#product_data && this.doc) {
+      this.#product_data = this.digital_data.product[0].productInfo;
     }
     return this.#product_data;
   }
@@ -1302,7 +1333,7 @@ BookPage = class extends Page {
   }
 
   get narrators() {
-    return this.json_audiobook.readBy?.map((n) => n.name) || [];
+    return this.product_data.narrators;
   }
 
   get rating() {
@@ -1312,10 +1343,6 @@ BookPage = class extends Page {
 
   get num_ratings() {
     return tryInt(this.json_audiobook.aggregateRating?.ratingCount);
-  }
-
-  get is_adult() {
-    return this.product_data.isAdultProduct;
   }
 
   get id() {
@@ -1338,18 +1365,14 @@ BookPage = class extends Page {
   }
 
   get title() {
-    let values = [
-      this.json_audiobook?.name,
-      this.doc.qsf("meta[property='og:title']")?.content,
-    ];
-    return first(values);
+    return this.json_audiobook?.name;
   }
 
   get publisher() {
     return this.json_audiobook.publisher;
   }
 
-  get publisher_summary() {
+  get summary() {
     let text = this.json_audiobook.description;
     if (!text) return null;
     return stripHTML(text);
@@ -1365,6 +1388,10 @@ BookPage = class extends Page {
     return titleCase(lang);
   }
 
+  get is_adult() {
+    return this.product_data.isAdultProduct;
+  }
+
   get categories_list() {
     return [];
   }
@@ -1372,11 +1399,14 @@ BookPage = class extends Page {
   /**
    * The duration in minutes.
    *
+   * Parsed from a string like: "PT2H25M" or "PT15M".
+   *
    * @type      {number}
-   * @abstract
    */
-  get duration_minutes() {
-    return null;
+  get duration() {
+    let re = /PT((?<hours>\d+)H)?(?<minutes>\d+)M/;
+    let time = this.json_audiobook.duration.match(re);
+    return toMinutes(time.groups.hours, time.groups.minutes);
   }
 
   get tags_list() {
@@ -1442,25 +1472,11 @@ BookPage = class extends Page {
   }
 
   get main_category() {
-    return this.categories_list[0]?.trim() || null;
+    return this.digital_data.page.category.primaryCategory;
   }
 
   get sub_category() {
-    // return the second category if there is one
-    if (this.categories_list && this.categories_list.length == 2) {
-      return this.categories_list[1].trim();
-    }
-
-    // find the first subgenre listed in tags
-    let listed_subgenres = [
-      ...new Set(this.tags).intersection(new Set(this.#sub_categories)),
-    ];
-    if (listed_subgenres.length >= 1) {
-      return listed_subgenres[0];
-    }
-
-    // return the first tag
-    return this.tags[0] || null;
+    return this.digital_data.page.category.subCategory1;
   }
 
   get categories() {
@@ -1488,14 +1504,6 @@ ADBLBookPage = class extends BookPage {
       }),
     );
   }
-
-  get duration_minutes() {
-    return this.toMinutes(this.info.duration);
-  }
-
-  // get summary() {
-  //   return this.doc.qsf("adbl-text-block[slot='summary']").textContent;
-  // }
 
   get categories_list() {
     return this.info.categories?.map((c) => c.name.trim()) || [];
@@ -1534,23 +1542,6 @@ ADBLBookPage = class extends BookPage {
  *
  */
 NormalBookPage = class extends BookPage {
-  get duration_minutes() {
-    let text = this.doc.gcf("runtimeLabel").innerHTML.replace(/length:/i, "");
-    return this.toMinutes(text);
-  }
-
-  // get summary() {
-  //   let elm = this.doc.qs("#center-1 .bc-container")[1]?.gcf("bc-text")
-
-  //   return (
-  //     elm.innerHTML
-  //       ?.replace(/([\n\r\s]+|)©.+/, "")
-  //       ?.replace(/[\n\r]+(\s+|)/g, "<br>")
-  //       ?.replace(/\t/g, " ")
-  //       ?.replace(/"/g, "'")
-  //   );
-  // }
-
   get tags_list() {
     return this.doc.gc("bc-chip-text").map((c) => {
       return c.attributes["data-text"].value;
@@ -4304,14 +4295,6 @@ TSVFile = class extends VirtualFile {
 
   preprocess() {
     for (let [i, record] of Object.entries(this.records)) {
-      if (record.authors === "") {
-        record.authors = [];
-      }
-
-      if (record.series === "") {
-        record.series = [];
-      }
-
       if (record.series) {
         record.series = record.series
           .map((series) => {
@@ -4324,13 +4307,11 @@ TSVFile = class extends VirtualFile {
         record.authors = record.authors.map((a) => a.name).join(", ");
       }
 
-      if ("is_adult" in record) {
-        record.is_adult = record.is_adult ? "true" : "false";
-      }
-
       Object.entries(record).forEach(([field, value]) => {
         if (value instanceof Array) {
           record[field] = value.join(", ");
+        } else if (typeof value == "boolean") {
+          record[field] = JSON.stringify(value);
         }
       });
     }
@@ -4374,12 +4355,12 @@ Result = class {
     narrators: ["details", "library"],
     series: ["library", "details"],
     publisher: ["details"],
-    duration_minutes: ["details"],
+    duration: ["details"],
     release_date: ["details"],
     release_timestamp: ["details"],
     purchase_date: ["order"],
     language: ["details"],
-    publisher_summary: ["details"],
+    summary: ["details"],
     rating: ["details"],
     num_ratings: ["details"],
     audible_original: ["details"],

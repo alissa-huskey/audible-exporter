@@ -67,3 +67,5 @@
 (D) 2025-05-02 Consider renaming OrderPage -> PurchaseHistoryPage since it might be confused with an order detail page (ie https://www.audible.com/account/order-details?orderId=D01-0506818-5008215)
 (B) 2025-05-02 @refactor Rename Purchase -> PurchaseRow.
 (A) 2025-05-02 @data @tsv Look into not escaping single quotes (look at series: https://www.audible.com/pd/House-of-Blades-Audiobook/B0B29L7HZ8)
+(A) 2025-05-02 @houskeeping Fix build not copying to dist/audible_exporter.js until second run.
+(B) 2025-05-03 @data Parse reviews from listener page: https://www.audible.com/listener

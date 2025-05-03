@@ -137,6 +137,35 @@ cleanObject = function (ob) {
   }, {});
 };
 
+/* Convert duration string to array of hours and minutes.
+ *
+ * @param {string} text  Human readable hours/minutes text.
+ *
+ * @return {Array}       Array of hours/minutes integers.
+ *
+ * @example
+ * parseTime("2 hrs and 25 mins"); // [2, 25]
+ */
+parseTime = function (text) {
+  let re = /((?<hrs>\d+)[ ]?hr[s]?)?( and)?[ ]?((?<mins>\d+)[ ]?min[s]?)?$/;
+  let found = text.match(re);
+  let hrs = found.groups.hrs || "0";
+  let mins = found.groups.mins || "0";
+  return [parseInt(hrs), parseInt(mins)];
+};
+
+/* Calculate minutes from hours and minutes.
+ *
+ * @return {number}
+ *
+ * @example
+ * page.toMinutes(2, 25); // 145
+ */
+toMinutes = function (hours, minutes) {
+  hours = hours || 0;
+  return parseInt(hours) * 60 + parseInt(minutes);
+};
+
 delay = (ms) =>
   new Promise((res) => {
     setTimeout(res, ms);

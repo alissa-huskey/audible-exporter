@@ -39,6 +39,21 @@ describe("util", () => {
     expect(reg(/\d+/.exec("abc"), 0)).toBe("");
   });
 
+  test("parseTime()", () => {
+    expect(parseTime("62 hrs and 48 mins")).toEqual([62, 48]);
+    expect(parseTime("2 hrs")).toEqual([2, 0]);
+    expect(parseTime("50 mins")).toEqual([0, 50]);
+    expect(parseTime("1 hr")).toEqual([1, 0]);
+    expect(parseTime("3 hrs 1 min")).toEqual([3, 1]);
+  });
+
+  test("toMinutes()", () => {
+    expect(toMinutes(62, 48)).toBe(3768);
+    expect(toMinutes(2, 0)).toBe(120);
+    expect(toMinutes(0, 50)).toBe(50);
+    expect(toMinutes(undefined, 10)).toBe(10);
+  });
+
   test("cleanObject() function", () => {
     let includedTypes = {
       a: true,

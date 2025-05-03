@@ -8,12 +8,6 @@ require("../src/book-page.js");
 describe("BookPage", () => {
   let page = new BookPage();
 
-  test(".toMinutes()", () => {
-    expect(page.toMinutes("62 hrs and 48 mins")).toBe(3768);
-    expect(page.toMinutes("2 hrs")).toBe(120);
-    expect(page.toMinutes("50 mins")).toBe(50);
-  });
-
   test.each([
     {
       fixture: "book-details-audible-original.html",
@@ -244,8 +238,8 @@ describe("NormalBookPage", () => {
     expect(page.release_date).toBe("9/28/2012");
   });
 
-  test(".duration_minutes", () => {
-    expect(page.duration_minutes).toBe(145);
+  test(".duration", () => {
+    expect(page.duration).toBe(145);
   });
 
   test(".rating", () => {
@@ -254,6 +248,10 @@ describe("NormalBookPage", () => {
 
   test(".num_ratings", () => {
     expect(page.num_ratings).toBe(1719);
+  });
+
+  test(".is_adult", () => {
+    expect(page.is_adult).toBe(false);
   });
 
   test(".series", () => {
@@ -267,10 +265,10 @@ describe("NormalBookPage", () => {
     ]);
   });
 
-  test(".publisher_summary", () => {
+  test(".summary", () => {
     let summary =
       "On a nightmare world a thousand light years from Earth, one honest cop won’t rest until he solves the mystery of why his colony was condemned there, in this Audible Original story from best-selling author Larry Correia. On a planet where life is cheap, in a city built on corruption, very few things are considered holy. The Landing Site is one of them. The remains of the century-old habitat pod—which delivered the colonists to the only barely habitable place on the cruel world of Croatoan—has become a monument to the hardscrabble people who somehow survived the unsurvivable. So when blood is shed on that sacred ground, it’s seen as an attack against the entire colony. With a fanatical terrorist group holding hostages inside the monument, DCI Lutero Cade and the Zenith PD have to end the crisis and put the bad guys down. Only there’s far more to this case than meets the eye. The lander may have been carrying a hidden cargo. And a shadowy figure with his own drone army will do anything to make sure the mission’s secrets stay buried—no matter how many nosy detectives he has to kill to do it.";
-    expect(page.publisher_summary).toBe(summary);
+    expect(page.summary).toBe(summary);
   });
 
   test(".publisher", () => {
@@ -297,12 +295,12 @@ describe("NormalBookPage", () => {
         },
       ],
       narrators: ["Oliver Wyman"],
-      duration_minutes: 145,
+      duration: 145,
       language: "English",
       release_date: "1/12/2023",
       release_timestamp: 1673506801000,
       publisher: "Audible Originals",
-      publisher_summary:
+      summary:
         "On a nightmare world a thousand light years from Earth, one honest cop won’t rest until he solves the mystery of why his colony was condemned there, in this Audible Original story from best-selling author Larry Correia. On a planet where life is cheap, in a city built on corruption, very few things are considered holy. The Landing Site is one of them. The remains of the century-old habitat pod—which delivered the colonists to the only barely habitable place on the cruel world of Croatoan—has become a monument to the hardscrabble people who somehow survived the unsurvivable. So when blood is shed on that sacred ground, it’s seen as an attack against the entire colony. With a fanatical terrorist group holding hostages inside the monument, DCI Lutero Cade and the Zenith PD have to end the crisis and put the bad guys down. Only there’s far more to this case than meets the eye. The lander may have been carrying a hidden cargo. And a shadowy figure with his own drone army will do anything to make sure the mission’s secrets stay buried—no matter how many nosy detectives he has to kill to do it.",
       audible_original: true,
       category_type: "fiction",
@@ -403,8 +401,8 @@ describe("ADBLBookPage", () => {
     expect(page.date).toEqual(new Date("09-28-12 00:00:01"));
   });
 
-  test(".duration_minutes", () => {
-    expect(page.duration_minutes).toBe(596);
+  test(".duration", () => {
+    expect(page.duration).toBe(596);
   });
 
   test(".rating", () => {
@@ -415,10 +413,14 @@ describe("ADBLBookPage", () => {
     expect(page.num_ratings).toBe(7856);
   });
 
-  test(".publisher_summary", () => {
+  test(".is_adult", () => {
+    expect(page.is_adult).toBe(false);
+  });
+
+  test(".summary", () => {
     let summary =
       "Probationary constable Peter Grant dreams of being a detective in London's Metropolitan Police. Too bad his superior plans to assign him to the Case Progression Unit, where the biggest threat he'll face is a paper cut. But Peter's prospects change in the aftermath of a puzzling murder, when he gains exclusive information from an eyewitness who happens to be a ghost. Peter's ability to speak with the lingering dead brings him to the attention of Detective Chief Inspector Thomas Nightingale, who investigates crimes involving magic and other manifestations of the uncanny.  Now, as a wave of brutal and bizarre murders engulfs the city, Peter is plunged into a world where gods and goddesses mingle with mortals and a long-dead evil is making a comeback on a rising tide of magic.";
-    expect(page.publisher_summary).toBe(summary);
+    expect(page.summary).toBe(summary);
   });
 
   test(".publisher", () => {
@@ -500,11 +502,11 @@ describe("ADBLBookPage", () => {
   });
 
   test(".sub_category", () => {
-    expect(page.sub_category).toBe("Fantasy");
+    expect(page.sub_category).toBe("Mystery");
   });
 
   test(".data() errors", () => {
-    let field_count = 13;
+    let field_count = 16;
     let page = new BookPage();
     let spy = jest.spyOn(global.console, "error");
     global.console.errors = spy.mockImplementation(() => {});
