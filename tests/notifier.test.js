@@ -83,10 +83,10 @@ describe("Notifier", () => {
     test(".messages", () => {
       let messages = $(notifier.messages.element)[0];
 
-      expect(messages.tagName).toBe("DIV");
+      expect(notifier.messages.element.tagName).toBe("DIV");
 
-      expect($(messages).find(`#${s.status}`)[0]?.tagName).toBe("DIV");
-      expect($(messages).find(`#${s.percentage}`)[0]?.tagName).toBe("SPAN");
+      expect($(messages).find(`.${s.status}`)[0]?.tagName).toBe("DIV");
+      expect($(messages).find(`.${s.percentage}`)[0]?.tagName).toBe("SPAN");
     });
 
     test(".bar", () => {
@@ -94,7 +94,7 @@ describe("Notifier", () => {
 
       expect(bar.tagName).toBe("DIV");
 
-      expect($(bar).find(`#${s.messages}`)[0]?.tagName).toBe("DIV");
+      expect($(bar).find(`.${s.messages}`)[0]?.tagName).toBe("DIV");
     });
 
     test(".context", () => {
@@ -111,8 +111,8 @@ describe("Notifier", () => {
 
       expect(wrapper.tagName).toBe("DIV");
 
-      expect($(wrapper).find(`#${s.bar}`)[0]?.tagName).toBe("DIV");
-      expect($(wrapper).find(`#${s.context}`)[0]?.tagName).toBe("DIV");
+      expect($(wrapper).find(`.${s.bar}`)[0]?.tagName).toBe("DIV");
+      expect($(wrapper).find(`.${s.context}`)[0]?.tagName).toBe("DIV");
     });
   });
 
