@@ -1271,7 +1271,7 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
     "Historical",
     // biographies & Memoiirs
     "Young Adult", "Thriller & Suspense"]);
-    _defineProperty(_this7, "_fields", ["id", "title", "authors", "narrators", "duration_minutes", "language", "release_date", "release_timestamp", "publisher", "publisher_summary", "audible_original", "series", "category_type", "main_category", "sub_category", "categories", "rating", "num_ratings"]);
+    _defineProperty(_this7, "_fields", ["id", "title", "authors", "narrators", "duration_minutes", "language", "release_date", "release_timestamp", "publisher", "publisher_summary", "audible_original", "series", "category_type", "main_category", "sub_category", "categories", "rating", "num_ratings", "is_adult"]);
     _defineProperty(_this7, "_identifers", ["url"]);
     _classPrivateFieldInitSpec(_this7, _tags, []);
     _classPrivateFieldInitSpec(_this7, _json_scripts, null);
@@ -1407,6 +1407,11 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
     get: function get() {
       var _this$json_audiobook$3;
       return tryInt((_this$json_audiobook$3 = this.json_audiobook.aggregateRating) === null || _this$json_audiobook$3 === void 0 ? void 0 : _this$json_audiobook$3.ratingCount);
+    }
+  }, {
+    key: "is_adult",
+    get: function get() {
+      return this.product_data.isAdultProduct;
     }
   }, {
     key: "id",
@@ -4283,6 +4288,9 @@ TSVFile = (_headers2 = /*#__PURE__*/new WeakMap(), _rows3 = /*#__PURE__*/new Wea
             return a.name;
           }).join(", ");
         }
+        if ("is_adult" in record) {
+          record.is_adult = record.is_adult ? "true" : "false";
+        }
         Object.entries(record).forEach(function (_ref11) {
           var _ref12 = _slicedToArray(_ref11, 2),
             field = _ref12[0],
@@ -4345,7 +4353,8 @@ Result = (_headers3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
       category_type: ["details"],
       main_category: ["details"],
       sub_category: ["details"],
-      categories: ["details"]
+      categories: ["details"],
+      is_adult: ["details"]
     });
     this.library = library || {};
     this.details = details || {};

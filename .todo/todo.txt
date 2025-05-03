@@ -24,7 +24,7 @@
 (Z) 2025-02-27 @ux Display error message dialog on fatal error.
 (C) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
 (C) 2025-02-27 @refactor Have Page.fetchDoc() set this.url = url
-(B) 2025-02-28 @ux @download Compare results from original download to current results
+
 (D) 2025-03-01 @download Add purchase_timestamp.
 (A) 2025-03-01 @refactor @data pages: Parse data from multiple fields, select the first one that has content.
 (M) 2025-03-01 @feature Get a list of collections a book belongs to
@@ -67,3 +67,4 @@
 (D) 2025-05-02 Consider renaming OrderPage -> PurchaseHistoryPage since it might be confused with an order detail page (ie https://www.audible.com/account/order-details?orderId=D01-0506818-5008215)
 (B) 2025-05-02 @refactor Rename Purchase -> PurchaseRow.
 (A) 2025-05-02 @data @tsv Look into not escaping single quotes (look at series: https://www.audible.com/pd/House-of-Blades-Audiobook/B0B29L7HZ8)
+(A) 2025-05-02 @houskeeping Fix build not copying to dist/audible_exporter.js until second run.

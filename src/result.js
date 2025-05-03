@@ -31,6 +31,7 @@ Result = class {
     main_category: ["details"],
     sub_category: ["details"],
     categories: ["details"],
+    is_adult: ["details"],
   };
 
   constructor(library = null, details = null, order = null) {

@@ -102,6 +102,7 @@ describe("Result", () => {
       categories: ["Fantasy"],
       rating: 4.7,
       num_ratings: 168,
+      is_adult: false,
     };
 
     let expected = {
@@ -156,6 +157,7 @@ describe("Result", () => {
       categories: ["Fantasy"],
       rating: 4.7,
       num_ratings: 168,
+      is_adult: false,
     };
 
     let result = new Result(library, details, order);

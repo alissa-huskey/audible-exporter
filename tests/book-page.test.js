@@ -311,6 +311,7 @@ describe("NormalBookPage", () => {
       categories: ["Funny", "Scary", "Detective", "Solar System"],
       rating: 4.6,
       num_ratings: 1719,
+      is_adult: false,
       series: [
         {
           id: "B0BLFCYN8D",
@@ -503,12 +504,13 @@ describe("ADBLBookPage", () => {
   });
 
   test(".data() errors", () => {
+    let field_count = 13;
     let page = new BookPage();
     let spy = jest.spyOn(global.console, "error");
     global.console.errors = spy.mockImplementation(() => {});
 
     page.data();
 
-    expect(spy.mock.calls).toHaveLength(12);
+    expect(spy.mock.calls).toHaveLength(field_count);
   });
 });

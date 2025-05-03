@@ -62,6 +62,10 @@ TSVFile = class extends VirtualFile {
         record.authors = record.authors.map((a) => a.name).join(", ");
       }
 
+      if (record.constructor.name == "Object" && "is_adult" in record) {
+        record.is_adult = record.is_adult ? "true" : "false";
+      }
+
       Object.entries(record).forEach(([field, value]) => {
         if (value instanceof Array) {
           record[field] = value.join(", ");

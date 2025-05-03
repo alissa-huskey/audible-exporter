@@ -101,6 +101,7 @@ BookPage = class extends Page {
     "categories",
     "rating",
     "num_ratings",
+    "is_adult",
   ];
 
   _identifers = ["url"];
@@ -259,6 +260,10 @@ BookPage = class extends Page {
 
   get num_ratings() {
     return tryInt(this.json_audiobook.aggregateRating?.ratingCount);
+  }
+
+  get is_adult() {
+    return this.product_data.isAdultProduct;
   }
 
   get id() {

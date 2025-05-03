@@ -24,7 +24,7 @@
 (Z) 2025-02-27 @ux Display error message dialog on fatal error.
 (C) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
 (C) 2025-02-27 @refactor Have Page.fetchDoc() set this.url = url
-(B) 2025-02-28 @ux @download Compare results from original download to current results
+
 (D) 2025-03-01 @download Add purchase_timestamp.
 (A) 2025-03-01 @refactor @data pages: Parse data from multiple fields, select the first one that has content.
 (M) 2025-03-01 @feature Get a list of collections a book belongs to
@@ -48,7 +48,6 @@
 (C) 2025-03-09 @reliability In fetch, check if the current page is the one being fetched, if so use document.body
 (B) 2025-03-09 @refactor look into switching everything to query selectors.
 (B) 2025-03-10 @ux @reliability Check navigator.online to make sure the user is online.
-x 2025-05-02 2025-03-10 @data Use date.toLocaleDate() instead of custom function.
 (B) 2025-03-10 @housekeeping reconsider code orginization (src/js, src/css; src/js/fetchers, src/js/modals?
 (B) 2025-03-10 @refactor review Timer started_at/ended_at and .started/stopped.toLocaleTimeString()
 2025-03-15 @bug Fix / detect sign in error.
