@@ -9,7 +9,7 @@ require("./util.js");
 require("./page.js");
 
 BookPage = class extends Page {
-  #category_types = ["Fiction", "Nonfiction"];
+  #types = ["Fiction", "Nonfiction"];
 
   #category_genres = {
     "Arts & Entertainment": "nonfiction",
@@ -30,7 +30,7 @@ BookPage = class extends Page {
     "Health & Wellness": "nonfiction",
     History: "nonfiction",
     "Home & Garden": "nonfiction",
-    "LGBTQ+": "null",
+    "LGBTQ+": null,
     "LGBTQ+ Studies": "nonfiction",
     "Parenting & Families": "nonfiction",
     "Literature & Fiction": "fiction",
@@ -53,35 +53,6 @@ BookPage = class extends Page {
     "Travel & Tourism": "nonfiction",
   };
 
-  #sub_categories = [
-    "Science Fiction",
-    "Fantasy",
-    "LitRPG",
-    "True Crime",
-    "Mystery",
-    "Horror",
-    "Epic Fantasy",
-    "Satire",
-    "Paranormal Romance",
-    "Contemporary Romance",
-    "Sex Instruction",
-    "Romantic Suspense",
-    "History & Criticism", // Arts & Entertainment
-    "Instruction & Technique", // Arts & Entertainment
-    "Historical Fiction",
-    "Literary Fiction",
-    "Personal Development",
-    "Classics",
-    "Fairy Tales",
-    "Crime Fiction",
-    "Fairy Tales, Folk Tales & Myths", // Children's Audiobooks
-    "Education & Learning", // Children's Audiobooks
-    "Essays", // biographies & Memoiirs
-    "Historical", // biographies & Memoiirs
-    "Young Adult",
-    "Thriller & Suspense",
-  ];
-
   _fields = [
     "id",
     "title",
@@ -95,10 +66,10 @@ BookPage = class extends Page {
     "summary",
     "audible_original",
     "series",
-    "category_type",
-    "main_category",
-    "sub_category",
-    "categories",
+    "type",
+    "genre",
+    "subgenre",
+    "tags",
     "rating",
     "num_ratings",
     "is_adult",
@@ -107,10 +78,10 @@ BookPage = class extends Page {
   _identifers = ["url"];
 
   #tags = [];
-  #json_scripts = null;
-  #json_audiobook = null;
-  #json_product = null;
+  #json = null;
+  #audiobook_data = null;
   #product_data = null;
+  #product_info = null;
   #digital_data = null;
 
   /**
@@ -165,10 +136,10 @@ BookPage = class extends Page {
    *
    * @return {Object} Object of parsed JSON mapping @type -> object.
    */
-  get json_scripts() {
-    if (!this.#json_scripts && this.doc) {
+  get json() {
+    if (!this.#json && this.doc) {
       let scripts = this.doc.qs("script[type='application/ld+json']");
-      this.#json_scripts = scripts.reduce((obj, doc) => {
+      this.#json = scripts.reduce((obj, doc) => {
         let json = JSON.parse(doc.innerHTML);
         if (!(json instanceof Array)) {
           json = [json];
@@ -180,21 +151,21 @@ BookPage = class extends Page {
       }, {});
     }
 
-    return this.#json_scripts;
+    return this.#json;
   }
 
-  get json_audiobook() {
-    if (!this.#json_audiobook && this.doc) {
-      this.#json_audiobook = this.json_scripts["Audiobook"] || {};
+  get audiobook_data() {
+    if (!this.#audiobook_data && this.doc) {
+      this.#audiobook_data = this.json["Audiobook"] || {};
     }
-    return this.#json_audiobook;
+    return this.#audiobook_data;
   }
 
-  get json_product() {
-    if (!this.#json_product && this.doc) {
-      this.#json_product = this.json_scripts["Product"] || {};
+  get product_data() {
+    if (!this.#product_data && this.doc) {
+      this.#product_data = this.json["Product"] || {};
     }
-    return this.#json_product;
+    return this.#product_data;
   }
 
   /**
@@ -224,11 +195,11 @@ BookPage = class extends Page {
    *
    * @return {object}
    */
-  get product_data() {
-    if (!this.#product_data && this.doc) {
-      this.#product_data = this.digital_data.product[0].productInfo;
+  get product_info() {
+    if (!this.#product_info && this.doc) {
+      this.#product_info = this.digital_data.product[0].productInfo;
     }
-    return this.#product_data;
+    return this.#product_info;
   }
 
   /**
@@ -239,7 +210,7 @@ BookPage = class extends Page {
    * @return {Array}
    */
   get authors() {
-    let authors = this.product_data.authors.map((a) => {
+    let authors = this.product_info.authors.map((a) => {
       let author = { name: a.fullName };
       if (a.id) {
         author.id = a.id;
@@ -252,24 +223,24 @@ BookPage = class extends Page {
   }
 
   get narrators() {
-    return this.product_data.narrators;
+    return this.product_info.narrators;
   }
 
   get rating() {
-    let rating = tryFloat(this.json_audiobook.aggregateRating?.ratingValue);
+    let rating = tryFloat(this.audiobook_data.aggregateRating?.ratingValue);
     return rating ? +rating.toFixed(1) : "";
   }
 
   get num_ratings() {
-    return tryInt(this.json_audiobook.aggregateRating?.ratingCount);
+    return tryInt(this.audiobook_data.aggregateRating?.ratingCount);
   }
 
   get id() {
-    return this.json_product.productID;
+    return this.product_data.productID;
   }
 
   get date() {
-    let date = this.json_audiobook.datePublished;
+    let date = this.audiobook_data.datePublished;
     if (!date) return null;
     return new Date(`${date}:00:00:01`);
   }
@@ -284,15 +255,15 @@ BookPage = class extends Page {
   }
 
   get title() {
-    return this.json_audiobook?.name;
+    return this.audiobook_data?.name;
   }
 
   get publisher() {
-    return this.json_audiobook.publisher;
+    return this.audiobook_data.publisher;
   }
 
   get summary() {
-    let text = this.json_audiobook.description;
+    let text = this.audiobook_data.description;
     if (!text) return null;
     return stripHTML(text);
   }
@@ -303,16 +274,12 @@ BookPage = class extends Page {
   }
 
   get language() {
-    let lang = this.json_audiobook.inLanguage;
+    let lang = this.audiobook_data.inLanguage;
     return titleCase(lang);
   }
 
   get is_adult() {
-    return this.product_data.isAdultProduct;
-  }
-
-  get categories_list() {
-    return [];
+    return this.product_info.isAdultProduct;
   }
 
   /**
@@ -323,8 +290,8 @@ BookPage = class extends Page {
    * @type      {number}
    */
   get duration() {
-    let re = /PT((?<hours>\d+)H)?(?<minutes>\d+)M/;
-    let time = this.json_audiobook.duration.match(re);
+    let re = /PT((?<hours>\d+)H)?((?<minutes>\d+)M)?/;
+    let time = this.audiobook_data.duration.match(re);
     return toMinutes(time.groups.hours, time.groups.minutes);
   }
 
@@ -337,69 +304,53 @@ BookPage = class extends Page {
    *
    * @return {string}
    */
-  get category_type() {
-    // check if the fiction tag is listed in the tags
-    for (var genre of this.#category_types) {
-      let idx = this.tags_list.indexOf(genre);
-      if (idx && idx >= 0) {
-        return genre.toLowerCase();
-      }
-    }
+  get type() {
+    let labels = [this.genre, this.subgenre, ...this.tags_list];
 
-    let all = [...this.categories_list, ...this.tags_list];
-
-    // check if the word "fiction" or "nonfiction" is in any of the categories or tags
-    for (let genre of this.#category_types) {
-      if (
-        all.some((c) => {
-          return c.toLowerCase().includes(genre.toLowerCase());
-        })
-      ) {
-        return genre.toLowerCase();
-      }
+    // check if the "Fiction" or "Nonfiction" is in any of the tags
+    let found = this.#types.filter((t) =>
+      labels.some((l) => new RegExp(`\\b${t}\\b`, "i").test(l)),
+    );
+    if (found.length) {
+      return found.first;
     }
 
     // get the fiction/nonfiction designation from #category_genres
-    for (var label of all) {
-      genre = this.#category_genres[label];
-      if (genre) {
-        return genre.toLowerCase();
-      }
-    }
+    let types = [
+      ...new Set(labels.map((l) => this.#category_genres[l]).filter((t) => t)),
+    ];
 
-    return null;
+    switch (types.length) {
+      case 0:
+        return null;
+      case 1:
+        return titleCase(types.first);
+      default:
+        return "Fiction";
+    }
+  }
+
+  get genre() {
+    return this.digital_data.page.category.primaryCategory;
+  }
+
+  get subgenre() {
+    return this.digital_data.page.category.subCategory1;
   }
 
   /**
    * Get tags.
    *
-   * Filter tags_list to exclude fiction/nonfiction and main_category.
+   * Filter tags_list to exclude generes and types.
    *
    * @returns {Array}
    */
   get tags() {
     if (!this.#tags.length && this.tags_list) {
-      let exclude = [...this.#category_types];
-      if (this.main_category) {
-        exclude.push(this.main_category);
-      }
-      this.#tags = this.tags_list.filter((t) => {
-        return !exclude.includes(t);
-      });
+      let exclude = [...this.#types, this.genre, this.subgenre];
+      this.#tags = this.tags_list.filter((t) => !exclude.includes(t));
     }
     return this.#tags;
-  }
-
-  get main_category() {
-    return this.digital_data.page.category.primaryCategory;
-  }
-
-  get sub_category() {
-    return this.digital_data.page.category.subCategory1;
-  }
-
-  get categories() {
-    return this.tags.filter((c) => !this.categories_list.includes(c));
   }
 };
 
@@ -411,21 +362,14 @@ BookPage = class extends Page {
  *
  */
 ADBLBookPage = class extends BookPage {
-  get adbl() {
-    return this.doc.qs("adbl-product-metadata script");
-  }
-
-  get info() {
-    return Object.assign(
-      {},
-      ...this.adbl.map((e) => {
-        return JSON.parse(e.textContent);
-      }),
-    );
-  }
-
-  get categories_list() {
-    return this.info.categories?.map((c) => c.name.trim()) || [];
+  /**
+   * Return data parsed from JSON script inside of <adbl-product-metadata> tags.
+   *
+   * @return {object}
+   */
+  get adbl_data() {
+    let scripts = this.doc.qs("adbl-product-metadata script");
+    return Object.assign({}, ...scripts.map((s) => JSON.parse(s.textContent)));
   }
 
   /**
@@ -441,7 +385,7 @@ ADBLBookPage = class extends BookPage {
 
   get series() {
     let series = [];
-    for (let s of this.info?.series || []) {
+    for (let s of this.adbl_data?.series || []) {
       series.push({
         id: s.url?.match(/series\/.*\/(.*)\?/)?.[1] || "",
         url: s.url?.replace(/\?.*$/, "") || "",
@@ -465,14 +409,6 @@ NormalBookPage = class extends BookPage {
     return this.doc.gc("bc-chip-text").map((c) => {
       return c.attributes["data-text"].value;
     });
-  }
-
-  get categories_list() {
-    return (
-      this.doc.qs(".categoriesLabel a")?.map((c) => {
-        return entityDecode(c.innerHTML)?.trim() || "";
-      }) || []
-    );
   }
 
   get series() {

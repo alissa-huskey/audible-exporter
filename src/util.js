@@ -163,6 +163,7 @@ parseTime = function (text) {
  */
 toMinutes = function (hours, minutes) {
   hours = hours || 0;
+  minutes = minutes || 0;
   return parseInt(hours) * 60 + parseInt(minutes);
 };
 

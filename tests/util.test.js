@@ -52,6 +52,7 @@ describe("util", () => {
     expect(toMinutes(2, 0)).toBe(120);
     expect(toMinutes(0, 50)).toBe(50);
     expect(toMinutes(undefined, 10)).toBe(10);
+    expect(toMinutes(1, undefined)).toBe(60);
   });
 
   test("cleanObject() function", () => {

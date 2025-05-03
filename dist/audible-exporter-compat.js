@@ -15,7 +15,7 @@ forced:!0},{iterateEntries:function iterateEntries(t){return new o(t,"entries")}
 //# sourceMappingURL=minified.js.map
 
 
-var _doc, _default_page_size, _rows, _books, _books2, _page_count, _category_types, _category_genres, _sub_categories, _tags, _json_scripts, _json_audiobook, _json_product, _product_data, _digital_data, _books3, _default_per_page, _valid_date_ranges, _orders, _purchases, _items, _page_num, _year, _count, _items2, _wrapper, _css, _wrapper2, _head, _content, _copy, _actions, _close_btn, _selectors, _wrapper3, _head2, _content2, _close_btn2, _copy2, _wrapper4, _content3, _actions2, _close_btn3, _ft_select, _start_btn, _file, _selectors2, _wrapper5, _head3, _content4, _copy3, _actions3, _ft_select2, _dl_btn, _file2, _selectors3, _wrapper6, _bar, _status, _percentage, _messages, _context11, _steps, _estimate, _percent, _item_no, _total, _year2, _years, _year3, _year_page, _item_no2, _page_count2, _item_no3, _total2, _item_no4, _total3, _contents, _headers, _rows2, _headers2, _rows3, _headers3;
+var _doc, _default_page_size, _rows, _books, _books2, _page_count, _types, _category_genres, _tags, _json, _audiobook_data, _product_data, _product_info, _digital_data, _books3, _default_per_page, _valid_date_ranges, _orders, _purchases, _items, _page_num, _year, _count, _items2, _wrapper, _css, _wrapper2, _head, _content, _copy, _actions, _close_btn, _selectors, _wrapper3, _head2, _content2, _close_btn2, _copy2, _wrapper4, _content3, _actions2, _close_btn3, _ft_select, _start_btn, _file, _selectors2, _wrapper5, _head3, _content4, _copy3, _actions3, _ft_select2, _dl_btn, _file2, _selectors3, _wrapper6, _bar, _status, _percentage, _messages, _context11, _steps, _estimate, _percent, _item_no, _total, _year2, _years, _year3, _year_page, _item_no2, _page_count2, _item_no3, _total2, _item_no4, _total3, _contents, _headers, _rows2, _headers2, _rows3, _headers3;
 function _superPropGet(t, o, e, r) { var p = _get3(_getPrototypeOf(1 & r ? t.prototype : t), o, e); return 2 & r && "function" == typeof p ? function (t) { return p.apply(e, t); } : p; }
 function _get3() { return _get3 = "undefined" != typeof Reflect && Reflect.get ? Reflect.get.bind() : function (e, t, r) { var p = _superPropBase(e, t); if (p) { var n = Object.getOwnPropertyDescriptor(p, t); return n.get ? n.get.call(arguments.length < 3 ? e : r) : n.value; } }, _get3.apply(null, arguments); }
 function _superPropBase(t, o) { for (; !{}.hasOwnProperty.call(t, o) && null !== (t = _getPrototypeOf(t));); return t; }
@@ -210,6 +210,7 @@ parseTime = function parseTime(text) {
  */
 toMinutes = function toMinutes(hours, minutes) {
   hours = hours || 0;
+  minutes = minutes || 0;
   return parseInt(hours) * 60 + parseInt(minutes);
 };
 delay = function delay(ms) {
@@ -1231,13 +1232,13 @@ LibraryFetcher = (_books2 = /*#__PURE__*/new WeakMap(), _page_count = /*#__PURE_
  *
  */
 
-BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#__PURE__*/new WeakMap(), _sub_categories = /*#__PURE__*/new WeakMap(), _tags = /*#__PURE__*/new WeakMap(), _json_scripts = /*#__PURE__*/new WeakMap(), _json_audiobook = /*#__PURE__*/new WeakMap(), _json_product = /*#__PURE__*/new WeakMap(), _product_data = /*#__PURE__*/new WeakMap(), _digital_data = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Page3) {
+BookPage = (_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#__PURE__*/new WeakMap(), _tags = /*#__PURE__*/new WeakMap(), _json = /*#__PURE__*/new WeakMap(), _audiobook_data = /*#__PURE__*/new WeakMap(), _product_data = /*#__PURE__*/new WeakMap(), _product_info = /*#__PURE__*/new WeakMap(), _digital_data = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Page3) {
   function _class3() {
     var _this7;
     var doc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
     _classCallCheck(this, _class3);
     _this7 = _callSuper(this, _class3);
-    _classPrivateFieldInitSpec(_this7, _category_types, ["Fiction", "Nonfiction"]);
+    _classPrivateFieldInitSpec(_this7, _types, ["Fiction", "Nonfiction"]);
     _classPrivateFieldInitSpec(_this7, _category_genres, {
       "Arts & Entertainment": "nonfiction",
       "Biographies & Memoirs": "nonfiction",
@@ -1262,7 +1263,7 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
       "Health & Wellness": "nonfiction",
       History: "nonfiction",
       "Home & Garden": "nonfiction",
-      "LGBTQ+": "null",
+      "LGBTQ+": null,
       "LGBTQ+ Studies": "nonfiction",
       "Parenting & Families": "nonfiction",
       "Literature & Fiction": "fiction",
@@ -1290,26 +1291,13 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
       // teen & young adult
       "Travel & Tourism": "nonfiction"
     });
-    _classPrivateFieldInitSpec(_this7, _sub_categories, ["Science Fiction", "Fantasy", "LitRPG", "True Crime", "Mystery", "Horror", "Epic Fantasy", "Satire", "Paranormal Romance", "Contemporary Romance", "Sex Instruction", "Romantic Suspense", "History & Criticism",
-    // Arts & Entertainment
-    "Instruction & Technique",
-    // Arts & Entertainment
-    "Historical Fiction", "Literary Fiction", "Personal Development", "Classics", "Fairy Tales", "Crime Fiction", "Fairy Tales, Folk Tales & Myths",
-    // Children's Audiobooks
-    "Education & Learning",
-    // Children's Audiobooks
-    "Essays",
-    // biographies & Memoiirs
-    "Historical",
-    // biographies & Memoiirs
-    "Young Adult", "Thriller & Suspense"]);
-    _defineProperty(_this7, "_fields", ["id", "title", "authors", "narrators", "duration", "language", "release_date", "release_timestamp", "publisher", "summary", "audible_original", "series", "category_type", "main_category", "sub_category", "categories", "rating", "num_ratings", "is_adult"]);
+    _defineProperty(_this7, "_fields", ["id", "title", "authors", "narrators", "duration", "language", "release_date", "release_timestamp", "publisher", "summary", "audible_original", "series", "type", "genre", "subgenre", "tags", "rating", "num_ratings", "is_adult"]);
     _defineProperty(_this7, "_identifers", ["url"]);
     _classPrivateFieldInitSpec(_this7, _tags, []);
-    _classPrivateFieldInitSpec(_this7, _json_scripts, null);
-    _classPrivateFieldInitSpec(_this7, _json_audiobook, null);
-    _classPrivateFieldInitSpec(_this7, _json_product, null);
+    _classPrivateFieldInitSpec(_this7, _json, null);
+    _classPrivateFieldInitSpec(_this7, _audiobook_data, null);
     _classPrivateFieldInitSpec(_this7, _product_data, null);
+    _classPrivateFieldInitSpec(_this7, _product_info, null);
     _classPrivateFieldInitSpec(_this7, _digital_data, null);
     _this7.doc = doc;
     return _this7;
@@ -1325,11 +1313,11 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
    */
   _inherits(_class3, _Page3);
   return _createClass(_class3, [{
-    key: "json_scripts",
+    key: "json",
     get: function get() {
-      if (!_classPrivateFieldGet(_json_scripts, this) && this.doc) {
+      if (!_classPrivateFieldGet(_json, this) && this.doc) {
         var scripts = this.doc.qs("script[type='application/ld+json']");
-        _classPrivateFieldSet(_json_scripts, this, scripts.reduce(function (obj, doc) {
+        _classPrivateFieldSet(_json, this, scripts.reduce(function (obj, doc) {
           var json = JSON.parse(doc.innerHTML);
           if (!(json instanceof Array)) {
             json = [json];
@@ -1340,23 +1328,23 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
           return obj;
         }, {}));
       }
-      return _classPrivateFieldGet(_json_scripts, this);
+      return _classPrivateFieldGet(_json, this);
     }
   }, {
-    key: "json_audiobook",
+    key: "audiobook_data",
     get: function get() {
-      if (!_classPrivateFieldGet(_json_audiobook, this) && this.doc) {
-        _classPrivateFieldSet(_json_audiobook, this, this.json_scripts["Audiobook"] || {});
+      if (!_classPrivateFieldGet(_audiobook_data, this) && this.doc) {
+        _classPrivateFieldSet(_audiobook_data, this, this.json["Audiobook"] || {});
       }
-      return _classPrivateFieldGet(_json_audiobook, this);
+      return _classPrivateFieldGet(_audiobook_data, this);
     }
   }, {
-    key: "json_product",
+    key: "product_data",
     get: function get() {
-      if (!_classPrivateFieldGet(_json_product, this) && this.doc) {
-        _classPrivateFieldSet(_json_product, this, this.json_scripts["Product"] || {});
+      if (!_classPrivateFieldGet(_product_data, this) && this.doc) {
+        _classPrivateFieldSet(_product_data, this, this.json["Product"] || {});
       }
-      return _classPrivateFieldGet(_json_product, this);
+      return _classPrivateFieldGet(_product_data, this);
     }
 
     /**
@@ -1390,12 +1378,12 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
      * @return {object}
      */
   }, {
-    key: "product_data",
+    key: "product_info",
     get: function get() {
-      if (!_classPrivateFieldGet(_product_data, this) && this.doc) {
-        _classPrivateFieldSet(_product_data, this, this.digital_data.product[0].productInfo);
+      if (!_classPrivateFieldGet(_product_info, this) && this.doc) {
+        _classPrivateFieldSet(_product_info, this, this.digital_data.product[0].productInfo);
       }
-      return _classPrivateFieldGet(_product_data, this);
+      return _classPrivateFieldGet(_product_info, this);
     }
 
     /**
@@ -1408,7 +1396,7 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
   }, {
     key: "authors",
     get: function get() {
-      var authors = this.product_data.authors.map(function (a) {
+      var authors = this.product_info.authors.map(function (a) {
         var author = {
           name: a.fullName
         };
@@ -1423,30 +1411,30 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
   }, {
     key: "narrators",
     get: function get() {
-      return this.product_data.narrators;
+      return this.product_info.narrators;
     }
   }, {
     key: "rating",
     get: function get() {
-      var _this$json_audiobook$;
-      var rating = tryFloat((_this$json_audiobook$ = this.json_audiobook.aggregateRating) === null || _this$json_audiobook$ === void 0 ? void 0 : _this$json_audiobook$.ratingValue);
+      var _this$audiobook_data$;
+      var rating = tryFloat((_this$audiobook_data$ = this.audiobook_data.aggregateRating) === null || _this$audiobook_data$ === void 0 ? void 0 : _this$audiobook_data$.ratingValue);
       return rating ? +rating.toFixed(1) : "";
     }
   }, {
     key: "num_ratings",
     get: function get() {
-      var _this$json_audiobook$2;
-      return tryInt((_this$json_audiobook$2 = this.json_audiobook.aggregateRating) === null || _this$json_audiobook$2 === void 0 ? void 0 : _this$json_audiobook$2.ratingCount);
+      var _this$audiobook_data$2;
+      return tryInt((_this$audiobook_data$2 = this.audiobook_data.aggregateRating) === null || _this$audiobook_data$2 === void 0 ? void 0 : _this$audiobook_data$2.ratingCount);
     }
   }, {
     key: "id",
     get: function get() {
-      return this.json_product.productID;
+      return this.product_data.productID;
     }
   }, {
     key: "date",
     get: function get() {
-      var date = this.json_audiobook.datePublished;
+      var date = this.audiobook_data.datePublished;
       if (!date) return null;
       return new Date("".concat(date, ":00:00:01"));
     }
@@ -1464,18 +1452,18 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
   }, {
     key: "title",
     get: function get() {
-      var _this$json_audiobook;
-      return (_this$json_audiobook = this.json_audiobook) === null || _this$json_audiobook === void 0 ? void 0 : _this$json_audiobook.name;
+      var _this$audiobook_data;
+      return (_this$audiobook_data = this.audiobook_data) === null || _this$audiobook_data === void 0 ? void 0 : _this$audiobook_data.name;
     }
   }, {
     key: "publisher",
     get: function get() {
-      return this.json_audiobook.publisher;
+      return this.audiobook_data.publisher;
     }
   }, {
     key: "summary",
     get: function get() {
-      var text = this.json_audiobook.description;
+      var text = this.audiobook_data.description;
       if (!text) return null;
       return stripHTML(text);
     }
@@ -1488,18 +1476,13 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
   }, {
     key: "language",
     get: function get() {
-      var lang = this.json_audiobook.inLanguage;
+      var lang = this.audiobook_data.inLanguage;
       return titleCase(lang);
     }
   }, {
     key: "is_adult",
     get: function get() {
-      return this.product_data.isAdultProduct;
-    }
-  }, {
-    key: "categories_list",
-    get: function get() {
-      return [];
+      return this.product_info.isAdultProduct;
     }
 
     /**
@@ -1512,11 +1495,11 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
   }, {
     key: "duration",
     get: function get() {
-      var re = /*#__PURE__*/_wrapRegExp(/PT((\d+)H)?(\d+)M/, {
+      var re = /*#__PURE__*/_wrapRegExp(/PT((\d+)H)?((\d+)M)?/, {
         hours: 2,
-        minutes: 3
+        minutes: 4
       });
-      var time = this.json_audiobook.duration.match(re);
+      var time = this.audiobook_data.duration.match(re);
       return toMinutes(time.groups.hours, time.groups.minutes);
     }
   }, {
@@ -1531,74 +1514,51 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
      * @return {string}
      */
   }, {
-    key: "category_type",
+    key: "type",
     get: function get() {
-      // check if the fiction tag is listed in the tags
-      var _iterator4 = _createForOfIteratorHelper(_classPrivateFieldGet(_category_types, this)),
-        _step4;
-      try {
-        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-          var genre = _step4.value;
-          var idx = this.tags_list.indexOf(genre);
-          if (idx && idx >= 0) {
-            return genre.toLowerCase();
-          }
-        }
-      } catch (err) {
-        _iterator4.e(err);
-      } finally {
-        _iterator4.f();
-      }
-      var all = [].concat(_toConsumableArray(this.categories_list), _toConsumableArray(this.tags_list));
+      var _this8 = this;
+      var labels = [this.genre, this.subgenre].concat(_toConsumableArray(this.tags_list));
 
-      // check if the word "fiction" or "nonfiction" is in any of the categories or tags
-      var _iterator5 = _createForOfIteratorHelper(_classPrivateFieldGet(_category_types, this)),
-        _step5;
-      try {
-        var _loop2 = function _loop2() {
-            var genre = _step5.value;
-            if (all.some(function (c) {
-              return c.toLowerCase().includes(genre.toLowerCase());
-            })) {
-              return {
-                v: genre.toLowerCase()
-              };
-            }
-          },
-          _ret2;
-        for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-          _ret2 = _loop2();
-          if (_ret2) return _ret2.v;
-        }
+      // check if the "Fiction" or "Nonfiction" is in any of the tags
+      var found = _classPrivateFieldGet(_types, this).filter(function (t) {
+        return labels.some(function (l) {
+          return new RegExp("\\b".concat(t, "\\b"), "i").test(l);
+        });
+      });
+      if (found.length) {
+        return found.first;
+      }
 
-        // get the fiction/nonfiction designation from #category_genres
-      } catch (err) {
-        _iterator5.e(err);
-      } finally {
-        _iterator5.f();
+      // get the fiction/nonfiction designation from #category_genres
+      var types = _toConsumableArray(new Set(labels.map(function (l) {
+        return _classPrivateFieldGet(_category_genres, _this8)[l];
+      }).filter(function (t) {
+        return t;
+      })));
+      switch (types.length) {
+        case 0:
+          return null;
+        case 1:
+          return titleCase(types.first);
+        default:
+          return "Fiction";
       }
-      var _iterator6 = _createForOfIteratorHelper(all),
-        _step6;
-      try {
-        for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-          var label = _step6.value;
-          genre = _classPrivateFieldGet(_category_genres, this)[label];
-          if (genre) {
-            return genre.toLowerCase();
-          }
-        }
-      } catch (err) {
-        _iterator6.e(err);
-      } finally {
-        _iterator6.f();
-      }
-      return null;
+    }
+  }, {
+    key: "genre",
+    get: function get() {
+      return this.digital_data.page.category.primaryCategory;
+    }
+  }, {
+    key: "subgenre",
+    get: function get() {
+      return this.digital_data.page.category.subCategory1;
     }
 
     /**
      * Get tags.
      *
-     * Filter tags_list to exclude fiction/nonfiction and main_category.
+     * Filter tags_list to exclude generes and types.
      *
      * @returns {Array}
      */
@@ -1606,33 +1566,12 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
     key: "tags",
     get: function get() {
       if (!_classPrivateFieldGet(_tags, this).length && this.tags_list) {
-        var exclude = _toConsumableArray(_classPrivateFieldGet(_category_types, this));
-        if (this.main_category) {
-          exclude.push(this.main_category);
-        }
+        var exclude = [].concat(_toConsumableArray(_classPrivateFieldGet(_types, this)), [this.genre, this.subgenre]);
         _classPrivateFieldSet(_tags, this, this.tags_list.filter(function (t) {
           return !exclude.includes(t);
         }));
       }
       return _classPrivateFieldGet(_tags, this);
-    }
-  }, {
-    key: "main_category",
-    get: function get() {
-      return this.digital_data.page.category.primaryCategory;
-    }
-  }, {
-    key: "sub_category",
-    get: function get() {
-      return this.digital_data.page.category.subCategory1;
-    }
-  }, {
-    key: "categories",
-    get: function get() {
-      var _this8 = this;
-      return this.tags.filter(function (c) {
-        return !_this8.categories_list.includes(c);
-      });
     }
   }], [{
     key: "new",
@@ -1708,24 +1647,18 @@ ADBLBookPage = /*#__PURE__*/function (_BookPage) {
   }
   _inherits(ADBLBookPage, _BookPage);
   return _createClass(ADBLBookPage, [{
-    key: "adbl",
-    get: function get() {
-      return this.doc.qs("adbl-product-metadata script");
-    }
-  }, {
-    key: "info",
-    get: function get() {
-      return Object.assign.apply(Object, [{}].concat(_toConsumableArray(this.adbl.map(function (e) {
-        return JSON.parse(e.textContent);
+    key: "adbl_data",
+    get:
+    /**
+     * Return data parsed from JSON script inside of <adbl-product-metadata> tags.
+     *
+     * @return {object}
+     */
+    function get() {
+      var scripts = this.doc.qs("adbl-product-metadata script");
+      return Object.assign.apply(Object, [{}].concat(_toConsumableArray(scripts.map(function (s) {
+        return JSON.parse(s.textContent);
       }))));
-    }
-  }, {
-    key: "categories_list",
-    get: function get() {
-      var _this$info$categories;
-      return ((_this$info$categories = this.info.categories) === null || _this$info$categories === void 0 ? void 0 : _this$info$categories.map(function (c) {
-        return c.name.trim();
-      })) || [];
     }
 
     /**
@@ -1743,14 +1676,14 @@ ADBLBookPage = /*#__PURE__*/function (_BookPage) {
   }, {
     key: "series",
     get: function get() {
-      var _this$info;
+      var _this$adbl_data;
       var series = [];
-      var _iterator7 = _createForOfIteratorHelper(((_this$info = this.info) === null || _this$info === void 0 ? void 0 : _this$info.series) || []),
-        _step7;
+      var _iterator4 = _createForOfIteratorHelper(((_this$adbl_data = this.adbl_data) === null || _this$adbl_data === void 0 ? void 0 : _this$adbl_data.series) || []),
+        _step4;
       try {
-        for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
+        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
           var _s$url, _s$url2, _s$part;
-          var s = _step7.value;
+          var s = _step4.value;
           series.push({
             id: ((_s$url = s.url) === null || _s$url === void 0 || (_s$url = _s$url.match(/series\/.*\/(.*)\?/)) === null || _s$url === void 0 ? void 0 : _s$url[1]) || "",
             url: ((_s$url2 = s.url) === null || _s$url2 === void 0 ? void 0 : _s$url2.replace(/\?.*$/, "")) || "",
@@ -1759,9 +1692,9 @@ ADBLBookPage = /*#__PURE__*/function (_BookPage) {
           });
         }
       } catch (err) {
-        _iterator7.e(err);
+        _iterator4.e(err);
       } finally {
-        _iterator7.f();
+        _iterator4.f();
       }
       return series;
     }
@@ -1787,15 +1720,6 @@ NormalBookPage = /*#__PURE__*/function (_BookPage2) {
       return this.doc.gc("bc-chip-text").map(function (c) {
         return c.attributes["data-text"].value;
       });
-    }
-  }, {
-    key: "categories_list",
-    get: function get() {
-      var _this$doc$qs;
-      return ((_this$doc$qs = this.doc.qs(".categoriesLabel a")) === null || _this$doc$qs === void 0 ? void 0 : _this$doc$qs.map(function (c) {
-        var _entityDecode;
-        return ((_entityDecode = entityDecode(c.innerHTML)) === null || _entityDecode === void 0 ? void 0 : _entityDecode.trim()) || "";
-      })) || [];
     }
   }, {
     key: "series",
@@ -1860,7 +1784,7 @@ DetailsFetcher = (_books3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function ()
     key: "populate",
     value: (function () {
       var _populate2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
-        var book, data, actual, total, i, _iterator8, _step8, timer, page;
+        var book, data, actual, total, i, _iterator5, _step5, timer, page;
         return _regeneratorRuntime().wrap(function _callee6$(_context6) {
           while (1) switch (_context6.prev = _context6.next) {
             case 0:
@@ -1871,15 +1795,15 @@ DetailsFetcher = (_books3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function ()
                 total: total
               });
               i = 0;
-              _iterator8 = _createForOfIteratorHelper(this.library);
+              _iterator5 = _createForOfIteratorHelper(this.library);
               _context6.prev = 6;
-              _iterator8.s();
+              _iterator5.s();
             case 8:
-              if ((_step8 = _iterator8.n()).done) {
+              if ((_step5 = _iterator5.n()).done) {
                 _context6.next = 24;
                 break;
               }
-              book = _step8.value;
+              book = _step5.value;
               if (book.url) {
                 _context6.next = 12;
                 break;
@@ -1909,10 +1833,10 @@ DetailsFetcher = (_books3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function ()
             case 26:
               _context6.prev = 26;
               _context6.t0 = _context6["catch"](6);
-              _iterator8.e(_context6.t0);
+              _iterator5.e(_context6.t0);
             case 29:
               _context6.prev = 29;
-              _iterator8.f();
+              _iterator5.f();
               return _context6.finish(29);
             case 32:
               actual.stop();
@@ -1943,19 +1867,19 @@ DetailsFetcher = (_books3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function ()
       if (!_classPrivateFieldGet(_books3, this)) {
         _classPrivateFieldSet(_books3, this, {});
         var data, page;
-        var _iterator9 = _createForOfIteratorHelper(this.pages),
-          _step9;
+        var _iterator6 = _createForOfIteratorHelper(this.pages),
+          _step6;
         try {
-          for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
-            page = _step9.value;
+          for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
+            page = _step6.value;
             if (!page) continue;
             var _data = page.data();
             _classPrivateFieldGet(_books3, this)[_data.id] = _data;
           }
         } catch (err) {
-          _iterator9.e(err);
+          _iterator6.e(err);
         } finally {
-          _iterator9.f();
+          _iterator6.f();
         }
       }
       return _classPrivateFieldGet(_books3, this);
@@ -2239,7 +2163,7 @@ OrdersFetcher = (_count = /*#__PURE__*/new WeakMap(), _items2 = /*#__PURE__*/new
     key: "init",
     value: function () {
       var _init = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(limit) {
-        var running_count, page, _iterator10, _step10, year, timer, page_num, page_count, _page;
+        var running_count, page, _iterator7, _step7, year, timer, page_num, page_count, _page;
         return _regeneratorRuntime().wrap(function _callee8$(_context8) {
           while (1) switch (_context8.prev = _context8.next) {
             case 0:
@@ -2256,15 +2180,15 @@ OrdersFetcher = (_count = /*#__PURE__*/new WeakMap(), _items2 = /*#__PURE__*/new
               fireEvent({
                 years: this.years
               });
-              _iterator10 = _createForOfIteratorHelper(this.years);
+              _iterator7 = _createForOfIteratorHelper(this.years);
               _context8.prev = 8;
-              _iterator10.s();
+              _iterator7.s();
             case 10:
-              if ((_step10 = _iterator10.n()).done) {
+              if ((_step7 = _iterator7.n()).done) {
                 _context8.next = 34;
                 break;
               }
-              year = _step10.value;
+              year = _step7.value;
               timer = new Timer();
               timer.start();
               fireEvent({
@@ -2314,10 +2238,10 @@ OrdersFetcher = (_count = /*#__PURE__*/new WeakMap(), _items2 = /*#__PURE__*/new
             case 36:
               _context8.prev = 36;
               _context8.t0 = _context8["catch"](8);
-              _iterator10.e(_context8.t0);
+              _iterator7.e(_context8.t0);
             case 39:
               _context8.prev = 39;
-              _iterator10.f();
+              _iterator7.f();
               return _context8.finish(39);
             case 42:
               fireEvent({
@@ -2340,8 +2264,8 @@ OrdersFetcher = (_count = /*#__PURE__*/new WeakMap(), _items2 = /*#__PURE__*/new
       var _populate3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
         var limit,
           i,
-          _iterator11,
-          _step11,
+          _iterator8,
+          _step8,
           page,
           timer,
           _args9 = arguments;
@@ -2356,15 +2280,15 @@ OrdersFetcher = (_count = /*#__PURE__*/new WeakMap(), _items2 = /*#__PURE__*/new
                 total: this.pages.length
               });
               i = 0;
-              _iterator11 = _createForOfIteratorHelper(this.pages);
+              _iterator8 = _createForOfIteratorHelper(this.pages);
               _context9.prev = 5;
-              _iterator11.s();
+              _iterator8.s();
             case 7:
-              if ((_step11 = _iterator11.n()).done) {
+              if ((_step8 = _iterator8.n()).done) {
                 _context9.next = 26;
                 break;
               }
-              page = _step11.value;
+              page = _step8.value;
               timer = new Timer();
               timer.start();
               fireEvent({
@@ -2405,10 +2329,10 @@ OrdersFetcher = (_count = /*#__PURE__*/new WeakMap(), _items2 = /*#__PURE__*/new
             case 28:
               _context9.prev = 28;
               _context9.t0 = _context9["catch"](5);
-              _iterator11.e(_context9.t0);
+              _iterator8.e(_context9.t0);
             case 31:
               _context9.prev = 31;
-              _iterator11.f();
+              _iterator8.f();
               return _context9.finish(31);
             case 34:
               fireEvent({
@@ -2440,28 +2364,28 @@ OrdersFetcher = (_count = /*#__PURE__*/new WeakMap(), _items2 = /*#__PURE__*/new
     get: function get() {
       if (!_classPrivateFieldGet(_items2, this)) {
         var items = {};
-        var _iterator12 = _createForOfIteratorHelper(this.pages),
-          _step12;
+        var _iterator9 = _createForOfIteratorHelper(this.pages),
+          _step9;
         try {
-          for (_iterator12.s(); !(_step12 = _iterator12.n()).done;) {
-            var page = _step12.value;
-            var _iterator13 = _createForOfIteratorHelper(page.items),
-              _step13;
+          for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
+            var page = _step9.value;
+            var _iterator10 = _createForOfIteratorHelper(page.items),
+              _step10;
             try {
-              for (_iterator13.s(); !(_step13 = _iterator13.n()).done;) {
-                var item = _step13.value;
+              for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
+                var item = _step10.value;
                 items[item.id] = item;
               }
             } catch (err) {
-              _iterator13.e(err);
+              _iterator10.e(err);
             } finally {
-              _iterator13.f();
+              _iterator10.f();
             }
           }
         } catch (err) {
-          _iterator12.e(err);
+          _iterator9.e(err);
         } finally {
-          _iterator12.f();
+          _iterator9.f();
         }
         _classPrivateFieldSet(_items2, this, items);
       }
@@ -4263,7 +4187,7 @@ TSVFile = (_headers2 = /*#__PURE__*/new WeakMap(), _rows3 = /*#__PURE__*/new Wea
   }, {
     key: "preprocess",
     value: function preprocess() {
-      var _loop3 = function _loop3() {
+      var _loop2 = function _loop2() {
         var _Object$entries5$_i = _slicedToArray(_Object$entries5[_i5], 2),
           i = _Object$entries5$_i[0],
           record = _Object$entries5$_i[1];
@@ -4289,7 +4213,7 @@ TSVFile = (_headers2 = /*#__PURE__*/new WeakMap(), _rows3 = /*#__PURE__*/new Wea
         });
       };
       for (var _i5 = 0, _Object$entries5 = Object.entries(this.records); _i5 < _Object$entries5.length; _i5++) {
-        _loop3();
+        _loop2();
       }
     }
   }, {
@@ -4338,10 +4262,10 @@ Result = (_headers3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
       rating: ["details"],
       num_ratings: ["details"],
       audible_original: ["details"],
-      category_type: ["details"],
-      main_category: ["details"],
-      sub_category: ["details"],
-      categories: ["details"],
+      type: ["details"],
+      genre: ["details"],
+      subgenre: ["details"],
+      tags: ["details"],
       is_adult: ["details"]
     });
     this.library = library || {};
@@ -4598,20 +4522,20 @@ Exporter = /*#__PURE__*/function () {
     value: function getResults() {
       var library_info, order_info, book_info, info;
       var results = [];
-      var _iterator14 = _createForOfIteratorHelper(this.library.books),
-        _step14;
+      var _iterator11 = _createForOfIteratorHelper(this.library.books),
+        _step11;
       try {
-        for (_iterator14.s(); !(_step14 = _iterator14.n()).done;) {
-          library_info = _step14.value;
+        for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
+          library_info = _step11.value;
           book_info = this.details.books[library_info.id];
           order_info = this.orders.items[library_info.id];
           var result = new Result(library_info, book_info, order_info);
           results.push(result.data());
         }
       } catch (err) {
-        _iterator14.e(err);
+        _iterator11.e(err);
       } finally {
-        _iterator14.f();
+        _iterator11.f();
       }
       log_table("Your audible data", results);
       this.results = results;

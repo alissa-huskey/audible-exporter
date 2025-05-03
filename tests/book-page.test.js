@@ -5,6 +5,17 @@
 require("../src/dev.js");
 require("../src/book-page.js");
 
+let fixtures = [
+  "book-details-ace.html",
+  "book-details-audible-original.html",
+  "book-details-award.html",
+  "book-details-multiple-series.html",
+  "book-details-no-series.html",
+  "book-details.html",
+];
+
+let docs = Object.fromEntries(fixtures.map((f) => [f, fixtureDoc(f)]));
+
 describe("BookPage", () => {
   let page = new BookPage();
 
@@ -18,15 +29,15 @@ describe("BookPage", () => {
       klass: ADBLBookPage,
     },
   ])("BookPage.new()", ({ fixture, klass }) => {
-    let doc = fixtureDoc(fixture);
+    let doc = docs[fixture];
     let page = BookPage.new(doc);
     expect(page).toBeA(klass);
   });
 
   test("BookPage.get()", async () => {
     Page.prototype.fetchDoc = mockFetchDocs([
-      fixtureDoc("book-details-audible-original.html"),
-      fixtureDoc("book-details.html"),
+      docs["book-details-audible-original.html"],
+      docs["book-details.html"],
     ]);
 
     let page = await BookPage.get("https://www.audible.com/pd/0062978810");
@@ -58,7 +69,7 @@ describe("BookPage", () => {
       narrators: ["Roger Clark"],
     },
   ])(".narrators", async ({ fixture, narrators }) => {
-    let doc = fixtureDoc(fixture);
+    let doc = docs[fixture];
     let page = BookPage.new(doc);
 
     expect(page.narrators).toBeA(Array);
@@ -120,21 +131,89 @@ describe("BookPage", () => {
       ],
     },
   ])(".series", async ({ fixture, series }) => {
-    let doc = fixtureDoc(fixture);
+    let doc = docs[fixture];
     let page = BookPage.new(doc);
 
     expect(page.series).toBeA(Array);
     expect(page.series).toEqual(series);
   });
+
+  test.each([
+    {
+      genre: "Science Fiction & Fantasy",
+      subgenre: "Fantasy",
+      tags: ["Funny", "Scary", "Detective", "Solar System"],
+      type: "Fiction",
+    },
+    {
+      genre: "Romance",
+      subgenre: "Fantasy",
+      tags: ["Epic Fantasy", "Science Fiction", "Steampunk", "Paleontology"],
+      type: "Fiction",
+    },
+    {
+      genre: "Romance",
+      subgenre: "Paranormal",
+      tags: ["Fiction", "Fairy Tales", "Fantasy"],
+      type: "Fiction",
+    },
+    {
+      genre: "Romance",
+      subgenre: "Fantasy",
+      tags: [],
+      type: "Fiction",
+    },
+    {
+      genre: "Education & Learning",
+      subgenre: "Words, Language & Grammar",
+      tags: [],
+      type: "Nonfiction",
+    },
+    {
+      genre: "Comedy & Humor",
+      subgenre: "Performing Arts",
+      tags: [],
+      type: "Nonfiction",
+    },
+    {
+      genre: "Teen & Young Adult",
+      subgenre: "Mystery, Thriller & Suspense",
+      tags: ["Fairy Tales, Folk Tales & Myths"],
+      type: "Fiction",
+    },
+    {
+      genre: "Teen & Young Adult",
+      subgenre: "Mystery, Thriller & Suspense",
+      tags: ["True Crime"],
+      type: "Nonfiction",
+    },
+    {
+      genre: "Mystery, Thriller & Suspense",
+      subgenre: "Mystery",
+      tags: ["History"],
+      type: "Fiction",
+    },
+  ])(".type", async ({ genre, subgenre, tags, type }) => {
+    let page = BookPage.new();
+
+    jest.spyOn(BookPage.prototype, "genre", "get").mockReturnValue(genre);
+    jest.spyOn(BookPage.prototype, "subgenre", "get").mockReturnValue(subgenre);
+
+    for (let klass of [BookPage, NormalBookPage, ADBLBookPage]) {
+      jest.spyOn(klass.prototype, "tags_list", "get").mockReturnValue(tags);
+    }
+
+    expect(page.type).toBe(type);
+  });
 });
 
 describe("NormalBookPage", () => {
-  let doc = fixtureDoc("book-details-audible-original.html");
+  let doc = docs["book-details-audible-original.html"];
   let page = new NormalBookPage(doc);
 
-  test(".json_scripts", () => {
-    expect(page.json_scripts).toBeA(Object);
-    expect(Object.keys(page.json_scripts)).toEqual([
+  test(".json", () => {
+    expect(page.json).toBeA(Object);
+    expect(Object.keys(page.json)).toEqual([
       "Organization",
       "Audiobook",
       "BreadcrumbList",
@@ -142,7 +221,7 @@ describe("NormalBookPage", () => {
     ]);
   });
 
-  test(".json_audiobook", () => {
+  test(".audiobook_data", () => {
     let json = {
       "@context": "http://schema.org",
       "@type": "Audiobook",
@@ -162,12 +241,12 @@ describe("NormalBookPage", () => {
       },
     };
 
-    expect(page.json_audiobook).toBeA(Object);
-    expect(page.json_audiobook).toMatchObject(json);
-    expect(page.json_audiobook.description).toMatch("On a nightmare world");
+    expect(page.audiobook_data).toBeA(Object);
+    expect(page.audiobook_data).toMatchObject(json);
+    expect(page.audiobook_data.description).toMatch("On a nightmare world");
   });
 
-  test(".json_product", () => {
+  test(".product_data", () => {
     let json = {
       "@context": "http://schema.org",
       "@type": "Product",
@@ -184,13 +263,13 @@ describe("NormalBookPage", () => {
       },
     };
 
-    expect(page.json_product).toBeTruthy();
-    expect(page.json_product).toMatchObject(json);
+    expect(page.product_data).toBeTruthy();
+    expect(page.product_data).toMatchObject(json);
   });
 
-  test(".product_data", () => {
-    expect(page.product_data).toBeA(Object);
-    expect(page.product_data).toEqual({
+  test(".product_info", () => {
+    expect(page.product_info).toBeA(Object);
+    expect(page.product_info).toEqual({
       isAvailable: true,
       productID: "B0BL84CBLZ",
       isInWishlist: false,
@@ -303,10 +382,10 @@ describe("NormalBookPage", () => {
       summary:
         "On a nightmare world a thousand light years from Earth, one honest cop won’t rest until he solves the mystery of why his colony was condemned there, in this Audible Original story from best-selling author Larry Correia. On a planet where life is cheap, in a city built on corruption, very few things are considered holy. The Landing Site is one of them. The remains of the century-old habitat pod—which delivered the colonists to the only barely habitable place on the cruel world of Croatoan—has become a monument to the hardscrabble people who somehow survived the unsurvivable. So when blood is shed on that sacred ground, it’s seen as an attack against the entire colony. With a fanatical terrorist group holding hostages inside the monument, DCI Lutero Cade and the Zenith PD have to end the crisis and put the bad guys down. Only there’s far more to this case than meets the eye. The lander may have been carrying a hidden cargo. And a shadowy figure with his own drone army will do anything to make sure the mission’s secrets stay buried—no matter how many nosy detectives he has to kill to do it.",
       audible_original: true,
-      category_type: "fiction",
-      main_category: "Science Fiction & Fantasy",
-      sub_category: "Science Fiction",
-      categories: ["Funny", "Scary", "Detective", "Solar System"],
+      type: "Fiction",
+      genre: "Science Fiction & Fantasy",
+      subgenre: "Science Fiction",
+      tags: ["Funny", "Scary", "Detective", "Solar System"],
       rating: 4.6,
       num_ratings: 1719,
       is_adult: false,
@@ -324,13 +403,8 @@ describe("NormalBookPage", () => {
     expect(result).toEqual(data);
   });
 
-  test(".categories_list", () => {
-    let categories = ["Science Fiction & Fantasy", "Science Fiction"];
-    expect(page.categories_list).toEqual(categories);
-  });
-
-  test(".main_category", () => {
-    expect(page.main_category).toEqual("Science Fiction & Fantasy");
+  test(".genre", () => {
+    expect(page.genre).toEqual("Science Fiction & Fantasy");
   });
 
   test(".tags_list", () => {
@@ -346,32 +420,18 @@ describe("NormalBookPage", () => {
   });
 
   test(".tags", () => {
-    let tags = [
-      "Science Fiction",
-      "Funny",
-      "Scary",
-      "Detective",
-      "Solar System",
-    ];
+    let tags = ["Funny", "Scary", "Detective", "Solar System"];
 
     expect(page.tags).toEqual(tags);
   });
 
-  test(".sub_category", () => {
-    expect(page.tags).toEqual([
-      "Science Fiction",
-      "Funny",
-      "Scary",
-      "Detective",
-      "Solar System",
-    ]);
-
-    expect(page.sub_category).toBe("Science Fiction");
+  test(".subgenre", () => {
+    expect(page.subgenre).toBe("Science Fiction");
   });
 });
 
 describe("ADBLBookPage", () => {
-  let doc = fixtureDoc("book-details.html");
+  let doc = docs["book-details.html"];
   let page = new ADBLBookPage(doc);
 
   test(".id", () => {
@@ -435,18 +495,15 @@ describe("ADBLBookPage", () => {
     expect(page.audible_original).toBe(false);
   });
 
-  test(".categories_list", () => {
-    expect(page.categories_list).toEqual(["Mystery, Thriller & Suspense"]);
-  });
-
-  test(".main_category", () => {
-    expect(page.main_category).toBe("Mystery, Thriller & Suspense");
+  test(".genre", () => {
+    expect(page.genre).toBe("Mystery, Thriller & Suspense");
   });
 
   test(".tags_list", () => {
-    expect(page.tags).toEqual([
+    expect(page.tags_list).toEqual([
       "Fantasy",
       "Fantasy Essentials",
+      "Fiction",
       "Mystery",
       "Paranormal",
       "Police Procedural",
@@ -459,7 +516,7 @@ describe("ADBLBookPage", () => {
   });
 
   test(".tags_list (with ampersand)", () => {
-    let doc = fixtureDoc("book-details-no-series.html");
+    let doc = docs["book-details-no-series.html"];
     let page = new ADBLBookPage(doc);
 
     expect(page.tags_list).toEqual([
@@ -479,7 +536,6 @@ describe("ADBLBookPage", () => {
     expect(page.tags).toEqual([
       "Fantasy",
       "Fantasy Essentials",
-      "Mystery",
       "Paranormal",
       "Police Procedural",
       "Urban",
@@ -501,12 +557,12 @@ describe("ADBLBookPage", () => {
     ]);
   });
 
-  test(".sub_category", () => {
-    expect(page.sub_category).toBe("Mystery");
+  test(".subgenre", () => {
+    expect(page.subgenre).toBe("Mystery");
   });
 
   test(".data() errors", () => {
-    let field_count = 16;
+    let field_count = 17;
     let page = new BookPage();
     let spy = jest.spyOn(global.console, "error");
     global.console.errors = spy.mockImplementation(() => {});
