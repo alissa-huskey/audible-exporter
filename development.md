@@ -42,19 +42,33 @@ Javascript, stored in `src`, is bundled into flat files by following the
 Architecture
 ------------
 
-Core components:
+### Core
+
+| Component    | Description                                                         |
+|--------------|---------------------------------------------------------------------|
+| Doc          | HTMLElement wrapper with helpers.                                   |
+| Virtual File | Blob file for download.                                             |
+
+### UI
+
+User interface components.
+
+| Component    | Description                                                         |
+|--------------|---------------------------------------------------------------------|
+| Notifier     | Status/progress bar DOM element.                                    |
+| Dialog       | Modal dialog box DOM element.                                       |
+| Exporter     | UI to open dialogs, display notifiers, and produce download file.   |
+
+### ETL
+
+Data extract-transform-load components.
 
 | Component    | Description                                                         |
 |--------------|---------------------------------------------------------------------|
 | Fetcher      | Collection of pages.                                                |
-| Doc          | HTMLElement wrapper with helpers.                                   |
 | Parser       | Document to be parsed.                                              |
 | Page         | Page on audible.com to be parsed or contains elements to be parsed. |
-| Notifier     | Status/progress bar DOM element.                                    |
-| Dialog       | Modal dialog box DOM element.                                       |
 | Row          | Row element on a audible.com page.                                  |
-| Virtual File | Blob file for download.                                             |
-| Exporter     | UI to open dialogs, display notifiers, and produce download file.   |
 
 Coding Style
 ------------
