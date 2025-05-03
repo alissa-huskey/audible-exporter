@@ -202,39 +202,10 @@ task("corejs", () => {
   return res;
 });
 
-/*
- * Generate the scripts to use in testcafe integration testing.
- */
-task("index.html", () => {
-  return src(`${dirs.src}/index.html`).pipe(using({})).pipe(dest(dirs.dev));
-});
-
-/*
- * Generate the scripts to use in testcafe integration testing.
- */
-task("_test-scripts", () => {
-  return src([
-    `${dirs.dev}/*-modal.js`,
-    `${dirs.dev}/*-notifier.js`,
-    `${dirs.dev}/audible-exporter.js`,
-  ])
-    .pipe(using({}))
-    .pipe(inject(/$/, { dirname: "tests/integration/runners" }))
-    .pipe(
-      replace(
-        /^/,
-        (_) => "\nwindow.addEventListener('DOMContentLoaded', function () {\n",
-      ),
-    )
-    .pipe(replace(/$/, (_) => "\n});"))
-    .pipe(dest("build/test-scripts"));
-});
-
 task(
   "dev",
   series("copy", "index.html", "style.css", "style.js", "ui", "exporter.js"),
 );
 task("exporter", series("dev", "audible-exporter.js"));
 task("compat", series("exporter", "babel", "corejs"));
-task("test-scripts", series("dev", "exporter", "_test-scripts"));
-task("default", parallel("test-scripts", "exporter", "compat"));
+task("default", parallel("exporter", "compat"));

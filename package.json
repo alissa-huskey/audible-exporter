@@ -5,8 +5,7 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint .",
-    "build": "gulp",
-    "int": "testcafe chrome:headless tests/integration/"
+    "build": "gulp"
   },
   "repository": {
     "type": "git",

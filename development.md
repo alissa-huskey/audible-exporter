@@ -10,7 +10,6 @@ Tools
 | Lint              | [ESLint][]          | `npm lint`                                                | `.eslintrc.js` |
 | Format            | [Prettier][]        | `prettier --check src`                                    | `.eslintrc.js` |
 | Unit Tests        | [Jest][]            | `npm test`                                                | `package.json` |
-| Integration Tests | [Testcafe][]        | `npm int`                                                 |                |
 | Build             | [Gulp][]            | `gulp`                                                    | `gulpfile.js`  |
 | Compile           | [Babel][]           |                                                           |                |
 | Package Manager   | [npm][]             |                                                           |                |
@@ -20,22 +19,10 @@ Tools
 [ESLint]: https://eslint.org/
 [Prettier]: https://prettier.io/
 [Jest]: https://jestjs.io/
-[Testcafe]: https://testcafe.io/
 [Gulp]: https://gulpjs.com/docs/en/getting-started/quick-start
 [Babel]: https://babeljs.io/
 [npm]: https://www.npmjs.com/
 [dependency-tree]: https://github.com/dependents/node-dependency-tree
-
-### Testcafe
-
-Located in `tests/integration`.
-
-Right now there are only barebones tests for each step and the exporter as a
-whole to make sure that the div is created and visible.
-
-Tests are run on scripts created on build and stored in `build/test-scripts`,
-which runs the source script on `DOMContentLoaded` event and appends the
-associated code from `tests/integration/runners` which executes the code.
 
 Build
 -----
@@ -49,7 +36,6 @@ Javascript, stored in `src`, is bundled into flat files by following the
 | Gulp Task      | Location             | Description                                                        |
 |----------------|----------------------|--------------------------------------------------------------------|
 | `dev`          | `build/dev`          | bundled component files that can be tested individually in browser |
-| `test-scripts` | `build/test-scripts` | scripts for integration tests (see [Testcafe](#Testcafe))           |
 | `prep`         | `build/prepped`      | source files with CSS added into JS                                |
 | `dist`         | `dist`               | release files                                                      |
 
