@@ -1,4 +1,4 @@
-require("./util.js");
+require("../util.js");
 
 /**
  * Domain class.

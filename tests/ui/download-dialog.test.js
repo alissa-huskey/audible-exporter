@@ -1,11 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-
-const $ = require("jquery");
-
-require("../src/dev.js");
-require("../src/download-dialog.js");
+require("../../src/ui/download-dialog.js");
 
 describe("DownloadDialog", () => {
   let dialog = new DownloadDialog();

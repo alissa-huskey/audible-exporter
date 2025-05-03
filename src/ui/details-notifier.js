@@ -3,7 +3,7 @@
  * step.
  */
 
-require("./util.js");
+require("../util.js");
 require("./notifier.js");
 
 DetailsNotifier = class extends Notifier {

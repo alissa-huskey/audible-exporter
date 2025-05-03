@@ -1,10 +1,6 @@
-/**
- * @jest-environment jsdom
- */
-
 const $ = require("jquery");
 
-require("../src/dialog.js");
+require("../../src/ui/dialog.js");
 
 describe("Dialog", () => {
   let dialog = new Dialog();

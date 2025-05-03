@@ -2,7 +2,7 @@
  * Modal dialog box.
  */
 
-require("./util.js");
+require("../util.js");
 require("./dialog.js");
 
 ErrorDialog = class extends Dialog {

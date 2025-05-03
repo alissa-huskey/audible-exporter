@@ -1,9 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-
-require("../src/dev.js");
-require("../src/purchase-history-notifier.js");
+require("../../src/ui/purchase-history-notifier.js");
 
 describe("PurchaseHistoryNotifier", () => {
   let notifier = new PurchaseHistoryNotifier();

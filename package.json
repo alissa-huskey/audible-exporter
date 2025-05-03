@@ -55,7 +55,7 @@
       "./tests/matchers.js"
     ],
     "testMatch": [
-      "<rootDir>/tests/*.test.js"
+      "<rootDir>/tests/**/*.test.js"
     ],
     "bail": 1
   },

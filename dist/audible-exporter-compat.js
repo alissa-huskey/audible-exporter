@@ -15,7 +15,7 @@ forced:!0},{iterateEntries:function iterateEntries(t){return new o(t,"entries")}
 //# sourceMappingURL=minified.js.map
 
 
-var _doc, _default_page_size, _rows, _books, _books2, _page_count, _types, _category_genres, _tags, _json, _audiobook_data, _product_data, _product_info, _digital_data, _books3, _default_per_page, _valid_date_ranges, _orders, _purchases, _items, _page_num, _year, _count, _items2, _wrapper, _css, _wrapper2, _head, _content, _copy, _actions, _close_btn, _selectors, _wrapper3, _head2, _content2, _close_btn2, _copy2, _wrapper4, _content3, _actions2, _close_btn3, _ft_select, _start_btn, _file, _selectors2, _wrapper5, _head3, _content4, _copy3, _actions3, _ft_select2, _dl_btn, _file2, _selectors3, _wrapper6, _bar, _status, _percentage, _messages, _context11, _steps, _estimate, _percent, _item_no, _total, _year2, _years, _year3, _year_page, _item_no2, _page_count2, _item_no3, _total2, _item_no4, _total3, _contents, _headers, _rows2, _headers2, _rows3, _headers3;
+var _doc, _default_page_size, _rows, _books, _books2, _page_count, _types, _category_genres, _tags, _json, _audiobook_data, _product_data, _product_info, _digital_data, _books3, _default_per_page, _valid_date_ranges, _orders, _purchases, _items, _page_num, _year, _count, _items2, _headers, _wrapper, _css, _wrapper2, _head, _content, _copy, _actions, _close_btn, _selectors, _wrapper3, _head2, _content2, _close_btn2, _copy2, _wrapper4, _content3, _actions2, _close_btn3, _ft_select, _start_btn, _file, _selectors2, _wrapper5, _head3, _content4, _copy3, _actions3, _ft_select2, _dl_btn, _file2, _selectors3, _wrapper6, _bar, _status, _percentage, _messages, _context11, _steps, _estimate, _percent, _item_no, _total, _year2, _years, _year3, _year_page, _item_no2, _page_count2, _item_no3, _total2, _item_no4, _total3, _contents, _headers2, _rows2, _headers3, _rows3;
 function _superPropGet(t, o, e, r) { var p = _get3(_getPrototypeOf(1 & r ? t.prototype : t), o, e); return 2 & r && "function" == typeof p ? function (t) { return p.apply(e, t); } : p; }
 function _get3() { return _get3 = "undefined" != typeof Reflect && Reflect.get ? Reflect.get.bind() : function (e, t, r) { var p = _superPropBase(e, t); if (p) { var n = Object.getOwnPropertyDescriptor(p, t); return n.get ? n.get.call(arguments.length < 3 ? e : r) : n.value; } }, _get3.apply(null, arguments); }
 function _superPropBase(t, o) { for (; !{}.hasOwnProperty.call(t, o) && null !== (t = _getPrototypeOf(t));); return t; }
@@ -331,150 +331,6 @@ Timer = /*#__PURE__*/function () {
   }]);
 }();
 /**
- * Domain class.
- *
- * Parses the subdomain, name, second level domain, and top level domain from a
- * host.
- */
-Domain = /*#__PURE__*/function () {
-  /**
-   * Create a Domain object.
-   *
-   * @param {string} host  The host portion of the URL.
-   *
-   * @example
-   *
-   * new Domain("example.co.uk");
-   */
-  function _class() {
-    var host = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    _classCallCheck(this, _class);
-    this.host = host;
-  }
-
-  /**
-   * Create a domain object from a URL.
-   *
-   * @param {string} address  URL
-   * @example
-   *
-   * Domain.fromURL("http://www.google.com/")
-   */
-  return _createClass(_class, [{
-    key: "labels",
-    get:
-    /**
-     * Array of dot seperated labels that make up the domain name.
-     *
-     * @example
-     * new Domain("example.com").labels == ["example", "com"];
-     */
-    function get() {
-      return this.host.split(".");
-    }
-
-    /**
-     * Array of second level domains available for this top level domain.
-     */
-  }, {
-    key: "ok_slds",
-    get: function get() {
-      return this.SLDS[this.tld] || [];
-    }
-
-    /**
-     * Top level domain.
-     *
-     * @example
-     * new Domain("example.com").tld == "com";
-     */
-  }, {
-    key: "tld",
-    get: function get() {
-      return this.labels.slice(-1)[0];
-    }
-
-    /**
-     * Second level domain(s).
-     *
-     * @example
-     * new Domain("example.co.uk").sld == "co";
-     */
-  }, {
-    key: "sld",
-    get: function get() {
-      if (!this.ok_slds.length) return "";
-      var labels = this.labels.slice(0, -1);
-      var i = labels.length - 1;
-      var sld;
-      do {
-        var attempt = labels.slice(i).join(".");
-        if (!this.ok_slds.includes(attempt)) {
-          break;
-        }
-        sld = attempt;
-        i--;
-      } while (i > 0);
-      return sld || "";
-    }
-
-    /**
-     * Domain name.
-     *
-     * @example
-     * new Domain("example.com").name == "example";
-     */
-  }, {
-    key: "name",
-    get: function get() {
-      // count of slds + 1 (tld)
-      var suffixes = (this.sld ? this.sld.split(".").length : 0) + 1;
-      // name is one backwards from there
-      var idx = this.labels.length - suffixes - 1;
-      return this.labels[idx];
-    }
-
-    /**
-     * Subdomain(s).
-     *
-     * @example
-     * new Domain("help.example.com").labels == "help";
-     */
-  }, {
-    key: "subdomain",
-    get: function get() {
-      var labels = this.labels.slice();
-      // number of slds + 1 (tld) + 1 (name)
-      var suffixes = (this.sld ? this.sld.split(".").length : 0) + 2;
-
-      // chop off everything starting at the name
-      labels.splice(-suffixes);
-
-      // whatever is left is the subdomain
-      var subdomain = labels.join(".");
-      return subdomain;
-    }
-  }], [{
-    key: "fromURL",
-    value: function fromURL(address) {
-      var url = new URL(address);
-      var domain = new Domain(url.host);
-      domain.url = url;
-      return domain;
-    }
-  }]);
-}();
-Domain.prototype.TLDS = ["asia", "blue", "ca", "ceo", "ch", "club", "cm", "co", "com", "de", "es", "fr", "in", "international", "it", "jp", "lu", "mobi", "mp", "name", "net", "nyc", "org", "pink", "pk", "red", "se", "si", "ws"];
-Domain.prototype.SLDS = {
-  es: ["com", "edu", "gob", "nom", "org"],
-  fr: ["aeroport", "avoues", "cci", "chambagri", "chirurgiens-dentistes", "experts-comptables", "geometre-expert", "greta", "huissier-justice", "medecin", "notaires", "pharmacien", "port", "prd", "veterinaire"],
-  "in": ["5g", "6g", "ac", "ai", "am", "bihar", "biz", "business", "ca", "cn", "co", "com", "com", "coop", "cs", "delhi", "dr", "edu", "er", "ernet", "firm", "gen", "gov", "gujarat", "ind", "info", "int", "internet", "io", "me", "mil", "net", "org", "pg", "post", "pro", "res", "travel", "tv", "uk", "up", "us"],
-  jp: ["ac", "ad", "co", "ed", "go", "gr", "lg", "ne", "or"],
-  pk: ["biz", "com", "edu", "fam", "gkp", "gob", "gog", "gok", "gop", "gos", "gov", "ltd", "mil", "net", "org", "res", "web"],
-  uk: ["ac", "bl", "co", "gov", "judiciary", "ltd", "me", "mod", "net", "nhs", "nic", "org", "parliament", "plc", "police", "rct", "royal", "sch", "ukaea"],
-  us: ["dni", "fed", "isa", "nsn"]
-};
-/**
  * Wraper for HTMLElements.
  */
 
@@ -484,10 +340,10 @@ Doc = /*#__PURE__*/function () {
    *
    * @params {HTMLElement} [elm]
    */
-  function _class2() {
+  function _class() {
     var _this = this;
     var elm = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    _classCallCheck(this, _class2);
+    _classCallCheck(this, _class);
     this.element = elm;
     if (!elm) return;
     var _loop = function _loop(k) {
@@ -517,7 +373,7 @@ Doc = /*#__PURE__*/function () {
    *
    * @returns {Doc[]}
    */
-  return _createClass(_class2, [{
+  return _createClass(_class, [{
     key: "gc",
     value:
     /**
@@ -1233,11 +1089,11 @@ LibraryFetcher = (_books2 = /*#__PURE__*/new WeakMap(), _page_count = /*#__PURE_
  */
 
 BookPage = (_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#__PURE__*/new WeakMap(), _tags = /*#__PURE__*/new WeakMap(), _json = /*#__PURE__*/new WeakMap(), _audiobook_data = /*#__PURE__*/new WeakMap(), _product_data = /*#__PURE__*/new WeakMap(), _product_info = /*#__PURE__*/new WeakMap(), _digital_data = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Page3) {
-  function _class3() {
+  function _class2() {
     var _this7;
     var doc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    _classCallCheck(this, _class3);
-    _this7 = _callSuper(this, _class3);
+    _classCallCheck(this, _class2);
+    _this7 = _callSuper(this, _class2);
     _classPrivateFieldInitSpec(_this7, _types, ["Fiction", "Nonfiction"]);
     _classPrivateFieldInitSpec(_this7, _category_genres, {
       "Arts & Entertainment": "nonfiction",
@@ -1311,8 +1167,8 @@ BookPage = (_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#__PURE__*
    *
    * @return {Object} Object of parsed JSON mapping @type -> object.
    */
-  _inherits(_class3, _Page3);
-  return _createClass(_class3, [{
+  _inherits(_class2, _Page3);
+  return _createClass(_class2, [{
     key: "json",
     get: function get() {
       if (!_classPrivateFieldGet(_json, this) && this.doc) {
@@ -2415,22 +2271,253 @@ LedgerFetcher = (_count = /*#__PURE__*/new WeakMap(), _items2 = /*#__PURE__*/new
   }]);
 }());
 /**
+ * Result.
+ *
+ * Final result set for a book from library data, order data, and book details
+ * data.
+ */
+Result = (_headers = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
+  function Result() {
+    var library = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    var details = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+    var order = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+    _classCallCheck(this, Result);
+    /**
+     * Mapping of header to list of sources in order of precedence.
+     *
+     * @access private
+     */
+    _classPrivateFieldInitSpec(this, _headers, {
+      asin: ["order", "library", "details"],
+      url: ["order", "library"],
+      title: ["order", "details", "library"],
+      authors: ["details", "library"],
+      narrators: ["details", "library"],
+      series: ["library", "details"],
+      publisher: ["details"],
+      duration: ["details"],
+      released: ["details"],
+      released_ts: ["details"],
+      purchased: ["order"],
+      language: ["details"],
+      summary: ["details"],
+      rating: ["details"],
+      num_ratings: ["details"],
+      audible_original: ["details"],
+      type: ["details"],
+      genre: ["details"],
+      subgenre: ["details"],
+      tags: ["details"],
+      is_adult: ["details"]
+    });
+    this.library = library || {};
+    this.details = details || {};
+    this.order = order || {};
+  }
+
+  /**
+   * Get the value for key from the first source that has it defined.
+   *
+   * @param {string} key  Key from .#headers.
+   *
+   * @return {any}
+   */
+  return _createClass(Result, [{
+    key: "first",
+    value: function first(key) {
+      var _this14 = this;
+      // the objects to look for key in
+      var sources = _toConsumableArray(_classPrivateFieldGet(_headers, this)[key]);
+      return sources.reduce(function (fallback, source, _, arr) {
+        var value = _this14[source][key];
+
+        // if the key is there, return it and break early
+        if (!["null", "undefined"].includes(_typeof(value))) {
+          arr.splice(1);
+          return value;
+        } else {
+          // otherwise, return ""
+          return fallback;
+        }
+      }, "");
+    }
+
+    /**
+     * Mapping of keys from .#headers to the value pulled from source data.
+     *
+     * @return {object}
+     */
+  }, {
+    key: "data",
+    value: function data() {
+      var _this15 = this;
+      return Object.fromEntries(Object.keys(_classPrivateFieldGet(_headers, this)).map(function (key) {
+        return [key, _this15.first(key)];
+      }));
+    }
+  }]);
+}());
+/**
+ * Domain class.
+ *
+ * Parses the subdomain, name, second level domain, and top level domain from a
+ * host.
+ */
+Domain = /*#__PURE__*/function () {
+  /**
+   * Create a Domain object.
+   *
+   * @param {string} host  The host portion of the URL.
+   *
+   * @example
+   *
+   * new Domain("example.co.uk");
+   */
+  function _class3() {
+    var host = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    _classCallCheck(this, _class3);
+    this.host = host;
+  }
+
+  /**
+   * Create a domain object from a URL.
+   *
+   * @param {string} address  URL
+   * @example
+   *
+   * Domain.fromURL("http://www.google.com/")
+   */
+  return _createClass(_class3, [{
+    key: "labels",
+    get:
+    /**
+     * Array of dot seperated labels that make up the domain name.
+     *
+     * @example
+     * new Domain("example.com").labels == ["example", "com"];
+     */
+    function get() {
+      return this.host.split(".");
+    }
+
+    /**
+     * Array of second level domains available for this top level domain.
+     */
+  }, {
+    key: "ok_slds",
+    get: function get() {
+      return this.SLDS[this.tld] || [];
+    }
+
+    /**
+     * Top level domain.
+     *
+     * @example
+     * new Domain("example.com").tld == "com";
+     */
+  }, {
+    key: "tld",
+    get: function get() {
+      return this.labels.slice(-1)[0];
+    }
+
+    /**
+     * Second level domain(s).
+     *
+     * @example
+     * new Domain("example.co.uk").sld == "co";
+     */
+  }, {
+    key: "sld",
+    get: function get() {
+      if (!this.ok_slds.length) return "";
+      var labels = this.labels.slice(0, -1);
+      var i = labels.length - 1;
+      var sld;
+      do {
+        var attempt = labels.slice(i).join(".");
+        if (!this.ok_slds.includes(attempt)) {
+          break;
+        }
+        sld = attempt;
+        i--;
+      } while (i > 0);
+      return sld || "";
+    }
+
+    /**
+     * Domain name.
+     *
+     * @example
+     * new Domain("example.com").name == "example";
+     */
+  }, {
+    key: "name",
+    get: function get() {
+      // count of slds + 1 (tld)
+      var suffixes = (this.sld ? this.sld.split(".").length : 0) + 1;
+      // name is one backwards from there
+      var idx = this.labels.length - suffixes - 1;
+      return this.labels[idx];
+    }
+
+    /**
+     * Subdomain(s).
+     *
+     * @example
+     * new Domain("help.example.com").labels == "help";
+     */
+  }, {
+    key: "subdomain",
+    get: function get() {
+      var labels = this.labels.slice();
+      // number of slds + 1 (tld) + 1 (name)
+      var suffixes = (this.sld ? this.sld.split(".").length : 0) + 2;
+
+      // chop off everything starting at the name
+      labels.splice(-suffixes);
+
+      // whatever is left is the subdomain
+      var subdomain = labels.join(".");
+      return subdomain;
+    }
+  }], [{
+    key: "fromURL",
+    value: function fromURL(address) {
+      var url = new URL(address);
+      var domain = new Domain(url.host);
+      domain.url = url;
+      return domain;
+    }
+  }]);
+}();
+Domain.prototype.TLDS = ["asia", "blue", "ca", "ceo", "ch", "club", "cm", "co", "com", "de", "es", "fr", "in", "international", "it", "jp", "lu", "mobi", "mp", "name", "net", "nyc", "org", "pink", "pk", "red", "se", "si", "ws"];
+Domain.prototype.SLDS = {
+  es: ["com", "edu", "gob", "nom", "org"],
+  fr: ["aeroport", "avoues", "cci", "chambagri", "chirurgiens-dentistes", "experts-comptables", "geometre-expert", "greta", "huissier-justice", "medecin", "notaires", "pharmacien", "port", "prd", "veterinaire"],
+  "in": ["5g", "6g", "ac", "ai", "am", "bihar", "biz", "business", "ca", "cn", "co", "com", "com", "coop", "cs", "delhi", "dr", "edu", "er", "ernet", "firm", "gen", "gov", "gujarat", "ind", "info", "int", "internet", "io", "me", "mil", "net", "org", "pg", "post", "pro", "res", "travel", "tv", "uk", "up", "us"],
+  jp: ["ac", "ad", "co", "ed", "go", "gr", "lg", "ne", "or"],
+  pk: ["biz", "com", "edu", "fam", "gkp", "gob", "gog", "gok", "gop", "gos", "gov", "ltd", "mil", "net", "org", "res", "web"],
+  uk: ["ac", "bl", "co", "gov", "judiciary", "ltd", "me", "mod", "net", "nhs", "nic", "org", "parliament", "plc", "police", "rct", "royal", "sch", "ukaea"],
+  us: ["dni", "fed", "isa", "nsn"]
+};
+/**
  * Manage elements in the DOM.
  */
 
 DOM = /*#__PURE__*/function () {
   function DOM() {
     var _window,
-      _this14 = this;
+      _this16 = this;
     _classCallCheck(this, DOM);
     (_window = window).ae || (_window.ae = {});
     ["id", "class", "classList"].forEach(function (k) {
-      Object.defineProperty(_this14, k, {
+      Object.defineProperty(_this16, k, {
         get: function get() {
-          return _this14.wrapper[k];
+          return _this16.wrapper[k];
         },
         set: function set(v) {
-          _this14.wrapper[k] = v;
+          _this16.wrapper[k] = v;
         }
       });
     });
@@ -2544,18 +2631,18 @@ DOM = /*#__PURE__*/function () {
 
 Style = (_wrapper = /*#__PURE__*/new WeakMap(), _css = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_DOM) {
   function Style() {
-    var _this15;
+    var _this17;
     _classCallCheck(this, Style);
     for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
       args[_key5] = arguments[_key5];
     }
-    _this15 = _callSuper(this, Style, [].concat(args));
-    _classPrivateFieldInitSpec(_this15, _wrapper, null);
-    _classPrivateFieldInitSpec(_this15, _css, null);
-    _defineProperty(_this15, "selectors", {
+    _this17 = _callSuper(this, Style, [].concat(args));
+    _classPrivateFieldInitSpec(_this17, _wrapper, null);
+    _classPrivateFieldInitSpec(_this17, _css, null);
+    _defineProperty(_this17, "selectors", {
       wrapper: "ae-style"
     });
-    return _this15;
+    return _this17;
   }
   _inherits(Style, _DOM);
   return _createClass(Style, [{
@@ -2641,20 +2728,20 @@ Styled = /*#__PURE__*/function (_DOM2) {
 
 Dialog = (_wrapper2 = /*#__PURE__*/new WeakMap(), _head = /*#__PURE__*/new WeakMap(), _content = /*#__PURE__*/new WeakMap(), _copy = /*#__PURE__*/new WeakMap(), _actions = /*#__PURE__*/new WeakMap(), _close_btn = /*#__PURE__*/new WeakMap(), _selectors = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Styled) {
   function Dialog() {
-    var _this16;
+    var _this18;
     _classCallCheck(this, Dialog);
     for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
       args[_key6] = arguments[_key6];
     }
-    _this16 = _callSuper(this, Dialog, [].concat(args));
-    _classPrivateFieldInitSpec(_this16, _wrapper2, null);
-    _classPrivateFieldInitSpec(_this16, _head, null);
-    _classPrivateFieldInitSpec(_this16, _content, null);
-    _classPrivateFieldInitSpec(_this16, _copy, null);
-    _classPrivateFieldInitSpec(_this16, _actions, null);
-    _classPrivateFieldInitSpec(_this16, _close_btn, null);
-    _defineProperty(_this16, "title", "");
-    _classPrivateFieldInitSpec(_this16, _selectors, {
+    _this18 = _callSuper(this, Dialog, [].concat(args));
+    _classPrivateFieldInitSpec(_this18, _wrapper2, null);
+    _classPrivateFieldInitSpec(_this18, _head, null);
+    _classPrivateFieldInitSpec(_this18, _content, null);
+    _classPrivateFieldInitSpec(_this18, _copy, null);
+    _classPrivateFieldInitSpec(_this18, _actions, null);
+    _classPrivateFieldInitSpec(_this18, _close_btn, null);
+    _defineProperty(_this18, "title", "");
+    _classPrivateFieldInitSpec(_this18, _selectors, {
       wrapper: "ae-modal",
       content: "ae-content",
       head: "ae-head",
@@ -2662,7 +2749,7 @@ Dialog = (_wrapper2 = /*#__PURE__*/new WeakMap(), _head = /*#__PURE__*/new WeakM
       actions: "ae-actions",
       close_btn: "ae-close-btn"
     });
-    return _this16;
+    return _this18;
   }
   _inherits(Dialog, _Styled);
   return _createClass(Dialog, [{
@@ -2825,17 +2912,17 @@ Dialog = (_wrapper2 = /*#__PURE__*/new WeakMap(), _head = /*#__PURE__*/new WeakM
 
 ErrorDialog = (_wrapper3 = /*#__PURE__*/new WeakMap(), _head2 = /*#__PURE__*/new WeakMap(), _content2 = /*#__PURE__*/new WeakMap(), _close_btn2 = /*#__PURE__*/new WeakMap(), _copy2 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Dialog) {
   function ErrorDialog() {
-    var _this17;
+    var _this19;
     var paragraphs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     _classCallCheck(this, ErrorDialog);
-    _this17 = _callSuper(this, ErrorDialog);
-    _classPrivateFieldInitSpec(_this17, _wrapper3, null);
-    _classPrivateFieldInitSpec(_this17, _head2, null);
-    _classPrivateFieldInitSpec(_this17, _content2, null);
-    _classPrivateFieldInitSpec(_this17, _close_btn2, null);
-    _classPrivateFieldInitSpec(_this17, _copy2, null);
-    _this17.paragraphs = paragraphs;
-    return _this17;
+    _this19 = _callSuper(this, ErrorDialog);
+    _classPrivateFieldInitSpec(_this19, _wrapper3, null);
+    _classPrivateFieldInitSpec(_this19, _head2, null);
+    _classPrivateFieldInitSpec(_this19, _content2, null);
+    _classPrivateFieldInitSpec(_this19, _close_btn2, null);
+    _classPrivateFieldInitSpec(_this19, _copy2, null);
+    _this19.paragraphs = paragraphs;
+    return _this19;
   }
 
   /* Elements
@@ -2880,11 +2967,11 @@ ErrorDialog = (_wrapper3 = /*#__PURE__*/new WeakMap(), _head2 = /*#__PURE__*/new
   }, {
     key: "copy",
     get: function get() {
-      var _this18 = this;
+      var _this20 = this;
       if (!_classPrivateFieldGet(_copy2, this)) {
         _classPrivateFieldSet(_copy2, this, _superPropGet(ErrorDialog, "copy", this, 1));
         this.paragraphs.forEach(function (text) {
-          _classPrivateFieldGet(_copy2, _this18).append(_this18.p(text));
+          _classPrivateFieldGet(_copy2, _this20).append(_this20.p(text));
         });
       }
       return _classPrivateFieldGet(_copy2, this);
@@ -2897,23 +2984,23 @@ ErrorDialog = (_wrapper3 = /*#__PURE__*/new WeakMap(), _head2 = /*#__PURE__*/new
 
 StartDialog = (_wrapper4 = /*#__PURE__*/new WeakMap(), _content3 = /*#__PURE__*/new WeakMap(), _actions2 = /*#__PURE__*/new WeakMap(), _close_btn3 = /*#__PURE__*/new WeakMap(), _ft_select = /*#__PURE__*/new WeakMap(), _start_btn = /*#__PURE__*/new WeakMap(), _file = /*#__PURE__*/new WeakMap(), _selectors2 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Dialog2) {
   function StartDialog() {
-    var _this19;
+    var _this21;
     _classCallCheck(this, StartDialog);
     for (var _len7 = arguments.length, args = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
       args[_key7] = arguments[_key7];
     }
-    _this19 = _callSuper(this, StartDialog, [].concat(args));
-    _classPrivateFieldInitSpec(_this19, _wrapper4, null);
-    _classPrivateFieldInitSpec(_this19, _content3, null);
-    _classPrivateFieldInitSpec(_this19, _actions2, null);
-    _classPrivateFieldInitSpec(_this19, _close_btn3, null);
-    _classPrivateFieldInitSpec(_this19, _ft_select, null);
-    _classPrivateFieldInitSpec(_this19, _start_btn, null);
-    _classPrivateFieldInitSpec(_this19, _file, null);
-    _classPrivateFieldInitSpec(_this19, _selectors2, {
+    _this21 = _callSuper(this, StartDialog, [].concat(args));
+    _classPrivateFieldInitSpec(_this21, _wrapper4, null);
+    _classPrivateFieldInitSpec(_this21, _content3, null);
+    _classPrivateFieldInitSpec(_this21, _actions2, null);
+    _classPrivateFieldInitSpec(_this21, _close_btn3, null);
+    _classPrivateFieldInitSpec(_this21, _ft_select, null);
+    _classPrivateFieldInitSpec(_this21, _start_btn, null);
+    _classPrivateFieldInitSpec(_this21, _file, null);
+    _classPrivateFieldInitSpec(_this21, _selectors2, {
       start_btn: "ae-start-btn"
     });
-    return _this19;
+    return _this21;
   }
   _inherits(StartDialog, _Dialog2);
   return _createClass(StartDialog, [{
@@ -2947,14 +3034,14 @@ StartDialog = (_wrapper4 = /*#__PURE__*/new WeakMap(), _content3 = /*#__PURE__*/
   }, {
     key: "content",
     get: function get() {
-      var _this20 = this;
+      var _this22 = this;
       if (!_classPrivateFieldGet(_content3, this)) {
         var content = _superPropGet(StartDialog, "content", this, 1);
         var ul = Doc.create("ul");
         content.append(this.copy);
         var need = ["be on audible.com and logged in.", "not close this browser window.", "not navigate away from this page.", "stay online (avoid sleep mode)."];
         ul.append.apply(ul, _toConsumableArray(need.map(function (text) {
-          return _this20.li(text);
+          return _this22.li(text);
         })));
         this.copy.append(this.p("This will export your audible library. It might take awhile."), this.p("Until it's done, you must:"), ul, this.p("Click the button to get started!"), this.actions);
         _classPrivateFieldSet(_content3, this, content);
@@ -3020,25 +3107,25 @@ StartDialog = (_wrapper4 = /*#__PURE__*/new WeakMap(), _content3 = /*#__PURE__*/
 
 DownloadDialog = (_wrapper5 = /*#__PURE__*/new WeakMap(), _head3 = /*#__PURE__*/new WeakMap(), _content4 = /*#__PURE__*/new WeakMap(), _copy3 = /*#__PURE__*/new WeakMap(), _actions3 = /*#__PURE__*/new WeakMap(), _ft_select2 = /*#__PURE__*/new WeakMap(), _dl_btn = /*#__PURE__*/new WeakMap(), _file2 = /*#__PURE__*/new WeakMap(), _selectors3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Dialog3) {
   function DownloadDialog() {
-    var _this21;
+    var _this23;
     _classCallCheck(this, DownloadDialog);
     for (var _len8 = arguments.length, args = new Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
       args[_key8] = arguments[_key8];
     }
-    _this21 = _callSuper(this, DownloadDialog, [].concat(args));
-    _classPrivateFieldInitSpec(_this21, _wrapper5, null);
-    _classPrivateFieldInitSpec(_this21, _head3, null);
-    _classPrivateFieldInitSpec(_this21, _content4, null);
-    _classPrivateFieldInitSpec(_this21, _copy3, null);
-    _classPrivateFieldInitSpec(_this21, _actions3, null);
-    _classPrivateFieldInitSpec(_this21, _ft_select2, null);
-    _classPrivateFieldInitSpec(_this21, _dl_btn, null);
-    _classPrivateFieldInitSpec(_this21, _file2, null);
-    _classPrivateFieldInitSpec(_this21, _selectors3, {
+    _this23 = _callSuper(this, DownloadDialog, [].concat(args));
+    _classPrivateFieldInitSpec(_this23, _wrapper5, null);
+    _classPrivateFieldInitSpec(_this23, _head3, null);
+    _classPrivateFieldInitSpec(_this23, _content4, null);
+    _classPrivateFieldInitSpec(_this23, _copy3, null);
+    _classPrivateFieldInitSpec(_this23, _actions3, null);
+    _classPrivateFieldInitSpec(_this23, _ft_select2, null);
+    _classPrivateFieldInitSpec(_this23, _dl_btn, null);
+    _classPrivateFieldInitSpec(_this23, _file2, null);
+    _classPrivateFieldInitSpec(_this23, _selectors3, {
       ft_select: "ae-filetype",
       dl_btn: "ae-download-btn"
     });
-    return _this21;
+    return _this23;
   }
   _inherits(DownloadDialog, _Dialog3);
   return _createClass(DownloadDialog, [{
@@ -3227,29 +3314,29 @@ DownloadDialog = (_wrapper5 = /*#__PURE__*/new WeakMap(), _head3 = /*#__PURE__*/
 }(Dialog));
 Notifier = (_wrapper6 = /*#__PURE__*/new WeakMap(), _bar = /*#__PURE__*/new WeakMap(), _status = /*#__PURE__*/new WeakMap(), _percentage = /*#__PURE__*/new WeakMap(), _messages = /*#__PURE__*/new WeakMap(), _context11 = /*#__PURE__*/new WeakMap(), _steps = /*#__PURE__*/new WeakMap(), _estimate = /*#__PURE__*/new WeakMap(), _percent = /*#__PURE__*/new WeakMap(), _item_no = /*#__PURE__*/new WeakMap(), _total = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Styled2) {
   function Notifier() {
-    var _this22;
+    var _this24;
     _classCallCheck(this, Notifier);
     for (var _len9 = arguments.length, args = new Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
       args[_key9] = arguments[_key9];
     }
-    _this22 = _callSuper(this, Notifier, [].concat(args));
-    _classPrivateFieldInitSpec(_this22, _wrapper6, null);
-    _classPrivateFieldInitSpec(_this22, _bar, null);
-    _classPrivateFieldInitSpec(_this22, _status, null);
-    _classPrivateFieldInitSpec(_this22, _percentage, null);
-    _classPrivateFieldInitSpec(_this22, _messages, null);
-    _classPrivateFieldInitSpec(_this22, _context11, null);
-    _classPrivateFieldInitSpec(_this22, _steps, null);
-    _classPrivateFieldInitSpec(_this22, _estimate, null);
-    _classPrivateFieldInitSpec(_this22, _percent, null);
-    _classPrivateFieldInitSpec(_this22, _item_no, null);
-    _classPrivateFieldInitSpec(_this22, _total, null);
-    _defineProperty(_this22, "step_no", null);
-    _defineProperty(_this22, "total_steps", 4);
-    _defineProperty(_this22, "estimate_padding", 1.05);
-    _defineProperty(_this22, "event_name", "update-ae-notifier");
-    _defineProperty(_this22, "times", []);
-    _defineProperty(_this22, "selectors", {
+    _this24 = _callSuper(this, Notifier, [].concat(args));
+    _classPrivateFieldInitSpec(_this24, _wrapper6, null);
+    _classPrivateFieldInitSpec(_this24, _bar, null);
+    _classPrivateFieldInitSpec(_this24, _status, null);
+    _classPrivateFieldInitSpec(_this24, _percentage, null);
+    _classPrivateFieldInitSpec(_this24, _messages, null);
+    _classPrivateFieldInitSpec(_this24, _context11, null);
+    _classPrivateFieldInitSpec(_this24, _steps, null);
+    _classPrivateFieldInitSpec(_this24, _estimate, null);
+    _classPrivateFieldInitSpec(_this24, _percent, null);
+    _classPrivateFieldInitSpec(_this24, _item_no, null);
+    _classPrivateFieldInitSpec(_this24, _total, null);
+    _defineProperty(_this24, "step_no", null);
+    _defineProperty(_this24, "total_steps", 4);
+    _defineProperty(_this24, "estimate_padding", 1.05);
+    _defineProperty(_this24, "event_name", "update-ae-notifier");
+    _defineProperty(_this24, "times", []);
+    _defineProperty(_this24, "selectors", {
       wrapper: "ae-notifier",
       bar: "ae-bar",
       messages: "ae-messages",
@@ -3259,7 +3346,7 @@ Notifier = (_wrapper6 = /*#__PURE__*/new WeakMap(), _bar = /*#__PURE__*/new Weak
       steps: "ae-steps-text",
       estimate: "ae-estimate-text"
     });
-    return _this22;
+    return _this24;
   }
   _inherits(Notifier, _Styled2);
   return _createClass(Notifier, [{
@@ -3787,16 +3874,16 @@ Notifier = (_wrapper6 = /*#__PURE__*/new WeakMap(), _bar = /*#__PURE__*/new Weak
 }(Styled));
 PurchaseHistoryNotifier = (_year2 = /*#__PURE__*/new WeakMap(), _years = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Notifier) {
   function PurchaseHistoryNotifier() {
-    var _this23;
+    var _this25;
     var years = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
     _classCallCheck(this, PurchaseHistoryNotifier);
-    _this23 = _callSuper(this, PurchaseHistoryNotifier);
-    _classPrivateFieldInitSpec(_this23, _year2, null);
-    _classPrivateFieldInitSpec(_this23, _years, null);
-    _defineProperty(_this23, "step_no", 1);
-    _this23.times = [];
-    _this23.years = years || [];
-    return _this23;
+    _this25 = _callSuper(this, PurchaseHistoryNotifier);
+    _classPrivateFieldInitSpec(_this25, _year2, null);
+    _classPrivateFieldInitSpec(_this25, _years, null);
+    _defineProperty(_this25, "step_no", 1);
+    _this25.times = [];
+    _this25.years = years || [];
+    return _this25;
   }
   _inherits(PurchaseHistoryNotifier, _Notifier);
   return _createClass(PurchaseHistoryNotifier, [{
@@ -3881,19 +3968,19 @@ PurchaseHistoryNotifier = (_year2 = /*#__PURE__*/new WeakMap(), _years = /*#__PU
 }(Notifier));
 OrderNotifier = (_year3 = /*#__PURE__*/new WeakMap(), _year_page = /*#__PURE__*/new WeakMap(), _item_no2 = /*#__PURE__*/new WeakMap(), _page_count2 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Notifier2) {
   function OrderNotifier() {
-    var _this24;
+    var _this26;
     var total = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
     var years = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
     _classCallCheck(this, OrderNotifier);
-    _this24 = _callSuper(this, OrderNotifier);
-    _classPrivateFieldInitSpec(_this24, _year3, null);
-    _classPrivateFieldInitSpec(_this24, _year_page, null);
-    _classPrivateFieldInitSpec(_this24, _item_no2, null);
-    _classPrivateFieldInitSpec(_this24, _page_count2, null);
-    _defineProperty(_this24, "step_no", 2);
-    _this24.total = total;
-    _this24.years = years;
-    return _this24;
+    _this26 = _callSuper(this, OrderNotifier);
+    _classPrivateFieldInitSpec(_this26, _year3, null);
+    _classPrivateFieldInitSpec(_this26, _year_page, null);
+    _classPrivateFieldInitSpec(_this26, _item_no2, null);
+    _classPrivateFieldInitSpec(_this26, _page_count2, null);
+    _defineProperty(_this26, "step_no", 2);
+    _this26.total = total;
+    _this26.years = years;
+    return _this26;
   }
   _inherits(OrderNotifier, _Notifier2);
   return _createClass(OrderNotifier, [{
@@ -3993,16 +4080,16 @@ OrderNotifier = (_year3 = /*#__PURE__*/new WeakMap(), _year_page = /*#__PURE__*/
 }(Notifier));
 LibraryNotifier = (_item_no3 = /*#__PURE__*/new WeakMap(), _total2 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Notifier3) {
   function LibraryNotifier() {
-    var _this25;
+    var _this27;
     _classCallCheck(this, LibraryNotifier);
     for (var _len10 = arguments.length, args = new Array(_len10), _key10 = 0; _key10 < _len10; _key10++) {
       args[_key10] = arguments[_key10];
     }
-    _this25 = _callSuper(this, LibraryNotifier, [].concat(args));
-    _classPrivateFieldInitSpec(_this25, _item_no3, null);
-    _classPrivateFieldInitSpec(_this25, _total2, null);
-    _defineProperty(_this25, "step_no", 3);
-    return _this25;
+    _this27 = _callSuper(this, LibraryNotifier, [].concat(args));
+    _classPrivateFieldInitSpec(_this27, _item_no3, null);
+    _classPrivateFieldInitSpec(_this27, _total2, null);
+    _defineProperty(_this27, "step_no", 3);
+    return _this27;
   }
   _inherits(LibraryNotifier, _Notifier3);
   return _createClass(LibraryNotifier, [{
@@ -4043,16 +4130,16 @@ LibraryNotifier = (_item_no3 = /*#__PURE__*/new WeakMap(), _total2 = /*#__PURE__
 
 DetailsNotifier = (_item_no4 = /*#__PURE__*/new WeakMap(), _total3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Notifier4) {
   function DetailsNotifier() {
-    var _this26;
+    var _this28;
     _classCallCheck(this, DetailsNotifier);
     for (var _len11 = arguments.length, args = new Array(_len11), _key11 = 0; _key11 < _len11; _key11++) {
       args[_key11] = arguments[_key11];
     }
-    _this26 = _callSuper(this, DetailsNotifier, [].concat(args));
-    _classPrivateFieldInitSpec(_this26, _item_no4, null);
-    _classPrivateFieldInitSpec(_this26, _total3, null);
-    _defineProperty(_this26, "step_no", 4);
-    return _this26;
+    _this28 = _callSuper(this, DetailsNotifier, [].concat(args));
+    _classPrivateFieldInitSpec(_this28, _item_no4, null);
+    _classPrivateFieldInitSpec(_this28, _total3, null);
+    _defineProperty(_this28, "step_no", 4);
+    return _this28;
   }
   _inherits(DetailsNotifier, _Notifier4);
   return _createClass(DetailsNotifier, [{
@@ -4129,18 +4216,18 @@ VirtualFile = (_contents = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () 
     }
   }]);
 }());
-JSONFile = (_headers = /*#__PURE__*/new WeakMap(), _rows2 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_VirtualFile) {
+JSONFile = (_headers2 = /*#__PURE__*/new WeakMap(), _rows2 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_VirtualFile) {
   function JSONFile() {
-    var _this27;
+    var _this29;
     var records = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
     _classCallCheck(this, JSONFile);
-    _this27 = _callSuper(this, JSONFile);
-    _classPrivateFieldInitSpec(_this27, _headers, null);
-    _classPrivateFieldInitSpec(_this27, _rows2, null);
-    _defineProperty(_this27, "mimetype", "text/json");
-    _defineProperty(_this27, "extension", "json");
-    _this27.records = records;
-    return _this27;
+    _this29 = _callSuper(this, JSONFile);
+    _classPrivateFieldInitSpec(_this29, _headers2, null);
+    _classPrivateFieldInitSpec(_this29, _rows2, null);
+    _defineProperty(_this29, "mimetype", "text/json");
+    _defineProperty(_this29, "extension", "json");
+    _this29.records = records;
+    return _this29;
   }
   _inherits(JSONFile, _VirtualFile);
   return _createClass(JSONFile, [{
@@ -4151,42 +4238,42 @@ JSONFile = (_headers = /*#__PURE__*/new WeakMap(), _rows2 = /*#__PURE__*/new Wea
     }
   }]);
 }(VirtualFile));
-TSVFile = (_headers2 = /*#__PURE__*/new WeakMap(), _rows3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_VirtualFile2) {
+TSVFile = (_headers3 = /*#__PURE__*/new WeakMap(), _rows3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_VirtualFile2) {
   function TSVFile() {
-    var _this28;
+    var _this30;
     var records = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
     _classCallCheck(this, TSVFile);
-    _this28 = _callSuper(this, TSVFile);
-    _classPrivateFieldInitSpec(_this28, _headers2, null);
-    _classPrivateFieldInitSpec(_this28, _rows3, null);
-    _defineProperty(_this28, "mimetype", "text/tsv");
-    _defineProperty(_this28, "extension", "tsv");
-    _this28.records = records;
-    return _this28;
+    _this30 = _callSuper(this, TSVFile);
+    _classPrivateFieldInitSpec(_this30, _headers3, null);
+    _classPrivateFieldInitSpec(_this30, _rows3, null);
+    _defineProperty(_this30, "mimetype", "text/tsv");
+    _defineProperty(_this30, "extension", "tsv");
+    _this30.records = records;
+    return _this30;
   }
   _inherits(TSVFile, _VirtualFile2);
   return _createClass(TSVFile, [{
     key: "headers",
     get: function get() {
-      var _this29 = this;
+      var _this31 = this;
       if (!this.records || isEmpty(this.records)) return null;
-      if (!_classPrivateFieldGet(_headers2, this)) {
-        _classPrivateFieldSet(_headers2, this, Object.keys(this.records[0]).map(function (h) {
-          return _this29.sanitize(h);
+      if (!_classPrivateFieldGet(_headers3, this)) {
+        _classPrivateFieldSet(_headers3, this, Object.keys(this.records[0]).map(function (h) {
+          return _this31.sanitize(h);
         }));
       }
-      return _classPrivateFieldGet(_headers2, this);
+      return _classPrivateFieldGet(_headers3, this);
     }
   }, {
     key: "rows",
     get: function get() {
-      var _this30 = this;
+      var _this32 = this;
       if (!this.records || isEmpty(this.records)) return null;
       if (!_classPrivateFieldGet(_rows3, this)) {
         this.preprocess();
         _classPrivateFieldSet(_rows3, this, this.records.map(function (row) {
           return Object.values(row).map(function (v) {
-            return _this30.sanitize(v);
+            return _this32.sanitize(v);
           });
         }));
       }
@@ -4246,93 +4333,6 @@ TSVFile = (_headers2 = /*#__PURE__*/new WeakMap(), _rows3 = /*#__PURE__*/new Wea
     }
   }]);
 }(VirtualFile));
-/**
- * Result.
- *
- * Final result set for a book from library data, order data, and book details
- * data.
- */
-Result = (_headers3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
-  function Result() {
-    var library = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    var details = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-    var order = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-    _classCallCheck(this, Result);
-    /**
-     * Mapping of header to list of sources in order of precedence.
-     *
-     * @access private
-     */
-    _classPrivateFieldInitSpec(this, _headers3, {
-      asin: ["order", "library", "details"],
-      url: ["order", "library"],
-      title: ["order", "details", "library"],
-      authors: ["details", "library"],
-      narrators: ["details", "library"],
-      series: ["library", "details"],
-      publisher: ["details"],
-      duration: ["details"],
-      released: ["details"],
-      released_ts: ["details"],
-      purchased: ["order"],
-      language: ["details"],
-      summary: ["details"],
-      rating: ["details"],
-      num_ratings: ["details"],
-      audible_original: ["details"],
-      type: ["details"],
-      genre: ["details"],
-      subgenre: ["details"],
-      tags: ["details"],
-      is_adult: ["details"]
-    });
-    this.library = library || {};
-    this.details = details || {};
-    this.order = order || {};
-  }
-
-  /**
-   * Get the value for key from the first source that has it defined.
-   *
-   * @param {string} key  Key from .#headers.
-   *
-   * @return {any}
-   */
-  return _createClass(Result, [{
-    key: "first",
-    value: function first(key) {
-      var _this31 = this;
-      // the objects to look for key in
-      var sources = _toConsumableArray(_classPrivateFieldGet(_headers3, this)[key]);
-      return sources.reduce(function (fallback, source, _, arr) {
-        var value = _this31[source][key];
-
-        // if the key is there, return it and break early
-        if (!["null", "undefined"].includes(_typeof(value))) {
-          arr.splice(1);
-          return value;
-        } else {
-          // otherwise, return ""
-          return fallback;
-        }
-      }, "");
-    }
-
-    /**
-     * Mapping of keys from .#headers to the value pulled from source data.
-     *
-     * @return {object}
-     */
-  }, {
-    key: "data",
-    value: function data() {
-      var _this32 = this;
-      return Object.fromEntries(Object.keys(_classPrivateFieldGet(_headers3, this)).map(function (key) {
-        return [key, _this32.first(key)];
-      }));
-    }
-  }]);
-}());
 /**
  * Event listener to create the export file and start the download.
  */

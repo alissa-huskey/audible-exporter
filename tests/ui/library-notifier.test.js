@@ -1,9 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-
-require("../src/dev.js");
-require("../src/library-notifier.js");
+require("../../src/ui/library-notifier.js");
 
 describe("LibraryNotifier", () => {
   test(".item_no =", () => {

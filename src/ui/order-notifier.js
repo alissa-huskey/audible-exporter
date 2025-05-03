@@ -1,4 +1,4 @@
-require("./util.js");
+require("../util.js");
 require("./notifier.js");
 
 OrderNotifier = class extends Notifier {

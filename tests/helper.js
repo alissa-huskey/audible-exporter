@@ -1,3 +1,5 @@
+require("../src/dev.js");
+
 const fs = require("fs");
 
 global.getFixtureFile = function (name) {

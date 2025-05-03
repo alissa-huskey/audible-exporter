@@ -2,7 +2,7 @@
  * Modal dialog box.
  */
 
-require("./util.js");
+require("../util.js");
 require("./styled.js");
 
 Dialog = class extends Styled {

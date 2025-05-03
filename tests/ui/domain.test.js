@@ -1,5 +1,4 @@
-require("../src/dev.js");
-require("../src/domain.js");
+require("../../src/ui/domain.js");
 
 describe("new Domain()", () => {
   test("new Domain()", () => {

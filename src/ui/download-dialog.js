@@ -2,7 +2,7 @@
  * Modal pop-up window for downloading the export.
  */
 
-require("./util.js");
+require("../util.js");
 require("./dialog.js");
 
 DownloadDialog = class extends Dialog {

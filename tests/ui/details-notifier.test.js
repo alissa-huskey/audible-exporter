@@ -1,9 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-
-require("../src/dev.js");
-require("../src/details-notifier.js");
+require("../../src/ui/details-notifier.js");
 
 describe("DetailsNotifier", () => {
   let timers = [new Timer(0, 1000), new Timer(0, 1500), new Timer(0, 2000)];

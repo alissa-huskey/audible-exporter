@@ -1,10 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-
-const $ = require("jquery");
-
-require("../src/start-dialog.js");
+require("../../src/ui/start-dialog.js");
 
 describe("StartDialog", () => {
   let dialog = new StartDialog();

@@ -1,11 +1,6 @@
-/**
- * @jest-environment jsdom
- */
-
 const $ = require("jquery");
 
-require("../src/dev.js");
-require("../src/notifier.js");
+require("../../src/ui/notifier.js");
 
 describe("Notifier", () => {
   test("new Notifier", () => {

@@ -1,9 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-
-require("../src/dev.js");
-require("../src/order-notifier.js");
+require("../../src/ui/order-notifier.js");
 
 describe("OrderNotifier", () => {
   test("new OrderNotifier()", () => {

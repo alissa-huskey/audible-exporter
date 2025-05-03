@@ -113,7 +113,7 @@ task("clean", () => {
  * Copy all javascript source code to the prep directory.
  */
 task("copy", () => {
-  return src([`${dirs.src}/*.js`])
+  return src([`${dirs.src}/**/*.js`])
     .pipe(using())
     .pipe(dest(dirs.prep));
 });
@@ -132,22 +132,28 @@ task("style.css", (cb) => {
  * Inject the contents of style.css into style.js.
  */
 task("style.js", (cb) => {
-  return src([`${dirs.src}/style.js`])
+  return src([`${dirs.src}/ui/style.js`])
     .pipe(using({}))
     .pipe(inject(/\s*\/\* CSS_MARKER \*\/\n/, `${dirs.prep}/style.css`))
-    .pipe(dest(dirs.prep));
+    .pipe(dest(`${dirs.prep}/ui`));
 });
 
 /**
- * Bundle all modals, notifiers, and the exporter into a single flat file each
+ * Bundle all modals and notifiers into a single flat file each
  * and save them in build/dev/.
  */
-task("bundles", () => {
-  return src([
-    `${dirs.prep}/*-modal.js`,
-    `${dirs.prep}/*-notifier.js`,
-    `${dirs.prep}/exporter.js`,
-  ])
+task("ui", () => {
+  return src([`${dirs.prep}/ui/*-modal.js`, `${dirs.prep}/ui/*-notifier.js`])
+    .pipe(using({}))
+    .pipe(bundle())
+    .pipe(dest(`${dirs.dev}/ui`));
+});
+
+/**
+ * Bundle exporter and save in build/dev/.
+ */
+task("exporter.js", () => {
+  return src([`${dirs.prep}/exporter.js`])
     .pipe(using({}))
     .pipe(bundle())
     .pipe(dest(dirs.dev));
@@ -165,15 +171,6 @@ task("audible-exporter.js", () => {
     .pipe(replace("info = function", (_) => "var info = function"))
     .pipe(replace("error = function", (_) => "var error = function"))
     .pipe(dest(dirs.dev))
-    .pipe(dest(dirs.dist));
-});
-
-/**
- * Copy from build/dev to dist/
- */
-task("_dist", () => {
-  return src([`${dirs.dev}/audible-exporter.js`])
-    .pipe(using({}))
     .pipe(dest(dirs.dist));
 });
 
@@ -233,9 +230,11 @@ task("_test-scripts", () => {
     .pipe(dest("build/test-scripts"));
 });
 
-task("dev", series("copy", "index.html", "style.css", "style.js", "bundles"));
-task("dist", series("dev", "_dist"));
+task(
+  "dev",
+  series("copy", "index.html", "style.css", "style.js", "ui", "exporter.js"),
+);
 task("exporter", series("dev", "audible-exporter.js"));
 task("compat", series("exporter", "babel", "corejs"));
 task("test-scripts", series("dev", "exporter", "_test-scripts"));
-task("default", parallel("dev", "exporter", "test-scripts", "dist", "compat"));
+task("default", parallel("test-scripts", "exporter", "compat"));

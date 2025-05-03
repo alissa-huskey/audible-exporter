@@ -1,4 +1,4 @@
-require("./timer.js");
+require("../timer.js");
 require("./styled.js");
 
 Notifier = class extends Styled {

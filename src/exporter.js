@@ -1,19 +1,22 @@
 require("./util.js");
 require("./timer.js");
-require("./domain.js");
+
 require("./library-fetcher.js");
 require("./details-fetcher.js");
 require("./ledger-fetcher.js");
-require("./error-dialog.js");
-require("./start-dialog.js");
-require("./download-dialog.js");
-require("./purchase-history-notifier.js");
-require("./order-notifier.js");
-require("./library-notifier.js");
-require("./details-notifier.js");
+require("./result.js");
+
+require("./ui/domain.js");
+require("./ui/error-dialog.js");
+require("./ui/start-dialog.js");
+require("./ui/download-dialog.js");
+require("./ui/purchase-history-notifier.js");
+require("./ui/order-notifier.js");
+require("./ui/library-notifier.js");
+require("./ui/details-notifier.js");
+
 require("./json-file.js");
 require("./tsv-file.js");
-require("./result.js");
 
 /**
  * Event listener to create the export file and start the download.

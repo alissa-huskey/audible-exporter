@@ -2,7 +2,7 @@
  * Modal pop-up window for starting the exporter.
  */
 
-require("./util.js");
+require("../util.js");
 require("./dialog.js");
 
 StartDialog = class extends Dialog {

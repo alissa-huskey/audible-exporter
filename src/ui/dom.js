@@ -2,8 +2,8 @@
  * Manage elements in the DOM.
  */
 
-require("./util.js");
-require("./doc.js");
+require("../util.js");
+require("../doc.js");
 
 DOM = class {
   constructor() {
