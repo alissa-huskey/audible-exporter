@@ -6,13 +6,11 @@
 (Z) 2025-02-21 @feature get finished/not-finished status
 (Z) 2025-02-22 @feature Add my_review
 (Z) 2025-02-22 @feature Add my_rating
-(C) 2025-02-22 @refactor set variables for css class names in appropriate places.
-(Z) 2025-02-23 @feature Add series ID.
 (Z) 2025-02-23 @feature Get collections
 (Z) 2025-02-23 @feature Get wishlist https://www.audible.com/library/wishlist
 (Z) 2025-02-23 @feature Get saved authors https://www.audible.com/library/authors
-(M) 2025-02-23 @feature Get if it is added to favorites https://www.audible.com/library/collections/__FAVORITES
-(M) 2025-02-23 @feature Get if a book is marked as finished.
+(A) 2025-02-23 @feature Get if it is added to favorites https://www.audible.com/library/collections/__FAVORITES
+(A) 2025-02-23 @feature Get if a book is marked as finished.
 (Z) 2025-02-23 @feature Get if a book has a PDF https://www.audible.com/companion-file/B0CQ3759C3
 (Z) 2025-02-23 @feature Get a list of authors you follow
 (Z) 2025-02-23 @feature Add date downloaded to JSON
@@ -24,14 +22,12 @@
 (Z) 2025-02-27 @ux Display error message dialog on fatal error.
 (C) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
 (C) 2025-02-27 @refactor Have Page.fetchDoc() set this.url = url
-
 (D) 2025-03-01 @download Add purchase_timestamp.
-(A) 2025-03-01 @refactor @data pages: Parse data from multiple fields, select the first one that has content.
 (M) 2025-03-01 @feature Get a list of collections a book belongs to
 (C) 2025-03-01 @refactor Rename NormalBookPage -> LegacyBookPage
 (D) 2025-03-01 @refactor @performance See about getting rid of .data() methods to reduce overhead.
 (C) 2025-03-01 @refactor Move LibraryFetcher.fetchPage() -> LibraryPage.get()
-(A) 2025-03-02 @download ensure all URL formats are the same.
+(B) 2025-03-02 @download ensure all URL formats are the same.
 (B) 2025-03-02 @data Parse as much data as possible from every page.
 (B) 2025-03-02 @refactor Make the OrderPage constructor not such a mess.
 (M) 2025-03-05 @qa @testing Try autoprefixer https://github.com/postcss/autoprefixer#browsers
@@ -40,7 +36,7 @@
 (B) 2025-03-05 @refactor notifiers: Consider changing text=, time=, etc to .updateText(), .updateTime()
 (D) 2025-03-07 notifiers: @dom Change most IDs to classes; add IDs for individual notifiers.
 (B) 2025-03-07 @refactor notifier: consider renaming all elements ie status -> status_element / status_el
-(A) 2025-03-07 @reliability Make all requests from / instead of audible.com/
+(B) 2025-03-07 @reliability Make all requests from / instead of audible.com/
 (D) 2025-03-07 @performance look intoperformance (memory specifically) testing
 (Z) 2025-03-08 @feature Add an option to download as CSV. https://stackoverflow.com/questions/14964035/how-to-export-javascript-array-info-to-csv-on-client-side
 (B) 2025-03-08 @ux Make getLibrary() the first step. (would help with overall time estimate and quick download option.
@@ -51,7 +47,7 @@
 (B) 2025-03-10 @housekeeping reconsider code orginization (src/js, src/css; src/js/fetchers, src/js/modals?
 (B) 2025-03-10 @refactor review Timer started_at/ended_at and .started/stopped.toLocaleTimeString()
 2025-03-15 @bug Fix / detect sign in error.
-(A) 2025-03-15 @ux @bug Close button on error modal still has focus-visible styling (outline). (In safari I think.)
+(B) 2025-03-15 @ux @bug Close button on error modal still has focus-visible styling (outline). (In safari I think.)
 (D) 2025-03-15 @ux Download file selector looks funny in Safari.
 (B) 2025-03-15 Consider removing testcafe.
 (B) 2025-03-16 @ux When checking if on audible.com, exclude help.audible.com.
@@ -62,11 +58,10 @@
 (B) 2025-05-02 @ux Allow user to download multiple times/multiple filetypes.
 (A) 2025-05-02 @data Library Book Row: parse status (finished, xh xm, xh xm left)
 (B) 2025-05-02 @data @json Add account and date downloaded to JSON.
-(D) 2025-05-02 @data Authors: Parse things like "Rovina Cai - illustrator" to seperate contributors field https://www.audible.com/pd/How-the-King-of-Elfhame-Learned-to-Hate-Stories-Audiobook/1549187538
+(B) 2025-05-02 @data Authors: Parse things like "Rovina Cai - illustrator" to seperate contributors field https://www.audible.com/pd/How-the-King-of-Elfhame-Learned-to-Hate-Stories-Audiobook/1549187538
 (M) 2025-05-02 @data Order Page: Authors: If no author is listed, authors should be [], not [""] (B0C29VRJTJ)
 (D) 2025-05-02 Consider renaming OrderPage -> PurchaseHistoryPage since it might be confused with an order detail page (ie https://www.audible.com/account/order-details?orderId=D01-0506818-5008215)
 (B) 2025-05-02 @refactor Rename Purchase -> PurchaseRow.
 (A) 2025-05-02 @data @tsv Look into not escaping single quotes (look at series: https://www.audible.com/pd/House-of-Blades-Audiobook/B0B29L7HZ8)
-(A) 2025-05-02 @houskeeping Fix build not copying to dist/audible_exporter.js until second run.
 (B) 2025-05-03 @data Parse reviews from listener page: https://www.audible.com/listener
 2025-05-03 @ux Get total books from credit summary page first (for estimate): https://www.audible.com/account/credits
