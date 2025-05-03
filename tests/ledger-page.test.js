@@ -6,11 +6,13 @@ require("../src/dev.js");
 require("../src/ledger-page.js");
 
 describe("LedgerPage", () => {
-  let doc = fixtureDoc("order-page.html");
+  let doc = fixtureDoc("ledger-page.html");
   let page = new LedgerPage(doc);
 
   test("new LedgerPage(year, page)", async () => {
-    LedgerPage.prototype.fetchDoc = mockFetchDoc("order-page-2025-1-of-1.html");
+    LedgerPage.prototype.fetchDoc = mockFetchDoc(
+      "ledger-page-2025-1-of-1.html",
+    );
     let page = new LedgerPage(2025, 1);
     await page.get();
 
@@ -26,7 +28,7 @@ describe("LedgerPage", () => {
   });
 
   test("new LedgerPage(date_range_string, page)", async () => {
-    LedgerPage.prototype.fetchDoc = mockFetchDoc("order-page.html");
+    LedgerPage.prototype.fetchDoc = mockFetchDoc("ledger-page.html");
     let page = new LedgerPage("last_90_days", 1, 20);
 
     expect(page.year).toBe("last_90_days");
@@ -35,7 +37,7 @@ describe("LedgerPage", () => {
   });
 
   test("new LedgerPage(year, page, per_page)", async () => {
-    LedgerPage.prototype.fetchDoc = mockFetchDoc("order-page.html");
+    LedgerPage.prototype.fetchDoc = mockFetchDoc("ledger-page.html");
     let page = new LedgerPage(2025, 1, 20);
 
     expect(page).toBeA(LedgerPage);
@@ -53,7 +55,7 @@ describe("LedgerPage", () => {
   });
 
   test(".get()", async () => {
-    LedgerPage.prototype.fetchDoc = mockFetchDoc("order-page.html");
+    LedgerPage.prototype.fetchDoc = mockFetchDoc("ledger-page.html");
 
     let page = new LedgerPage("last_90_days", 1, 20);
     let element = await page.get();
@@ -65,14 +67,14 @@ describe("LedgerPage", () => {
   });
 
   test(".page_count", () => {
-    let page = new LedgerPage(fixtureDoc("order-page-2024-1-of-2.html"));
+    let page = new LedgerPage(fixtureDoc("ledger-page-2024-1-of-2.html"));
     expect(page.page_count).toBe(2);
   });
 
   test(".years", () => {
     let years = ["2025", "2024", "2023"];
 
-    page = new LedgerPage(fixtureDoc("order-page-2025-1-of-1.html"));
+    page = new LedgerPage(fixtureDoc("ledger-page-2025-1-of-1.html"));
     expect(page.years).toEqual(years);
   });
 
@@ -101,12 +103,12 @@ describe("LedgerPage", () => {
       "D01-7076604-3849823": { id: "D01-7076604-3849823", date: "10/15/2024", total: "1 Credit" },
     };
 
-    let page = new LedgerPage(fixtureDoc("order-page.html"));
+    let page = new LedgerPage(fixtureDoc("ledger-page.html"));
     expect(page.orders).toEqual(orders);
   });
 
   test(".purchases", () => {
-    let page = new LedgerPage(fixtureDoc("order-page.html"));
+    let page = new LedgerPage(fixtureDoc("ledger-page.html"));
     // prettier-ignore
     let purchases = [
         { asin: "B0CQ3759C3", order_id: "D01-7379715-3760239", amount: "1 Credit", credits: "1.0", title: "Wind and Truth", author: "Brandon Sanderson" },
@@ -209,7 +211,7 @@ describe("LedgerPage", () => {
         { asin: "0062978810", url: "http://www.audible.com/pd/0062978810", title: "Krondor the Betrayal", author: "Raymond E. Feist", purchased: "10/15/2024" }
     ];
 
-    let doc = fixtureDoc("order-page.html");
+    let doc = fixtureDoc("ledger-page.html");
     let page = new LedgerPage(doc);
     expect(page.items).toEqual(items);
   });

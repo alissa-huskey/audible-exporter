@@ -16,10 +16,10 @@ describe("LedgerFetcher", () => {
   });
 
   test(".init()", async () => {
-    let files = await glob("tests/fixtures/order-page-*-1-of-*.html");
+    let files = await glob("tests/fixtures/ledger-page-*-1-of-*.html");
     let pat = /^.*\//;
     let filenames = [
-      "order-page-2025-1-of-1.html",
+      "ledger-page-2025-1-of-1.html",
       ...files.map((f) => f.replace(pat, "")).reverse(),
     ];
     let mockFn = mockFetchFixtureDocs(filenames);
@@ -48,8 +48,8 @@ describe("LedgerFetcher", () => {
 
   test(".init(limit)", async () => {
     let filenames = [
-      "order-page-2025-1-of-1.html",
-      "order-page-2025-1-of-1.html",
+      "ledger-page-2025-1-of-1.html",
+      "ledger-page-2025-1-of-1.html",
     ];
     let mockFn = mockFetchFixtureDocs(filenames);
 
@@ -63,10 +63,10 @@ describe("LedgerFetcher", () => {
   });
 
   test(".populate()", async () => {
-    let files = await glob("tests/fixtures/order-page-*-1-of-*.html");
+    let files = await glob("tests/fixtures/ledger-page-*-1-of-*.html");
     let pat = /^.*\//;
     let docs = [
-      fixtureDoc("order-page-2025-1-of-1.html"),
+      fixtureDoc("ledger-page-2025-1-of-1.html"),
       ...files.map((f) => fixtureDoc(f.replace(pat, ""))).reverse(),
     ];
 
@@ -83,10 +83,10 @@ describe("LedgerFetcher", () => {
 
     let ledger = new LedgerFetcher();
     ledger.pages = [
-      new LedgerPage(fixtureDoc("order-page-2025-1-of-1.html")),
-      new LedgerPage(fixtureDoc("order-page-2024-1-of-2.html")),
+      new LedgerPage(fixtureDoc("ledger-page-2025-1-of-1.html")),
+      new LedgerPage(fixtureDoc("ledger-page-2024-1-of-2.html")),
       new LedgerPage(2024, 2),
-      new LedgerPage(fixtureDoc("order-page-2023-1-of-3.html")),
+      new LedgerPage(fixtureDoc("ledger-page-2023-1-of-3.html")),
       new LedgerPage(2023, 2),
       new LedgerPage(2023, 3),
     ];
@@ -97,7 +97,7 @@ describe("LedgerFetcher", () => {
   });
 
   test(".populate(limit)", async () => {
-    let doc = fixtureDoc("order-page-2025-1-of-1.html");
+    let doc = fixtureDoc("ledger-page-2025-1-of-1.html");
     let mockFn = mockFetchDocs([doc]);
     Page.prototype.fetchDoc = mockFn;
 
