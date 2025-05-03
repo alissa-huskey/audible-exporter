@@ -3,21 +3,21 @@
  */
 
 require("../src/dev.js");
-require("../src/order-page.js");
+require("../src/ledger-page.js");
 
-describe("OrderPage", () => {
+describe("LedgerPage", () => {
   let doc = fixtureDoc("order-page.html");
-  let page = new OrderPage(doc);
+  let page = new LedgerPage(doc);
 
-  test("new OrderPage(year, page)", async () => {
-    OrderPage.prototype.fetchDoc = mockFetchDoc("order-page-2025-1-of-1.html");
-    let page = new OrderPage(2025, 1);
+  test("new LedgerPage(year, page)", async () => {
+    LedgerPage.prototype.fetchDoc = mockFetchDoc("order-page-2025-1-of-1.html");
+    let page = new LedgerPage(2025, 1);
     await page.get();
 
-    expect(OrderPage.prototype.fetchDoc).toHaveBeenCalledWith(
+    expect(LedgerPage.prototype.fetchDoc).toHaveBeenCalledWith(
       `${page.base_url}&df=2025&pn=1&ps=40`,
     );
-    expect(page).toBeA(OrderPage);
+    expect(page).toBeA(LedgerPage);
     expect(page.year).toBe(2025);
     expect(page.page_num).toBe(1);
     expect(page.per_page).toBe(40);
@@ -25,54 +25,54 @@ describe("OrderPage", () => {
     expect(page.doc.title).toBe("Purchase History | Audible.com");
   });
 
-  test("new OrderPage(date_range_string, page)", async () => {
-    OrderPage.prototype.fetchDoc = mockFetchDoc("order-page.html");
-    let page = new OrderPage("last_90_days", 1, 20);
+  test("new LedgerPage(date_range_string, page)", async () => {
+    LedgerPage.prototype.fetchDoc = mockFetchDoc("order-page.html");
+    let page = new LedgerPage("last_90_days", 1, 20);
 
     expect(page.year).toBe("last_90_days");
     expect(page.page_num).toBe(1);
     expect(page.per_page).toBe(20);
   });
 
-  test("new OrderPage(year, page, per_page)", async () => {
-    OrderPage.prototype.fetchDoc = mockFetchDoc("order-page.html");
-    let page = new OrderPage(2025, 1, 20);
+  test("new LedgerPage(year, page, per_page)", async () => {
+    LedgerPage.prototype.fetchDoc = mockFetchDoc("order-page.html");
+    let page = new LedgerPage(2025, 1, 20);
 
-    expect(page).toBeA(OrderPage);
+    expect(page).toBeA(LedgerPage);
     expect(page.year).toBe(2025);
     expect(page.page_num).toBe(1);
     expect(page.per_page).toBe(20);
   });
 
-  test("new OrderPage(doc)", () => {
-    let page = new OrderPage(doc);
+  test("new LedgerPage(doc)", () => {
+    let page = new LedgerPage(doc);
     expect(page.year).toBe(2025);
     expect(page.page_num).toBe(1);
-    expect(page).toBeA(OrderPage);
+    expect(page).toBeA(LedgerPage);
     expect(page.doc).toBeA(Doc);
   });
 
   test(".get()", async () => {
-    OrderPage.prototype.fetchDoc = mockFetchDoc("order-page.html");
+    LedgerPage.prototype.fetchDoc = mockFetchDoc("order-page.html");
 
-    let page = new OrderPage("last_90_days", 1, 20);
+    let page = new LedgerPage("last_90_days", 1, 20);
     let element = await page.get();
 
-    expect(OrderPage.prototype.fetchDoc).toHaveBeenCalledWith(
+    expect(LedgerPage.prototype.fetchDoc).toHaveBeenCalledWith(
       `${page.base_url}&df=last_90_days&pn=1&ps=20`,
     );
     expect(element.title).toBe("Purchase History | Audible.com");
   });
 
   test(".page_count", () => {
-    let page = new OrderPage(fixtureDoc("order-page-2024-1-of-2.html"));
+    let page = new LedgerPage(fixtureDoc("order-page-2024-1-of-2.html"));
     expect(page.page_count).toBe(2);
   });
 
   test(".years", () => {
     let years = ["2025", "2024", "2023"];
 
-    page = new OrderPage(fixtureDoc("order-page-2025-1-of-1.html"));
+    page = new LedgerPage(fixtureDoc("order-page-2025-1-of-1.html"));
     expect(page.years).toEqual(years);
   });
 
@@ -101,12 +101,12 @@ describe("OrderPage", () => {
       "D01-7076604-3849823": { id: "D01-7076604-3849823", date: "10/15/2024", total: "1 Credit" },
     };
 
-    let page = new OrderPage(fixtureDoc("order-page.html"));
+    let page = new LedgerPage(fixtureDoc("order-page.html"));
     expect(page.orders).toEqual(orders);
   });
 
   test(".purchases", () => {
-    let page = new OrderPage(fixtureDoc("order-page.html"));
+    let page = new LedgerPage(fixtureDoc("order-page.html"));
     // prettier-ignore
     let purchases = [
         { asin: "B0CQ3759C3", order_id: "D01-7379715-3760239", amount: "1 Credit", credits: "1.0", title: "Wind and Truth", author: "Brandon Sanderson" },
@@ -210,12 +210,12 @@ describe("OrderPage", () => {
     ];
 
     let doc = fixtureDoc("order-page.html");
-    let page = new OrderPage(doc);
+    let page = new LedgerPage(doc);
     expect(page.items).toEqual(items);
   });
 
   test(".items errors", () => {
-    let page = new OrderPage();
+    let page = new LedgerPage();
     let spy = jest.spyOn(global.console, "error");
     global.console.errors = spy.mockImplementation(() => {});
 

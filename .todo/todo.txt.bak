@@ -64,3 +64,4 @@
 (A) 2025-05-02 @data @tsv Look into not escaping single quotes (look at series: https://www.audible.com/pd/House-of-Blades-Audiobook/B0B29L7HZ8)
 (B) 2025-05-03 @data Parse reviews from listener page: https://www.audible.com/listener
 2025-05-03 @ux Get total books from credit summary page first (for estimate): https://www.audible.com/account/credits
+(A) 2025-05-03 @tsv Move field-specific out of TSVFile.

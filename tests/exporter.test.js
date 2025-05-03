@@ -39,8 +39,8 @@ describe("Exporter", () => {
 
   test(".getPurchaseHistory()", async () => {
     let mockFn = mockFetchDocs([
-      fixtureDoc("order-page.html"),
-      fixtureDoc("order-page.html"),
+      fixtureDoc("ledger-page.html"),
+      fixtureDoc("ledger-page.html"),
     ]);
     Page.prototype.fetchDoc = mockFn;
 
@@ -48,21 +48,21 @@ describe("Exporter", () => {
     await exporter.getPurchaseHistory();
 
     expect(mockFn.mock.calls).toHaveLength(2);
-    expect(exporter.orders.pages).toHaveLength(1);
+    expect(exporter.ledger.pages).toHaveLength(1);
   });
 
-  test(".getOrders()", async () => {
-    let mockFn = mockFetchDocs([fixtureDoc("order-page-2025-1-of-1.html")]);
+  test(".getLedger()", async () => {
+    let mockFn = mockFetchDocs([fixtureDoc("ledger-page-2025-1-of-1.html")]);
     Page.prototype.fetchDoc = mockFn;
 
     let exporter = new Exporter();
-    exporter.orders.years = ["2025"];
-    exporter.orders.pages = [new OrderPage(2025, 1)];
+    exporter.ledger.years = ["2025"];
+    exporter.ledger.pages = [new LedgerPage(2025, 1)];
 
-    await exporter.getOrders();
+    await exporter.getLedger();
 
     expect(mockFn.mock.calls).toHaveLength(1);
-    expect(exporter.orders.count).toBe(1);
+    expect(exporter.ledger.count).toBe(1);
   });
 
   test(".getLibrary()", async () => {
@@ -88,8 +88,8 @@ describe("Exporter", () => {
 
   test(".getBookDetails()", async () => {
     let mockFn = mockFetchDocs([
-      fixtureDoc("order-page.html"),
-      fixtureDoc("order-page.html"),
+      fixtureDoc("ledger-page.html"),
+      fixtureDoc("ledger-page.html"),
       fixtureDoc("library-page-1-of-1.html"),
       fixtureDoc("book-details-audible-original.html"),
     ]);
@@ -97,12 +97,12 @@ describe("Exporter", () => {
 
     let exporter = new Exporter();
 
-    await exporter.orders.init();
-    await exporter.orders.populate();
+    await exporter.ledger.init();
+    await exporter.ledger.populate();
 
     // make sure the order setup worked as expected
-    expect(exporter.orders.pages).toHaveLength(1);
-    expect(exporter.orders.count).toBe(44);
+    expect(exporter.ledger.pages).toHaveLength(1);
+    expect(exporter.ledger.count).toBe(44);
 
     await exporter.library.populate();
 
@@ -124,7 +124,7 @@ describe("Exporter", () => {
     let exporter = new Exporter();
 
     // prettier-ignore
-    exporter.orders.items = {
+    exporter.ledger.items = {
       B0CQ3759C3: { asin: "B0CQ3759C3", url: "http://www.audible.com/pd/B0CQ3759C3", title: "Wind and Truth", author: "Brandon Sanderson", purchased: "1/21/2025" },
       B0BG96TCVH: { asin: "B0BG96TCVH", url: "http://www.audible.com/pd/B0BG96TCVH", title: "Demons of Good and Evil", author: "Kim Harrison", purchased: "12/3/2024" },
       1713569264: { asin: "1713569264", url: "http://www.audible.com/pd/1713569264", title: "The Queen", author: "Jennifer L. Armentrout", purchased: "12/3/2024" },
@@ -178,8 +178,8 @@ describe("Exporter", () => {
 
   test(".run()", async () => {
     let mockFn = mockFetchDocs([
-      fixtureDoc("order-page.html"),
-      fixtureDoc("order-page.html"),
+      fixtureDoc("ledger-page.html"),
+      fixtureDoc("ledger-page.html"),
       fixtureDoc("library-page-1-of-1.html"),
       fixtureDoc("book-details-audible-original.html"),
     ]);

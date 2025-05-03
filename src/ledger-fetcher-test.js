@@ -8,7 +8,7 @@ require("../src/dev.js");
 require("../src/ledger-fetcher.js");
 
 describe("LedgerFetcher", () => {
-  let base_url = new OrderPage().base_url;
+  let base_url = new LedgerPage().base_url;
 
   test("new LedgerFetcher()", () => {
     let ledger = new LedgerFetcher();
@@ -32,7 +32,7 @@ describe("LedgerFetcher", () => {
     expect(mockFn.mock.calls).toHaveLength(4);
 
     expect(ledger.pages.length).toEqual(6);
-    expect(ledger.pages[0]).toBeA(OrderPage);
+    expect(ledger.pages[0]).toBeA(LedgerPage);
     expect(ledger.pages[0].year).toBe(2025);
     expect(ledger.pages[0].page_num).toBe(1);
     expect(ledger.pages[0].page_count).toBe(1);
@@ -83,12 +83,12 @@ describe("LedgerFetcher", () => {
 
     let ledger = new LedgerFetcher();
     ledger.pages = [
-      new OrderPage(fixtureDoc("order-page-2025-1-of-1.html")),
-      new OrderPage(fixtureDoc("order-page-2024-1-of-2.html")),
-      new OrderPage(2024, 2),
-      new OrderPage(fixtureDoc("order-page-2023-1-of-3.html")),
-      new OrderPage(2023, 2),
-      new OrderPage(2023, 3),
+      new LedgerPage(fixtureDoc("order-page-2025-1-of-1.html")),
+      new LedgerPage(fixtureDoc("order-page-2024-1-of-2.html")),
+      new LedgerPage(2024, 2),
+      new LedgerPage(fixtureDoc("order-page-2023-1-of-3.html")),
+      new LedgerPage(2023, 2),
+      new LedgerPage(2023, 3),
     ];
 
     await ledger.populate();
@@ -103,9 +103,9 @@ describe("LedgerFetcher", () => {
 
     let ledger = new LedgerFetcher();
     ledger.pages = [
-      new OrderPage(doc),
-      new OrderPage(2024, 1),
-      new OrderPage(2024, 2),
+      new LedgerPage(doc),
+      new LedgerPage(2024, 1),
+      new LedgerPage(2024, 2),
     ];
     await ledger.populate(1);
 

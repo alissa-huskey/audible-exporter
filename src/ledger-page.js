@@ -12,7 +12,7 @@ require("./purchase-row.js");
  * Example:
  * https://www.audible.com/account/purchase-history?ref=&tf=orders&df=2024&ps=20
  */
-OrderPage = class extends Page {
+LedgerPage = class extends Page {
   base_url = "https://www.audible.com/account/purchase-history?tf=orders";
 
   #default_per_page = 40;

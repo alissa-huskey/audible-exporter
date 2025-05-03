@@ -38,7 +38,7 @@ Exporter = class {
     this.limit = limit;
     this.timer = new Timer();
     this.notifier = new Notifier();
-    this.orders = new LedgerFetcher();
+    this.ledger = new LedgerFetcher();
     this.library = new LibraryFetcher();
     this.details = new DetailsFetcher();
     this.results = [];
@@ -83,7 +83,7 @@ Exporter = class {
     this.notifier = new PurchaseHistoryNotifier();
     this.notifier.create();
 
-    await this.orders.init(this.limit);
+    await this.ledger.init(this.limit);
 
     await delay(1000);
     timer.stop();
@@ -93,28 +93,28 @@ Exporter = class {
     );
   }
 
-  async getOrders() {
+  async getLedger() {
     let timer = new Timer();
     timer.start();
 
     this.notifier.remove();
     this.notifier = new OrderNotifier(
-      this.orders.pages.length,
-      this.orders.years,
+      this.ledger.pages.length,
+      this.ledger.years,
     );
     this.notifier.create();
 
-    await this.orders.populate(this.limit);
+    await this.ledger.populate(this.limit);
 
-    log_table("purchases", this.orders.items);
+    log_table("purchases", this.ledger.items);
 
     await delay(1000);
 
     timer.stop();
     info(
-      `getOrders() took ${timer.minutes} minutes (${timer.seconds} seconds).`,
+      `getLedger() took ${timer.minutes} minutes (${timer.seconds} seconds).`,
     );
-    return this.orders.items;
+    return this.ledger.items;
   }
 
   async getLibrary() {
@@ -160,7 +160,7 @@ Exporter = class {
 
     for (library_info of this.library.books) {
       book_info = this.details.books[library_info.asin];
-      order_info = this.orders.items[library_info.asin];
+      order_info = this.ledger.items[library_info.asin];
       let result = new Result(library_info, book_info, order_info);
       results.push(result.data());
     }
@@ -209,7 +209,7 @@ Exporter = class {
       this.notifier.create();
 
       await this.getPurchaseHistory();
-      await this.getOrders();
+      await this.getLedger();
       await this.getLibrary();
       await this.getBookDetails();
       this.getResults();

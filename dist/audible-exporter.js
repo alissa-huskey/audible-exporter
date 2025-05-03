@@ -1678,7 +1678,7 @@ PurchaseRow = class extends Parser {
  * Example:
  * https://www.audible.com/account/purchase-history?ref=&tf=orders&df=2024&ps=20
  */
-OrderPage = class extends Page {
+LedgerPage = class extends Page {
   base_url = "https://www.audible.com/account/purchase-history?tf=orders";
 
   #default_per_page = 40;
@@ -1847,7 +1847,7 @@ OrderPage = class extends Page {
     return this.#items;
   }
 };
-OrdersFetcher = class {
+LedgerFetcher = class {
   #count = 0;
   #items = null;
 
@@ -1860,7 +1860,7 @@ OrdersFetcher = class {
   async init(limit) {
     // request to get the years in order history
     let running_count = 0;
-    let page = new OrderPage("last_90_days", 1, 20);
+    let page = new LedgerPage("last_90_days", 1, 20);
     await page.get();
     this.years = page.years;
 
@@ -1880,7 +1880,7 @@ OrdersFetcher = class {
       let page_count;
 
       do {
-        let page = new OrderPage(tryInt(year), page_num);
+        let page = new LedgerPage(tryInt(year), page_num);
 
         if (page_num == 1) {
           await page.get();
@@ -3316,11 +3316,6 @@ DownloadDialog = class extends Dialog {
     return this.#actions;
   }
 
-  /**
-   * HTML select element with a drop-down for file types.
-   *
-   * @returns {Doc}
-   */
   get ft_select() {
     if (!this.#ft_select) {
       // create select tag
@@ -3377,11 +3372,6 @@ DownloadDialog = class extends Dialog {
     return this.#dl_btn;
   }
 
-  /**
-   * The filetype currently selected.
-   *
-   * @return {string}
-   */
   get filetype() {
     return this.ft_select.value;
   }
@@ -3406,14 +3396,10 @@ DownloadDialog = class extends Dialog {
    */
   set file(file) {
     this.#file = file;
-    info("setting file:", file);
     this.dl_btn.element.href = file.url;
     this.dl_btn.element.download = file.filename;
-    info("url:", file.url);
-    info("filename:", file.filename);
     this.dl_btn.element.addEventListener("click", () => {
       setTimeout(() => {
-        info("revoking url");
         window.URL.revokeObjectURL(file.url);
       }, 10);
     });
@@ -4390,9 +4376,7 @@ download = () => {
   if (!modal.filetype) return;
   let klass = exporter.formats[modal.filetype];
   let file = new klass(exporter.results);
-  info("file:", file);
   modal.file = file;
-  info("modal.file:", modal.file);
   modal.hide();
 };
 
@@ -4406,7 +4390,7 @@ Exporter = class {
     this.limit = limit;
     this.timer = new Timer();
     this.notifier = new Notifier();
-    this.orders = new OrdersFetcher();
+    this.ledger = new LedgerFetcher();
     this.library = new LibraryFetcher();
     this.details = new DetailsFetcher();
     this.results = [];
@@ -4451,7 +4435,7 @@ Exporter = class {
     this.notifier = new PurchaseHistoryNotifier();
     this.notifier.create();
 
-    await this.orders.init(this.limit);
+    await this.ledger.init(this.limit);
 
     await delay(1000);
     timer.stop();
@@ -4461,28 +4445,28 @@ Exporter = class {
     );
   }
 
-  async getOrders() {
+  async getLedger() {
     let timer = new Timer();
     timer.start();
 
     this.notifier.remove();
     this.notifier = new OrderNotifier(
-      this.orders.pages.length,
-      this.orders.years,
+      this.ledger.pages.length,
+      this.ledger.years,
     );
     this.notifier.create();
 
-    await this.orders.populate(this.limit);
+    await this.ledger.populate(this.limit);
 
-    log_table("purchases", this.orders.items);
+    log_table("purchases", this.ledger.items);
 
     await delay(1000);
 
     timer.stop();
     info(
-      `getOrders() took ${timer.minutes} minutes (${timer.seconds} seconds).`,
+      `getLedger() took ${timer.minutes} minutes (${timer.seconds} seconds).`,
     );
-    return this.orders.items;
+    return this.ledger.items;
   }
 
   async getLibrary() {
@@ -4528,7 +4512,7 @@ Exporter = class {
 
     for (library_info of this.library.books) {
       book_info = this.details.books[library_info.asin];
-      order_info = this.orders.items[library_info.asin];
+      order_info = this.ledger.items[library_info.asin];
       let result = new Result(library_info, book_info, order_info);
       results.push(result.data());
     }
@@ -4577,7 +4561,7 @@ Exporter = class {
       this.notifier.create();
 
       await this.getPurchaseHistory();
-      await this.getOrders();
+      await this.getLedger();
       await this.getLibrary();
       await this.getBookDetails();
       this.getResults();

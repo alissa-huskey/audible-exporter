@@ -1,6 +1,6 @@
 require("./util.js");
 require("./timer.js");
-require("./order-page.js");
+require("./ledger-page.js");
 
 LedgerFetcher = class {
   #count = 0;
@@ -15,7 +15,7 @@ LedgerFetcher = class {
   async init(limit) {
     // request to get the years in order history
     let running_count = 0;
-    let page = new OrderPage("last_90_days", 1, 20);
+    let page = new LedgerPage("last_90_days", 1, 20);
     await page.get();
     this.years = page.years;
 
@@ -35,7 +35,7 @@ LedgerFetcher = class {
       let page_count;
 
       do {
-        let page = new OrderPage(tryInt(year), page_num);
+        let page = new LedgerPage(tryInt(year), page_num);
 
         if (page_num == 1) {
           await page.get();

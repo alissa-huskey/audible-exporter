@@ -1972,14 +1972,14 @@ PurchaseRow = /*#__PURE__*/function (_Parser4) {
  * Example:
  * https://www.audible.com/account/purchase-history?ref=&tf=orders&df=2024&ps=20
  */
-OrderPage = (_default_per_page = /*#__PURE__*/new WeakMap(), _valid_date_ranges = /*#__PURE__*/new WeakMap(), _orders = /*#__PURE__*/new WeakMap(), _purchases = /*#__PURE__*/new WeakMap(), _items = /*#__PURE__*/new WeakMap(), _page_num = /*#__PURE__*/new WeakMap(), _year = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Page4) {
-  function OrderPage() {
+LedgerPage = (_default_per_page = /*#__PURE__*/new WeakMap(), _valid_date_ranges = /*#__PURE__*/new WeakMap(), _orders = /*#__PURE__*/new WeakMap(), _purchases = /*#__PURE__*/new WeakMap(), _items = /*#__PURE__*/new WeakMap(), _page_num = /*#__PURE__*/new WeakMap(), _year = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Page4) {
+  function LedgerPage() {
     var _this12;
     var year_or_doc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
     var page_num = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
     var per_page = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-    _classCallCheck(this, OrderPage);
-    _this12 = _callSuper(this, OrderPage);
+    _classCallCheck(this, LedgerPage);
+    _this12 = _callSuper(this, LedgerPage);
     _defineProperty(_this12, "base_url", "https://www.audible.com/account/purchase-history?tf=orders");
     _classPrivateFieldInitSpec(_this12, _default_per_page, 40);
     _classPrivateFieldInitSpec(_this12, _valid_date_ranges, ["last_90_days", "last_180_days", "last_365_days"]);
@@ -2005,8 +2005,8 @@ OrderPage = (_default_per_page = /*#__PURE__*/new WeakMap(), _valid_date_ranges 
    *
    * @return {Doc}
    */
-  _inherits(OrderPage, _Page4);
-  return _createClass(OrderPage, [{
+  _inherits(LedgerPage, _Page4);
+  return _createClass(LedgerPage, [{
     key: "require",
     value:
     /**
@@ -2168,16 +2168,16 @@ OrderPage = (_default_per_page = /*#__PURE__*/new WeakMap(), _valid_date_ranges 
     }
   }]);
 }(Page));
-OrdersFetcher = (_count = /*#__PURE__*/new WeakMap(), _items2 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
-  function OrdersFetcher() {
-    _classCallCheck(this, OrdersFetcher);
+LedgerFetcher = (_count = /*#__PURE__*/new WeakMap(), _items2 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
+  function LedgerFetcher() {
+    _classCallCheck(this, LedgerFetcher);
     _classPrivateFieldInitSpec(this, _count, 0);
     _classPrivateFieldInitSpec(this, _items2, null);
     _classPrivateFieldSet(_count, this, 0);
     _classPrivateFieldSet(_items2, this, null);
     this.pages = [];
   }
-  return _createClass(OrdersFetcher, [{
+  return _createClass(LedgerFetcher, [{
     key: "init",
     value: function () {
       var _init = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(limit) {
@@ -2187,7 +2187,7 @@ OrdersFetcher = (_count = /*#__PURE__*/new WeakMap(), _items2 = /*#__PURE__*/new
             case 0:
               // request to get the years in order history
               running_count = 0;
-              page = new OrderPage("last_90_days", 1, 20);
+              page = new LedgerPage("last_90_days", 1, 20);
               _context8.next = 4;
               return page.get();
             case 4:
@@ -2215,7 +2215,7 @@ OrdersFetcher = (_count = /*#__PURE__*/new WeakMap(), _items2 = /*#__PURE__*/new
               page_num = 1;
               page_count = void 0;
             case 17:
-              _page = new OrderPage(tryInt(year), page_num);
+              _page = new LedgerPage(tryInt(year), page_num);
               if (!(page_num == 1)) {
                 _context8.next = 22;
                 break;
@@ -3121,12 +3121,6 @@ DownloadDialog = (_wrapper5 = /*#__PURE__*/new WeakMap(), _head3 = /*#__PURE__*/
       }
       return _classPrivateFieldGet(_actions3, this);
     }
-
-    /**
-     * HTML select element with a drop-down for file types.
-     *
-     * @returns {Doc}
-     */
   }, {
     key: "ft_select",
     get: function get() {
@@ -3193,12 +3187,6 @@ DownloadDialog = (_wrapper5 = /*#__PURE__*/new WeakMap(), _head3 = /*#__PURE__*/
       }
       return _classPrivateFieldGet(_dl_btn, this);
     }
-
-    /**
-     * The filetype currently selected.
-     *
-     * @return {string}
-     */
   }, {
     key: "filetype",
     get: function get() {
@@ -3227,14 +3215,10 @@ DownloadDialog = (_wrapper5 = /*#__PURE__*/new WeakMap(), _head3 = /*#__PURE__*/
      */,
     set: function set(file) {
       _classPrivateFieldSet(_file2, this, file);
-      info("setting file:", file);
       this.dl_btn.element.href = file.url;
       this.dl_btn.element.download = file.filename;
-      info("url:", file.url);
-      info("filename:", file.filename);
       this.dl_btn.element.addEventListener("click", function () {
         setTimeout(function () {
-          info("revoking url");
           window.URL.revokeObjectURL(file.url);
         }, 10);
       });
@@ -4358,9 +4342,7 @@ download = function download() {
   if (!modal.filetype) return;
   var klass = exporter.formats[modal.filetype];
   var file = new klass(exporter.results);
-  info("file:", file);
   modal.file = file;
-  info("modal.file:", modal.file);
   modal.hide();
 };
 
@@ -4378,7 +4360,7 @@ Exporter = /*#__PURE__*/function () {
     this.limit = limit;
     this.timer = new Timer();
     this.notifier = new Notifier();
-    this.orders = new OrdersFetcher();
+    this.ledger = new LedgerFetcher();
     this.library = new LibraryFetcher();
     this.details = new DetailsFetcher();
     this.results = [];
@@ -4434,7 +4416,7 @@ Exporter = /*#__PURE__*/function () {
               this.notifier = new PurchaseHistoryNotifier();
               this.notifier.create();
               _context12.next = 7;
-              return this.orders.init(this.limit);
+              return this.ledger.init(this.limit);
             case 7:
               _context12.next = 9;
               return delay(1000);
@@ -4453,9 +4435,9 @@ Exporter = /*#__PURE__*/function () {
       return getPurchaseHistory;
     }()
   }, {
-    key: "getOrders",
+    key: "getLedger",
     value: function () {
-      var _getOrders = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee12() {
+      var _getLedger = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee12() {
         var timer;
         return _regeneratorRuntime().wrap(function _callee12$(_context13) {
           while (1) switch (_context13.prev = _context13.next) {
@@ -4463,28 +4445,28 @@ Exporter = /*#__PURE__*/function () {
               timer = new Timer();
               timer.start();
               this.notifier.remove();
-              this.notifier = new OrderNotifier(this.orders.pages.length, this.orders.years);
+              this.notifier = new OrderNotifier(this.ledger.pages.length, this.ledger.years);
               this.notifier.create();
               _context13.next = 7;
-              return this.orders.populate(this.limit);
+              return this.ledger.populate(this.limit);
             case 7:
-              log_table("purchases", this.orders.items);
+              log_table("purchases", this.ledger.items);
               _context13.next = 10;
               return delay(1000);
             case 10:
               timer.stop();
-              info("getOrders() took ".concat(timer.minutes, " minutes (").concat(timer.seconds, " seconds)."));
-              return _context13.abrupt("return", this.orders.items);
+              info("getLedger() took ".concat(timer.minutes, " minutes (").concat(timer.seconds, " seconds)."));
+              return _context13.abrupt("return", this.ledger.items);
             case 13:
             case "end":
               return _context13.stop();
           }
         }, _callee12, this);
       }));
-      function getOrders() {
-        return _getOrders.apply(this, arguments);
+      function getLedger() {
+        return _getLedger.apply(this, arguments);
       }
-      return getOrders;
+      return getLedger;
     }()
   }, {
     key: "getLibrary",
@@ -4564,7 +4546,7 @@ Exporter = /*#__PURE__*/function () {
         for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
           library_info = _step11.value;
           book_info = this.details.books[library_info.asin];
-          order_info = this.orders.items[library_info.asin];
+          order_info = this.ledger.items[library_info.asin];
           var result = new Result(library_info, book_info, order_info);
           results.push(result.data());
         }
@@ -4620,7 +4602,7 @@ Exporter = /*#__PURE__*/function () {
               return this.getPurchaseHistory();
             case 12:
               _context16.next = 14;
-              return this.getOrders();
+              return this.getLedger();
             case 14:
               _context16.next = 16;
               return this.getLibrary();
