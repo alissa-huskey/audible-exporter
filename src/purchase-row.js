@@ -1,7 +1,7 @@
 require("./util.js");
 require("./parser.js");
 
-Purchase = class extends Parser {
+PurchaseRow = class extends Parser {
   _fields = {
     asin: "data-order-item-asin",
     order_id: "data-order-id",

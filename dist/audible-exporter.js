@@ -1645,7 +1645,7 @@ OrderRow = class extends Parser {
     return this.doc.qsf(".ui-it-purchasehistory-item-total div").innerHTML;
   }
 };
-Purchase = class extends Parser {
+PurchaseRow = class extends Parser {
   _fields = {
     asin: "data-order-item-asin",
     order_id: "data-order-id",
@@ -1673,7 +1673,7 @@ Purchase = class extends Parser {
  * A single purchase history page, usually a year and page ie 2024, page 2
  *
  * Each order page has both a list of orders, and a list of purchases (see
- * purchase.js).
+ * purchase-row.js).
  *
  * Example:
  * https://www.audible.com/account/purchase-history?ref=&tf=orders&df=2024&ps=20
@@ -1784,6 +1784,11 @@ OrderPage = class extends Page {
     return years;
   }
 
+  /**
+   * Data from OrderRow objects, keyed by order id.
+   *
+   * @return {object}
+   */
   get orders() {
     if (this.doc && isEmpty(this.#orders)) {
       let rows = this.doc.qs("tr:has(a[href^='/account/order-details'])");
@@ -1798,16 +1803,26 @@ OrderPage = class extends Page {
     return this.#orders;
   }
 
+  /**
+   * Data from PurchaseRow objects.
+   *
+   * @returns {Array}
+   */
   get purchases() {
     if (this.doc && isEmpty(this.#purchases)) {
       let links = this.doc.qs("a[data-order-item-id]");
-      let purchases = links.map((a) => new Purchase(a).data());
+      let purchases = links.map((a) => new PurchaseRow(a).data());
       this.#purchases = purchases;
     }
 
     return this.#purchases;
   }
 
+  /**
+   * Merge selected order data and purchase data.
+   *
+   * @return {Array}
+   */
   get items() {
     if (!this.#items) {
       try {
@@ -3301,6 +3316,11 @@ DownloadDialog = class extends Dialog {
     return this.#actions;
   }
 
+  /**
+   * HTML select element with a drop-down for file types.
+   *
+   * @returns {Doc}
+   */
   get ft_select() {
     if (!this.#ft_select) {
       // create select tag
@@ -3357,6 +3377,11 @@ DownloadDialog = class extends Dialog {
     return this.#dl_btn;
   }
 
+  /**
+   * The filetype currently selected.
+   *
+   * @return {string}
+   */
   get filetype() {
     return this.ft_select.value;
   }
@@ -3381,10 +3406,14 @@ DownloadDialog = class extends Dialog {
    */
   set file(file) {
     this.#file = file;
+    info("setting file:", file);
     this.dl_btn.element.href = file.url;
     this.dl_btn.element.download = file.filename;
+    info("url:", file.url);
+    info("filename:", file.filename);
     this.dl_btn.element.addEventListener("click", () => {
       setTimeout(() => {
+        info("revoking url");
         window.URL.revokeObjectURL(file.url);
       }, 10);
     });
@@ -4361,7 +4390,9 @@ download = () => {
   if (!modal.filetype) return;
   let klass = exporter.formats[modal.filetype];
   let file = new klass(exporter.results);
+  info("file:", file);
   modal.file = file;
+  info("modal.file:", modal.file);
   modal.hide();
 };
 

@@ -3,16 +3,16 @@
  */
 
 require("../src/dev.js");
-require("../src/purchase.js");
+require("../src/purchase-row.js");
 
-describe("Purchase", () => {
-  let row = new Purchase(fixtureElement("purchase.html", "a"));
+describe("PurchaseRow", () => {
+  let row = new PurchaseRow(fixtureElement("purchase.html", "a"));
 
-  test("new Purchase()", () => {
-    expect(row).toBeA(Purchase);
+  test("new PurchaseRow()", () => {
+    expect(row).toBeA(PurchaseRow);
   });
 
-  test("new Purchase(doc)", () => {
+  test("new PurchaseRoPurchaseRow(doc)", () => {
     expect(row.doc).toBeA(Doc);
   });
 

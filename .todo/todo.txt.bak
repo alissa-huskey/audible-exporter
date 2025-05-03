@@ -9,7 +9,7 @@
 (Z) 2025-02-23 @feature Get collections
 (Z) 2025-02-23 @feature Get wishlist https://www.audible.com/library/wishlist
 (Z) 2025-02-23 @feature Get saved authors https://www.audible.com/library/authors
-(M) 2025-02-23 @feature Get if it is added to favorites https://www.audible.com/library/collections/__FAVORITES
+(A) 2025-02-23 @feature Get if it is added to favorites https://www.audible.com/library/collections/__FAVORITES
 (A) 2025-02-23 @feature Get if a book is marked as finished.
 (Z) 2025-02-23 @feature Get if a book has a PDF https://www.audible.com/companion-file/B0CQ3759C3
 (Z) 2025-02-23 @feature Get a list of authors you follow
@@ -61,7 +61,6 @@
 (B) 2025-05-02 @data Authors: Parse things like "Rovina Cai - illustrator" to seperate contributors field https://www.audible.com/pd/How-the-King-of-Elfhame-Learned-to-Hate-Stories-Audiobook/1549187538
 (M) 2025-05-02 @data Order Page: Authors: If no author is listed, authors should be [], not [""] (B0C29VRJTJ)
 (D) 2025-05-02 Consider renaming OrderPage -> PurchaseHistoryPage since it might be confused with an order detail page (ie https://www.audible.com/account/order-details?orderId=D01-0506818-5008215)
-(B) 2025-05-02 @refactor Rename Purchase -> PurchaseRow.
 (A) 2025-05-02 @data @tsv Look into not escaping single quotes (look at series: https://www.audible.com/pd/House-of-Blades-Audiobook/B0B29L7HZ8)
 (B) 2025-05-03 @data Parse reviews from listener page: https://www.audible.com/listener
 2025-05-03 @ux Get total books from credit summary page first (for estimate): https://www.audible.com/account/credits

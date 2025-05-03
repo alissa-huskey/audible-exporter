@@ -109,3 +109,4 @@ x 2025-05-02 2025-02-28 @ux @download In TSV download, join categories.
 x 2025-05-02 2025-03-10 @data Use date.toLocaleDate() instead of custom function.
 x 2025-05-03 2025-05-02 @houskeeping Fix build not copying to dist/audible_exporter.js until second run.
 x 2025-05-03 2025-02-23 @feature Add series ID.
+x 2025-05-03 2025-05-02 @refactor Rename Purchase -> PurchaseRow.

@@ -1931,12 +1931,12 @@ OrderRow = /*#__PURE__*/function (_Parser3) {
     }
   }]);
 }(Parser);
-Purchase = /*#__PURE__*/function (_Parser4) {
-  function Purchase() {
+PurchaseRow = /*#__PURE__*/function (_Parser4) {
+  function PurchaseRow() {
     var _this10;
     var doc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    _classCallCheck(this, Purchase);
-    _this10 = _callSuper(this, Purchase);
+    _classCallCheck(this, PurchaseRow);
+    _this10 = _callSuper(this, PurchaseRow);
     _defineProperty(_this10, "_fields", {
       asin: "data-order-item-asin",
       order_id: "data-order-id",
@@ -1948,8 +1948,8 @@ Purchase = /*#__PURE__*/function (_Parser4) {
     _this10.doc = doc;
     return _this10;
   }
-  _inherits(Purchase, _Parser4);
-  return _createClass(Purchase, [{
+  _inherits(PurchaseRow, _Parser4);
+  return _createClass(PurchaseRow, [{
     key: "data",
     value: function data() {
       var _this11 = this;
@@ -1967,7 +1967,7 @@ Purchase = /*#__PURE__*/function (_Parser4) {
  * A single purchase history page, usually a year and page ie 2024, page 2
  *
  * Each order page has both a list of orders, and a list of purchases (see
- * purchase.js).
+ * purchase-row.js).
  *
  * Example:
  * https://www.audible.com/account/purchase-history?ref=&tf=orders&df=2024&ps=20
@@ -2097,6 +2097,12 @@ OrderPage = (_default_per_page = /*#__PURE__*/new WeakMap(), _valid_date_ranges 
       }, []);
       return years;
     }
+
+    /**
+     * Data from OrderRow objects, keyed by order id.
+     *
+     * @return {object}
+     */
   }, {
     key: "orders",
     get: function get() {
@@ -2110,18 +2116,30 @@ OrderPage = (_default_per_page = /*#__PURE__*/new WeakMap(), _valid_date_ranges 
       }
       return _classPrivateFieldGet(_orders, this);
     }
+
+    /**
+     * Data from PurchaseRow objects.
+     *
+     * @returns {Array}
+     */
   }, {
     key: "purchases",
     get: function get() {
       if (this.doc && isEmpty(_classPrivateFieldGet(_purchases, this))) {
         var links = this.doc.qs("a[data-order-item-id]");
         var purchases = links.map(function (a) {
-          return new Purchase(a).data();
+          return new PurchaseRow(a).data();
         });
         _classPrivateFieldSet(_purchases, this, purchases);
       }
       return _classPrivateFieldGet(_purchases, this);
     }
+
+    /**
+     * Merge selected order data and purchase data.
+     *
+     * @return {Array}
+     */
   }, {
     key: "items",
     get: function get() {
@@ -3103,6 +3121,12 @@ DownloadDialog = (_wrapper5 = /*#__PURE__*/new WeakMap(), _head3 = /*#__PURE__*/
       }
       return _classPrivateFieldGet(_actions3, this);
     }
+
+    /**
+     * HTML select element with a drop-down for file types.
+     *
+     * @returns {Doc}
+     */
   }, {
     key: "ft_select",
     get: function get() {
@@ -3169,6 +3193,12 @@ DownloadDialog = (_wrapper5 = /*#__PURE__*/new WeakMap(), _head3 = /*#__PURE__*/
       }
       return _classPrivateFieldGet(_dl_btn, this);
     }
+
+    /**
+     * The filetype currently selected.
+     *
+     * @return {string}
+     */
   }, {
     key: "filetype",
     get: function get() {
@@ -3197,10 +3227,14 @@ DownloadDialog = (_wrapper5 = /*#__PURE__*/new WeakMap(), _head3 = /*#__PURE__*/
      */,
     set: function set(file) {
       _classPrivateFieldSet(_file2, this, file);
+      info("setting file:", file);
       this.dl_btn.element.href = file.url;
       this.dl_btn.element.download = file.filename;
+      info("url:", file.url);
+      info("filename:", file.filename);
       this.dl_btn.element.addEventListener("click", function () {
         setTimeout(function () {
+          info("revoking url");
           window.URL.revokeObjectURL(file.url);
         }, 10);
       });
@@ -4324,7 +4358,9 @@ download = function download() {
   if (!modal.filetype) return;
   var klass = exporter.formats[modal.filetype];
   var file = new klass(exporter.results);
+  info("file:", file);
   modal.file = file;
+  info("modal.file:", modal.file);
   modal.hide();
 };
 
