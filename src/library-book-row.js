@@ -33,7 +33,15 @@ LibraryBookRow = class extends Parser {
 
   get authors() {
     let links = this.ul.qs(".authorLabel a.bc-color-base");
-    return links.map((a) => a.innerHTML.trim());
+    return links.map((a) => {
+      let author = { name: a.innerHTML.trim() };
+      let found = a.href.match(/[/]author[/](?<id>[^?]+)/);
+      if (found) {
+        author.id = found.groups.id;
+        author.url = `/author/${found.groups.id}`;
+      }
+      return author;
+    });
   }
 
   get narrators() {

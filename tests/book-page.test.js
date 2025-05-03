@@ -138,7 +138,7 @@ describe("NormalBookPage", () => {
   let doc = fixtureDoc("book-details-audible-original.html");
   let page = new NormalBookPage(doc);
 
-  test("json_scripts", () => {
+  test(".json_scripts", () => {
     expect(page.json_scripts).toBeA(Object);
     expect(Object.keys(page.json_scripts)).toEqual([
       "Organization",
@@ -148,14 +148,70 @@ describe("NormalBookPage", () => {
     ]);
   });
 
-  test("json_audiobook", () => {
-    expect(page.json_audiobook).toBeTruthy();
-    expect(page.json_audiobook["@type"]).toBe("Audiobook");
+  test(".json_audiobook", () => {
+    let json = {
+      "@context": "http://schema.org",
+      "@type": "Audiobook",
+      bookFormat: "AudiobookFormat",
+      name: "Ghosts of Zenith",
+      image: "https://m.media-amazon.com/images/I/51lF5xL--dL._SL500_.jpg",
+      author: [{ "@type": "Person", name: "Larry Correia" }],
+      readBy: [{ "@type": "Person", name: "Oliver Wyman" }],
+      publisher: "Audible Originals",
+      datePublished: "2023-01-12",
+      inLanguage: "english",
+      duration: "PT2H25M",
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: "4.64281559045957",
+        ratingCount: "1719",
+      },
+    };
+
+    expect(page.json_audiobook).toBeA(Object);
+    expect(page.json_audiobook).toMatchObject(json);
+    expect(page.json_audiobook.description).toMatch("On a nightmare world");
   });
 
-  test("json_product", () => {
+  test(".json_product", () => {
+    let json = {
+      "@context": "http://schema.org",
+      "@type": "Product",
+      additionalType: "http://www.productontology.org/id/Audiobook",
+      productID: "B0BL84CBLZ",
+      name: "Ghosts of Zenith",
+      image: "https://m.media-amazon.com/images/I/51lF5xL--dL._SL500_.jpg",
+      sku: "OR_ORIG_002162",
+      brand: "Audible Originals",
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: "4.64281559045957",
+        ratingCount: "1719",
+      },
+    };
+
     expect(page.json_product).toBeTruthy();
-    expect(page.json_product["@type"]).toBe("Product");
+    expect(page.json_product).toMatchObject(json);
+  });
+
+  test(".product_data", () => {
+    expect(page.product_data).toBeA(Object);
+    expect(page.product_data).toEqual({
+      isAvailable: true,
+      productID: "B0BL84CBLZ",
+      isInWishlist: false,
+      language: "english",
+      productName: "Ghosts of Zenith",
+      narrationAccent: "None",
+      contentDeliveryType: "SinglePartBook",
+      isFree: false,
+      publisherName: "Audible Originals",
+      isPreorderable: false,
+      sku: "OR_ORIG_002162",
+      isAdultProduct: false,
+      authors: [{ fullName: "Larry Correia", id: "B002D68HL8" }],
+      narrators: ["Oliver Wyman"],
+    });
   });
 
   test(".id", () => {
@@ -167,7 +223,14 @@ describe("NormalBookPage", () => {
   });
 
   test(".authors", () => {
-    expect(page.authors).toEqual(["Larry Correia"]);
+    let author = [
+      {
+        name: "Larry Correia",
+        id: "B002D68HL8",
+        url: "/author/B002D68HL8",
+      },
+    ];
+    expect(page.authors).toEqual(author);
   });
 
   test(".narrators", () => {
@@ -226,7 +289,13 @@ describe("NormalBookPage", () => {
     let data = {
       id: "B0BL84CBLZ",
       title: "Ghosts of Zenith",
-      authors: ["Larry Correia"],
+      authors: [
+        {
+          name: "Larry Correia",
+          id: "B002D68HL8",
+          url: "/author/B002D68HL8",
+        },
+      ],
       narrators: ["Oliver Wyman"],
       duration_minutes: 145,
       language: "English",
@@ -315,7 +384,14 @@ describe("ADBLBookPage", () => {
   });
 
   test(".authors", () => {
-    expect(page.authors).toEqual(["Ben Aaronovitch"]);
+    let author = [
+      {
+        name: "Ben Aaronovitch",
+        id: "B000AP1TJQ",
+        url: "/author/B000AP1TJQ",
+      },
+    ];
+    expect(page.authors).toEqual(author);
   });
 
   test(".narrators", () => {

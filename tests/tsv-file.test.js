@@ -85,7 +85,7 @@ describe("TSVFile", () => {
             number: "2",
           },
         ],
-        authors: ["C. S. Lewis"],
+        authors: [{ name: "C. S. Lewis" }],
         narrators: ["Michael York"],
       },
     ]);

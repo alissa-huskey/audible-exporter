@@ -55,17 +55,28 @@ describe("LibraryBookRow", () => {
     let row = new LibraryBookRow(doc);
 
     let authors = [
-      "Brandon Sanderson",
-      "Max Epstein",
-      "David Pace",
-      "Michael Harkins",
+      {
+        name: "Brandon Sanderson",
+        id: "B001IGFHW6",
+        url: "/author/B001IGFHW6",
+      },
+      { name: "Max Epstein" },
+      { name: "David Pace" },
+      { name: "Michael Harkins" },
     ];
 
     expect(row.authors).toEqual(authors);
   });
 
   test("authors (single)", () => {
-    expect(row.authors).toEqual(["Neal Shusterman"]);
+    let author = [
+      {
+        name: "Neal Shusterman",
+        id: "B000APTN0I",
+        url: "/author/B000APTN0I",
+      },
+    ];
+    expect(row.authors).toEqual(author);
   });
 
   test("narrators", () => {
@@ -118,7 +129,13 @@ describe("LibraryBookRow", () => {
       id: "1705240569",
       url: "/pd/Scorpion-Shards-Audiobook/1705240569",
       title: "Scorpion Shards: Star Shards Chronicles Series, Book 1",
-      authors: ["Neal Shusterman"],
+      authors: [
+        {
+          name: "Neal Shusterman",
+          id: "B000APTN0I",
+          url: "/author/B000APTN0I",
+        },
+      ],
       narrators: ["Joe Hempel"],
       series: [
         {

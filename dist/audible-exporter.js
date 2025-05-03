@@ -857,7 +857,15 @@ LibraryBookRow = class extends Parser {
 
   get authors() {
     let links = this.ul.qs(".authorLabel a.bc-color-base");
-    return links.map((a) => a.innerHTML.trim());
+    return links.map((a) => {
+      let author = { name: a.innerHTML.trim() };
+      let found = a.href.match(/[/]author[/](?<id>[^?]+)/);
+      if (found) {
+        author.id = found.groups.id;
+        author.url = `/author/${found.groups.id}`;
+      }
+      return author;
+    });
   }
 
   get narrators() {
@@ -1167,6 +1175,7 @@ BookPage = class extends Page {
   #json_scripts = null;
   #json_audiobook = null;
   #json_product = null;
+  #product_data = null;
 
   /**
    * Return a BookPage instance of the correct subclass (ADBLBookPage or
@@ -1263,8 +1272,46 @@ BookPage = class extends Page {
     return this.#json_product;
   }
 
+  /**
+   * Return the relevant data from the digitalData variable.
+   *
+   * Same as:
+   *   digitalData.product[0].productInfo;
+   *
+   * @return {object}
+   */
+  get product_data() {
+    if (!this.#product_data) {
+      let digitalData;
+
+      let tags = this.doc.qs("script[type='text/javascript']");
+      let script = tags.filter((t) => t.innerHTML.match(/digitalData/));
+      let js = script[0].innerHTML;
+      js = js.replace("var digitalData = ", "digitalData =");
+      eval(js);
+      this.#product_data = digitalData.product[0].productInfo;
+    }
+    return this.#product_data;
+  }
+
+  /**
+   * Return an array of author objects.
+   *
+   * Each object includes a name and may include id and url.
+   *
+   * @return {Array}
+   */
   get authors() {
-    return this.json_audiobook.author?.map((a) => a.name) || [];
+    let authors = this.product_data.authors.map((a) => {
+      let author = { name: a.fullName };
+      if (a.id) {
+        author.id = a.id;
+        author.url = `/author/${a.id}`;
+      }
+      return author;
+    });
+
+    return authors || [];
   }
 
   get narrators() {
@@ -4265,15 +4312,24 @@ TSVFile = class extends VirtualFile {
 
   preprocess() {
     for (let [i, record] of Object.entries(this.records)) {
+      if (record.authors === "") {
+        record.authors = [];
+      }
+
       if (record.series === "") {
         record.series = [];
       }
+
       if (record.series) {
         record.series = record.series
           .map((series) => {
             return series.name + (series.number ? ` #${series.number}` : "");
           })
           .join(", ");
+      }
+
+      if (record.authors) {
+        record.authors = record.authors.map((a) => a.name).join(", ");
       }
 
       Object.entries(record).forEach(([field, value]) => {

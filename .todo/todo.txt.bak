@@ -24,7 +24,7 @@
 (Z) 2025-02-27 @ux Display error message dialog on fatal error.
 (C) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
 (C) 2025-02-27 @refactor Have Page.fetchDoc() set this.url = url
-(B) 2025-02-28 @ux @download In TSV download, join categories.
+x 2025-05-02 2025-02-28 @ux @download In TSV download, join categories.
 (B) 2025-02-28 @ux @download Compare results from original download to current results
 (D) 2025-03-01 @download Add purchase_timestamp.
 (A) 2025-03-01 @refactor @data pages: Parse data from multiple fields, select the first one that has content.
@@ -59,7 +59,6 @@
 (B) 2025-03-16 @ux When checking if on audible.com, exclude help.audible.com.
 (A) 2025-05-01 @feature Add purchase information to download.
 (A) 2025-05-01 @feature Add option to skip purchase information
-x 2025-05-02 2025-05-02 @refactor BookPage: Split .get() into one function that fetches the page and another (.new() maybe) that determines if it is a NormalBookPage or an ADBLBookPage.
 (A) 2025-05-02 @bug In JSON, when there is no series value should be [] not "".
 (B) 2025-05-02 @ux Add limit option to UX instead of just CLI
 (B) 2025-05-02 @ux Allow user to download multiple times/multiple filetypes.

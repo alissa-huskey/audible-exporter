@@ -15,7 +15,7 @@ forced:!0},{iterateEntries:function iterateEntries(t){return new o(t,"entries")}
 //# sourceMappingURL=minified.js.map
 
 
-var _doc, _default_page_size, _rows, _books, _books2, _page_count, _category_types, _category_genres, _sub_categories, _tags, _json_scripts, _json_audiobook, _json_product, _books3, _default_per_page, _valid_date_ranges, _orders, _purchases, _items, _page_num, _year, _count, _items2, _wrapper, _css, _wrapper2, _head, _content, _copy, _actions, _close_btn, _selectors, _wrapper3, _head2, _content2, _close_btn2, _copy2, _wrapper4, _content3, _actions2, _close_btn3, _ft_select, _start_btn, _file, _selectors2, _wrapper5, _head3, _content4, _copy3, _actions3, _ft_select2, _dl_btn, _file2, _selectors3, _wrapper6, _bar, _status, _percentage, _messages, _context11, _steps, _estimate, _percent, _item_no, _total, _year2, _years, _year3, _year_page, _item_no2, _page_count2, _item_no3, _total2, _item_no4, _total3, _contents, _headers, _rows2, _headers2, _rows3, _headers3;
+var _doc, _default_page_size, _rows, _books, _books2, _page_count, _category_types, _category_genres, _sub_categories, _tags, _json_scripts, _json_audiobook, _json_product, _product_data, _books3, _default_per_page, _valid_date_ranges, _orders, _purchases, _items, _page_num, _year, _count, _items2, _wrapper, _css, _wrapper2, _head, _content, _copy, _actions, _close_btn, _selectors, _wrapper3, _head2, _content2, _close_btn2, _copy2, _wrapper4, _content3, _actions2, _close_btn3, _ft_select, _start_btn, _file, _selectors2, _wrapper5, _head3, _content4, _copy3, _actions3, _ft_select2, _dl_btn, _file2, _selectors3, _wrapper6, _bar, _status, _percentage, _messages, _context11, _steps, _estimate, _percent, _item_no, _total, _year2, _years, _year3, _year_page, _item_no2, _page_count2, _item_no3, _total2, _item_no4, _total3, _contents, _headers, _rows2, _headers2, _rows3, _headers3;
 function _superPropGet(t, o, e, r) { var p = _get3(_getPrototypeOf(1 & r ? t.prototype : t), o, e); return 2 & r && "function" == typeof p ? function (t) { return p.apply(e, t); } : p; }
 function _get3() { return _get3 = "undefined" != typeof Reflect && Reflect.get ? Reflect.get.bind() : function (e, t, r) { var p = _superPropBase(e, t); if (p) { var n = Object.getOwnPropertyDescriptor(p, t); return n.get ? n.get.call(arguments.length < 3 ? e : r) : n.value; } }, _get3.apply(null, arguments); }
 function _superPropBase(t, o) { for (; !{}.hasOwnProperty.call(t, o) && null !== (t = _getPrototypeOf(t));); return t; }
@@ -23,6 +23,7 @@ function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArra
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
 function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _wrapRegExp() { _wrapRegExp = function _wrapRegExp(e, r) { return new BabelRegExp(e, void 0, r); }; var e = RegExp.prototype, r = new WeakMap(); function BabelRegExp(e, t, p) { var o = RegExp(e, t); return r.set(o, p || r.get(e)), _setPrototypeOf(o, BabelRegExp.prototype); } function buildGroups(e, t) { var p = r.get(t); return Object.keys(p).reduce(function (r, t) { var o = p[t]; if ("number" == typeof o) r[t] = e[o];else { for (var i = 0; void 0 === e[o[i]] && i + 1 < o.length;) i++; r[t] = e[o[i]]; } return r; }, Object.create(null)); } return _inherits(BabelRegExp, RegExp), BabelRegExp.prototype.exec = function (r) { var t = e.exec.call(this, r); if (t) { t.groups = buildGroups(t, this); var p = t.indices; p && (p.groups = buildGroups(p, this)); } return t; }, BabelRegExp.prototype[Symbol.replace] = function (t, p) { if ("string" == typeof p) { var o = r.get(this); return e[Symbol.replace].call(this, t, p.replace(/\$<([^>]+)>/g, function (e, r) { var t = o[r]; return "$" + (Array.isArray(t) ? t.join("$") : t); })); } if ("function" == typeof p) { var i = this; return e[Symbol.replace].call(this, t, function () { var e = arguments; return "object" != _typeof(e[e.length - 1]) && (e = [].slice.call(e)).push(buildGroups(e, i)), p.apply(this, e); }); } return e[Symbol.replace].call(this, t, p); }, _wrapRegExp.apply(this, arguments); }
 function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
 function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
 function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
@@ -868,7 +869,17 @@ LibraryBookRow = /*#__PURE__*/function (_Parser) {
     get: function get() {
       var links = this.ul.qs(".authorLabel a.bc-color-base");
       return links.map(function (a) {
-        return a.innerHTML.trim();
+        var author = {
+          name: a.innerHTML.trim()
+        };
+        var found = a.href.match(/*#__PURE__*/_wrapRegExp(/[/]author[/]([^?]+)/, {
+          id: 1
+        }));
+        if (found) {
+          author.id = found.groups.id;
+          author.url = "/author/".concat(found.groups.id);
+        }
+        return author;
       });
     }
   }, {
@@ -1189,7 +1200,7 @@ LibraryFetcher = (_books2 = /*#__PURE__*/new WeakMap(), _page_count = /*#__PURE_
  *
  */
 
-BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#__PURE__*/new WeakMap(), _sub_categories = /*#__PURE__*/new WeakMap(), _tags = /*#__PURE__*/new WeakMap(), _json_scripts = /*#__PURE__*/new WeakMap(), _json_audiobook = /*#__PURE__*/new WeakMap(), _json_product = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Page3) {
+BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#__PURE__*/new WeakMap(), _sub_categories = /*#__PURE__*/new WeakMap(), _tags = /*#__PURE__*/new WeakMap(), _json_scripts = /*#__PURE__*/new WeakMap(), _json_audiobook = /*#__PURE__*/new WeakMap(), _json_product = /*#__PURE__*/new WeakMap(), _product_data = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Page3) {
   function _class3() {
     var _this7;
     var doc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
@@ -1267,6 +1278,7 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
     _classPrivateFieldInitSpec(_this7, _json_scripts, null);
     _classPrivateFieldInitSpec(_this7, _json_audiobook, null);
     _classPrivateFieldInitSpec(_this7, _json_product, null);
+    _classPrivateFieldInitSpec(_this7, _product_data, null);
     _this7.doc = doc;
     return _this7;
   }
@@ -1328,34 +1340,74 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
       }
       return _classPrivateFieldGet(_json_product, this);
     }
+
+    /**
+     * Return the relevant data from the digitalData variable.
+     *
+     * Same as:
+     *   digitalData.product[0].productInfo;
+     *
+     * @return {object}
+     */
+  }, {
+    key: "product_data",
+    get: function get() {
+      if (!_classPrivateFieldGet(_product_data, this)) {
+        var digitalData;
+        var tags = this.doc.qs("script[type='text/javascript']");
+        var script = tags.filter(function (t) {
+          return t.innerHTML.match(/digitalData/);
+        });
+        var js = script[0].innerHTML;
+        js = js.replace("var digitalData = ", "digitalData =");
+        eval(js);
+        _classPrivateFieldSet(_product_data, this, digitalData.product[0].productInfo);
+      }
+      return _classPrivateFieldGet(_product_data, this);
+    }
+
+    /**
+     * Return an array of author objects.
+     *
+     * Each object includes a name and may include id and url.
+     *
+     * @return {Array}
+     */
   }, {
     key: "authors",
     get: function get() {
-      var _this$json_audiobook$;
-      return ((_this$json_audiobook$ = this.json_audiobook.author) === null || _this$json_audiobook$ === void 0 ? void 0 : _this$json_audiobook$.map(function (a) {
-        return a.name;
-      })) || [];
+      var authors = this.product_data.authors.map(function (a) {
+        var author = {
+          name: a.fullName
+        };
+        if (a.id) {
+          author.id = a.id;
+          author.url = "/author/".concat(a.id);
+        }
+        return author;
+      });
+      return authors || [];
     }
   }, {
     key: "narrators",
     get: function get() {
-      var _this$json_audiobook$2;
-      return ((_this$json_audiobook$2 = this.json_audiobook.readBy) === null || _this$json_audiobook$2 === void 0 ? void 0 : _this$json_audiobook$2.map(function (n) {
+      var _this$json_audiobook$;
+      return ((_this$json_audiobook$ = this.json_audiobook.readBy) === null || _this$json_audiobook$ === void 0 ? void 0 : _this$json_audiobook$.map(function (n) {
         return n.name;
       })) || [];
     }
   }, {
     key: "rating",
     get: function get() {
-      var _this$json_audiobook$3;
-      var rating = tryFloat((_this$json_audiobook$3 = this.json_audiobook.aggregateRating) === null || _this$json_audiobook$3 === void 0 ? void 0 : _this$json_audiobook$3.ratingValue);
+      var _this$json_audiobook$2;
+      var rating = tryFloat((_this$json_audiobook$2 = this.json_audiobook.aggregateRating) === null || _this$json_audiobook$2 === void 0 ? void 0 : _this$json_audiobook$2.ratingValue);
       return rating ? +rating.toFixed(1) : "";
     }
   }, {
     key: "num_ratings",
     get: function get() {
-      var _this$json_audiobook$4;
-      return tryInt((_this$json_audiobook$4 = this.json_audiobook.aggregateRating) === null || _this$json_audiobook$4 === void 0 ? void 0 : _this$json_audiobook$4.ratingCount);
+      var _this$json_audiobook$3;
+      return tryInt((_this$json_audiobook$3 = this.json_audiobook.aggregateRating) === null || _this$json_audiobook$3 === void 0 ? void 0 : _this$json_audiobook$3.ratingCount);
     }
   }, {
     key: "id",
@@ -4215,12 +4267,20 @@ TSVFile = (_headers2 = /*#__PURE__*/new WeakMap(), _rows3 = /*#__PURE__*/new Wea
         var _Object$entries5$_i = _slicedToArray(_Object$entries5[_i5], 2),
           i = _Object$entries5$_i[0],
           record = _Object$entries5$_i[1];
+        if (record.authors === "") {
+          record.authors = [];
+        }
         if (record.series === "") {
           record.series = [];
         }
         if (record.series) {
           record.series = record.series.map(function (series) {
             return series.name + (series.number ? " #".concat(series.number) : "");
+          }).join(", ");
+        }
+        if (record.authors) {
+          record.authors = record.authors.map(function (a) {
+            return a.name;
           }).join(", ");
         }
         Object.entries(record).forEach(function (_ref11) {

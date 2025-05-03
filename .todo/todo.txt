@@ -24,7 +24,6 @@
 (Z) 2025-02-27 @ux Display error message dialog on fatal error.
 (C) 2025-02-27 @ux Add simple download option to skip book details and only download info from library and orders.
 (C) 2025-02-27 @refactor Have Page.fetchDoc() set this.url = url
-(B) 2025-02-28 @ux @download In TSV download, join categories.
 (B) 2025-02-28 @ux @download Compare results from original download to current results
 (D) 2025-03-01 @download Add purchase_timestamp.
 (A) 2025-03-01 @refactor @data pages: Parse data from multiple fields, select the first one that has content.

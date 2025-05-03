@@ -105,3 +105,4 @@ x 2025-05-02 2025-03-10 @data Parse/handle multiple authors.
 x 2025-05-02 2025-03-01 @download Rename audible_oginal -> audible_original
 x 2025-05-02 2025-05-02 @data Parse multiple narrators.
 x 2025-05-02 2025-05-02 @refactor BookPage: Split .get() into one function that fetches the page and another (.new() maybe) that determines if it is a NormalBookPage or an ADBLBookPage.
+x 2025-05-02 2025-02-28 @ux @download In TSV download, join categories.
