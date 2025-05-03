@@ -86,15 +86,16 @@ describe("TSVFile", () => {
           },
         ],
         authors: ["C. S. Lewis"],
+        narrators: ["Michael York"],
       },
     ]);
 
     file.preprocess();
 
+    expect(file.records[0].authors).toBe("C. S. Lewis");
+    expect(file.records[0].narrators).toBe("Michael York");
     expect(file.records[0].series).toBe(
       "The Chronicles of Narnia (Publication Order) #1, The Chronicles of Narnia (Author's Preferred Order) #2",
     );
-
-    expect(file.records[0].authors).toBe("C. S. Lewis");
   });
 });

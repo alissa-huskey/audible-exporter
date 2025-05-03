@@ -86,6 +86,7 @@ BookPage = class extends Page {
     "id",
     "title",
     "authors",
+    "narrators",
     "duration_minutes",
     "language",
     "release_date",
@@ -110,6 +111,27 @@ BookPage = class extends Page {
   #json_product = null;
 
   /**
+   * Return a BookPage instance of the correct subclass (ADBLBookPage or
+   * NormalBookPage).
+   *
+   * @param {HTMLDocument} html  Document parsed from page contents.
+   *
+   * @returns {BookPage}
+   */
+  static new(html) {
+    let doc = new Doc(html);
+    let page;
+
+    if (doc.gt("adbl-product-details").length) {
+      page = new ADBLBookPage(doc);
+    } else {
+      page = new NormalBookPage(doc);
+    }
+
+    return page;
+  }
+
+  /**
    * Fetch the book page and return the BookPage object.
    *
    * Return either an ADBLBookPage or NormalBookPage.
@@ -119,17 +141,11 @@ BookPage = class extends Page {
    * @returns {BookPage}
    */
   static async get(url) {
-    let page = new Page();
-    let doc = await page.fetchDoc(url);
-    doc = new Doc(doc);
+    let doc = await new Page().fetchDoc(url);
 
-    if (doc.gt("adbl-product-details").length) {
-      page = new ADBLBookPage(doc);
-    } else {
-      page = new NormalBookPage(doc);
-    }
-
+    let page = BookPage.new(doc);
     page.url = url;
+
     return page;
   }
 
@@ -191,6 +207,10 @@ BookPage = class extends Page {
 
   get authors() {
     return this.json_audiobook.author?.map((a) => a.name) || [];
+  }
+
+  get narrators() {
+    return this.json_audiobook.readBy?.map((n) => n.name) || [];
   }
 
   get rating() {

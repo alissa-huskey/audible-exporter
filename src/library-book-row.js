@@ -2,7 +2,7 @@ require("./util.js");
 require("./parser.js");
 
 LibraryBookRow = class extends Parser {
-  _fields = ["id", "url", "title", "authors", "narrator", "series"];
+  _fields = ["id", "url", "title", "authors", "narrators", "series"];
   _identifers = ["page_num", "row_num"];
 
   constructor(doc = null, page_num = null, row_num = null) {
@@ -36,8 +36,9 @@ LibraryBookRow = class extends Parser {
     return links.map((a) => a.innerHTML.trim());
   }
 
-  get narrator() {
-    return this.ul.qsf(".narratorLabel .bc-color-base")?.innerHTML?.trim();
+  get narrators() {
+    let links = this.ul.qs(".narratorLabel .bc-color-base");
+    return links.map((a) => a.innerHTML.trim());
   }
 
   get series() {

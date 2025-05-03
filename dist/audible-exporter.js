@@ -826,7 +826,7 @@ Parser = class {
   }
 };
 LibraryBookRow = class extends Parser {
-  _fields = ["id", "url", "title", "authors", "narrator", "series"];
+  _fields = ["id", "url", "title", "authors", "narrators", "series"];
   _identifers = ["page_num", "row_num"];
 
   constructor(doc = null, page_num = null, row_num = null) {
@@ -860,8 +860,9 @@ LibraryBookRow = class extends Parser {
     return links.map((a) => a.innerHTML.trim());
   }
 
-  get narrator() {
-    return this.ul.qsf(".narratorLabel .bc-color-base")?.innerHTML?.trim();
+  get narrators() {
+    let links = this.ul.qs(".narratorLabel .bc-color-base");
+    return links.map((a) => a.innerHTML.trim());
   }
 
   get series() {
@@ -1143,13 +1144,14 @@ BookPage = class extends Page {
     "id",
     "title",
     "authors",
+    "narrators",
     "duration_minutes",
     "language",
     "release_date",
     "release_timestamp",
     "publisher",
     "publisher_summary",
-    "audible_oginal",
+    "audible_original",
     "series",
     "category_type",
     "main_category",
@@ -1167,6 +1169,27 @@ BookPage = class extends Page {
   #json_product = null;
 
   /**
+   * Return a BookPage instance of the correct subclass (ADBLBookPage or
+   * NormalBookPage).
+   *
+   * @param {HTMLDocument} html  Document parsed from page contents.
+   *
+   * @returns {BookPage}
+   */
+  static new(html) {
+    let doc = new Doc(html);
+    let page;
+
+    if (doc.gt("adbl-product-details").length) {
+      page = new ADBLBookPage(doc);
+    } else {
+      page = new NormalBookPage(doc);
+    }
+
+    return page;
+  }
+
+  /**
    * Fetch the book page and return the BookPage object.
    *
    * Return either an ADBLBookPage or NormalBookPage.
@@ -1176,17 +1199,11 @@ BookPage = class extends Page {
    * @returns {BookPage}
    */
   static async get(url) {
-    let page = new Page();
-    let doc = await page.fetchDoc(url);
-    doc = new Doc(doc);
+    let doc = await new Page().fetchDoc(url);
 
-    if (doc.gt("adbl-product-details").length) {
-      page = new ADBLBookPage(doc);
-    } else {
-      page = new NormalBookPage(doc);
-    }
-
+    let page = BookPage.new(doc);
     page.url = url;
+
     return page;
   }
 
@@ -1250,6 +1267,10 @@ BookPage = class extends Page {
     return this.json_audiobook.author?.map((a) => a.name) || [];
   }
 
+  get narrators() {
+    return this.json_audiobook.readBy?.map((n) => n.name) || [];
+  }
+
   get rating() {
     let rating = tryFloat(this.json_audiobook.aggregateRating?.ratingValue);
     return rating ? +rating.toFixed(1) : "";
@@ -1296,7 +1317,7 @@ BookPage = class extends Page {
     return stripHTML(text);
   }
 
-  get audible_oginal() {
+  get audible_original() {
     if (!this.publisher) return null;
     return /^Audible Original/.test(this.publisher);
   }
@@ -4247,9 +4268,6 @@ TSVFile = class extends VirtualFile {
       if (record.series === "") {
         record.series = [];
       }
-      if (record.authors === "") {
-        record.authors = [];
-      }
       if (record.series) {
         record.series = record.series
           .map((series) => {
@@ -4257,9 +4275,12 @@ TSVFile = class extends VirtualFile {
           })
           .join(", ");
       }
-      if (record.authors) {
-        record.authors = record.authors.join(", ");
-      }
+
+      Object.entries(record).forEach(([field, value]) => {
+        if (value instanceof Array) {
+          record[field] = value.join(", ");
+        }
+      });
     }
   }
 
@@ -4297,8 +4318,8 @@ Result = class {
     id: ["order", "library", "details"],
     url: ["order", "library"],
     title: ["order", "details", "library"],
-    authors: ["library", "details"],
-    narrator: ["library"],
+    authors: ["details", "library"],
+    narrators: ["details", "library"],
     series: ["library", "details"],
     publisher: ["details"],
     duration_minutes: ["details"],
@@ -4309,7 +4330,7 @@ Result = class {
     publisher_summary: ["details"],
     rating: ["details"],
     num_ratings: ["details"],
-    audible_oginal: ["details"],
+    audible_original: ["details"],
     category_type: ["details"],
     main_category: ["details"],
     sub_category: ["details"],

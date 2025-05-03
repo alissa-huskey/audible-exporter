@@ -832,7 +832,7 @@ LibraryBookRow = /*#__PURE__*/function (_Parser) {
     var row_num = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
     _classCallCheck(this, LibraryBookRow);
     _this4 = _callSuper(this, LibraryBookRow);
-    _defineProperty(_this4, "_fields", ["id", "url", "title", "authors", "narrator", "series"]);
+    _defineProperty(_this4, "_fields", ["id", "url", "title", "authors", "narrators", "series"]);
     _defineProperty(_this4, "_identifers", ["page_num", "row_num"]);
     _this4.doc = doc;
     _this4.page_num = page_num;
@@ -872,10 +872,12 @@ LibraryBookRow = /*#__PURE__*/function (_Parser) {
       });
     }
   }, {
-    key: "narrator",
+    key: "narrators",
     get: function get() {
-      var _this$ul$qsf;
-      return (_this$ul$qsf = this.ul.qsf(".narratorLabel .bc-color-base")) === null || _this$ul$qsf === void 0 || (_this$ul$qsf = _this$ul$qsf.innerHTML) === null || _this$ul$qsf === void 0 ? void 0 : _this$ul$qsf.trim();
+      var links = this.ul.qs(".narratorLabel .bc-color-base");
+      return links.map(function (a) {
+        return a.innerHTML.trim();
+      });
     }
   }, {
     key: "series",
@@ -1188,11 +1190,11 @@ LibraryFetcher = (_books2 = /*#__PURE__*/new WeakMap(), _page_count = /*#__PURE_
  */
 
 BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#__PURE__*/new WeakMap(), _sub_categories = /*#__PURE__*/new WeakMap(), _tags = /*#__PURE__*/new WeakMap(), _json_scripts = /*#__PURE__*/new WeakMap(), _json_audiobook = /*#__PURE__*/new WeakMap(), _json_product = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Page3) {
-  function BookPage() {
+  function _class3() {
     var _this7;
     var doc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    _classCallCheck(this, BookPage);
-    _this7 = _callSuper(this, BookPage);
+    _classCallCheck(this, _class3);
+    _this7 = _callSuper(this, _class3);
     _classPrivateFieldInitSpec(_this7, _category_types, ["Fiction", "Nonfiction"]);
     _classPrivateFieldInitSpec(_this7, _category_genres, {
       "Arts & Entertainment": "nonfiction",
@@ -1259,7 +1261,7 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
     "Historical",
     // biographies & Memoiirs
     "Young Adult", "Thriller & Suspense"]);
-    _defineProperty(_this7, "_fields", ["id", "title", "authors", "duration_minutes", "language", "release_date", "release_timestamp", "publisher", "publisher_summary", "audible_oginal", "series", "category_type", "main_category", "sub_category", "categories", "rating", "num_ratings"]);
+    _defineProperty(_this7, "_fields", ["id", "title", "authors", "narrators", "duration_minutes", "language", "release_date", "release_timestamp", "publisher", "publisher_summary", "audible_original", "series", "category_type", "main_category", "sub_category", "categories", "rating", "num_ratings"]);
     _defineProperty(_this7, "_identifers", ["url"]);
     _classPrivateFieldInitSpec(_this7, _tags, []);
     _classPrivateFieldInitSpec(_this7, _json_scripts, null);
@@ -1274,8 +1276,8 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
    * @example
    * page.toMinutes("2 hrs and 25 mins"); // 145
    */
-  _inherits(BookPage, _Page3);
-  return _createClass(BookPage, [{
+  _inherits(_class3, _Page3);
+  return _createClass(_class3, [{
     key: "toMinutes",
     value: function toMinutes(text) {
       var _exec, _exec2;
@@ -1335,17 +1337,25 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
       })) || [];
     }
   }, {
-    key: "rating",
+    key: "narrators",
     get: function get() {
       var _this$json_audiobook$2;
-      var rating = tryFloat((_this$json_audiobook$2 = this.json_audiobook.aggregateRating) === null || _this$json_audiobook$2 === void 0 ? void 0 : _this$json_audiobook$2.ratingValue);
+      return ((_this$json_audiobook$2 = this.json_audiobook.readBy) === null || _this$json_audiobook$2 === void 0 ? void 0 : _this$json_audiobook$2.map(function (n) {
+        return n.name;
+      })) || [];
+    }
+  }, {
+    key: "rating",
+    get: function get() {
+      var _this$json_audiobook$3;
+      var rating = tryFloat((_this$json_audiobook$3 = this.json_audiobook.aggregateRating) === null || _this$json_audiobook$3 === void 0 ? void 0 : _this$json_audiobook$3.ratingValue);
       return rating ? +rating.toFixed(1) : "";
     }
   }, {
     key: "num_ratings",
     get: function get() {
-      var _this$json_audiobook$3;
-      return tryInt((_this$json_audiobook$3 = this.json_audiobook.aggregateRating) === null || _this$json_audiobook$3 === void 0 ? void 0 : _this$json_audiobook$3.ratingCount);
+      var _this$json_audiobook$4;
+      return tryInt((_this$json_audiobook$4 = this.json_audiobook.aggregateRating) === null || _this$json_audiobook$4 === void 0 ? void 0 : _this$json_audiobook$4.ratingCount);
     }
   }, {
     key: "id",
@@ -1390,7 +1400,7 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
       return stripHTML(text);
     }
   }, {
-    key: "audible_oginal",
+    key: "audible_original",
     get: function get() {
       if (!this.publisher) return null;
       return /^Audible Original/.test(this.publisher);
@@ -1547,8 +1557,27 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
       });
     }
   }], [{
-    key: "get",
-    value: (
+    key: "new",
+    value:
+    /**
+     * Return a BookPage instance of the correct subclass (ADBLBookPage or
+     * NormalBookPage).
+     *
+     * @param {HTMLDocument} html  Document parsed from page contents.
+     *
+     * @returns {BookPage}
+     */
+    function _new(html) {
+      var doc = new Doc(html);
+      var page;
+      if (doc.gt("adbl-product-details").length) {
+        page = new ADBLBookPage(doc);
+      } else {
+        page = new NormalBookPage(doc);
+      }
+      return page;
+    }
+
     /**
      * Fetch the book page and return the BookPage object.
      *
@@ -1558,26 +1587,22 @@ BookPage = (_category_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#
      *
      * @returns {BookPage}
      */
-    function () {
+  }, {
+    key: "get",
+    value: (function () {
       var _get = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5(url) {
-        var page, doc;
+        var doc, page;
         return _regeneratorRuntime().wrap(function _callee5$(_context5) {
           while (1) switch (_context5.prev = _context5.next) {
             case 0:
-              page = new Page();
-              _context5.next = 3;
-              return page.fetchDoc(url);
-            case 3:
+              _context5.next = 2;
+              return new Page().fetchDoc(url);
+            case 2:
               doc = _context5.sent;
-              doc = new Doc(doc);
-              if (doc.gt("adbl-product-details").length) {
-                page = new ADBLBookPage(doc);
-              } else {
-                page = new NormalBookPage(doc);
-              }
+              page = BookPage["new"](doc);
               page.url = url;
               return _context5.abrupt("return", page);
-            case 8:
+            case 6:
             case "end":
               return _context5.stop();
           }
@@ -4186,24 +4211,29 @@ TSVFile = (_headers2 = /*#__PURE__*/new WeakMap(), _rows3 = /*#__PURE__*/new Wea
   }, {
     key: "preprocess",
     value: function preprocess() {
-      for (var _i5 = 0, _Object$entries5 = Object.entries(this.records); _i5 < _Object$entries5.length; _i5++) {
+      var _loop3 = function _loop3() {
         var _Object$entries5$_i = _slicedToArray(_Object$entries5[_i5], 2),
           i = _Object$entries5$_i[0],
           record = _Object$entries5$_i[1];
         if (record.series === "") {
           record.series = [];
         }
-        if (record.authors === "") {
-          record.authors = [];
-        }
         if (record.series) {
           record.series = record.series.map(function (series) {
             return series.name + (series.number ? " #".concat(series.number) : "");
           }).join(", ");
         }
-        if (record.authors) {
-          record.authors = record.authors.join(", ");
-        }
+        Object.entries(record).forEach(function (_ref11) {
+          var _ref12 = _slicedToArray(_ref11, 2),
+            field = _ref12[0],
+            value = _ref12[1];
+          if (value instanceof Array) {
+            record[field] = value.join(", ");
+          }
+        });
+      };
+      for (var _i5 = 0, _Object$entries5 = Object.entries(this.records); _i5 < _Object$entries5.length; _i5++) {
+        _loop3();
       }
     }
   }, {
@@ -4239,8 +4269,8 @@ Result = (_headers3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
       id: ["order", "library", "details"],
       url: ["order", "library"],
       title: ["order", "details", "library"],
-      authors: ["library", "details"],
-      narrator: ["library"],
+      authors: ["details", "library"],
+      narrators: ["details", "library"],
       series: ["library", "details"],
       publisher: ["details"],
       duration_minutes: ["details"],
@@ -4251,7 +4281,7 @@ Result = (_headers3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
       publisher_summary: ["details"],
       rating: ["details"],
       num_ratings: ["details"],
-      audible_oginal: ["details"],
+      audible_original: ["details"],
       category_type: ["details"],
       main_category: ["details"],
       sub_category: ["details"],

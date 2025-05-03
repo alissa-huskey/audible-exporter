@@ -30,7 +30,6 @@
 (A) 2025-03-01 @refactor @data pages: Parse data from multiple fields, select the first one that has content.
 (M) 2025-03-01 @feature Get a list of collections a book belongs to
 (C) 2025-03-01 @refactor Rename NormalBookPage -> LegacyBookPage
-x 2025-05-02 2025-03-01 @download Rename audible_oginal -> audible_original
 (D) 2025-03-01 @refactor @performance See about getting rid of .data() methods to reduce overhead.
 (C) 2025-03-01 @refactor Move LibraryFetcher.fetchPage() -> LibraryPage.get()
 (A) 2025-03-02 @download ensure all URL formats are the same.
@@ -60,11 +59,10 @@ x 2025-05-02 2025-03-01 @download Rename audible_oginal -> audible_original
 (B) 2025-03-16 @ux When checking if on audible.com, exclude help.audible.com.
 (A) 2025-05-01 @feature Add purchase information to download.
 (A) 2025-05-01 @feature Add option to skip purchase information
-(A) 2025-05-02 @refactor BookPage: Split .get() into one function that fetches the page and another (.new() maybe) that determines if it is a NormalBookPage or an ADBLBookPage.
+x 2025-05-02 2025-05-02 @refactor BookPage: Split .get() into one function that fetches the page and another (.new() maybe) that determines if it is a NormalBookPage or an ADBLBookPage.
 (A) 2025-05-02 @bug In JSON, when there is no series value should be [] not "".
 (B) 2025-05-02 @ux Add limit option to UX instead of just CLI
 (B) 2025-05-02 @ux Allow user to download multiple times/multiple filetypes.
-(A) 2025-05-02 @data Parse multiple narrators.
 (A) 2025-05-02 @data Library Book Row: parse status (finished, xh xm, xh xm left)
 (B) 2025-05-02 @data @json Add account and date downloaded to JSON.
 (D) 2025-05-02 @data Authors: Parse things like "Rovina Cai - illustrator" to seperate contributors field https://www.audible.com/pd/How-the-King-of-Elfhame-Learned-to-Hate-Stories-Audiobook/1549187538

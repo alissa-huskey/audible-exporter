@@ -51,7 +51,7 @@ describe("Result", () => {
       url: "/pd/Honored-Enemy-Audiobook/006297534X",
       title: "Honored Enemy: Legends of the Riftwar, Book 1",
       authors: ["Raymond E. Feist", "William R. Forstchen"],
-      narrator: "Matt Bates",
+      narrators: ["Matt Bates"],
       series: [
         {
           id: "B0D9HWCMMS",
@@ -98,7 +98,7 @@ describe("Result", () => {
       url: "http://www.audible.com/pd/006297534X",
       title: "Honored Enemy",
       authors: ["Raymond E. Feist", "William R. Forstchen"],
-      narrator: "Matt Bates",
+      narrators: ["Matt Bates"],
       series: [
         {
           id: "B0D9HWCMMS",

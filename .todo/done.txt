@@ -103,3 +103,5 @@ x 2025-05-01 2025-03-01 @data book-details: Parse/handle multiple series.
 x 2025-05-02 2025-03-10 @data Remove &amp; from categories in JSON export.
 x 2025-05-02 2025-03-10 @data Parse/handle multiple authors.
 x 2025-05-02 2025-03-01 @download Rename audible_oginal -> audible_original
+x 2025-05-02 2025-05-02 @data Parse multiple narrators.
+x 2025-05-02 2025-05-02 @refactor BookPage: Split .get() into one function that fetches the page and another (.new() maybe) that determines if it is a NormalBookPage or an ADBLBookPage.

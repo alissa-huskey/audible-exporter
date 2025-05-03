@@ -14,6 +14,21 @@ describe("BookPage", () => {
     expect(page.toMinutes("50 mins")).toBe(50);
   });
 
+  test.each([
+    {
+      fixture: "book-details-audible-original.html",
+      klass: NormalBookPage,
+    },
+    {
+      fixture: "book-details.html",
+      klass: ADBLBookPage,
+    },
+  ])("BookPage.new()", ({ fixture, klass }) => {
+    let doc = fixtureDoc(fixture);
+    let page = BookPage.new(doc);
+    expect(page).toBeA(klass);
+  });
+
   test("BookPage.get()", async () => {
     Page.prototype.fetchDoc = mockFetchDocs([
       fixtureDoc("book-details-audible-original.html"),
@@ -25,6 +40,35 @@ describe("BookPage", () => {
 
     page = await BookPage.get("https://www.audible.com/pd/0062978810");
     expect(page).toBeA("ADBLBookPage");
+  });
+
+  test.each([
+    {
+      fixture: "book-details-audible-original.html",
+      narrators: ["Oliver Wyman"],
+    },
+    {
+      fixture: "book-details-award.html",
+      narrators: ["Colin Firth"],
+    },
+    {
+      fixture: "book-details-no-series.html",
+      narrators: ["Ben Barnes", "Lauren Fortgang"],
+    },
+    {
+      fixture: "book-details-multiple-series.html",
+      narrators: ["Kate Reading", "Michael Kramer"],
+    },
+    {
+      fixture: "book-details-ace.html",
+      narrators: ["Roger Clark"],
+    },
+  ])(".narrators", async ({ fixture, narrators }) => {
+    let doc = fixtureDoc(fixture);
+    let page = BookPage.new(doc);
+
+    expect(page.narrators).toBeA(Array);
+    expect(page.narrators).toEqual(narrators);
   });
 
   test.each([
@@ -82,15 +126,8 @@ describe("BookPage", () => {
       ],
     },
   ])(".series", async ({ fixture, series }) => {
-    let doc = new Doc(fixtureDoc(fixture));
-    let page;
-
-    // TODO: Move this to static function on BookPage
-    if (doc.gt("adbl-product-details").length) {
-      page = new ADBLBookPage(doc);
-    } else {
-      page = new NormalBookPage(doc);
-    }
+    let doc = fixtureDoc(fixture);
+    let page = BookPage.new(doc);
 
     expect(page.series).toBeA(Array);
     expect(page.series).toEqual(series);
@@ -131,6 +168,10 @@ describe("NormalBookPage", () => {
 
   test(".authors", () => {
     expect(page.authors).toEqual(["Larry Correia"]);
+  });
+
+  test(".narrators", () => {
+    expect(page.narrators).toEqual(["Oliver Wyman"]);
   });
 
   test(".date", () => {
@@ -186,6 +227,7 @@ describe("NormalBookPage", () => {
       id: "B0BL84CBLZ",
       title: "Ghosts of Zenith",
       authors: ["Larry Correia"],
+      narrators: ["Oliver Wyman"],
       duration_minutes: 145,
       language: "English",
       release_date: "2023 Jan 12",
@@ -274,6 +316,10 @@ describe("ADBLBookPage", () => {
 
   test(".authors", () => {
     expect(page.authors).toEqual(["Ben Aaronovitch"]);
+  });
+
+  test(".narrators", () => {
+    expect(page.narrators).toEqual(["Kobna Holdbrook-Smith"]);
   });
 
   test(".date", () => {
@@ -387,6 +433,6 @@ describe("ADBLBookPage", () => {
 
     page.data();
 
-    expect(spy.mock.calls).toHaveLength(11);
+    expect(spy.mock.calls).toHaveLength(12);
   });
 });

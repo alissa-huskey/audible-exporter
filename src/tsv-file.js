@@ -45,9 +45,6 @@ TSVFile = class extends VirtualFile {
       if (record.series === "") {
         record.series = [];
       }
-      if (record.authors === "") {
-        record.authors = [];
-      }
       if (record.series) {
         record.series = record.series
           .map((series) => {
@@ -55,9 +52,12 @@ TSVFile = class extends VirtualFile {
           })
           .join(", ");
       }
-      if (record.authors) {
-        record.authors = record.authors.join(", ");
-      }
+
+      Object.entries(record).forEach(([field, value]) => {
+        if (value instanceof Array) {
+          record[field] = value.join(", ");
+        }
+      });
     }
   }
 
