@@ -123,7 +123,7 @@ describe("Exporter", () => {
     let exporter = new Exporter();
 
     // prettier-ignore
-    exporter.ledger.items = {
+    exporter.ledger.entries = {
       B0CQ3759C3: { asin: "B0CQ3759C3", url: "http://www.audible.com/pd/B0CQ3759C3", title: "Wind and Truth", author: "Brandon Sanderson", purchased: "1/21/2025" },
       B0BG96TCVH: { asin: "B0BG96TCVH", url: "http://www.audible.com/pd/B0BG96TCVH", title: "Demons of Good and Evil", author: "Kim Harrison", purchased: "12/3/2024" },
       1713569264: { asin: "1713569264", url: "http://www.audible.com/pd/1713569264", title: "The Queen", author: "Jennifer L. Armentrout", purchased: "12/3/2024" },

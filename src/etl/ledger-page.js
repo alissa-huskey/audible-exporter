@@ -3,10 +3,11 @@ require("./order-row.js");
 require("./purchase-row.js");
 
 /**
- * A single purchase history page, usually a year and page ie 2024, page 2
+ * A single purchase history page, usually a year and page
+ * (ie 2024, page 2 of 3).
  *
- * Each order page has both a list of orders, and a list of purchases (see
- * purchase-row.js).
+ * Each order page has both a list of orders (OrderRow), and a list of
+ * purchases (PurchaseRow).
  *
  * Example:
  * https://www.audible.com/account/purchase-history?ref=&tf=orders&df=2024&ps=20
@@ -20,27 +21,11 @@ LedgerPage = class extends Page {
 
   #orders = {};
   #purchases = {};
-  #items = [];
+  #entries = [];
   #page_num = null;
   #year = null;
-
-  /**
-   * Return true if all given attributes are truthy.
-   */
-  require(...attrs) {
-    let success = true;
-    for (let a in attrs) {
-      if (!this[attrs[a]]) {
-        let source = new Error().stack
-          .split("\n")[2]
-          .match(/at (.*)\.require \[as (.*)] \(.*[/](.*)\)/);
-        let prefix = source ? `<${source[3]} ${source[1]}.${source[2]}> ` : "";
-        error(`${prefix}Missing required attribute: ${attrs[a]}.`);
-        success = false;
-      }
-    }
-    return success;
-  }
+  #years = null;
+  #page_count = null;
 
   constructor(year_or_doc = null, page_num = null, per_page = null) {
     super();
@@ -57,7 +42,7 @@ LedgerPage = class extends Page {
     }
 
     this.per_page = per_page || this.#default_per_page;
-    this.#items = null;
+    this.#entries = null;
   }
 
   /**
@@ -71,6 +56,11 @@ LedgerPage = class extends Page {
     return this.doc;
   }
 
+  /**
+   * The year for this page.
+   *
+   * @return {number}
+   */
   get year() {
     if (!this.#year && this.doc) {
       this.#year = this.doc.qsf(
@@ -80,10 +70,20 @@ LedgerPage = class extends Page {
     return tryInt(this.#year);
   }
 
+  /**
+   * Set the year for this page.
+   *
+   * @param {number} value  The year.
+   */
   set year(value) {
     this.#year = value;
   }
 
+  /**
+   * The page number of this page.
+   *
+   * @return {number}
+   */
   get page_num() {
     if (!this.#page_num && this.doc) {
       this.#page_num =
@@ -94,31 +94,44 @@ LedgerPage = class extends Page {
     return tryInt(this.#page_num);
   }
 
+  /**
+   * Set the page number of this page.
+   *
+   * @param {number} value   The page number.
+   */
   set page_num(value) {
     this.#page_num = value;
   }
 
+  /**
+   * Number of pages for this year (or date range).
+   *
+   * @return {number}
+   */
   get page_count() {
-    if (!this.require("doc")) return null;
-    let link = this.doc.qs("a.purchase-history-pagination-button").last;
-    let count = link?.innerHTML.trim() || 1;
-    return parseInt(count);
-  }
-
-  get years() {
-    let options = this.doc.qs("#ui-it-purchase-history-date-filter option");
-    let years = options.reduce((arr, option) => {
-      let year = option.value;
-      if (/^\d+$/.test(year)) {
-        arr.push(year);
-      }
-      return arr;
-    }, []);
-    return years;
+    if (!this.#page_count && this.doc) {
+      let link = this.doc.qs("a.purchase-history-pagination-button").last;
+      let count = link?.innerHTML.trim() || 1;
+      this.#page_count = parseInt(count);
+    }
+    return this.#page_count;
   }
 
   /**
-   * Data from OrderRow objects, keyed by order id.
+   * An array of years available in the year drop-down.
+   *
+   * @return {array}
+   */
+  get years() {
+    if (!this.#years && this.doc) {
+      let options = this.doc.qs("#ui-it-purchase-history-date-filter option");
+      this.#years = options.map((o) => o.value).filter((y) => /^\d+$/.test(y));
+    }
+    return this.#years;
+  }
+
+  /**
+   * Data from OrderRow objects on this page, keyed by order id.
    *
    * @return {object}
    */
@@ -137,7 +150,7 @@ LedgerPage = class extends Page {
   }
 
   /**
-   * Data from PurchaseRow objects.
+   * Data from PurchaseRow objects on this page.
    *
    * @returns {Array}
    */
@@ -156,13 +169,16 @@ LedgerPage = class extends Page {
    *
    * @return {Array}
    */
-  get items() {
-    if (!this.#items) {
+  get entries() {
+    if (!this.#entries) {
       try {
         let seen = {};
-        this.#items = this.purchases.reduce((arr, p) => {
-          if (p.title && p.author && !seen[p.asin]) {
-            seen[p.asin] = true;
+        this.#entries = this.purchases.reduce((arr, p) => {
+          if (seen[p.asin]) {
+            error(`Duplicate item: /pd/${asin}`, seen[p.asin], p);
+          } else if (p.title && p.author) {
+            // ^ missing title and author mean credit purchases
+            seen[p.asin] = p;
             arr.push({
               asin: p.asin,
               url: `http://www.audible.com/pd/${p.asin}`,
@@ -177,6 +193,6 @@ LedgerPage = class extends Page {
         error(err);
       }
     }
-    return this.#items;
+    return this.#entries;
   }
 };

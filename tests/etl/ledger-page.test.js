@@ -76,26 +76,26 @@ describe("LedgerPage", () => {
   test(".orders", () => {
     // prettier-ignore
     let orders = {
-      "D01-7379715-3760239": { id: "D01-7379715-3760239", date: "1/21/2025", total: "1 Credit" },
-      "D01-4905288-1517028": { id: "D01-4905288-1517028", date: "12/3/2024", total: "$77.30" },
-      "D01-0506818-5008215": { id: "D01-0506818-5008215", date: "12/2/2024", total: "$95.67" },
-      "D01-9703333-4870646": { id: "D01-9703333-4870646", date: "12/1/2024", total: "1 Credit" },
-      "D01-1162658-5907410": { id: "D01-1162658-5907410", date: "11/4/2024", total: "1 Credit" },
-      "D01-7262808-8163417": { id: "D01-7262808-8163417", date: "10/31/2024", total: "1 Credit" },
-      "D01-5796677-8291425": { id: "D01-5796677-8291425", date: "10/29/2024", total: "1 Credit" },
-      "D01-7247673-4073843": { id: "D01-7247673-4073843", date: "10/28/2024", total: "1 Credit" },
-      "D01-2388300-9366627": { id: "D01-2388300-9366627", date: "10/28/2024", total: "$60.92" },
-      "D01-4899140-6464226": { id: "D01-4899140-6464226", date: "10/25/2024", total: "1 Credit" },
-      "D01-8770138-4333054": { id: "D01-8770138-4333054", date: "10/24/2024", total: "1 Credit" },
-      "D01-6124148-0992254": { id: "D01-6124148-0992254", date: "10/23/2024", total: "1 Credit" },
-      "D01-7466506-3280229": { id: "D01-7466506-3280229", date: "10/23/2024", total: "1 Credit" },
-      "D01-5982790-0067405": { id: "D01-5982790-0067405", date: "10/21/2024", total: "1 Credit" },
-      "D01-6834207-4877038": { id: "D01-6834207-4877038", date: "10/21/2024", total: "$59.99" },
-      "D01-1471084-4086621": { id: "D01-1471084-4086621", date: "10/20/2024", total: "1 Credit" },
-      "D01-6352719-4022627": { id: "D01-6352719-4022627", date: "10/19/2024", total: "1 Credit" },
-      "D01-1087744-2694668": { id: "D01-1087744-2694668", date: "10/19/2024", total: "1 Credit" },
-      "D01-0625368-9699437": { id: "D01-0625368-9699437", date: "10/16/2024", total: "1 Credit" },
-      "D01-7076604-3849823": { id: "D01-7076604-3849823", date: "10/15/2024", total: "1 Credit" },
+   "D01-7379715-3760239": { id: "D01-7379715-3760239", date: "1/21/2025", total: "1 Credit", url: "/account/order-details?orderId=D01-7379715-3760239" },
+   "D01-4905288-1517028": { id: "D01-4905288-1517028", date: "12/3/2024", total: "$77.30", url: "/account/order-details?orderId=D01-4905288-1517028" },
+   "D01-0506818-5008215": { id: "D01-0506818-5008215", date: "12/2/2024", total: "$95.67", url: "/account/order-details?orderId=D01-0506818-5008215" },
+   "D01-9703333-4870646": { id: "D01-9703333-4870646", date: "12/1/2024", total: "1 Credit", url: "/account/order-details?orderId=D01-9703333-4870646" },
+   "D01-1162658-5907410": { id: "D01-1162658-5907410", date: "11/4/2024", total: "1 Credit", url: "/account/order-details?orderId=D01-1162658-5907410" },
+   "D01-7262808-8163417": { id: "D01-7262808-8163417", date: "10/31/2024", total: "1 Credit", url: "/account/order-details?orderId=D01-7262808-8163417" },
+   "D01-5796677-8291425": { id: "D01-5796677-8291425", date: "10/29/2024", total: "1 Credit", url: "/account/order-details?orderId=D01-5796677-8291425" },
+   "D01-7247673-4073843": { id: "D01-7247673-4073843", date: "10/28/2024", total: "1 Credit", url: "/account/order-details?orderId=D01-7247673-4073843" },
+   "D01-2388300-9366627": { id: "D01-2388300-9366627", date: "10/28/2024", total: "$60.92", url: "/account/order-details?orderId=D01-2388300-9366627" },
+   "D01-4899140-6464226": { id: "D01-4899140-6464226", date: "10/25/2024", total: "1 Credit", url: "/account/order-details?orderId=D01-4899140-6464226" },
+   "D01-8770138-4333054": { id: "D01-8770138-4333054", date: "10/24/2024", total: "1 Credit", url: "/account/order-details?orderId=D01-8770138-4333054" },
+   "D01-6124148-0992254": { id: "D01-6124148-0992254", date: "10/23/2024", total: "1 Credit", url: "/account/order-details?orderId=D01-6124148-0992254" },
+   "D01-7466506-3280229": { id: "D01-7466506-3280229", date: "10/23/2024", total: "1 Credit", url: "/account/order-details?orderId=D01-7466506-3280229" },
+   "D01-5982790-0067405": { id: "D01-5982790-0067405", date: "10/21/2024", total: "1 Credit", url: "/account/order-details?orderId=D01-5982790-0067405" },
+   "D01-6834207-4877038": { id: "D01-6834207-4877038", date: "10/21/2024", total: "$59.99", url: "/account/order-details?orderId=D01-6834207-4877038" },
+   "D01-1471084-4086621": { id: "D01-1471084-4086621", date: "10/20/2024", total: "1 Credit", url: "/account/order-details?orderId=D01-1471084-4086621" },
+   "D01-6352719-4022627": { id: "D01-6352719-4022627", date: "10/19/2024", total: "1 Credit", url: "/account/order-details?orderId=D01-6352719-4022627" },
+   "D01-1087744-2694668": { id: "D01-1087744-2694668", date: "10/19/2024", total: "1 Credit", url: "/account/order-details?orderId=D01-1087744-2694668" },
+   "D01-0625368-9699437": { id: "D01-0625368-9699437", date: "10/16/2024", total: "1 Credit", url: "/account/order-details?orderId=D01-0625368-9699437" },
+   "D01-7076604-3849823": { id: "D01-7076604-3849823", date: "10/15/2024", total: "1 Credit", url: "/account/order-details?orderId=D01-7076604-3849823" },
     };
 
     let page = new LedgerPage(fixtureDoc("ledger-page.html"));
@@ -157,9 +157,9 @@ describe("LedgerPage", () => {
     expect(page.purchases).toEqual(purchases);
   });
 
-  test(".items", () => {
+  test(".entries", () => {
     // prettier-ignore
-    let items = [
+    let entries = [
         { asin: "B0CQ3759C3", url: "http://www.audible.com/pd/B0CQ3759C3", title: "Wind and Truth", author: "Brandon Sanderson", purchased: "1/21/2025" },
         { asin: "B0BG96TCVH", url: "http://www.audible.com/pd/B0BG96TCVH", title: "Demons of Good and Evil", author: "Kim Harrison", purchased: "12/3/2024" },
         { asin: "1713569264", url: "http://www.audible.com/pd/1713569264", title: "The Queen", author: "Jennifer L. Armentrout", purchased: "12/3/2024" },
@@ -208,15 +208,15 @@ describe("LedgerPage", () => {
 
     let doc = fixtureDoc("ledger-page.html");
     let page = new LedgerPage(doc);
-    expect(page.items).toEqual(items);
+    expect(page.entries).toEqual(entries);
   });
 
-  test(".items errors", () => {
+  test(".entries errors", () => {
     let page = new LedgerPage();
     let spy = jest.spyOn(global.console, "error");
     global.console.errors = spy.mockImplementation(() => {});
 
-    page.items;
+    page.entries;
 
     expect(spy.mock.calls).toHaveLength(1);
   });

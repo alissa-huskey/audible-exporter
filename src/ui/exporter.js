@@ -109,7 +109,7 @@ Exporter = class {
 
     await this.ledger.populate(this.limit);
 
-    log_table("purchases", this.ledger.items);
+    log_table("purchases", this.ledger.entries);
 
     await delay(1000);
 
@@ -117,7 +117,7 @@ Exporter = class {
     info(
       `getLedger() took ${timer.minutes} minutes (${timer.seconds} seconds).`,
     );
-    return this.ledger.items;
+    return this.ledger.entries;
   }
 
   async getLibrary() {
@@ -163,7 +163,7 @@ Exporter = class {
 
     for (library_info of this.library.books) {
       book_info = this.details.books[library_info.asin];
-      order_info = this.ledger.items[library_info.asin];
+      order_info = this.ledger.entries[library_info.asin];
       let result = new Result(library_info, book_info, order_info);
       results.push(result.data());
     }

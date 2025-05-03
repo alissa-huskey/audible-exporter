@@ -108,18 +108,18 @@ describe("LedgerFetcher", () => {
     expect(ledger.pages).toHaveLength(1);
   });
 
-  test(".items", () => {
+  test(".entries", () => {
     // prettier-ignore
     let pages = [
       {
-        items: [
+        entries: [
           { asin: "B0CQ3759C3", url: "http://www.audible.com/pd/B0CQ3759C3", title: "Wind and Truth", author: "Brandon Sanderson", purchased: "01-21-2025" },
           { asin: "B0BG96TCVH", url: "http://www.audible.com/pd/B0BG96TCVH", title: "Demons of Good and Evil", author: "Kim Harrison", purchased: "12-03-2024" },
           { asin: "1713569264", url: "http://www.audible.com/pd/1713569264", title: "The Queen", author: "Jennifer L. Armentrout", purchased: "12-03-2024" },
         ],
       },
       {
-        items: [
+        entries: [
           { asin: "1250819148", url: "http://www.audible.com/pd/1250819148", title: "The Lives of Saints", author: "Leigh Bardugo", purchased: "12-03-2024" },
           { asin: "B01AMIGU3K", url: "http://www.audible.com/pd/B01AMIGU3K", title: "Patterns in the Dark", author: "Lindsay Buroker", purchased: "12-03-2024" },
           { asin: "B071NQ26W4", url: "http://www.audible.com/pd/B071NQ26W4", title: "Soulblade", author: "Lindsay Buroker", purchased: "12-03-2024" },
@@ -131,6 +131,6 @@ describe("LedgerFetcher", () => {
     ledger.pages = pages;
 
     expect(ledger.count).toBe(6);
-    expect(ledger.items["B0CQ3759C3"]).toEqual(pages[0].items[0]);
+    expect(ledger.entries["B0CQ3759C3"]).toEqual(pages[0].entries[0]);
   });
 });

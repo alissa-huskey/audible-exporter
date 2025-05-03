@@ -3,16 +3,23 @@ require("./ledger-page.js");
 
 LedgerFetcher = class {
   #count = 0;
-  #items = null;
+  #entries = null;
 
   constructor() {
     this.#count = 0;
-    this.#items = null;
+    this.#entries = null;
     this.pages = [];
   }
 
+  /**
+   * Fetch the first purchase history page to get the list of years in purchase
+   * history, then fetch the first page of each year to determine how many
+   * pages in each year.
+   *
+   * @fires update-ae-notifier
+   */
   async init(limit) {
-    // request to get the years in order history
+    // request to get the years in purchase history
     let running_count = 0;
     let page = new LedgerPage("last_90_days", 1, 20);
     await page.get();
@@ -58,6 +65,13 @@ LedgerFetcher = class {
     fireEvent({ percent: 1 });
   }
 
+  /**
+   * Fetch all of the pages, up to limit.
+   *
+   * @param {integer} limit   Number of pages to stop at.
+   *
+   * @fires update-ae-notifier
+   */
   async populate(limit = null) {
     if (limit) {
       this.pages.splice(limit, this.pages.length);
@@ -91,29 +105,44 @@ LedgerFetcher = class {
     fireEvent({ percent: 1 });
   }
 
+  /**
+   * Return the total number entries in all ledger pages.
+   *
+   * @return {number}
+   */
   get count() {
     if (!this.#count) {
-      this.#count = this.pages.reduce((sum, p) => sum + p.items.length, 0);
+      this.#count = this.pages.reduce((sum, p) => sum + p.entries.length, 0);
     }
     return this.#count;
   }
 
-  get items() {
-    if (!this.#items) {
-      let items = {};
+  /**
+   * Entries from all pages keyed by ASIN.
+   *
+   * @return {object}
+   */
+  get entries() {
+    if (!this.#entries) {
+      let entries = {};
 
       for (let page of this.pages) {
-        for (let item of page.items) {
-          items[item.asin] = item;
+        for (let item of page.entries) {
+          entries[item.asin] = item;
         }
       }
 
-      this.#items = items;
+      this.#entries = entries;
     }
-    return this.#items;
+    return this.#entries;
   }
 
-  set items(value) {
-    this.#items = value;
+  /**
+   * Set entries.
+   *
+   * @param {object}
+   */
+  set entries(value) {
+    this.#entries = value;
   }
 };

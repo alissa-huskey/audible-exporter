@@ -12,9 +12,7 @@ describe("OrderRow", () => {
   });
 
   test(".url", () => {
-    expect(row.url).toBe(
-      "/account/order-details?orderId=D01-7379715-3760239&ref_pageloadid=PnNZC0TrKwjuxoGZ&pf_rd_p=be5880e8-6386-440e-a7af-e00fdf352b08&pf_rd_r=AEAEAXCW30F21JFP3MCA&plink=wf1AG3y3gMfhGHZf&pageLoadId=h4PVqYOFWD9IZl9N&creativeId=9653015a-0975-4d29-a2f4-52c96d320026&ref=a_account_p_c1_purchase_history_1",
-    );
+    expect(row.url).toBe("/account/order-details?orderId=D01-7379715-3760239");
   });
 
   test(".id", () => {
@@ -34,6 +32,7 @@ describe("OrderRow", () => {
       id: "D01-7379715-3760239",
       date: "1/21/2025",
       total: "1 Credit",
+      url: "/account/order-details?orderId=D01-7379715-3760239",
     };
 
     expect(row.data()).toEqual(data);
@@ -44,9 +43,10 @@ describe("OrderRow", () => {
     global.console.errors = spy.mockImplementation(() => {});
 
     let row = new OrderRow("");
+    let field_count = row._fields.length;
 
     row.data();
 
-    expect(spy.mock.calls).toHaveLength(3);
+    expect(spy.mock.calls).toHaveLength(field_count);
   });
 });
