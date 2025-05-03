@@ -5,14 +5,14 @@
 const glob = require("glob").sync;
 
 require("../src/dev.js");
-require("../src/orders-fetcher.js");
+require("../src/ledger-fetcher.js");
 
-describe("OrdersFetcher", () => {
+describe("LedgerFetcher", () => {
   let base_url = new OrderPage().base_url;
 
-  test("new OrdersFetcher()", () => {
-    let orders = new OrdersFetcher();
-    expect(orders).toBeA(OrdersFetcher);
+  test("new LedgerFetcher()", () => {
+    let ledger = new LedgerFetcher();
+    expect(ledger).toBeA(LedgerFetcher);
   });
 
   test(".init()", async () => {
@@ -26,24 +26,24 @@ describe("OrdersFetcher", () => {
 
     Page.prototype.fetchDoc = mockFn;
 
-    let orders = new OrdersFetcher();
-    await orders.init();
+    let ledger = new LedgerFetcher();
+    await ledger.init();
 
     expect(mockFn.mock.calls).toHaveLength(4);
 
-    expect(orders.pages.length).toEqual(6);
-    expect(orders.pages[0]).toBeA(OrderPage);
-    expect(orders.pages[0].year).toBe(2025);
-    expect(orders.pages[0].page_num).toBe(1);
-    expect(orders.pages[0].page_count).toBe(1);
+    expect(ledger.pages.length).toEqual(6);
+    expect(ledger.pages[0]).toBeA(OrderPage);
+    expect(ledger.pages[0].year).toBe(2025);
+    expect(ledger.pages[0].page_num).toBe(1);
+    expect(ledger.pages[0].page_count).toBe(1);
 
-    expect(orders.pages[1].year).toBe(2024);
-    expect(orders.pages[1].page_num).toBe(1);
-    expect(orders.pages[1].page_count).toBe(2);
+    expect(ledger.pages[1].year).toBe(2024);
+    expect(ledger.pages[1].page_num).toBe(1);
+    expect(ledger.pages[1].page_count).toBe(2);
 
-    expect(orders.pages[2].year).toBe(2024);
-    expect(orders.pages[2].page_num).toBe(2);
-    expect(orders.pages[2].doc).toBeNull();
+    expect(ledger.pages[2].year).toBe(2024);
+    expect(ledger.pages[2].page_num).toBe(2);
+    expect(ledger.pages[2].doc).toBeNull();
   });
 
   test(".init(limit)", async () => {
@@ -55,11 +55,11 @@ describe("OrdersFetcher", () => {
 
     Page.prototype.fetchDoc = mockFn;
 
-    let orders = new OrdersFetcher();
-    await orders.init(1);
+    let ledger = new LedgerFetcher();
+    await ledger.init(1);
 
     expect(mockFn.mock.calls).toHaveLength(2);
-    expect(orders.pages).toHaveLength(1);
+    expect(ledger.pages).toHaveLength(1);
   });
 
   test(".populate()", async () => {
@@ -81,8 +81,8 @@ describe("OrdersFetcher", () => {
 
     Page.prototype.fetchDoc = mockFetchDocs(docs);
 
-    let orders = new OrdersFetcher();
-    orders.pages = [
+    let ledger = new LedgerFetcher();
+    ledger.pages = [
       new OrderPage(fixtureDoc("order-page-2025-1-of-1.html")),
       new OrderPage(fixtureDoc("order-page-2024-1-of-2.html")),
       new OrderPage(2024, 2),
@@ -91,7 +91,7 @@ describe("OrdersFetcher", () => {
       new OrderPage(2023, 3),
     ];
 
-    await orders.populate();
+    await ledger.populate();
 
     expect(Page.prototype.fetchDoc.mock.calls).toEqual(urls);
   });
@@ -101,16 +101,16 @@ describe("OrdersFetcher", () => {
     let mockFn = mockFetchDocs([doc]);
     Page.prototype.fetchDoc = mockFn;
 
-    let orders = new OrdersFetcher();
-    orders.pages = [
+    let ledger = new LedgerFetcher();
+    ledger.pages = [
       new OrderPage(doc),
       new OrderPage(2024, 1),
       new OrderPage(2024, 2),
     ];
-    await orders.populate(1);
+    await ledger.populate(1);
 
     expect(mockFn.mock.calls).toHaveLength(0);
-    expect(orders.pages).toHaveLength(1);
+    expect(ledger.pages).toHaveLength(1);
   });
 
   test(".items", () => {
@@ -132,10 +132,10 @@ describe("OrdersFetcher", () => {
       },
     ];
 
-    let orders = new OrdersFetcher();
-    orders.pages = pages;
+    let ledger = new LedgerFetcher();
+    ledger.pages = pages;
 
-    expect(orders.count).toBe(6);
-    expect(orders.items["B0CQ3759C3"]).toEqual(pages[0].items[0]);
+    expect(ledger.count).toBe(6);
+    expect(ledger.items["B0CQ3759C3"]).toEqual(pages[0].items[0]);
   });
 });

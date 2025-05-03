@@ -2,7 +2,7 @@ require("./util.js");
 require("./timer.js");
 require("./order-page.js");
 
-OrdersFetcher = class {
+LedgerFetcher = class {
   #count = 0;
   #items = null;
 

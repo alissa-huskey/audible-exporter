@@ -3,7 +3,7 @@ require("./timer.js");
 require("./domain.js");
 require("./library-fetcher.js");
 require("./details-fetcher.js");
-require("./orders-fetcher.js");
+require("./ledger-fetcher.js");
 require("./error-dialog.js");
 require("./start-dialog.js");
 require("./download-dialog.js");
@@ -38,7 +38,7 @@ Exporter = class {
     this.limit = limit;
     this.timer = new Timer();
     this.notifier = new Notifier();
-    this.orders = new OrdersFetcher();
+    this.orders = new LedgerFetcher();
     this.library = new LibraryFetcher();
     this.details = new DetailsFetcher();
     this.results = [];
