@@ -1,9 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-
-require("../src/dev.js");
-require("../src/json-file.js");
+require("../../src/ui/json-file.js");
 
 describe("JSONFile", () => {
   test("new JSONFile()", () => {

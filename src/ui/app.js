@@ -5,6 +5,8 @@
 require("../util.js");
 require("../timer.js");
 
+require("../etl/exporter.js");
+
 require("./domain.js");
 require("./error-dialog.js");
 require("./start-dialog.js");
@@ -14,10 +16,8 @@ require("./order-notifier.js");
 require("./library-notifier.js");
 require("./details-notifier.js");
 
-require("../etl/exporter.js");
-
-require("../json-file.js");
-require("../tsv-file.js");
+require("./json-file.js");
+require("./tsv-file.js");
 
 /**
  * Event listener to create the export file and start the download.

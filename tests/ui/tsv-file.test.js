@@ -1,9 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-
-require("../src/dev.js");
-require("../src/tsv-file.js");
+require("../../src/ui/tsv-file.js");
 
 describe("TSVFile", () => {
   test("new TSVFile()", () => {

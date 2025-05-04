@@ -253,6 +253,1674 @@ Timer = class {
   }
 };
 /**
+ * Wraper for HTMLElements.
+ */
+
+Doc = class {
+  /**
+   * Constructor.
+   *
+   * @params {HTMLElement} [elm]
+   */
+  constructor(elm = null) {
+    this.element = elm;
+
+    if (!elm) return;
+
+    for (let k in elm.__proto__) {
+      // eslint-disable-next-line no-prototype-builtins
+      if (Object.hasOwnProperty(k)) continue;
+
+      if (k in this) continue;
+
+      Object.defineProperty(this, k, {
+        get: () => this.element[k],
+        set: (v) => {
+          this.element[k] = v;
+        },
+      });
+    }
+  }
+
+  /**
+   * Convert a HTMLCollection of HTMLElements to an Array of Docs.
+   *
+   * @param {HTMLCollection} collection
+   *
+   * @returns {Doc[]}
+   */
+  static toArray(collection) {
+    let elements = Array.from(collection);
+    return elements.map((item) => new Doc(item));
+  }
+
+  /**
+   * Create HTMLElement.
+   *
+   * @param {str}    html     Tag name or HTML string.
+   * @param {object} [attrs]  Attributes to set on element.
+   *
+   * @return {Doc}
+   *
+   * @example
+   * let elm = Doc.create("div", {id: "container"});
+   * let elm = Doc.create("<p>hello</p>");
+   */
+  static create(html, attrs = {}) {
+    let dom;
+    if (html.includes("<")) {
+      let doc = document.createElement("body");
+      doc.innerHTML = html;
+      dom = doc.lastChild;
+    } else if (html) {
+      dom = document.createElement(html);
+    }
+
+    if (attrs.style && typeof attrs.style == "object") {
+      for (let [k, v] of Object.entries(attrs.style)) {
+        dom.style[k] = v;
+      }
+      delete attrs.style;
+    }
+
+    let element = new Doc(dom);
+    element.set(attrs);
+    return element;
+  }
+
+  /**
+   * Shorthand for document.getElementsByClassName.
+   *
+   * @returns {Array}
+   */
+  static gc(name) {
+    return Doc.toArray(document.getElementsByClassName(name));
+  }
+
+  /**
+   * Shorthand for document.getElementById.
+   *
+   * @returns {Doc}
+   */
+  static gi(name) {
+    let node = document.getElementById(name);
+    return new Doc(node);
+  }
+
+  /**
+   * Shorthand for document.getElementsByTagName.
+   *
+   * @returns {Array}
+   */
+  static gt(name) {
+    return Doc.toArray(document.getElementsByTagName(name));
+  }
+
+  /**
+   * Shorthand for document.querySelector.
+   *
+   * @returns {Doc}
+   */
+  static qs(query) {
+    let res = document.querySelector(query);
+    return new Doc(res);
+  }
+
+  /**
+   * Shorthand for document.querySelectorAll.
+   *
+   * @returns {Array}
+   */
+  static qsa(query) {
+    let res = document.querySelectorAll(query);
+    return Doc.toArray(res);
+  }
+
+  /**
+   * Shorthand for element.getElementsByClassName.
+   *
+   * @returns {Array}
+   */
+  gc(name) {
+    if (!this.element) return [];
+
+    let res = this.element.getElementsByClassName(name);
+    return Doc.toArray(res);
+  }
+
+  /**
+   * Shorthand for element.getElementById.
+   *
+   * @returns {Doc}
+   */
+  gi(name) {
+    return Doc.gi(name);
+  }
+
+  /**
+   * Shorthand for element.getElementsByTagName.
+   *
+   * @returns {Array}
+   */
+  gt(name) {
+    if (!this.element) return [];
+
+    let res = this.element.getElementsByTagName(name);
+    return Doc.toArray(res);
+  }
+
+  /**
+   * Shorthand for element.querySelectorAll.
+   *
+   * @returns {Array}
+   */
+  qs(query) {
+    let res = this.element.querySelectorAll(query);
+    return Doc.toArray(res);
+  }
+
+  /**
+   * First result of element.getElementsByClassName.
+   *
+   * @returns {Doc}
+   */
+  gcf(name) {
+    return this.gc(name)[0];
+  }
+
+  /**
+   * First result of element.getElementsByTagName.
+   *
+   * @returns {Doc}
+   */
+  gtf(name) {
+    return this.gt(name)[0];
+  }
+
+  /**
+   * Shorthand for element.querySelector.
+   *
+   * @returns {Doc}
+   */
+  qsf(query) {
+    let res = this.element.querySelector(query);
+    return new Doc(res);
+  }
+
+  /**
+   * Shortcut for this.element.append().
+   *
+   * @params {...Doc,HTMLElement,string}  Child or children to append.
+   */
+  append(...children) {
+    children.forEach((child) => {
+      if (child instanceof Doc) {
+        child = child.element;
+      }
+      this.element.append(child);
+    });
+  }
+
+  /**
+   * Shortcut for this.element.addEventListener().
+   *
+   * @params {...args}  args to pass along
+   */
+  listen(...args) {
+    this.element.addEventListener(...args);
+  }
+
+  /**
+   * Set attributes.
+   *
+   * @param {string, object} attrs  An object of attr names and values, or a
+   *                                   single attribute name.
+   * @param {string}         value  The value to set, when attrs is a string.
+   *
+   * @example
+   *
+   * doc.set("id", "thing-1");
+   * doc.set({id: "thing-2", "class": "small"});
+   */
+  set(attrs, value = null) {
+    if (typeof attrs == "string") {
+      let key = attrs;
+      attrs = {};
+      attrs[key] = value;
+    }
+
+    for (let [k, v] of Object.entries(attrs)) {
+      this.element.setAttribute(k, v);
+    }
+  }
+};
+/*
+ * Parser.
+ *
+ * DOM Element Parser.
+ */
+
+/*
+ * Parser class.
+ *
+ *
+ */
+Parser = class {
+  #doc = null;
+
+  /**
+   * List of .data() object properties mapped to class members.
+   *
+   * To be defined in subclasses.
+   *
+   * @access protected
+   */
+  _fields = [];
+
+  /*
+   * List of class members to identify an individual page for error messages.
+   *
+   * To be defined in subclasses.
+   *
+   * @access protected
+   */
+  _identifiers = [];
+
+  /**
+   * Get #doc.
+   *
+   * @return {Doc}
+   */
+  get doc() {
+    return this.#doc;
+  }
+
+  /**
+   * Set #doc.
+   *
+   * @param {Doc} value
+   */
+  set doc(value) {
+    if (value) {
+      if (!value) return;
+
+      if (!(value instanceof Doc)) {
+        value = new Doc(value);
+      }
+
+      this.#doc = value;
+    }
+  }
+
+  /**
+   * Return the data parsed from the .doc.
+   *
+   * Construct data object by mapping list of ._fields to class member values.
+   *
+   * Catch and re-raise exceptions using ._identifiers class member values in
+   * error message.
+   *
+   * @return {Object}
+   */
+  data() {
+    let f;
+    let data = {};
+
+    for (let i in this._fields) {
+      try {
+        f = this._fields[i];
+        data[f] = this[f];
+      } catch (err) {
+        let identifiers = this._identifers
+          .map((i) => `${i}: ${this[i]}`)
+          .join(", ");
+        error(`${this.constructor.name}.${f} (${identifiers}):\n`, err);
+      }
+    }
+    return cleanObject(data);
+  }
+};
+LibraryBookRow = class extends Parser {
+  _fields = ["asin", "url", "title", "authors", "narrators", "series"];
+  _identifers = ["page_num", "row_num"];
+
+  constructor(doc = null, page_num = null, row_num = null) {
+    super();
+    this.doc = doc;
+    this.page_num = page_num;
+    this.row_num = row_num;
+  }
+
+  get asin() {
+    return this.doc.id.replace("adbl-library-content-row-", "");
+  }
+
+  get ul() {
+    return this.doc.qsf(".bc-list.bc-list-nostyle");
+  }
+
+  get url() {
+    return this.ul
+      .gcf("bc-size-headline3")
+      .parentElement.attributes["href"]?.value.replace(/\?.+/, "");
+  }
+
+  get title() {
+    let title = this.ul.gcf("bc-size-headline3")?.innerHTML.trim();
+    return entityDecode(title);
+  }
+
+  get authors() {
+    let links = this.ul.qs(".authorLabel a.bc-color-base");
+    return links.map((a) => {
+      let author = { name: a.innerHTML.trim() };
+      let found = a.href.match(/[/]author[/](?<id>[^?]+)/);
+      if (found) {
+        author.id = found.groups.id;
+        author.url = `/author/${found.groups.id}`;
+      }
+      return author;
+    });
+  }
+
+  get narrators() {
+    let links = this.ul.qs(".narratorLabel .bc-color-base");
+    return links.map((a) => a.innerHTML.trim());
+  }
+
+  get series() {
+    let i = 1;
+    let series = [];
+    let links = this.ul.qs(".seriesLabel a");
+    for (let link of links) {
+      let [_, url, id] = /(\/series\/.*\/(.*))\?/.exec(link.href) || [
+        null,
+        "",
+        "",
+      ];
+
+      let span = this.ul.qsf(`.seriesLabel a:nth-child(${i}) + span`);
+      let number = span?.innerHTML?.trim().replace("Book ", "") || "";
+
+      series.push({
+        id: id,
+        url: url,
+        name: link.innerHTML.trim(),
+        number: number,
+      });
+      i++;
+    }
+    return series;
+  }
+};
+Page = class extends Parser {
+  async fetchDoc(url) {
+    let res;
+    try {
+      res = await fetch(url);
+
+      if (!res.ok) {
+        error(`Page.fetchDoc("${url.trim()}"): Response status: ${res.status}`);
+      }
+
+      let text = await res.text();
+      return new DOMParser().parseFromString(text, "text/html");
+    } catch (err) {
+      error(`Page.fetchDoc("${url.trim()}"):\n`, err);
+    }
+  }
+};
+LibraryPage = class extends Page {
+  #default_page_size = 20;
+  #rows = null;
+  #books = null;
+
+  constructor(doc = null) {
+    super();
+    this.doc = doc;
+    this.#rows = null;
+    this.#books = null;
+  }
+
+  get page_size() {
+    if (!this.doc) return null;
+    let size =
+      this.doc.qsf("select[name='pageSize'] option:checked")?.value ||
+      this.#default_page_size;
+    return parseInt(size);
+  }
+
+  get page_num() {
+    if (!this.doc) return null;
+    let num = this.doc.qsf("span.pageNumberElement")?.innerHTML || 1;
+    return parseInt(num);
+  }
+
+  get page_count() {
+    if (!this.doc) return null;
+    let links = this.doc.qs("a.pageNumberElement");
+    let count = links.last?.innerHTML || 1;
+    return parseInt(count);
+  }
+
+  get rows() {
+    if (!this.#rows) {
+      let i = 0;
+      let arr = [];
+      let rows = this.doc.gc("adbl-library-content-row");
+      for (let row of rows) {
+        arr.push(new LibraryBookRow(row, this.page_num, i + 1));
+        i++;
+      }
+      this.#rows = arr;
+    }
+    return this.#rows;
+  }
+
+  get books() {
+    if (!this.#books) {
+      try {
+        this.#books = this.rows.reduce((arr, row) => {
+          if (row.title == "Your First Listen") {
+            return arr;
+          }
+
+          arr.push(row.data());
+          return arr;
+        }, []);
+      } catch (err) {
+        error(err);
+      }
+    }
+    return this.#books;
+  }
+};
+LibraryFetcher = class extends Page {
+  page_size = 50;
+  base_url = "https://www.audible.com/library/titles";
+
+  #books = [];
+  #page_count = null;
+
+  constructor() {
+    super();
+    this.pages = [];
+    this.#books = null;
+  }
+
+  async fetchPage(i) {
+    let url = `${this.base_url}?pageSize=${this.page_size}&page=${i}`;
+    let doc = await this.fetchDoc(url);
+    return new LibraryPage(doc);
+  }
+
+  async populate(limit = null) {
+    let i = 0;
+    do {
+      let timer = new Timer();
+      timer.start();
+      if (limit) {
+        this.page_count = limit;
+        fireEvent({ total: this.page_count });
+        this.page_size = 20;
+      }
+
+      let page_num = i + 1;
+      fireEvent({ item_no: page_num });
+
+      let page = await this.fetchPage(page_num);
+      this.pages.push(page);
+
+      i++;
+
+      timer.stop();
+
+      fireEvent({
+        item_no: page_num,
+        total: this.page_count,
+        timer: timer,
+      });
+    } while (i < this.page_count);
+
+    fireEvent({ percent: 1 });
+
+    return this.pages;
+  }
+
+  get book_count() {
+    if (!this.pages) return null;
+    let page = this.pages[0];
+    return page.page_size * page.page_count;
+  }
+
+  get page_count() {
+    if (!this.#page_count) {
+      this.#page_count = Math.ceil(this.book_count / this.page_size);
+    }
+    return this.#page_count;
+  }
+
+  set page_count(value) {
+    this.#page_count = value;
+  }
+
+  get books() {
+    if (!this.#books) {
+      let books = this.pages.reduce((arr, page) => {
+        return arr.concat(
+          // map books by URL to avoid duplicates
+          page.books.map((book) => [book.url, book]),
+        );
+      }, []);
+
+      this.#books = Object.values(Object.fromEntries(books));
+    }
+    return this.#books;
+  }
+
+  set books(value) {
+    this.#books = value;
+  }
+};
+/**
+ * Book page.
+ *
+ * Parse the book details from an audible book page.
+ *
+ */
+
+BookPage = class extends Page {
+  #types = ["Fiction", "Nonfiction"];
+
+  #category_genres = {
+    "Arts & Entertainment": "nonfiction",
+    "Biographies & Memoirs": "nonfiction",
+    "Business & Careers": "nonfiction",
+    "Children's Audiobooks": null,
+    "Action & Adventure": "fiction", // children"s audiobooks
+    "Activities & Hobbies": "nonfiction", // children"s audiobooks
+    "Animals & Nature": "nonfiction", // children"s audiobooks
+    "Fairy Tales, Folk Tales & Myths": "fiction",
+    "Geography & Cultures": "nonfiction",
+    "Comedy & Humor": null,
+    "Performing Arts": "nonfiction", // comedy & humor
+    "Computers & Technology": "nonfiction",
+    "Education & Learning": "nonfiction",
+    Erotica: null,
+    "Sex Instruction": "nonfiction", // erotica
+    "Health & Wellness": "nonfiction",
+    History: "nonfiction",
+    "Home & Garden": "nonfiction",
+    "LGBTQ+": null,
+    "LGBTQ+ Studies": "nonfiction",
+    "Parenting & Families": "nonfiction",
+    "Literature & Fiction": "fiction",
+    "Money & Finance": "nonfiction",
+    "Mystery, Thriller & Suspense": null,
+    "True Crime": "nonfiction", // mystery, thriller & suspense
+    Mystery: "fiction", // mystery, thriller & suspense
+    "Thriller & Suspense": "fiction", // mystery, thriller & suspense
+    "Crime Fiction": "fiction", // mystery, thriller & suspense
+    "Politics & Social Sciences": "nonfiction",
+    "Politics, Society & Current Events": "nonfiction",
+    "Relationships, Parenting & Personal Development": "nonfiction",
+    "Religion & Spirituality": "nonfiction",
+    Romance: "fiction",
+    "Science & Engineering": "nonfiction",
+    "Sports & Outdoors": "nonfiction",
+    "Teen & Young Adult": null,
+    "Health, Lifestyle & Relationships": "nonfiction", // teen & young adult
+    "History & Culture": "nonfiction", // teen & young adult
+    "Travel & Tourism": "nonfiction",
+  };
+
+  _fields = [
+    "asin",
+    "title",
+    "authors",
+    "narrators",
+    "duration",
+    "language",
+    "released",
+    "released_ts",
+    "publisher",
+    "summary",
+    "audible_original",
+    "series",
+    "type",
+    "genre",
+    "subgenre",
+    "tags",
+    "rating",
+    "num_ratings",
+    "is_adult",
+  ];
+
+  _identifers = ["url"];
+
+  #tags = [];
+  #json = null;
+  #audiobook_data = null;
+  #product_data = null;
+  #product_info = null;
+  #digital_data = null;
+
+  /**
+   * Return a BookPage instance of the correct subclass (ADBLBookPage or
+   * NormalBookPage).
+   *
+   * @param {HTMLDocument} html  Document parsed from page contents.
+   *
+   * @returns {BookPage}
+   */
+  static new(html) {
+    let doc = new Doc(html);
+    let page;
+
+    if (doc.gt("adbl-product-details").length) {
+      page = new ADBLBookPage(doc);
+    } else {
+      page = new NormalBookPage(doc);
+    }
+
+    return page;
+  }
+
+  /**
+   * Fetch the book page and return the BookPage object.
+   *
+   * Return either an ADBLBookPage or NormalBookPage.
+   *
+   * @param {string} url
+   *
+   * @returns {BookPage}
+   */
+  static async get(url) {
+    let doc = await new Page().fetchDoc(url);
+
+    let page = BookPage.new(doc);
+    page.url = url;
+
+    return page;
+  }
+
+  constructor(doc = null) {
+    super();
+    this.doc = doc;
+  }
+
+  /**
+   * Get parsed JSON from script tags.
+   *
+   * Parse the JSON from script tags and return an object mapping each objects
+   * "@type" key to the object.
+   *
+   * @return {Object} Object of parsed JSON mapping @type -> object.
+   */
+  get json() {
+    if (!this.#json && this.doc) {
+      let scripts = this.doc.qs("script[type='application/ld+json']");
+      this.#json = scripts.reduce((obj, doc) => {
+        let json = JSON.parse(doc.innerHTML);
+        if (!(json instanceof Array)) {
+          json = [json];
+        }
+        json.forEach((child) => {
+          obj[child["@type"]] = child;
+        });
+        return obj;
+      }, {});
+    }
+
+    return this.#json;
+  }
+
+  get audiobook_data() {
+    if (!this.#audiobook_data && this.doc) {
+      this.#audiobook_data = this.json["Audiobook"] || {};
+    }
+    return this.#audiobook_data;
+  }
+
+  get product_data() {
+    if (!this.#product_data && this.doc) {
+      this.#product_data = this.json["Product"] || {};
+    }
+    return this.#product_data;
+  }
+
+  /**
+   * Return digitalData value;
+   *
+   * @return {object}
+   */
+  get digital_data() {
+    if (!this.#digital_data && this.doc) {
+      let digitalData;
+
+      let tags = this.doc.qs("script[type='text/javascript']");
+      let script = tags.filter((t) => t.innerHTML.match(/digitalData/));
+      let js = script[0].innerHTML;
+      js = js.replace("var digitalData = ", "digitalData =");
+      eval(js);
+      this.#digital_data = digitalData;
+    }
+    return this.#digital_data;
+  }
+
+  /**
+   * Return the relevant data from the digitalData variable.
+   *
+   * Same as:
+   *   digitalData.product[0].productInfo;
+   *
+   * @return {object}
+   */
+  get product_info() {
+    if (!this.#product_info && this.doc) {
+      this.#product_info = this.digital_data.product[0].productInfo;
+    }
+    return this.#product_info;
+  }
+
+  /**
+   * Return an array of author objects.
+   *
+   * Each object includes a name and may include id and url.
+   *
+   * @return {Array}
+   */
+  get authors() {
+    let authors = this.product_info.authors.map((a) => {
+      let author = { name: a.fullName };
+      if (a.id) {
+        author.id = a.id;
+        author.url = `/author/${a.id}`;
+      }
+      return author;
+    });
+
+    return authors || [];
+  }
+
+  get narrators() {
+    return this.product_info.narrators;
+  }
+
+  get rating() {
+    let rating = tryFloat(this.audiobook_data.aggregateRating?.ratingValue);
+    return rating ? +rating.toFixed(1) : "";
+  }
+
+  get num_ratings() {
+    return tryInt(this.audiobook_data.aggregateRating?.ratingCount);
+  }
+
+  get asin() {
+    return this.product_data.productID;
+  }
+
+  get date() {
+    let date = this.audiobook_data.datePublished;
+    if (!date) return null;
+    return new Date(`${date}:00:00:01`);
+  }
+
+  get released() {
+    if (!this.date) return null;
+    return dateString(this.date);
+  }
+
+  get released_ts() {
+    return this.date.getTime();
+  }
+
+  get title() {
+    return this.audiobook_data?.name;
+  }
+
+  get publisher() {
+    return this.audiobook_data.publisher;
+  }
+
+  get summary() {
+    let text = this.audiobook_data.description;
+    if (!text) return null;
+    return stripHTML(text);
+  }
+
+  get audible_original() {
+    if (!this.publisher) return null;
+    return /^Audible Original/.test(this.publisher);
+  }
+
+  get language() {
+    let lang = this.audiobook_data.inLanguage;
+    return titleCase(lang);
+  }
+
+  get is_adult() {
+    return this.product_info.isAdultProduct;
+  }
+
+  /**
+   * The duration in minutes.
+   *
+   * Parsed from a string like: "PT2H25M" or "PT15M".
+   *
+   * @type      {number}
+   */
+  get duration() {
+    let re = /PT((?<hours>\d+)H)?((?<minutes>\d+)M)?/;
+    let time = this.audiobook_data.duration.match(re);
+    return toMinutes(time.groups.hours, time.groups.minutes);
+  }
+
+  get tags_list() {
+    return [];
+  }
+
+  /**
+   * Determine fiction or nonfiction.
+   *
+   * @return {string}
+   */
+  get type() {
+    let labels = [this.genre, this.subgenre, ...this.tags_list];
+
+    // check if the "Fiction" or "Nonfiction" is in any of the tags
+    let found = this.#types.filter((t) =>
+      labels.some((l) => new RegExp(`\\b${t}\\b`, "i").test(l)),
+    );
+    if (found.length) {
+      return found.first;
+    }
+
+    // get the fiction/nonfiction designation from #category_genres
+    let types = [
+      ...new Set(labels.map((l) => this.#category_genres[l]).filter((t) => t)),
+    ];
+
+    switch (types.length) {
+      case 0:
+        return null;
+      case 1:
+        return titleCase(types.first);
+      default:
+        return "Fiction";
+    }
+  }
+
+  get genre() {
+    return this.digital_data.page.category.primaryCategory;
+  }
+
+  get subgenre() {
+    return this.digital_data.page.category.subCategory1;
+  }
+
+  /**
+   * Get tags.
+   *
+   * Filter tags_list to exclude generes and types.
+   *
+   * @returns {Array}
+   */
+  get tags() {
+    if (!this.#tags.length && this.tags_list) {
+      let exclude = [...this.#types, this.genre, this.subgenre];
+      this.#tags = this.tags_list.filter((t) => !exclude.includes(t));
+    }
+    return this.#tags;
+  }
+};
+
+/* Book pages which use custom <adbl-*> tags.
+ *
+ * (Note: Not audible-original books.)
+ *
+ * @link https://www.audible.com/pd/Ghosts-of-Zenith-Audiobook/B0BL84CBLZ
+ *
+ */
+ADBLBookPage = class extends BookPage {
+  /**
+   * Return data parsed from JSON script inside of <adbl-product-metadata> tags.
+   *
+   * @return {object}
+   */
+  get adbl_data() {
+    let scripts = this.doc.qs("adbl-product-metadata script");
+    return Object.assign({}, ...scripts.map((s) => JSON.parse(s.textContent)));
+  }
+
+  /**
+   * Parse list of tags.
+   *
+   * @return {Array}
+   */
+  get tags_list() {
+    return this.doc
+      .qs("adbl-chip-group.product-topictag-impression adbl-chip")
+      .map((c) => entityDecode(c.innerHTML));
+  }
+
+  get series() {
+    let series = [];
+    for (let s of this.adbl_data?.series || []) {
+      series.push({
+        id: s.url?.match(/series\/.*\/(.*)\?/)?.[1] || "",
+        url: s.url?.replace(/\?.*$/, "") || "",
+        name: s.name,
+        number: s.part?.replace("Book ", "") || "",
+      });
+    }
+    return series;
+  }
+};
+
+/* Book pages which do not use custom <adbl-*> tags.
+ *
+ * (Note: Possibly only Audible originals books.)
+ *
+ * @link https://www.audible.com/pd/Midnight-Riot-Audiobook//B009CZNUGU
+ *
+ */
+NormalBookPage = class extends BookPage {
+  get tags_list() {
+    return this.doc.gc("bc-chip-text").map((c) => {
+      return c.attributes["data-text"].value;
+    });
+  }
+
+  get series() {
+    let li = this.doc.qsf("li.seriesLabel");
+    if (!li?.element) return [];
+
+    let series = [];
+
+    let children = Array.from(li.childNodes);
+    for (let i in children) {
+      let node = children[i];
+      if (!(node instanceof HTMLAnchorElement)) continue;
+
+      let [_, url, id] = /(\/series\/.*\/(.*))\?/.exec(node.href) || [
+        null,
+        "",
+        "",
+      ];
+
+      let number = "";
+      let sibling = node.nextSibling;
+      if (sibling && sibling instanceof Text) {
+        number = sibling.textContent.match(/[\d.-]+/)?.[0] || "";
+      }
+
+      series.push({
+        id: id,
+        url: url,
+        name: node.innerHTML.trim(),
+        number: number,
+      });
+    }
+    return series;
+  }
+};
+/**
+ * Fetch all book details.
+ *
+ * Fetch book pages to gather additional details for all objects in the library
+ * array.
+ */
+
+DetailsFetcher = class {
+  #books = {};
+
+  /**
+   * Constructor.
+   *
+   * @params {object[]} [library]  List of objects that contain a url key.
+   */
+  constructor(library = null) {
+    this.library = library;
+    this.#books = null;
+    this.pages = [];
+  }
+
+  /**
+   * Fetch the book pages and fire events to update the DetailsNotifier.
+   *
+   * @fires update-ae-notifier
+   */
+  async populate() {
+    let book, data;
+
+    let actual = new Timer();
+    actual.start();
+
+    let total = this.library.length;
+
+    fireEvent({ total: total });
+
+    let i = 0;
+
+    for (book of this.library) {
+      if (!book.url) {
+        continue;
+      }
+      let timer = new Timer();
+      timer.start();
+      let page = await BookPage.get(book.url.replace("http", "https"));
+
+      page.url = book.url;
+      this.pages.push(page);
+      i++;
+
+      timer.stop();
+      fireEvent({ item_no: i, timer: timer });
+    }
+
+    actual.stop();
+    fireEvent({ percent: 1 });
+    info(
+      `DetailsFetcher.populate() took: ${actual.minutes} minutes (${actual.seconds} seconds)`,
+    );
+  }
+
+  /**
+   * Getter for the list of book data.
+   *
+   * @returns {object}  Book data keyed by ASIN.
+   */
+  get books() {
+    if (!this.#books) {
+      this.#books = {};
+      let data, page;
+
+      for (page of this.pages) {
+        if (!page) continue;
+
+        let data = page.data();
+        this.#books[data.asin] = data;
+      }
+    }
+    return this.#books;
+  }
+
+  /**
+   * Setter for the list of book data.
+   *
+   * @param {object}  Book data keyed by ASIN.
+   */
+  set books(value) {
+    this.#books = value;
+  }
+};
+/**
+ * A row from a LedgerPage (purchase history) that contains order details.
+ *
+ */
+OrderRow = class extends Parser {
+  _fields = ["id", "url", "date", "total"];
+  _identifers = [];
+
+  constructor(doc = null) {
+    super();
+    this.doc = doc;
+  }
+
+  /**
+   * The order detail page URL, minus all the extra params.
+   *
+   * @return {string}
+   */
+  get url() {
+    let url = this.doc.qsf("a[href^='/account/order-details']").href;
+    return url.replace(/&.*$/, "");
+  }
+
+  /**
+   * The order id.
+   *
+   * @return {string}
+   */
+  get id() {
+    return this.url.match(/orderId=(.*$)/)[1];
+  }
+
+  /**
+   * The order date.
+   *
+   * @return {string}
+   */
+  get date() {
+    let date = this.doc
+      .qsf(".ui-it-purchasehistory-item-purchasedate")
+      .innerHTML?.trim();
+    return dateString(date);
+  }
+
+  /**
+   * The order total, either dollars or credits.
+   *
+   * @return {string}
+   */
+  get total() {
+    return this.doc.qsf(".ui-it-purchasehistory-item-total div").innerHTML;
+  }
+};
+PurchaseRow = class extends Parser {
+  _fields = {
+    asin: "data-order-item-asin",
+    order_id: "data-order-id",
+    title: "data-order-item-name",
+    author: "data-order-item-author",
+    amount: "data-order-item-cost",
+    credits: "data-order-item-credit-cost",
+  };
+
+  constructor(doc = null) {
+    super();
+    this.doc = doc;
+  }
+
+  data() {
+    return Object.fromEntries(
+      Object.entries(this._fields).map(([key, attr]) => [
+        key,
+        this.doc.attributes?.[attr]?.value,
+      ]),
+    );
+  }
+};
+/**
+ * A single purchase history page, usually a year and page
+ * (ie 2024, page 2 of 3).
+ *
+ * Each order page has both a list of orders (OrderRow), and a list of
+ * purchases (PurchaseRow).
+ *
+ * Example:
+ * https://www.audible.com/account/purchase-history?ref=&tf=orders&df=2024&ps=20
+ */
+LedgerPage = class extends Page {
+  base_url = "https://www.audible.com/account/purchase-history?tf=orders";
+
+  #default_per_page = 40;
+
+  #valid_date_ranges = ["last_90_days", "last_180_days", "last_365_days"];
+
+  #orders = {};
+  #purchases = {};
+  #entries = [];
+  #page_num = null;
+  #year = null;
+  #years = null;
+  #page_count = null;
+
+  constructor(year_or_doc = null, page_num = null, per_page = null) {
+    super();
+    this.doc = null;
+    if (
+      (typeof year_or_doc == "number" ||
+        this.#valid_date_ranges.includes(year_or_doc)) &&
+      typeof page_num == "number"
+    ) {
+      this.year = year_or_doc;
+      this.page_num = page_num;
+    } else if (year_or_doc) {
+      this.doc = year_or_doc;
+    }
+
+    this.per_page = per_page || this.#default_per_page;
+    this.#entries = null;
+  }
+
+  /**
+   * Fetch the document for the given year, page number, and per_page.
+   *
+   * @return {Doc}
+   */
+  async get() {
+    let url = `${this.base_url}&df=${this.year}&pn=${this.page_num}&ps=${this.per_page}`;
+    this.doc = await this.fetchDoc(url);
+    return this.doc;
+  }
+
+  /**
+   * The year for this page.
+   *
+   * @return {number}
+   */
+  get year() {
+    if (!this.#year && this.doc) {
+      this.#year = this.doc.qsf(
+        "#ui-it-purchase-history-date-filter option:checked",
+      )?.value;
+    }
+    return tryInt(this.#year);
+  }
+
+  /**
+   * Set the year for this page.
+   *
+   * @param {number} value  The year.
+   */
+  set year(value) {
+    this.#year = value;
+  }
+
+  /**
+   * The page number of this page.
+   *
+   * @return {number}
+   */
+  get page_num() {
+    if (!this.#page_num && this.doc) {
+      this.#page_num =
+        this.doc
+          .qsf("span.purchase-history-pagination-button")
+          ?.innerHTML?.trim() || 1;
+    }
+    return tryInt(this.#page_num);
+  }
+
+  /**
+   * Set the page number of this page.
+   *
+   * @param {number} value   The page number.
+   */
+  set page_num(value) {
+    this.#page_num = value;
+  }
+
+  /**
+   * Number of pages for this year (or date range).
+   *
+   * @return {number}
+   */
+  get page_count() {
+    if (!this.#page_count && this.doc) {
+      let link = this.doc.qs("a.purchase-history-pagination-button").last;
+      let count = link?.innerHTML.trim() || 1;
+      this.#page_count = parseInt(count);
+    }
+    return this.#page_count;
+  }
+
+  /**
+   * An array of years available in the year drop-down.
+   *
+   * @return {array}
+   */
+  get years() {
+    if (!this.#years && this.doc) {
+      let options = this.doc.qs("#ui-it-purchase-history-date-filter option");
+      this.#years = options.map((o) => o.value).filter((y) => /^\d+$/.test(y));
+    }
+    return this.#years;
+  }
+
+  /**
+   * Data from OrderRow objects on this page, keyed by order id.
+   *
+   * @return {object}
+   */
+  get orders() {
+    if (this.doc && isEmpty(this.#orders)) {
+      let rows = this.doc.qs("tr:has(a[href^='/account/order-details'])");
+
+      let orders = rows.map((tr) => {
+        let row = new OrderRow(tr);
+        return [row.id, row.data()];
+      });
+
+      this.#orders = Object.fromEntries(orders);
+    }
+    return this.#orders;
+  }
+
+  /**
+   * Data from PurchaseRow objects on this page.
+   *
+   * @returns {Array}
+   */
+  get purchases() {
+    if (this.doc && isEmpty(this.#purchases)) {
+      let links = this.doc.qs("a[data-order-item-id]");
+      let purchases = links.map((a) => new PurchaseRow(a).data());
+      this.#purchases = purchases;
+    }
+
+    return this.#purchases;
+  }
+
+  /**
+   * Merge selected order data and purchase data.
+   *
+   * @return {Array}
+   */
+  get entries() {
+    if (!this.#entries) {
+      try {
+        let seen = {};
+        this.#entries = this.purchases.reduce((arr, p) => {
+          if (seen[p.asin]) {
+            error(`Duplicate item: /pd/${asin}`, seen[p.asin], p);
+          } else if (p.title && p.author) {
+            // ^ missing title and author mean credit purchases
+            seen[p.asin] = p;
+            arr.push({
+              asin: p.asin,
+              url: `http://www.audible.com/pd/${p.asin}`,
+              title: p.title,
+              author: p.author,
+              purchased: dateString(this.orders[p.order_id].date),
+            });
+          }
+          return arr;
+        }, []);
+      } catch (err) {
+        error(err);
+      }
+    }
+    return this.#entries;
+  }
+};
+LedgerFetcher = class {
+  #count = 0;
+  #entries = null;
+
+  constructor() {
+    this.#count = 0;
+    this.#entries = null;
+    this.pages = [];
+  }
+
+  /**
+   * Fetch the first purchase history page to get the list of years in purchase
+   * history, then fetch the first page of each year to determine how many
+   * pages in each year.
+   *
+   * @fires update-ae-notifier
+   */
+  async init(limit) {
+    // request to get the years in purchase history
+    let running_count = 0;
+    let page = new LedgerPage("last_90_days", 1, 20);
+    await page.get();
+    this.years = page.years;
+
+    if (limit && this.years.length > limit) {
+      this.years.splice(limit);
+    }
+
+    fireEvent({ years: this.years });
+
+    for (let year of this.years) {
+      let timer = new Timer();
+      timer.start();
+
+      fireEvent({ year: year });
+
+      let page_num = 1;
+      let page_count;
+
+      do {
+        let page = new LedgerPage(tryInt(year), page_num);
+
+        if (page_num == 1) {
+          await page.get();
+          page_count = page.page_count;
+        }
+
+        this.pages.push(page);
+        running_count++;
+        page_num++;
+
+        if (limit && running_count >= limit) {
+          this.years.splice(this.years.indexOf(year));
+          fireEvent({ years: this.years });
+          break;
+        }
+      } while (page_num <= page_count);
+      timer.stop();
+      fireEvent({ timer: timer });
+    }
+
+    fireEvent({ percent: 1 });
+  }
+
+  /**
+   * Fetch all of the pages, up to limit.
+   *
+   * @param {integer} limit   Number of pages to stop at.
+   *
+   * @fires update-ae-notifier
+   */
+  async populate(limit = null) {
+    if (limit) {
+      this.pages.splice(limit, this.pages.length);
+    }
+
+    fireEvent({ total: this.pages.length });
+    let i = 0;
+
+    for (let page of this.pages) {
+      let timer = new Timer();
+      timer.start();
+
+      fireEvent({
+        year: page.year,
+        year_page: page.page_num,
+        item_no: i,
+      });
+
+      if (!page.doc) {
+        await page.get();
+        fireEvent({ page_count: page.page_count });
+      } else {
+        fireEvent({ page_count: page.page_count });
+        await delay(500);
+      }
+
+      i++;
+      timer.stop();
+      fireEvent({ timer: timer });
+    }
+    fireEvent({ percent: 1 });
+  }
+
+  /**
+   * Return the total number entries in all ledger pages.
+   *
+   * @return {number}
+   */
+  get count() {
+    if (!this.#count) {
+      this.#count = this.pages.reduce((sum, p) => sum + p.entries.length, 0);
+    }
+    return this.#count;
+  }
+
+  /**
+   * Entries from all pages keyed by ASIN.
+   *
+   * @return {object}
+   */
+  get entries() {
+    if (!this.#entries) {
+      let entries = {};
+
+      for (let page of this.pages) {
+        for (let item of page.entries) {
+          entries[item.asin] = item;
+        }
+      }
+
+      this.#entries = entries;
+    }
+    return this.#entries;
+  }
+
+  /**
+   * Set entries.
+   *
+   * @param {object}
+   */
+  set entries(value) {
+    this.#entries = value;
+  }
+};
+/**
+ * Result.
+ *
+ * Final result set for a book from library data, order data, and book details
+ * data.
+ */
+Result = class {
+  /**
+   * Mapping of header to list of sources in order of precedence.
+   *
+   * @access private
+   */
+  #headers = {
+    asin: ["order", "library", "details"],
+    url: ["order", "library"],
+    title: ["order", "details", "library"],
+    authors: ["details", "library"],
+    narrators: ["details", "library"],
+    series: ["library", "details"],
+    publisher: ["details"],
+    duration: ["details"],
+    released: ["details"],
+    released_ts: ["details"],
+    purchased: ["order"],
+    language: ["details"],
+    summary: ["details"],
+    rating: ["details"],
+    num_ratings: ["details"],
+    audible_original: ["details"],
+    type: ["details"],
+    genre: ["details"],
+    subgenre: ["details"],
+    tags: ["details"],
+    is_adult: ["details"],
+  };
+
+  constructor(library = null, details = null, order = null) {
+    this.library = library || {};
+    this.details = details || {};
+    this.order = order || {};
+  }
+
+  /**
+   * Get the value for key from the first source that has it defined.
+   *
+   * @param {string} key  Key from .#headers.
+   *
+   * @return {any}
+   */
+  first(key) {
+    // the objects to look for key in
+    let sources = [...this.#headers[key]];
+
+    return sources.reduce((fallback, source, _, arr) => {
+      let value = this[source][key];
+
+      // if the key is there, return it and break early
+      if (!["null", "undefined"].includes(typeof value)) {
+        arr.splice(1);
+        return value;
+      } else {
+        // otherwise, return ""
+        return fallback;
+      }
+    }, "");
+  }
+
+  /**
+   * Mapping of keys from .#headers to the value pulled from source data.
+   *
+   * @return {object}
+   */
+  data() {
+    return Object.fromEntries(
+      Object.keys(this.#headers).map((key) => {
+        return [key, this.first(key)];
+      }),
+    );
+  }
+};
+/**
+ * Module that handles extracting and organizing the data.
+ */
+
+/**
+ * Exporter class.
+ */
+Exporter = class {
+  constructor(limit = null) {
+    this.limit = limit;
+    this.timer = new Timer();
+
+    this.ledger = new LedgerFetcher();
+    this.library = new LibraryFetcher();
+    this.details = new DetailsFetcher();
+    this.results = [];
+  }
+
+  async getPurchaseHistory() {
+    await this.ledger.init(this.limit);
+  }
+
+  async getLedger() {
+    await this.ledger.populate(this.limit);
+  }
+
+  async getLibrary() {
+    await this.library.populate(this.limit);
+  }
+
+  async getBookDetails() {
+    this.details.library = this.library.books;
+    await this.details.populate();
+  }
+
+  getResults() {
+    let library_info, order_info, book_info, info;
+    let results = [];
+
+    for (library_info of this.library.books) {
+      book_info = this.details.books[library_info.asin];
+      order_info = this.ledger.entries[library_info.asin];
+      let result = new Result(library_info, book_info, order_info);
+      results.push(result.data());
+    }
+
+    this.results = results;
+    return results;
+  }
+
+  /**
+   * For TSV files, flatten results to a single string per field.
+   */
+  flatten() {
+    for (let [i, record] of Object.entries(this.results)) {
+      if (record.series) {
+        record.series = record.series
+          .map((series) => {
+            return series.name + (series.number ? ` #${series.number}` : "");
+          })
+          .join(", ");
+      }
+
+      if (record.authors) {
+        record.authors = record.authors.map((a) => a.name).join(", ");
+      }
+    }
+  }
+};
+/**
  * Domain class.
  *
  * Parses the subdomain, name, second level domain, and top level domain from a
@@ -512,248 +2180,6 @@ Domain.prototype.SLDS = {
     "ukaea",
   ],
   us: ["dni", "fed", "isa", "nsn"],
-};
-/**
- * Wraper for HTMLElements.
- */
-
-Doc = class {
-  /**
-   * Constructor.
-   *
-   * @params {HTMLElement} [elm]
-   */
-  constructor(elm = null) {
-    this.element = elm;
-
-    if (!elm) return;
-
-    for (let k in elm.__proto__) {
-      // eslint-disable-next-line no-prototype-builtins
-      if (Object.hasOwnProperty(k)) continue;
-
-      if (k in this) continue;
-
-      Object.defineProperty(this, k, {
-        get: () => this.element[k],
-        set: (v) => {
-          this.element[k] = v;
-        },
-      });
-    }
-  }
-
-  /**
-   * Convert a HTMLCollection of HTMLElements to an Array of Docs.
-   *
-   * @param {HTMLCollection} collection
-   *
-   * @returns {Doc[]}
-   */
-  static toArray(collection) {
-    let elements = Array.from(collection);
-    return elements.map((item) => new Doc(item));
-  }
-
-  /**
-   * Create HTMLElement.
-   *
-   * @param {str}    html     Tag name or HTML string.
-   * @param {object} [attrs]  Attributes to set on element.
-   *
-   * @return {Doc}
-   *
-   * @example
-   * let elm = Doc.create("div", {id: "container"});
-   * let elm = Doc.create("<p>hello</p>");
-   */
-  static create(html, attrs = {}) {
-    let dom;
-    if (html.includes("<")) {
-      let doc = document.createElement("body");
-      doc.innerHTML = html;
-      dom = doc.lastChild;
-    } else if (html) {
-      dom = document.createElement(html);
-    }
-
-    if (attrs.style && typeof attrs.style == "object") {
-      for (let [k, v] of Object.entries(attrs.style)) {
-        dom.style[k] = v;
-      }
-      delete attrs.style;
-    }
-
-    let element = new Doc(dom);
-    element.set(attrs);
-    return element;
-  }
-
-  /**
-   * Shorthand for document.getElementsByClassName.
-   *
-   * @returns {Array}
-   */
-  static gc(name) {
-    return Doc.toArray(document.getElementsByClassName(name));
-  }
-
-  /**
-   * Shorthand for document.getElementById.
-   *
-   * @returns {Doc}
-   */
-  static gi(name) {
-    let node = document.getElementById(name);
-    return new Doc(node);
-  }
-
-  /**
-   * Shorthand for document.getElementsByTagName.
-   *
-   * @returns {Array}
-   */
-  static gt(name) {
-    return Doc.toArray(document.getElementsByTagName(name));
-  }
-
-  /**
-   * Shorthand for document.querySelector.
-   *
-   * @returns {Doc}
-   */
-  static qs(query) {
-    let res = document.querySelector(query);
-    return new Doc(res);
-  }
-
-  /**
-   * Shorthand for document.querySelectorAll.
-   *
-   * @returns {Array}
-   */
-  static qsa(query) {
-    let res = document.querySelectorAll(query);
-    return Doc.toArray(res);
-  }
-
-  /**
-   * Shorthand for element.getElementsByClassName.
-   *
-   * @returns {Array}
-   */
-  gc(name) {
-    if (!this.element) return [];
-
-    let res = this.element.getElementsByClassName(name);
-    return Doc.toArray(res);
-  }
-
-  /**
-   * Shorthand for element.getElementById.
-   *
-   * @returns {Doc}
-   */
-  gi(name) {
-    return Doc.gi(name);
-  }
-
-  /**
-   * Shorthand for element.getElementsByTagName.
-   *
-   * @returns {Array}
-   */
-  gt(name) {
-    if (!this.element) return [];
-
-    let res = this.element.getElementsByTagName(name);
-    return Doc.toArray(res);
-  }
-
-  /**
-   * Shorthand for element.querySelectorAll.
-   *
-   * @returns {Array}
-   */
-  qs(query) {
-    let res = this.element.querySelectorAll(query);
-    return Doc.toArray(res);
-  }
-
-  /**
-   * First result of element.getElementsByClassName.
-   *
-   * @returns {Doc}
-   */
-  gcf(name) {
-    return this.gc(name)[0];
-  }
-
-  /**
-   * First result of element.getElementsByTagName.
-   *
-   * @returns {Doc}
-   */
-  gtf(name) {
-    return this.gt(name)[0];
-  }
-
-  /**
-   * Shorthand for element.querySelector.
-   *
-   * @returns {Doc}
-   */
-  qsf(query) {
-    let res = this.element.querySelector(query);
-    return new Doc(res);
-  }
-
-  /**
-   * Shortcut for this.element.append().
-   *
-   * @params {...Doc,HTMLElement,string}  Child or children to append.
-   */
-  append(...children) {
-    children.forEach((child) => {
-      if (child instanceof Doc) {
-        child = child.element;
-      }
-      this.element.append(child);
-    });
-  }
-
-  /**
-   * Shortcut for this.element.addEventListener().
-   *
-   * @params {...args}  args to pass along
-   */
-  listen(...args) {
-    this.element.addEventListener(...args);
-  }
-
-  /**
-   * Set attributes.
-   *
-   * @param {string, object} attrs  An object of attr names and values, or a
-   *                                   single attribute name.
-   * @param {string}         value  The value to set, when attrs is a string.
-   *
-   * @example
-   *
-   * doc.set("id", "thing-1");
-   * doc.set({id: "thing-2", "class": "small"});
-   */
-  set(attrs, value = null) {
-    if (typeof attrs == "string") {
-      let key = attrs;
-      attrs = {};
-      attrs[key] = value;
-    }
-
-    for (let [k, v] of Object.entries(attrs)) {
-      this.element.setAttribute(k, v);
-    }
-  }
 };
 /**
  * Manage elements in the DOM.
@@ -2948,1432 +4374,6 @@ DetailsNotifier = class extends Notifier {
     }
 
     return `Retrieving book ${this.item_no} of ${this.total}`;
-  }
-};
-/*
- * Parser.
- *
- * DOM Element Parser.
- */
-
-/*
- * Parser class.
- *
- *
- */
-Parser = class {
-  #doc = null;
-
-  /**
-   * List of .data() object properties mapped to class members.
-   *
-   * To be defined in subclasses.
-   *
-   * @access protected
-   */
-  _fields = [];
-
-  /*
-   * List of class members to identify an individual page for error messages.
-   *
-   * To be defined in subclasses.
-   *
-   * @access protected
-   */
-  _identifiers = [];
-
-  /**
-   * Get #doc.
-   *
-   * @return {Doc}
-   */
-  get doc() {
-    return this.#doc;
-  }
-
-  /**
-   * Set #doc.
-   *
-   * @param {Doc} value
-   */
-  set doc(value) {
-    if (value) {
-      if (!value) return;
-
-      if (!(value instanceof Doc)) {
-        value = new Doc(value);
-      }
-
-      this.#doc = value;
-    }
-  }
-
-  /**
-   * Return the data parsed from the .doc.
-   *
-   * Construct data object by mapping list of ._fields to class member values.
-   *
-   * Catch and re-raise exceptions using ._identifiers class member values in
-   * error message.
-   *
-   * @return {Object}
-   */
-  data() {
-    let f;
-    let data = {};
-
-    for (let i in this._fields) {
-      try {
-        f = this._fields[i];
-        data[f] = this[f];
-      } catch (err) {
-        let identifiers = this._identifers
-          .map((i) => `${i}: ${this[i]}`)
-          .join(", ");
-        error(`${this.constructor.name}.${f} (${identifiers}):\n`, err);
-      }
-    }
-    return cleanObject(data);
-  }
-};
-LibraryBookRow = class extends Parser {
-  _fields = ["asin", "url", "title", "authors", "narrators", "series"];
-  _identifers = ["page_num", "row_num"];
-
-  constructor(doc = null, page_num = null, row_num = null) {
-    super();
-    this.doc = doc;
-    this.page_num = page_num;
-    this.row_num = row_num;
-  }
-
-  get asin() {
-    return this.doc.id.replace("adbl-library-content-row-", "");
-  }
-
-  get ul() {
-    return this.doc.qsf(".bc-list.bc-list-nostyle");
-  }
-
-  get url() {
-    return this.ul
-      .gcf("bc-size-headline3")
-      .parentElement.attributes["href"]?.value.replace(/\?.+/, "");
-  }
-
-  get title() {
-    let title = this.ul.gcf("bc-size-headline3")?.innerHTML.trim();
-    return entityDecode(title);
-  }
-
-  get authors() {
-    let links = this.ul.qs(".authorLabel a.bc-color-base");
-    return links.map((a) => {
-      let author = { name: a.innerHTML.trim() };
-      let found = a.href.match(/[/]author[/](?<id>[^?]+)/);
-      if (found) {
-        author.id = found.groups.id;
-        author.url = `/author/${found.groups.id}`;
-      }
-      return author;
-    });
-  }
-
-  get narrators() {
-    let links = this.ul.qs(".narratorLabel .bc-color-base");
-    return links.map((a) => a.innerHTML.trim());
-  }
-
-  get series() {
-    let i = 1;
-    let series = [];
-    let links = this.ul.qs(".seriesLabel a");
-    for (let link of links) {
-      let [_, url, id] = /(\/series\/.*\/(.*))\?/.exec(link.href) || [
-        null,
-        "",
-        "",
-      ];
-
-      let span = this.ul.qsf(`.seriesLabel a:nth-child(${i}) + span`);
-      let number = span?.innerHTML?.trim().replace("Book ", "") || "";
-
-      series.push({
-        id: id,
-        url: url,
-        name: link.innerHTML.trim(),
-        number: number,
-      });
-      i++;
-    }
-    return series;
-  }
-};
-Page = class extends Parser {
-  async fetchDoc(url) {
-    let res;
-    try {
-      res = await fetch(url);
-
-      if (!res.ok) {
-        error(`Page.fetchDoc("${url.trim()}"): Response status: ${res.status}`);
-      }
-
-      let text = await res.text();
-      return new DOMParser().parseFromString(text, "text/html");
-    } catch (err) {
-      error(`Page.fetchDoc("${url.trim()}"):\n`, err);
-    }
-  }
-};
-LibraryPage = class extends Page {
-  #default_page_size = 20;
-  #rows = null;
-  #books = null;
-
-  constructor(doc = null) {
-    super();
-    this.doc = doc;
-    this.#rows = null;
-    this.#books = null;
-  }
-
-  get page_size() {
-    if (!this.doc) return null;
-    let size =
-      this.doc.qsf("select[name='pageSize'] option:checked")?.value ||
-      this.#default_page_size;
-    return parseInt(size);
-  }
-
-  get page_num() {
-    if (!this.doc) return null;
-    let num = this.doc.qsf("span.pageNumberElement")?.innerHTML || 1;
-    return parseInt(num);
-  }
-
-  get page_count() {
-    if (!this.doc) return null;
-    let links = this.doc.qs("a.pageNumberElement");
-    let count = links.last?.innerHTML || 1;
-    return parseInt(count);
-  }
-
-  get rows() {
-    if (!this.#rows) {
-      let i = 0;
-      let arr = [];
-      let rows = this.doc.gc("adbl-library-content-row");
-      for (let row of rows) {
-        arr.push(new LibraryBookRow(row, this.page_num, i + 1));
-        i++;
-      }
-      this.#rows = arr;
-    }
-    return this.#rows;
-  }
-
-  get books() {
-    if (!this.#books) {
-      try {
-        this.#books = this.rows.reduce((arr, row) => {
-          if (row.title == "Your First Listen") {
-            return arr;
-          }
-
-          arr.push(row.data());
-          return arr;
-        }, []);
-      } catch (err) {
-        error(err);
-      }
-    }
-    return this.#books;
-  }
-};
-LibraryFetcher = class extends Page {
-  page_size = 50;
-  base_url = "https://www.audible.com/library/titles";
-
-  #books = [];
-  #page_count = null;
-
-  constructor() {
-    super();
-    this.pages = [];
-    this.#books = null;
-  }
-
-  async fetchPage(i) {
-    let url = `${this.base_url}?pageSize=${this.page_size}&page=${i}`;
-    let doc = await this.fetchDoc(url);
-    return new LibraryPage(doc);
-  }
-
-  async populate(limit = null) {
-    let i = 0;
-    do {
-      let timer = new Timer();
-      timer.start();
-      if (limit) {
-        this.page_count = limit;
-        fireEvent({ total: this.page_count });
-        this.page_size = 20;
-      }
-
-      let page_num = i + 1;
-      fireEvent({ item_no: page_num });
-
-      let page = await this.fetchPage(page_num);
-      this.pages.push(page);
-
-      i++;
-
-      timer.stop();
-
-      fireEvent({
-        item_no: page_num,
-        total: this.page_count,
-        timer: timer,
-      });
-    } while (i < this.page_count);
-
-    fireEvent({ percent: 1 });
-
-    return this.pages;
-  }
-
-  get book_count() {
-    if (!this.pages) return null;
-    let page = this.pages[0];
-    return page.page_size * page.page_count;
-  }
-
-  get page_count() {
-    if (!this.#page_count) {
-      this.#page_count = Math.ceil(this.book_count / this.page_size);
-    }
-    return this.#page_count;
-  }
-
-  set page_count(value) {
-    this.#page_count = value;
-  }
-
-  get books() {
-    if (!this.#books) {
-      let books = this.pages.reduce((arr, page) => {
-        return arr.concat(
-          // map books by URL to avoid duplicates
-          page.books.map((book) => [book.url, book]),
-        );
-      }, []);
-
-      this.#books = Object.values(Object.fromEntries(books));
-    }
-    return this.#books;
-  }
-
-  set books(value) {
-    this.#books = value;
-  }
-};
-/**
- * Book page.
- *
- * Parse the book details from an audible book page.
- *
- */
-
-BookPage = class extends Page {
-  #types = ["Fiction", "Nonfiction"];
-
-  #category_genres = {
-    "Arts & Entertainment": "nonfiction",
-    "Biographies & Memoirs": "nonfiction",
-    "Business & Careers": "nonfiction",
-    "Children's Audiobooks": null,
-    "Action & Adventure": "fiction", // children"s audiobooks
-    "Activities & Hobbies": "nonfiction", // children"s audiobooks
-    "Animals & Nature": "nonfiction", // children"s audiobooks
-    "Fairy Tales, Folk Tales & Myths": "fiction",
-    "Geography & Cultures": "nonfiction",
-    "Comedy & Humor": null,
-    "Performing Arts": "nonfiction", // comedy & humor
-    "Computers & Technology": "nonfiction",
-    "Education & Learning": "nonfiction",
-    Erotica: null,
-    "Sex Instruction": "nonfiction", // erotica
-    "Health & Wellness": "nonfiction",
-    History: "nonfiction",
-    "Home & Garden": "nonfiction",
-    "LGBTQ+": null,
-    "LGBTQ+ Studies": "nonfiction",
-    "Parenting & Families": "nonfiction",
-    "Literature & Fiction": "fiction",
-    "Money & Finance": "nonfiction",
-    "Mystery, Thriller & Suspense": null,
-    "True Crime": "nonfiction", // mystery, thriller & suspense
-    Mystery: "fiction", // mystery, thriller & suspense
-    "Thriller & Suspense": "fiction", // mystery, thriller & suspense
-    "Crime Fiction": "fiction", // mystery, thriller & suspense
-    "Politics & Social Sciences": "nonfiction",
-    "Politics, Society & Current Events": "nonfiction",
-    "Relationships, Parenting & Personal Development": "nonfiction",
-    "Religion & Spirituality": "nonfiction",
-    Romance: "fiction",
-    "Science & Engineering": "nonfiction",
-    "Sports & Outdoors": "nonfiction",
-    "Teen & Young Adult": null,
-    "Health, Lifestyle & Relationships": "nonfiction", // teen & young adult
-    "History & Culture": "nonfiction", // teen & young adult
-    "Travel & Tourism": "nonfiction",
-  };
-
-  _fields = [
-    "asin",
-    "title",
-    "authors",
-    "narrators",
-    "duration",
-    "language",
-    "released",
-    "released_ts",
-    "publisher",
-    "summary",
-    "audible_original",
-    "series",
-    "type",
-    "genre",
-    "subgenre",
-    "tags",
-    "rating",
-    "num_ratings",
-    "is_adult",
-  ];
-
-  _identifers = ["url"];
-
-  #tags = [];
-  #json = null;
-  #audiobook_data = null;
-  #product_data = null;
-  #product_info = null;
-  #digital_data = null;
-
-  /**
-   * Return a BookPage instance of the correct subclass (ADBLBookPage or
-   * NormalBookPage).
-   *
-   * @param {HTMLDocument} html  Document parsed from page contents.
-   *
-   * @returns {BookPage}
-   */
-  static new(html) {
-    let doc = new Doc(html);
-    let page;
-
-    if (doc.gt("adbl-product-details").length) {
-      page = new ADBLBookPage(doc);
-    } else {
-      page = new NormalBookPage(doc);
-    }
-
-    return page;
-  }
-
-  /**
-   * Fetch the book page and return the BookPage object.
-   *
-   * Return either an ADBLBookPage or NormalBookPage.
-   *
-   * @param {string} url
-   *
-   * @returns {BookPage}
-   */
-  static async get(url) {
-    let doc = await new Page().fetchDoc(url);
-
-    let page = BookPage.new(doc);
-    page.url = url;
-
-    return page;
-  }
-
-  constructor(doc = null) {
-    super();
-    this.doc = doc;
-  }
-
-  /**
-   * Get parsed JSON from script tags.
-   *
-   * Parse the JSON from script tags and return an object mapping each objects
-   * "@type" key to the object.
-   *
-   * @return {Object} Object of parsed JSON mapping @type -> object.
-   */
-  get json() {
-    if (!this.#json && this.doc) {
-      let scripts = this.doc.qs("script[type='application/ld+json']");
-      this.#json = scripts.reduce((obj, doc) => {
-        let json = JSON.parse(doc.innerHTML);
-        if (!(json instanceof Array)) {
-          json = [json];
-        }
-        json.forEach((child) => {
-          obj[child["@type"]] = child;
-        });
-        return obj;
-      }, {});
-    }
-
-    return this.#json;
-  }
-
-  get audiobook_data() {
-    if (!this.#audiobook_data && this.doc) {
-      this.#audiobook_data = this.json["Audiobook"] || {};
-    }
-    return this.#audiobook_data;
-  }
-
-  get product_data() {
-    if (!this.#product_data && this.doc) {
-      this.#product_data = this.json["Product"] || {};
-    }
-    return this.#product_data;
-  }
-
-  /**
-   * Return digitalData value;
-   *
-   * @return {object}
-   */
-  get digital_data() {
-    if (!this.#digital_data && this.doc) {
-      let digitalData;
-
-      let tags = this.doc.qs("script[type='text/javascript']");
-      let script = tags.filter((t) => t.innerHTML.match(/digitalData/));
-      let js = script[0].innerHTML;
-      js = js.replace("var digitalData = ", "digitalData =");
-      eval(js);
-      this.#digital_data = digitalData;
-    }
-    return this.#digital_data;
-  }
-
-  /**
-   * Return the relevant data from the digitalData variable.
-   *
-   * Same as:
-   *   digitalData.product[0].productInfo;
-   *
-   * @return {object}
-   */
-  get product_info() {
-    if (!this.#product_info && this.doc) {
-      this.#product_info = this.digital_data.product[0].productInfo;
-    }
-    return this.#product_info;
-  }
-
-  /**
-   * Return an array of author objects.
-   *
-   * Each object includes a name and may include id and url.
-   *
-   * @return {Array}
-   */
-  get authors() {
-    let authors = this.product_info.authors.map((a) => {
-      let author = { name: a.fullName };
-      if (a.id) {
-        author.id = a.id;
-        author.url = `/author/${a.id}`;
-      }
-      return author;
-    });
-
-    return authors || [];
-  }
-
-  get narrators() {
-    return this.product_info.narrators;
-  }
-
-  get rating() {
-    let rating = tryFloat(this.audiobook_data.aggregateRating?.ratingValue);
-    return rating ? +rating.toFixed(1) : "";
-  }
-
-  get num_ratings() {
-    return tryInt(this.audiobook_data.aggregateRating?.ratingCount);
-  }
-
-  get asin() {
-    return this.product_data.productID;
-  }
-
-  get date() {
-    let date = this.audiobook_data.datePublished;
-    if (!date) return null;
-    return new Date(`${date}:00:00:01`);
-  }
-
-  get released() {
-    if (!this.date) return null;
-    return dateString(this.date);
-  }
-
-  get released_ts() {
-    return this.date.getTime();
-  }
-
-  get title() {
-    return this.audiobook_data?.name;
-  }
-
-  get publisher() {
-    return this.audiobook_data.publisher;
-  }
-
-  get summary() {
-    let text = this.audiobook_data.description;
-    if (!text) return null;
-    return stripHTML(text);
-  }
-
-  get audible_original() {
-    if (!this.publisher) return null;
-    return /^Audible Original/.test(this.publisher);
-  }
-
-  get language() {
-    let lang = this.audiobook_data.inLanguage;
-    return titleCase(lang);
-  }
-
-  get is_adult() {
-    return this.product_info.isAdultProduct;
-  }
-
-  /**
-   * The duration in minutes.
-   *
-   * Parsed from a string like: "PT2H25M" or "PT15M".
-   *
-   * @type      {number}
-   */
-  get duration() {
-    let re = /PT((?<hours>\d+)H)?((?<minutes>\d+)M)?/;
-    let time = this.audiobook_data.duration.match(re);
-    return toMinutes(time.groups.hours, time.groups.minutes);
-  }
-
-  get tags_list() {
-    return [];
-  }
-
-  /**
-   * Determine fiction or nonfiction.
-   *
-   * @return {string}
-   */
-  get type() {
-    let labels = [this.genre, this.subgenre, ...this.tags_list];
-
-    // check if the "Fiction" or "Nonfiction" is in any of the tags
-    let found = this.#types.filter((t) =>
-      labels.some((l) => new RegExp(`\\b${t}\\b`, "i").test(l)),
-    );
-    if (found.length) {
-      return found.first;
-    }
-
-    // get the fiction/nonfiction designation from #category_genres
-    let types = [
-      ...new Set(labels.map((l) => this.#category_genres[l]).filter((t) => t)),
-    ];
-
-    switch (types.length) {
-      case 0:
-        return null;
-      case 1:
-        return titleCase(types.first);
-      default:
-        return "Fiction";
-    }
-  }
-
-  get genre() {
-    return this.digital_data.page.category.primaryCategory;
-  }
-
-  get subgenre() {
-    return this.digital_data.page.category.subCategory1;
-  }
-
-  /**
-   * Get tags.
-   *
-   * Filter tags_list to exclude generes and types.
-   *
-   * @returns {Array}
-   */
-  get tags() {
-    if (!this.#tags.length && this.tags_list) {
-      let exclude = [...this.#types, this.genre, this.subgenre];
-      this.#tags = this.tags_list.filter((t) => !exclude.includes(t));
-    }
-    return this.#tags;
-  }
-};
-
-/* Book pages which use custom <adbl-*> tags.
- *
- * (Note: Not audible-original books.)
- *
- * @link https://www.audible.com/pd/Ghosts-of-Zenith-Audiobook/B0BL84CBLZ
- *
- */
-ADBLBookPage = class extends BookPage {
-  /**
-   * Return data parsed from JSON script inside of <adbl-product-metadata> tags.
-   *
-   * @return {object}
-   */
-  get adbl_data() {
-    let scripts = this.doc.qs("adbl-product-metadata script");
-    return Object.assign({}, ...scripts.map((s) => JSON.parse(s.textContent)));
-  }
-
-  /**
-   * Parse list of tags.
-   *
-   * @return {Array}
-   */
-  get tags_list() {
-    return this.doc
-      .qs("adbl-chip-group.product-topictag-impression adbl-chip")
-      .map((c) => entityDecode(c.innerHTML));
-  }
-
-  get series() {
-    let series = [];
-    for (let s of this.adbl_data?.series || []) {
-      series.push({
-        id: s.url?.match(/series\/.*\/(.*)\?/)?.[1] || "",
-        url: s.url?.replace(/\?.*$/, "") || "",
-        name: s.name,
-        number: s.part?.replace("Book ", "") || "",
-      });
-    }
-    return series;
-  }
-};
-
-/* Book pages which do not use custom <adbl-*> tags.
- *
- * (Note: Possibly only Audible originals books.)
- *
- * @link https://www.audible.com/pd/Midnight-Riot-Audiobook//B009CZNUGU
- *
- */
-NormalBookPage = class extends BookPage {
-  get tags_list() {
-    return this.doc.gc("bc-chip-text").map((c) => {
-      return c.attributes["data-text"].value;
-    });
-  }
-
-  get series() {
-    let li = this.doc.qsf("li.seriesLabel");
-    if (!li?.element) return [];
-
-    let series = [];
-
-    let children = Array.from(li.childNodes);
-    for (let i in children) {
-      let node = children[i];
-      if (!(node instanceof HTMLAnchorElement)) continue;
-
-      let [_, url, id] = /(\/series\/.*\/(.*))\?/.exec(node.href) || [
-        null,
-        "",
-        "",
-      ];
-
-      let number = "";
-      let sibling = node.nextSibling;
-      if (sibling && sibling instanceof Text) {
-        number = sibling.textContent.match(/[\d.-]+/)?.[0] || "";
-      }
-
-      series.push({
-        id: id,
-        url: url,
-        name: node.innerHTML.trim(),
-        number: number,
-      });
-    }
-    return series;
-  }
-};
-/**
- * Fetch all book details.
- *
- * Fetch book pages to gather additional details for all objects in the library
- * array.
- */
-
-DetailsFetcher = class {
-  #books = {};
-
-  /**
-   * Constructor.
-   *
-   * @params {object[]} [library]  List of objects that contain a url key.
-   */
-  constructor(library = null) {
-    this.library = library;
-    this.#books = null;
-    this.pages = [];
-  }
-
-  /**
-   * Fetch the book pages and fire events to update the DetailsNotifier.
-   *
-   * @fires update-ae-notifier
-   */
-  async populate() {
-    let book, data;
-
-    let actual = new Timer();
-    actual.start();
-
-    let total = this.library.length;
-
-    fireEvent({ total: total });
-
-    let i = 0;
-
-    for (book of this.library) {
-      if (!book.url) {
-        continue;
-      }
-      let timer = new Timer();
-      timer.start();
-      let page = await BookPage.get(book.url.replace("http", "https"));
-
-      page.url = book.url;
-      this.pages.push(page);
-      i++;
-
-      timer.stop();
-      fireEvent({ item_no: i, timer: timer });
-    }
-
-    actual.stop();
-    fireEvent({ percent: 1 });
-    info(
-      `DetailsFetcher.populate() took: ${actual.minutes} minutes (${actual.seconds} seconds)`,
-    );
-  }
-
-  /**
-   * Getter for the list of book data.
-   *
-   * @returns {object}  Book data keyed by ASIN.
-   */
-  get books() {
-    if (!this.#books) {
-      this.#books = {};
-      let data, page;
-
-      for (page of this.pages) {
-        if (!page) continue;
-
-        let data = page.data();
-        this.#books[data.asin] = data;
-      }
-    }
-    return this.#books;
-  }
-
-  /**
-   * Setter for the list of book data.
-   *
-   * @param {object}  Book data keyed by ASIN.
-   */
-  set books(value) {
-    this.#books = value;
-  }
-};
-/**
- * A row from a LedgerPage (purchase history) that contains order details.
- *
- */
-OrderRow = class extends Parser {
-  _fields = ["id", "url", "date", "total"];
-  _identifers = [];
-
-  constructor(doc = null) {
-    super();
-    this.doc = doc;
-  }
-
-  /**
-   * The order detail page URL, minus all the extra params.
-   *
-   * @return {string}
-   */
-  get url() {
-    let url = this.doc.qsf("a[href^='/account/order-details']").href;
-    return url.replace(/&.*$/, "");
-  }
-
-  /**
-   * The order id.
-   *
-   * @return {string}
-   */
-  get id() {
-    return this.url.match(/orderId=(.*$)/)[1];
-  }
-
-  /**
-   * The order date.
-   *
-   * @return {string}
-   */
-  get date() {
-    let date = this.doc
-      .qsf(".ui-it-purchasehistory-item-purchasedate")
-      .innerHTML?.trim();
-    return dateString(date);
-  }
-
-  /**
-   * The order total, either dollars or credits.
-   *
-   * @return {string}
-   */
-  get total() {
-    return this.doc.qsf(".ui-it-purchasehistory-item-total div").innerHTML;
-  }
-};
-PurchaseRow = class extends Parser {
-  _fields = {
-    asin: "data-order-item-asin",
-    order_id: "data-order-id",
-    title: "data-order-item-name",
-    author: "data-order-item-author",
-    amount: "data-order-item-cost",
-    credits: "data-order-item-credit-cost",
-  };
-
-  constructor(doc = null) {
-    super();
-    this.doc = doc;
-  }
-
-  data() {
-    return Object.fromEntries(
-      Object.entries(this._fields).map(([key, attr]) => [
-        key,
-        this.doc.attributes?.[attr]?.value,
-      ]),
-    );
-  }
-};
-/**
- * A single purchase history page, usually a year and page
- * (ie 2024, page 2 of 3).
- *
- * Each order page has both a list of orders (OrderRow), and a list of
- * purchases (PurchaseRow).
- *
- * Example:
- * https://www.audible.com/account/purchase-history?ref=&tf=orders&df=2024&ps=20
- */
-LedgerPage = class extends Page {
-  base_url = "https://www.audible.com/account/purchase-history?tf=orders";
-
-  #default_per_page = 40;
-
-  #valid_date_ranges = ["last_90_days", "last_180_days", "last_365_days"];
-
-  #orders = {};
-  #purchases = {};
-  #entries = [];
-  #page_num = null;
-  #year = null;
-  #years = null;
-  #page_count = null;
-
-  constructor(year_or_doc = null, page_num = null, per_page = null) {
-    super();
-    this.doc = null;
-    if (
-      (typeof year_or_doc == "number" ||
-        this.#valid_date_ranges.includes(year_or_doc)) &&
-      typeof page_num == "number"
-    ) {
-      this.year = year_or_doc;
-      this.page_num = page_num;
-    } else if (year_or_doc) {
-      this.doc = year_or_doc;
-    }
-
-    this.per_page = per_page || this.#default_per_page;
-    this.#entries = null;
-  }
-
-  /**
-   * Fetch the document for the given year, page number, and per_page.
-   *
-   * @return {Doc}
-   */
-  async get() {
-    let url = `${this.base_url}&df=${this.year}&pn=${this.page_num}&ps=${this.per_page}`;
-    this.doc = await this.fetchDoc(url);
-    return this.doc;
-  }
-
-  /**
-   * The year for this page.
-   *
-   * @return {number}
-   */
-  get year() {
-    if (!this.#year && this.doc) {
-      this.#year = this.doc.qsf(
-        "#ui-it-purchase-history-date-filter option:checked",
-      )?.value;
-    }
-    return tryInt(this.#year);
-  }
-
-  /**
-   * Set the year for this page.
-   *
-   * @param {number} value  The year.
-   */
-  set year(value) {
-    this.#year = value;
-  }
-
-  /**
-   * The page number of this page.
-   *
-   * @return {number}
-   */
-  get page_num() {
-    if (!this.#page_num && this.doc) {
-      this.#page_num =
-        this.doc
-          .qsf("span.purchase-history-pagination-button")
-          ?.innerHTML?.trim() || 1;
-    }
-    return tryInt(this.#page_num);
-  }
-
-  /**
-   * Set the page number of this page.
-   *
-   * @param {number} value   The page number.
-   */
-  set page_num(value) {
-    this.#page_num = value;
-  }
-
-  /**
-   * Number of pages for this year (or date range).
-   *
-   * @return {number}
-   */
-  get page_count() {
-    if (!this.#page_count && this.doc) {
-      let link = this.doc.qs("a.purchase-history-pagination-button").last;
-      let count = link?.innerHTML.trim() || 1;
-      this.#page_count = parseInt(count);
-    }
-    return this.#page_count;
-  }
-
-  /**
-   * An array of years available in the year drop-down.
-   *
-   * @return {array}
-   */
-  get years() {
-    if (!this.#years && this.doc) {
-      let options = this.doc.qs("#ui-it-purchase-history-date-filter option");
-      this.#years = options.map((o) => o.value).filter((y) => /^\d+$/.test(y));
-    }
-    return this.#years;
-  }
-
-  /**
-   * Data from OrderRow objects on this page, keyed by order id.
-   *
-   * @return {object}
-   */
-  get orders() {
-    if (this.doc && isEmpty(this.#orders)) {
-      let rows = this.doc.qs("tr:has(a[href^='/account/order-details'])");
-
-      let orders = rows.map((tr) => {
-        let row = new OrderRow(tr);
-        return [row.id, row.data()];
-      });
-
-      this.#orders = Object.fromEntries(orders);
-    }
-    return this.#orders;
-  }
-
-  /**
-   * Data from PurchaseRow objects on this page.
-   *
-   * @returns {Array}
-   */
-  get purchases() {
-    if (this.doc && isEmpty(this.#purchases)) {
-      let links = this.doc.qs("a[data-order-item-id]");
-      let purchases = links.map((a) => new PurchaseRow(a).data());
-      this.#purchases = purchases;
-    }
-
-    return this.#purchases;
-  }
-
-  /**
-   * Merge selected order data and purchase data.
-   *
-   * @return {Array}
-   */
-  get entries() {
-    if (!this.#entries) {
-      try {
-        let seen = {};
-        this.#entries = this.purchases.reduce((arr, p) => {
-          if (seen[p.asin]) {
-            error(`Duplicate item: /pd/${asin}`, seen[p.asin], p);
-          } else if (p.title && p.author) {
-            // ^ missing title and author mean credit purchases
-            seen[p.asin] = p;
-            arr.push({
-              asin: p.asin,
-              url: `http://www.audible.com/pd/${p.asin}`,
-              title: p.title,
-              author: p.author,
-              purchased: dateString(this.orders[p.order_id].date),
-            });
-          }
-          return arr;
-        }, []);
-      } catch (err) {
-        error(err);
-      }
-    }
-    return this.#entries;
-  }
-};
-LedgerFetcher = class {
-  #count = 0;
-  #entries = null;
-
-  constructor() {
-    this.#count = 0;
-    this.#entries = null;
-    this.pages = [];
-  }
-
-  /**
-   * Fetch the first purchase history page to get the list of years in purchase
-   * history, then fetch the first page of each year to determine how many
-   * pages in each year.
-   *
-   * @fires update-ae-notifier
-   */
-  async init(limit) {
-    // request to get the years in purchase history
-    let running_count = 0;
-    let page = new LedgerPage("last_90_days", 1, 20);
-    await page.get();
-    this.years = page.years;
-
-    if (limit && this.years.length > limit) {
-      this.years.splice(limit);
-    }
-
-    fireEvent({ years: this.years });
-
-    for (let year of this.years) {
-      let timer = new Timer();
-      timer.start();
-
-      fireEvent({ year: year });
-
-      let page_num = 1;
-      let page_count;
-
-      do {
-        let page = new LedgerPage(tryInt(year), page_num);
-
-        if (page_num == 1) {
-          await page.get();
-          page_count = page.page_count;
-        }
-
-        this.pages.push(page);
-        running_count++;
-        page_num++;
-
-        if (limit && running_count >= limit) {
-          this.years.splice(this.years.indexOf(year));
-          fireEvent({ years: this.years });
-          break;
-        }
-      } while (page_num <= page_count);
-      timer.stop();
-      fireEvent({ timer: timer });
-    }
-
-    fireEvent({ percent: 1 });
-  }
-
-  /**
-   * Fetch all of the pages, up to limit.
-   *
-   * @param {integer} limit   Number of pages to stop at.
-   *
-   * @fires update-ae-notifier
-   */
-  async populate(limit = null) {
-    if (limit) {
-      this.pages.splice(limit, this.pages.length);
-    }
-
-    fireEvent({ total: this.pages.length });
-    let i = 0;
-
-    for (let page of this.pages) {
-      let timer = new Timer();
-      timer.start();
-
-      fireEvent({
-        year: page.year,
-        year_page: page.page_num,
-        item_no: i,
-      });
-
-      if (!page.doc) {
-        await page.get();
-        fireEvent({ page_count: page.page_count });
-      } else {
-        fireEvent({ page_count: page.page_count });
-        await delay(500);
-      }
-
-      i++;
-      timer.stop();
-      fireEvent({ timer: timer });
-    }
-    fireEvent({ percent: 1 });
-  }
-
-  /**
-   * Return the total number entries in all ledger pages.
-   *
-   * @return {number}
-   */
-  get count() {
-    if (!this.#count) {
-      this.#count = this.pages.reduce((sum, p) => sum + p.entries.length, 0);
-    }
-    return this.#count;
-  }
-
-  /**
-   * Entries from all pages keyed by ASIN.
-   *
-   * @return {object}
-   */
-  get entries() {
-    if (!this.#entries) {
-      let entries = {};
-
-      for (let page of this.pages) {
-        for (let item of page.entries) {
-          entries[item.asin] = item;
-        }
-      }
-
-      this.#entries = entries;
-    }
-    return this.#entries;
-  }
-
-  /**
-   * Set entries.
-   *
-   * @param {object}
-   */
-  set entries(value) {
-    this.#entries = value;
-  }
-};
-/**
- * Result.
- *
- * Final result set for a book from library data, order data, and book details
- * data.
- */
-Result = class {
-  /**
-   * Mapping of header to list of sources in order of precedence.
-   *
-   * @access private
-   */
-  #headers = {
-    asin: ["order", "library", "details"],
-    url: ["order", "library"],
-    title: ["order", "details", "library"],
-    authors: ["details", "library"],
-    narrators: ["details", "library"],
-    series: ["library", "details"],
-    publisher: ["details"],
-    duration: ["details"],
-    released: ["details"],
-    released_ts: ["details"],
-    purchased: ["order"],
-    language: ["details"],
-    summary: ["details"],
-    rating: ["details"],
-    num_ratings: ["details"],
-    audible_original: ["details"],
-    type: ["details"],
-    genre: ["details"],
-    subgenre: ["details"],
-    tags: ["details"],
-    is_adult: ["details"],
-  };
-
-  constructor(library = null, details = null, order = null) {
-    this.library = library || {};
-    this.details = details || {};
-    this.order = order || {};
-  }
-
-  /**
-   * Get the value for key from the first source that has it defined.
-   *
-   * @param {string} key  Key from .#headers.
-   *
-   * @return {any}
-   */
-  first(key) {
-    // the objects to look for key in
-    let sources = [...this.#headers[key]];
-
-    return sources.reduce((fallback, source, _, arr) => {
-      let value = this[source][key];
-
-      // if the key is there, return it and break early
-      if (!["null", "undefined"].includes(typeof value)) {
-        arr.splice(1);
-        return value;
-      } else {
-        // otherwise, return ""
-        return fallback;
-      }
-    }, "");
-  }
-
-  /**
-   * Mapping of keys from .#headers to the value pulled from source data.
-   *
-   * @return {object}
-   */
-  data() {
-    return Object.fromEntries(
-      Object.keys(this.#headers).map((key) => {
-        return [key, this.first(key)];
-      }),
-    );
-  }
-};
-/**
- * Module that handles extracting and organizing the data.
- */
-
-/**
- * Exporter class.
- */
-Exporter = class {
-  constructor(limit = null) {
-    this.limit = limit;
-    this.timer = new Timer();
-
-    this.ledger = new LedgerFetcher();
-    this.library = new LibraryFetcher();
-    this.details = new DetailsFetcher();
-    this.results = [];
-  }
-
-  async getPurchaseHistory() {
-    await this.ledger.init(this.limit);
-  }
-
-  async getLedger() {
-    await this.ledger.populate(this.limit);
-  }
-
-  async getLibrary() {
-    await this.library.populate(this.limit);
-  }
-
-  async getBookDetails() {
-    this.details.library = this.library.books;
-    await this.details.populate();
-  }
-
-  getResults() {
-    let library_info, order_info, book_info, info;
-    let results = [];
-
-    for (library_info of this.library.books) {
-      book_info = this.details.books[library_info.asin];
-      order_info = this.ledger.entries[library_info.asin];
-      let result = new Result(library_info, book_info, order_info);
-      results.push(result.data());
-    }
-
-    this.results = results;
-    return results;
-  }
-
-  /**
-   * For TSV files, flatten results to a single string per field.
-   */
-  flatten() {
-    for (let [i, record] of Object.entries(this.results)) {
-      if (record.series) {
-        record.series = record.series
-          .map((series) => {
-            return series.name + (series.number ? ` #${series.number}` : "");
-          })
-          .join(", ");
-      }
-
-      if (record.authors) {
-        record.authors = record.authors.map((a) => a.name).join(", ");
-      }
-    }
   }
 };
 VirtualFile = class {

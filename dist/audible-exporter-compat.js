@@ -15,14 +15,14 @@ forced:!0},{iterateEntries:function iterateEntries(t){return new o(t,"entries")}
 //# sourceMappingURL=minified.js.map
 
 
-var _wrapper, _css, _wrapper2, _head, _content, _copy, _actions, _close_btn, _selectors, _wrapper3, _head2, _content2, _close_btn2, _copy2, _wrapper4, _content3, _actions2, _close_btn3, _ft_select, _start_btn, _file, _selectors2, _wrapper5, _head3, _content4, _copy3, _actions3, _ft_select2, _dl_btn, _file2, _selectors3, _wrapper6, _bar, _status, _percentage, _messages, _context3, _steps, _estimate, _percent, _item_no, _total, _year, _years, _year2, _year_page, _item_no2, _page_count, _item_no3, _total2, _item_no4, _total3, _doc, _default_page_size, _rows, _books, _books2, _page_count2, _types, _category_genres, _tags, _json, _audiobook_data, _product_data, _product_info, _digital_data, _books3, _default_per_page, _valid_date_ranges, _orders, _purchases, _entries, _page_num, _year3, _years2, _page_count3, _count, _entries2, _headers, _contents, _headers2, _rows2, _headers3, _rows3;
+var _doc, _default_page_size, _rows, _books, _books2, _page_count, _types, _category_genres, _tags, _json, _audiobook_data, _product_data, _product_info, _digital_data, _books3, _default_per_page, _valid_date_ranges, _orders, _purchases, _entries, _page_num, _year, _years, _page_count2, _count, _entries2, _headers, _wrapper, _css, _wrapper2, _head, _content, _copy, _actions, _close_btn, _selectors, _wrapper3, _head2, _content2, _close_btn2, _copy2, _wrapper4, _content3, _actions2, _close_btn3, _ft_select, _start_btn, _file, _selectors2, _wrapper5, _head3, _content4, _copy3, _actions3, _ft_select2, _dl_btn, _file2, _selectors3, _wrapper6, _bar, _status, _percentage, _messages, _context15, _steps, _estimate, _percent, _item_no, _total, _year2, _years2, _year3, _year_page, _item_no2, _page_count3, _item_no3, _total2, _item_no4, _total3, _contents, _headers2, _rows2, _headers3, _rows3;
+function _superPropGet(t, o, e, r) { var p = _get3(_getPrototypeOf(1 & r ? t.prototype : t), o, e); return 2 & r && "function" == typeof p ? function (t) { return p.apply(e, t); } : p; }
+function _get3() { return _get3 = "undefined" != typeof Reflect && Reflect.get ? Reflect.get.bind() : function (e, t, r) { var p = _superPropBase(e, t); if (p) { var n = Object.getOwnPropertyDescriptor(p, t); return n.get ? n.get.call(arguments.length < 3 ? e : r) : n.value; } }, _get3.apply(null, arguments); }
+function _superPropBase(t, o) { for (; !{}.hasOwnProperty.call(t, o) && null !== (t = _getPrototypeOf(t));); return t; }
 function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
 function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
-function _superPropGet(t, o, e, r) { var p = _get(_getPrototypeOf(1 & r ? t.prototype : t), o, e); return 2 & r && "function" == typeof p ? function (t) { return p.apply(e, t); } : p; }
-function _get() { return _get = "undefined" != typeof Reflect && Reflect.get ? Reflect.get.bind() : function (e, t, r) { var p = _superPropBase(e, t); if (p) { var n = Object.getOwnPropertyDescriptor(p, t); return n.get ? n.get.call(arguments.length < 3 ? e : r) : n.value; } }, _get.apply(null, arguments); }
-function _superPropBase(t, o) { for (; !{}.hasOwnProperty.call(t, o) && null !== (t = _getPrototypeOf(t));); return t; }
 function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
 function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
 function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
@@ -331,150 +331,6 @@ Timer = /*#__PURE__*/function () {
   }]);
 }();
 /**
- * Domain class.
- *
- * Parses the subdomain, name, second level domain, and top level domain from a
- * host.
- */
-Domain = /*#__PURE__*/function () {
-  /**
-   * Create a Domain object.
-   *
-   * @param {string} host  The host portion of the URL.
-   *
-   * @example
-   *
-   * new Domain("example.co.uk");
-   */
-  function _class() {
-    var host = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    _classCallCheck(this, _class);
-    this.host = host;
-  }
-
-  /**
-   * Create a domain object from a URL.
-   *
-   * @param {string} address  URL
-   * @example
-   *
-   * Domain.fromURL("http://www.google.com/")
-   */
-  return _createClass(_class, [{
-    key: "labels",
-    get:
-    /**
-     * Array of dot seperated labels that make up the domain name.
-     *
-     * @example
-     * new Domain("example.com").labels == ["example", "com"];
-     */
-    function get() {
-      return this.host.split(".");
-    }
-
-    /**
-     * Array of second level domains available for this top level domain.
-     */
-  }, {
-    key: "ok_slds",
-    get: function get() {
-      return this.SLDS[this.tld] || [];
-    }
-
-    /**
-     * Top level domain.
-     *
-     * @example
-     * new Domain("example.com").tld == "com";
-     */
-  }, {
-    key: "tld",
-    get: function get() {
-      return this.labels.slice(-1)[0];
-    }
-
-    /**
-     * Second level domain(s).
-     *
-     * @example
-     * new Domain("example.co.uk").sld == "co";
-     */
-  }, {
-    key: "sld",
-    get: function get() {
-      if (!this.ok_slds.length) return "";
-      var labels = this.labels.slice(0, -1);
-      var i = labels.length - 1;
-      var sld;
-      do {
-        var attempt = labels.slice(i).join(".");
-        if (!this.ok_slds.includes(attempt)) {
-          break;
-        }
-        sld = attempt;
-        i--;
-      } while (i > 0);
-      return sld || "";
-    }
-
-    /**
-     * Domain name.
-     *
-     * @example
-     * new Domain("example.com").name == "example";
-     */
-  }, {
-    key: "name",
-    get: function get() {
-      // count of slds + 1 (tld)
-      var suffixes = (this.sld ? this.sld.split(".").length : 0) + 1;
-      // name is one backwards from there
-      var idx = this.labels.length - suffixes - 1;
-      return this.labels[idx];
-    }
-
-    /**
-     * Subdomain(s).
-     *
-     * @example
-     * new Domain("help.example.com").labels == "help";
-     */
-  }, {
-    key: "subdomain",
-    get: function get() {
-      var labels = this.labels.slice();
-      // number of slds + 1 (tld) + 1 (name)
-      var suffixes = (this.sld ? this.sld.split(".").length : 0) + 2;
-
-      // chop off everything starting at the name
-      labels.splice(-suffixes);
-
-      // whatever is left is the subdomain
-      var subdomain = labels.join(".");
-      return subdomain;
-    }
-  }], [{
-    key: "fromURL",
-    value: function fromURL(address) {
-      var url = new URL(address);
-      var domain = new Domain(url.host);
-      domain.url = url;
-      return domain;
-    }
-  }]);
-}();
-Domain.prototype.TLDS = ["asia", "blue", "ca", "ceo", "ch", "club", "cm", "co", "com", "de", "es", "fr", "in", "international", "it", "jp", "lu", "mobi", "mp", "name", "net", "nyc", "org", "pink", "pk", "red", "se", "si", "ws"];
-Domain.prototype.SLDS = {
-  es: ["com", "edu", "gob", "nom", "org"],
-  fr: ["aeroport", "avoues", "cci", "chambagri", "chirurgiens-dentistes", "experts-comptables", "geometre-expert", "greta", "huissier-justice", "medecin", "notaires", "pharmacien", "port", "prd", "veterinaire"],
-  "in": ["5g", "6g", "ac", "ai", "am", "bihar", "biz", "business", "ca", "cn", "co", "com", "com", "coop", "cs", "delhi", "dr", "edu", "er", "ernet", "firm", "gen", "gov", "gujarat", "ind", "info", "int", "internet", "io", "me", "mil", "net", "org", "pg", "post", "pro", "res", "travel", "tv", "uk", "up", "us"],
-  jp: ["ac", "ad", "co", "ed", "go", "gr", "lg", "ne", "or"],
-  pk: ["biz", "com", "edu", "fam", "gkp", "gob", "gog", "gok", "gop", "gos", "gov", "ltd", "mil", "net", "org", "res", "web"],
-  uk: ["ac", "bl", "co", "gov", "judiciary", "ltd", "me", "mod", "net", "nhs", "nic", "org", "parliament", "plc", "police", "rct", "royal", "sch", "ukaea"],
-  us: ["dni", "fed", "isa", "nsn"]
-};
-/**
  * Wraper for HTMLElements.
  */
 
@@ -484,10 +340,10 @@ Doc = /*#__PURE__*/function () {
    *
    * @params {HTMLElement} [elm]
    */
-  function _class2() {
+  function _class() {
     var _this = this;
     var elm = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    _classCallCheck(this, _class2);
+    _classCallCheck(this, _class);
     this.element = elm;
     if (!elm) return;
     var _loop = function _loop(k) {
@@ -517,7 +373,7 @@ Doc = /*#__PURE__*/function () {
    *
    * @returns {Doc[]}
    */
-  return _createClass(_class2, [{
+  return _createClass(_class, [{
     key: "gc",
     value:
     /**
@@ -767,6 +623,2117 @@ Doc = /*#__PURE__*/function () {
     }
   }]);
 }();
+/*
+ * Parser.
+ *
+ * DOM Element Parser.
+ */
+
+/*
+ * Parser class.
+ *
+ *
+ */
+Parser = (_doc = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
+  function Parser() {
+    _classCallCheck(this, Parser);
+    _classPrivateFieldInitSpec(this, _doc, null);
+    /**
+     * List of .data() object properties mapped to class members.
+     *
+     * To be defined in subclasses.
+     *
+     * @access protected
+     */
+    _defineProperty(this, "_fields", []);
+    /*
+     * List of class members to identify an individual page for error messages.
+     *
+     * To be defined in subclasses.
+     *
+     * @access protected
+     */
+    _defineProperty(this, "_identifiers", []);
+  }
+  return _createClass(Parser, [{
+    key: "doc",
+    get:
+    /**
+     * Get #doc.
+     *
+     * @return {Doc}
+     */
+    function get() {
+      return _classPrivateFieldGet(_doc, this);
+    }
+
+    /**
+     * Set #doc.
+     *
+     * @param {Doc} value
+     */,
+    set: function set(value) {
+      if (value) {
+        if (!value) return;
+        if (!(value instanceof Doc)) {
+          value = new Doc(value);
+        }
+        _classPrivateFieldSet(_doc, this, value);
+      }
+    }
+
+    /**
+     * Return the data parsed from the .doc.
+     *
+     * Construct data object by mapping list of ._fields to class member values.
+     *
+     * Catch and re-raise exceptions using ._identifiers class member values in
+     * error message.
+     *
+     * @return {Object}
+     */
+  }, {
+    key: "data",
+    value: function data() {
+      var _this3 = this;
+      var f;
+      var data = {};
+      for (var i in this._fields) {
+        try {
+          f = this._fields[i];
+          data[f] = this[f];
+        } catch (err) {
+          var identifiers = this._identifers.map(function (i) {
+            return "".concat(i, ": ").concat(_this3[i]);
+          }).join(", ");
+          error("".concat(this.constructor.name, ".").concat(f, " (").concat(identifiers, "):\n"), err);
+        }
+      }
+      return cleanObject(data);
+    }
+  }]);
+}());
+LibraryBookRow = /*#__PURE__*/function (_Parser) {
+  function LibraryBookRow() {
+    var _this4;
+    var doc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    var page_num = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+    var row_num = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+    _classCallCheck(this, LibraryBookRow);
+    _this4 = _callSuper(this, LibraryBookRow);
+    _defineProperty(_this4, "_fields", ["asin", "url", "title", "authors", "narrators", "series"]);
+    _defineProperty(_this4, "_identifers", ["page_num", "row_num"]);
+    _this4.doc = doc;
+    _this4.page_num = page_num;
+    _this4.row_num = row_num;
+    return _this4;
+  }
+  _inherits(LibraryBookRow, _Parser);
+  return _createClass(LibraryBookRow, [{
+    key: "asin",
+    get: function get() {
+      return this.doc.id.replace("adbl-library-content-row-", "");
+    }
+  }, {
+    key: "ul",
+    get: function get() {
+      return this.doc.qsf(".bc-list.bc-list-nostyle");
+    }
+  }, {
+    key: "url",
+    get: function get() {
+      var _this$ul$gcf$parentEl;
+      return (_this$ul$gcf$parentEl = this.ul.gcf("bc-size-headline3").parentElement.attributes["href"]) === null || _this$ul$gcf$parentEl === void 0 ? void 0 : _this$ul$gcf$parentEl.value.replace(/\?.+/, "");
+    }
+  }, {
+    key: "title",
+    get: function get() {
+      var _this$ul$gcf;
+      var title = (_this$ul$gcf = this.ul.gcf("bc-size-headline3")) === null || _this$ul$gcf === void 0 ? void 0 : _this$ul$gcf.innerHTML.trim();
+      return entityDecode(title);
+    }
+  }, {
+    key: "authors",
+    get: function get() {
+      var links = this.ul.qs(".authorLabel a.bc-color-base");
+      return links.map(function (a) {
+        var author = {
+          name: a.innerHTML.trim()
+        };
+        var found = a.href.match(/*#__PURE__*/_wrapRegExp(/[/]author[/]([^?]+)/, {
+          id: 1
+        }));
+        if (found) {
+          author.id = found.groups.id;
+          author.url = "/author/".concat(found.groups.id);
+        }
+        return author;
+      });
+    }
+  }, {
+    key: "narrators",
+    get: function get() {
+      var links = this.ul.qs(".narratorLabel .bc-color-base");
+      return links.map(function (a) {
+        return a.innerHTML.trim();
+      });
+    }
+  }, {
+    key: "series",
+    get: function get() {
+      var i = 1;
+      var series = [];
+      var links = this.ul.qs(".seriesLabel a");
+      var _iterator2 = _createForOfIteratorHelper(links),
+        _step2;
+      try {
+        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+          var _span$innerHTML;
+          var link = _step2.value;
+          var _ref5 = /(\/series\/.*\/(.*))\?/.exec(link.href) || [null, "", ""],
+            _ref6 = _slicedToArray(_ref5, 3),
+            _ = _ref6[0],
+            url = _ref6[1],
+            id = _ref6[2];
+          var span = this.ul.qsf(".seriesLabel a:nth-child(".concat(i, ") + span"));
+          var number = (span === null || span === void 0 || (_span$innerHTML = span.innerHTML) === null || _span$innerHTML === void 0 ? void 0 : _span$innerHTML.trim().replace("Book ", "")) || "";
+          series.push({
+            id: id,
+            url: url,
+            name: link.innerHTML.trim(),
+            number: number
+          });
+          i++;
+        }
+      } catch (err) {
+        _iterator2.e(err);
+      } finally {
+        _iterator2.f();
+      }
+      return series;
+    }
+  }]);
+}(Parser);
+Page = /*#__PURE__*/function (_Parser2) {
+  function Page() {
+    _classCallCheck(this, Page);
+    return _callSuper(this, Page, arguments);
+  }
+  _inherits(Page, _Parser2);
+  return _createClass(Page, [{
+    key: "fetchDoc",
+    value: function () {
+      var _fetchDoc = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(url) {
+        var res, text;
+        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+          while (1) switch (_context2.prev = _context2.next) {
+            case 0:
+              _context2.prev = 0;
+              _context2.next = 3;
+              return fetch(url);
+            case 3:
+              res = _context2.sent;
+              if (!res.ok) {
+                error("Page.fetchDoc(\"".concat(url.trim(), "\"): Response status: ").concat(res.status));
+              }
+              _context2.next = 7;
+              return res.text();
+            case 7:
+              text = _context2.sent;
+              return _context2.abrupt("return", new DOMParser().parseFromString(text, "text/html"));
+            case 11:
+              _context2.prev = 11;
+              _context2.t0 = _context2["catch"](0);
+              error("Page.fetchDoc(\"".concat(url.trim(), "\"):\n"), _context2.t0);
+            case 14:
+            case "end":
+              return _context2.stop();
+          }
+        }, _callee2, null, [[0, 11]]);
+      }));
+      function fetchDoc(_x2) {
+        return _fetchDoc.apply(this, arguments);
+      }
+      return fetchDoc;
+    }()
+  }]);
+}(Parser);
+LibraryPage = (_default_page_size = /*#__PURE__*/new WeakMap(), _rows = /*#__PURE__*/new WeakMap(), _books = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Page) {
+  function LibraryPage() {
+    var _this5;
+    var doc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    _classCallCheck(this, LibraryPage);
+    _this5 = _callSuper(this, LibraryPage);
+    _classPrivateFieldInitSpec(_this5, _default_page_size, 20);
+    _classPrivateFieldInitSpec(_this5, _rows, null);
+    _classPrivateFieldInitSpec(_this5, _books, null);
+    _this5.doc = doc;
+    _classPrivateFieldSet(_rows, _this5, null);
+    _classPrivateFieldSet(_books, _this5, null);
+    return _this5;
+  }
+  _inherits(LibraryPage, _Page);
+  return _createClass(LibraryPage, [{
+    key: "page_size",
+    get: function get() {
+      var _this$doc$qsf;
+      if (!this.doc) return null;
+      var size = ((_this$doc$qsf = this.doc.qsf("select[name='pageSize'] option:checked")) === null || _this$doc$qsf === void 0 ? void 0 : _this$doc$qsf.value) || _classPrivateFieldGet(_default_page_size, this);
+      return parseInt(size);
+    }
+  }, {
+    key: "page_num",
+    get: function get() {
+      var _this$doc$qsf2;
+      if (!this.doc) return null;
+      var num = ((_this$doc$qsf2 = this.doc.qsf("span.pageNumberElement")) === null || _this$doc$qsf2 === void 0 ? void 0 : _this$doc$qsf2.innerHTML) || 1;
+      return parseInt(num);
+    }
+  }, {
+    key: "page_count",
+    get: function get() {
+      var _links$last;
+      if (!this.doc) return null;
+      var links = this.doc.qs("a.pageNumberElement");
+      var count = ((_links$last = links.last) === null || _links$last === void 0 ? void 0 : _links$last.innerHTML) || 1;
+      return parseInt(count);
+    }
+  }, {
+    key: "rows",
+    get: function get() {
+      if (!_classPrivateFieldGet(_rows, this)) {
+        var i = 0;
+        var arr = [];
+        var rows = this.doc.gc("adbl-library-content-row");
+        var _iterator3 = _createForOfIteratorHelper(rows),
+          _step3;
+        try {
+          for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+            var row = _step3.value;
+            arr.push(new LibraryBookRow(row, this.page_num, i + 1));
+            i++;
+          }
+        } catch (err) {
+          _iterator3.e(err);
+        } finally {
+          _iterator3.f();
+        }
+        _classPrivateFieldSet(_rows, this, arr);
+      }
+      return _classPrivateFieldGet(_rows, this);
+    }
+  }, {
+    key: "books",
+    get: function get() {
+      if (!_classPrivateFieldGet(_books, this)) {
+        try {
+          _classPrivateFieldSet(_books, this, this.rows.reduce(function (arr, row) {
+            if (row.title == "Your First Listen") {
+              return arr;
+            }
+            arr.push(row.data());
+            return arr;
+          }, []));
+        } catch (err) {
+          error(err);
+        }
+      }
+      return _classPrivateFieldGet(_books, this);
+    }
+  }]);
+}(Page));
+LibraryFetcher = (_books2 = /*#__PURE__*/new WeakMap(), _page_count = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Page2) {
+  function LibraryFetcher() {
+    var _this6;
+    _classCallCheck(this, LibraryFetcher);
+    _this6 = _callSuper(this, LibraryFetcher);
+    _defineProperty(_this6, "page_size", 50);
+    _defineProperty(_this6, "base_url", "https://www.audible.com/library/titles");
+    _classPrivateFieldInitSpec(_this6, _books2, []);
+    _classPrivateFieldInitSpec(_this6, _page_count, null);
+    _this6.pages = [];
+    _classPrivateFieldSet(_books2, _this6, null);
+    return _this6;
+  }
+  _inherits(LibraryFetcher, _Page2);
+  return _createClass(LibraryFetcher, [{
+    key: "fetchPage",
+    value: function () {
+      var _fetchPage = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(i) {
+        var url, doc;
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+          while (1) switch (_context3.prev = _context3.next) {
+            case 0:
+              url = "".concat(this.base_url, "?pageSize=").concat(this.page_size, "&page=").concat(i);
+              _context3.next = 3;
+              return this.fetchDoc(url);
+            case 3:
+              doc = _context3.sent;
+              return _context3.abrupt("return", new LibraryPage(doc));
+            case 5:
+            case "end":
+              return _context3.stop();
+          }
+        }, _callee3, this);
+      }));
+      function fetchPage(_x3) {
+        return _fetchPage.apply(this, arguments);
+      }
+      return fetchPage;
+    }()
+  }, {
+    key: "populate",
+    value: function () {
+      var _populate = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+        var limit,
+          i,
+          timer,
+          page_num,
+          page,
+          _args4 = arguments;
+        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+          while (1) switch (_context4.prev = _context4.next) {
+            case 0:
+              limit = _args4.length > 0 && _args4[0] !== undefined ? _args4[0] : null;
+              i = 0;
+            case 2:
+              timer = new Timer();
+              timer.start();
+              if (limit) {
+                this.page_count = limit;
+                fireEvent({
+                  total: this.page_count
+                });
+                this.page_size = 20;
+              }
+              page_num = i + 1;
+              fireEvent({
+                item_no: page_num
+              });
+              _context4.next = 9;
+              return this.fetchPage(page_num);
+            case 9:
+              page = _context4.sent;
+              this.pages.push(page);
+              i++;
+              timer.stop();
+              fireEvent({
+                item_no: page_num,
+                total: this.page_count,
+                timer: timer
+              });
+            case 14:
+              if (i < this.page_count) {
+                _context4.next = 2;
+                break;
+              }
+            case 15:
+              fireEvent({
+                percent: 1
+              });
+              return _context4.abrupt("return", this.pages);
+            case 17:
+            case "end":
+              return _context4.stop();
+          }
+        }, _callee4, this);
+      }));
+      function populate() {
+        return _populate.apply(this, arguments);
+      }
+      return populate;
+    }()
+  }, {
+    key: "book_count",
+    get: function get() {
+      if (!this.pages) return null;
+      var page = this.pages[0];
+      return page.page_size * page.page_count;
+    }
+  }, {
+    key: "page_count",
+    get: function get() {
+      if (!_classPrivateFieldGet(_page_count, this)) {
+        _classPrivateFieldSet(_page_count, this, Math.ceil(this.book_count / this.page_size));
+      }
+      return _classPrivateFieldGet(_page_count, this);
+    },
+    set: function set(value) {
+      _classPrivateFieldSet(_page_count, this, value);
+    }
+  }, {
+    key: "books",
+    get: function get() {
+      if (!_classPrivateFieldGet(_books2, this)) {
+        var books = this.pages.reduce(function (arr, page) {
+          return arr.concat(
+          // map books by URL to avoid duplicates
+          page.books.map(function (book) {
+            return [book.url, book];
+          }));
+        }, []);
+        _classPrivateFieldSet(_books2, this, Object.values(Object.fromEntries(books)));
+      }
+      return _classPrivateFieldGet(_books2, this);
+    },
+    set: function set(value) {
+      _classPrivateFieldSet(_books2, this, value);
+    }
+  }]);
+}(Page));
+/**
+ * Book page.
+ *
+ * Parse the book details from an audible book page.
+ *
+ */
+
+BookPage = (_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#__PURE__*/new WeakMap(), _tags = /*#__PURE__*/new WeakMap(), _json = /*#__PURE__*/new WeakMap(), _audiobook_data = /*#__PURE__*/new WeakMap(), _product_data = /*#__PURE__*/new WeakMap(), _product_info = /*#__PURE__*/new WeakMap(), _digital_data = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Page3) {
+  function _class2() {
+    var _this7;
+    var doc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    _classCallCheck(this, _class2);
+    _this7 = _callSuper(this, _class2);
+    _classPrivateFieldInitSpec(_this7, _types, ["Fiction", "Nonfiction"]);
+    _classPrivateFieldInitSpec(_this7, _category_genres, {
+      "Arts & Entertainment": "nonfiction",
+      "Biographies & Memoirs": "nonfiction",
+      "Business & Careers": "nonfiction",
+      "Children's Audiobooks": null,
+      "Action & Adventure": "fiction",
+      // children"s audiobooks
+      "Activities & Hobbies": "nonfiction",
+      // children"s audiobooks
+      "Animals & Nature": "nonfiction",
+      // children"s audiobooks
+      "Fairy Tales, Folk Tales & Myths": "fiction",
+      "Geography & Cultures": "nonfiction",
+      "Comedy & Humor": null,
+      "Performing Arts": "nonfiction",
+      // comedy & humor
+      "Computers & Technology": "nonfiction",
+      "Education & Learning": "nonfiction",
+      Erotica: null,
+      "Sex Instruction": "nonfiction",
+      // erotica
+      "Health & Wellness": "nonfiction",
+      History: "nonfiction",
+      "Home & Garden": "nonfiction",
+      "LGBTQ+": null,
+      "LGBTQ+ Studies": "nonfiction",
+      "Parenting & Families": "nonfiction",
+      "Literature & Fiction": "fiction",
+      "Money & Finance": "nonfiction",
+      "Mystery, Thriller & Suspense": null,
+      "True Crime": "nonfiction",
+      // mystery, thriller & suspense
+      Mystery: "fiction",
+      // mystery, thriller & suspense
+      "Thriller & Suspense": "fiction",
+      // mystery, thriller & suspense
+      "Crime Fiction": "fiction",
+      // mystery, thriller & suspense
+      "Politics & Social Sciences": "nonfiction",
+      "Politics, Society & Current Events": "nonfiction",
+      "Relationships, Parenting & Personal Development": "nonfiction",
+      "Religion & Spirituality": "nonfiction",
+      Romance: "fiction",
+      "Science & Engineering": "nonfiction",
+      "Sports & Outdoors": "nonfiction",
+      "Teen & Young Adult": null,
+      "Health, Lifestyle & Relationships": "nonfiction",
+      // teen & young adult
+      "History & Culture": "nonfiction",
+      // teen & young adult
+      "Travel & Tourism": "nonfiction"
+    });
+    _defineProperty(_this7, "_fields", ["asin", "title", "authors", "narrators", "duration", "language", "released", "released_ts", "publisher", "summary", "audible_original", "series", "type", "genre", "subgenre", "tags", "rating", "num_ratings", "is_adult"]);
+    _defineProperty(_this7, "_identifers", ["url"]);
+    _classPrivateFieldInitSpec(_this7, _tags, []);
+    _classPrivateFieldInitSpec(_this7, _json, null);
+    _classPrivateFieldInitSpec(_this7, _audiobook_data, null);
+    _classPrivateFieldInitSpec(_this7, _product_data, null);
+    _classPrivateFieldInitSpec(_this7, _product_info, null);
+    _classPrivateFieldInitSpec(_this7, _digital_data, null);
+    _this7.doc = doc;
+    return _this7;
+  }
+
+  /**
+   * Get parsed JSON from script tags.
+   *
+   * Parse the JSON from script tags and return an object mapping each objects
+   * "@type" key to the object.
+   *
+   * @return {Object} Object of parsed JSON mapping @type -> object.
+   */
+  _inherits(_class2, _Page3);
+  return _createClass(_class2, [{
+    key: "json",
+    get: function get() {
+      if (!_classPrivateFieldGet(_json, this) && this.doc) {
+        var scripts = this.doc.qs("script[type='application/ld+json']");
+        _classPrivateFieldSet(_json, this, scripts.reduce(function (obj, doc) {
+          var json = JSON.parse(doc.innerHTML);
+          if (!(json instanceof Array)) {
+            json = [json];
+          }
+          json.forEach(function (child) {
+            obj[child["@type"]] = child;
+          });
+          return obj;
+        }, {}));
+      }
+      return _classPrivateFieldGet(_json, this);
+    }
+  }, {
+    key: "audiobook_data",
+    get: function get() {
+      if (!_classPrivateFieldGet(_audiobook_data, this) && this.doc) {
+        _classPrivateFieldSet(_audiobook_data, this, this.json["Audiobook"] || {});
+      }
+      return _classPrivateFieldGet(_audiobook_data, this);
+    }
+  }, {
+    key: "product_data",
+    get: function get() {
+      if (!_classPrivateFieldGet(_product_data, this) && this.doc) {
+        _classPrivateFieldSet(_product_data, this, this.json["Product"] || {});
+      }
+      return _classPrivateFieldGet(_product_data, this);
+    }
+
+    /**
+     * Return digitalData value;
+     *
+     * @return {object}
+     */
+  }, {
+    key: "digital_data",
+    get: function get() {
+      if (!_classPrivateFieldGet(_digital_data, this) && this.doc) {
+        var digitalData;
+        var tags = this.doc.qs("script[type='text/javascript']");
+        var script = tags.filter(function (t) {
+          return t.innerHTML.match(/digitalData/);
+        });
+        var js = script[0].innerHTML;
+        js = js.replace("var digitalData = ", "digitalData =");
+        eval(js);
+        _classPrivateFieldSet(_digital_data, this, digitalData);
+      }
+      return _classPrivateFieldGet(_digital_data, this);
+    }
+
+    /**
+     * Return the relevant data from the digitalData variable.
+     *
+     * Same as:
+     *   digitalData.product[0].productInfo;
+     *
+     * @return {object}
+     */
+  }, {
+    key: "product_info",
+    get: function get() {
+      if (!_classPrivateFieldGet(_product_info, this) && this.doc) {
+        _classPrivateFieldSet(_product_info, this, this.digital_data.product[0].productInfo);
+      }
+      return _classPrivateFieldGet(_product_info, this);
+    }
+
+    /**
+     * Return an array of author objects.
+     *
+     * Each object includes a name and may include id and url.
+     *
+     * @return {Array}
+     */
+  }, {
+    key: "authors",
+    get: function get() {
+      var authors = this.product_info.authors.map(function (a) {
+        var author = {
+          name: a.fullName
+        };
+        if (a.id) {
+          author.id = a.id;
+          author.url = "/author/".concat(a.id);
+        }
+        return author;
+      });
+      return authors || [];
+    }
+  }, {
+    key: "narrators",
+    get: function get() {
+      return this.product_info.narrators;
+    }
+  }, {
+    key: "rating",
+    get: function get() {
+      var _this$audiobook_data$;
+      var rating = tryFloat((_this$audiobook_data$ = this.audiobook_data.aggregateRating) === null || _this$audiobook_data$ === void 0 ? void 0 : _this$audiobook_data$.ratingValue);
+      return rating ? +rating.toFixed(1) : "";
+    }
+  }, {
+    key: "num_ratings",
+    get: function get() {
+      var _this$audiobook_data$2;
+      return tryInt((_this$audiobook_data$2 = this.audiobook_data.aggregateRating) === null || _this$audiobook_data$2 === void 0 ? void 0 : _this$audiobook_data$2.ratingCount);
+    }
+  }, {
+    key: "asin",
+    get: function get() {
+      return this.product_data.productID;
+    }
+  }, {
+    key: "date",
+    get: function get() {
+      var date = this.audiobook_data.datePublished;
+      if (!date) return null;
+      return new Date("".concat(date, ":00:00:01"));
+    }
+  }, {
+    key: "released",
+    get: function get() {
+      if (!this.date) return null;
+      return dateString(this.date);
+    }
+  }, {
+    key: "released_ts",
+    get: function get() {
+      return this.date.getTime();
+    }
+  }, {
+    key: "title",
+    get: function get() {
+      var _this$audiobook_data;
+      return (_this$audiobook_data = this.audiobook_data) === null || _this$audiobook_data === void 0 ? void 0 : _this$audiobook_data.name;
+    }
+  }, {
+    key: "publisher",
+    get: function get() {
+      return this.audiobook_data.publisher;
+    }
+  }, {
+    key: "summary",
+    get: function get() {
+      var text = this.audiobook_data.description;
+      if (!text) return null;
+      return stripHTML(text);
+    }
+  }, {
+    key: "audible_original",
+    get: function get() {
+      if (!this.publisher) return null;
+      return /^Audible Original/.test(this.publisher);
+    }
+  }, {
+    key: "language",
+    get: function get() {
+      var lang = this.audiobook_data.inLanguage;
+      return titleCase(lang);
+    }
+  }, {
+    key: "is_adult",
+    get: function get() {
+      return this.product_info.isAdultProduct;
+    }
+
+    /**
+     * The duration in minutes.
+     *
+     * Parsed from a string like: "PT2H25M" or "PT15M".
+     *
+     * @type      {number}
+     */
+  }, {
+    key: "duration",
+    get: function get() {
+      var re = /*#__PURE__*/_wrapRegExp(/PT((\d+)H)?((\d+)M)?/, {
+        hours: 2,
+        minutes: 4
+      });
+      var time = this.audiobook_data.duration.match(re);
+      return toMinutes(time.groups.hours, time.groups.minutes);
+    }
+  }, {
+    key: "tags_list",
+    get: function get() {
+      return [];
+    }
+
+    /**
+     * Determine fiction or nonfiction.
+     *
+     * @return {string}
+     */
+  }, {
+    key: "type",
+    get: function get() {
+      var _this8 = this;
+      var labels = [this.genre, this.subgenre].concat(_toConsumableArray(this.tags_list));
+
+      // check if the "Fiction" or "Nonfiction" is in any of the tags
+      var found = _classPrivateFieldGet(_types, this).filter(function (t) {
+        return labels.some(function (l) {
+          return new RegExp("\\b".concat(t, "\\b"), "i").test(l);
+        });
+      });
+      if (found.length) {
+        return found.first;
+      }
+
+      // get the fiction/nonfiction designation from #category_genres
+      var types = _toConsumableArray(new Set(labels.map(function (l) {
+        return _classPrivateFieldGet(_category_genres, _this8)[l];
+      }).filter(function (t) {
+        return t;
+      })));
+      switch (types.length) {
+        case 0:
+          return null;
+        case 1:
+          return titleCase(types.first);
+        default:
+          return "Fiction";
+      }
+    }
+  }, {
+    key: "genre",
+    get: function get() {
+      return this.digital_data.page.category.primaryCategory;
+    }
+  }, {
+    key: "subgenre",
+    get: function get() {
+      return this.digital_data.page.category.subCategory1;
+    }
+
+    /**
+     * Get tags.
+     *
+     * Filter tags_list to exclude generes and types.
+     *
+     * @returns {Array}
+     */
+  }, {
+    key: "tags",
+    get: function get() {
+      if (!_classPrivateFieldGet(_tags, this).length && this.tags_list) {
+        var exclude = [].concat(_toConsumableArray(_classPrivateFieldGet(_types, this)), [this.genre, this.subgenre]);
+        _classPrivateFieldSet(_tags, this, this.tags_list.filter(function (t) {
+          return !exclude.includes(t);
+        }));
+      }
+      return _classPrivateFieldGet(_tags, this);
+    }
+  }], [{
+    key: "new",
+    value:
+    /**
+     * Return a BookPage instance of the correct subclass (ADBLBookPage or
+     * NormalBookPage).
+     *
+     * @param {HTMLDocument} html  Document parsed from page contents.
+     *
+     * @returns {BookPage}
+     */
+    function _new(html) {
+      var doc = new Doc(html);
+      var page;
+      if (doc.gt("adbl-product-details").length) {
+        page = new ADBLBookPage(doc);
+      } else {
+        page = new NormalBookPage(doc);
+      }
+      return page;
+    }
+
+    /**
+     * Fetch the book page and return the BookPage object.
+     *
+     * Return either an ADBLBookPage or NormalBookPage.
+     *
+     * @param {string} url
+     *
+     * @returns {BookPage}
+     */
+  }, {
+    key: "get",
+    value: (function () {
+      var _get = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5(url) {
+        var doc, page;
+        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+          while (1) switch (_context5.prev = _context5.next) {
+            case 0:
+              _context5.next = 2;
+              return new Page().fetchDoc(url);
+            case 2:
+              doc = _context5.sent;
+              page = BookPage["new"](doc);
+              page.url = url;
+              return _context5.abrupt("return", page);
+            case 6:
+            case "end":
+              return _context5.stop();
+          }
+        }, _callee5);
+      }));
+      function get(_x4) {
+        return _get.apply(this, arguments);
+      }
+      return get;
+    }())
+  }]);
+}(Page));
+
+/* Book pages which use custom <adbl-*> tags.
+ *
+ * (Note: Not audible-original books.)
+ *
+ * @link https://www.audible.com/pd/Ghosts-of-Zenith-Audiobook/B0BL84CBLZ
+ *
+ */
+ADBLBookPage = /*#__PURE__*/function (_BookPage) {
+  function ADBLBookPage() {
+    _classCallCheck(this, ADBLBookPage);
+    return _callSuper(this, ADBLBookPage, arguments);
+  }
+  _inherits(ADBLBookPage, _BookPage);
+  return _createClass(ADBLBookPage, [{
+    key: "adbl_data",
+    get:
+    /**
+     * Return data parsed from JSON script inside of <adbl-product-metadata> tags.
+     *
+     * @return {object}
+     */
+    function get() {
+      var scripts = this.doc.qs("adbl-product-metadata script");
+      return Object.assign.apply(Object, [{}].concat(_toConsumableArray(scripts.map(function (s) {
+        return JSON.parse(s.textContent);
+      }))));
+    }
+
+    /**
+     * Parse list of tags.
+     *
+     * @return {Array}
+     */
+  }, {
+    key: "tags_list",
+    get: function get() {
+      return this.doc.qs("adbl-chip-group.product-topictag-impression adbl-chip").map(function (c) {
+        return entityDecode(c.innerHTML);
+      });
+    }
+  }, {
+    key: "series",
+    get: function get() {
+      var _this$adbl_data;
+      var series = [];
+      var _iterator4 = _createForOfIteratorHelper(((_this$adbl_data = this.adbl_data) === null || _this$adbl_data === void 0 ? void 0 : _this$adbl_data.series) || []),
+        _step4;
+      try {
+        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+          var _s$url, _s$url2, _s$part;
+          var s = _step4.value;
+          series.push({
+            id: ((_s$url = s.url) === null || _s$url === void 0 || (_s$url = _s$url.match(/series\/.*\/(.*)\?/)) === null || _s$url === void 0 ? void 0 : _s$url[1]) || "",
+            url: ((_s$url2 = s.url) === null || _s$url2 === void 0 ? void 0 : _s$url2.replace(/\?.*$/, "")) || "",
+            name: s.name,
+            number: ((_s$part = s.part) === null || _s$part === void 0 ? void 0 : _s$part.replace("Book ", "")) || ""
+          });
+        }
+      } catch (err) {
+        _iterator4.e(err);
+      } finally {
+        _iterator4.f();
+      }
+      return series;
+    }
+  }]);
+}(BookPage);
+
+/* Book pages which do not use custom <adbl-*> tags.
+ *
+ * (Note: Possibly only Audible originals books.)
+ *
+ * @link https://www.audible.com/pd/Midnight-Riot-Audiobook//B009CZNUGU
+ *
+ */
+NormalBookPage = /*#__PURE__*/function (_BookPage2) {
+  function NormalBookPage() {
+    _classCallCheck(this, NormalBookPage);
+    return _callSuper(this, NormalBookPage, arguments);
+  }
+  _inherits(NormalBookPage, _BookPage2);
+  return _createClass(NormalBookPage, [{
+    key: "tags_list",
+    get: function get() {
+      return this.doc.gc("bc-chip-text").map(function (c) {
+        return c.attributes["data-text"].value;
+      });
+    }
+  }, {
+    key: "series",
+    get: function get() {
+      var li = this.doc.qsf("li.seriesLabel");
+      if (!(li !== null && li !== void 0 && li.element)) return [];
+      var series = [];
+      var children = Array.from(li.childNodes);
+      for (var i in children) {
+        var node = children[i];
+        if (!(node instanceof HTMLAnchorElement)) continue;
+        var _ref7 = /(\/series\/.*\/(.*))\?/.exec(node.href) || [null, "", ""],
+          _ref8 = _slicedToArray(_ref7, 3),
+          _ = _ref8[0],
+          url = _ref8[1],
+          id = _ref8[2];
+        var number = "";
+        var sibling = node.nextSibling;
+        if (sibling && sibling instanceof Text) {
+          var _sibling$textContent$;
+          number = ((_sibling$textContent$ = sibling.textContent.match(/[\d.-]+/)) === null || _sibling$textContent$ === void 0 ? void 0 : _sibling$textContent$[0]) || "";
+        }
+        series.push({
+          id: id,
+          url: url,
+          name: node.innerHTML.trim(),
+          number: number
+        });
+      }
+      return series;
+    }
+  }]);
+}(BookPage);
+/**
+ * Fetch all book details.
+ *
+ * Fetch book pages to gather additional details for all objects in the library
+ * array.
+ */
+
+DetailsFetcher = (_books3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
+  /**
+   * Constructor.
+   *
+   * @params {object[]} [library]  List of objects that contain a url key.
+   */
+  function DetailsFetcher() {
+    var library = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    _classCallCheck(this, DetailsFetcher);
+    _classPrivateFieldInitSpec(this, _books3, {});
+    this.library = library;
+    _classPrivateFieldSet(_books3, this, null);
+    this.pages = [];
+  }
+
+  /**
+   * Fetch the book pages and fire events to update the DetailsNotifier.
+   *
+   * @fires update-ae-notifier
+   */
+  return _createClass(DetailsFetcher, [{
+    key: "populate",
+    value: (function () {
+      var _populate2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+        var book, data, actual, total, i, _iterator5, _step5, timer, page;
+        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+          while (1) switch (_context6.prev = _context6.next) {
+            case 0:
+              actual = new Timer();
+              actual.start();
+              total = this.library.length;
+              fireEvent({
+                total: total
+              });
+              i = 0;
+              _iterator5 = _createForOfIteratorHelper(this.library);
+              _context6.prev = 6;
+              _iterator5.s();
+            case 8:
+              if ((_step5 = _iterator5.n()).done) {
+                _context6.next = 24;
+                break;
+              }
+              book = _step5.value;
+              if (book.url) {
+                _context6.next = 12;
+                break;
+              }
+              return _context6.abrupt("continue", 22);
+            case 12:
+              timer = new Timer();
+              timer.start();
+              _context6.next = 16;
+              return BookPage.get(book.url.replace("http", "https"));
+            case 16:
+              page = _context6.sent;
+              page.url = book.url;
+              this.pages.push(page);
+              i++;
+              timer.stop();
+              fireEvent({
+                item_no: i,
+                timer: timer
+              });
+            case 22:
+              _context6.next = 8;
+              break;
+            case 24:
+              _context6.next = 29;
+              break;
+            case 26:
+              _context6.prev = 26;
+              _context6.t0 = _context6["catch"](6);
+              _iterator5.e(_context6.t0);
+            case 29:
+              _context6.prev = 29;
+              _iterator5.f();
+              return _context6.finish(29);
+            case 32:
+              actual.stop();
+              fireEvent({
+                percent: 1
+              });
+              info("DetailsFetcher.populate() took: ".concat(actual.minutes, " minutes (").concat(actual.seconds, " seconds)"));
+            case 35:
+            case "end":
+              return _context6.stop();
+          }
+        }, _callee6, this, [[6, 26, 29, 32]]);
+      }));
+      function populate() {
+        return _populate2.apply(this, arguments);
+      }
+      return populate;
+    }()
+    /**
+     * Getter for the list of book data.
+     *
+     * @returns {object}  Book data keyed by ASIN.
+     */
+    )
+  }, {
+    key: "books",
+    get: function get() {
+      if (!_classPrivateFieldGet(_books3, this)) {
+        _classPrivateFieldSet(_books3, this, {});
+        var data, page;
+        var _iterator6 = _createForOfIteratorHelper(this.pages),
+          _step6;
+        try {
+          for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
+            page = _step6.value;
+            if (!page) continue;
+            var _data = page.data();
+            _classPrivateFieldGet(_books3, this)[_data.asin] = _data;
+          }
+        } catch (err) {
+          _iterator6.e(err);
+        } finally {
+          _iterator6.f();
+        }
+      }
+      return _classPrivateFieldGet(_books3, this);
+    }
+
+    /**
+     * Setter for the list of book data.
+     *
+     * @param {object}  Book data keyed by ASIN.
+     */,
+    set: function set(value) {
+      _classPrivateFieldSet(_books3, this, value);
+    }
+  }]);
+}());
+/**
+ * A row from a LedgerPage (purchase history) that contains order details.
+ *
+ */
+OrderRow = /*#__PURE__*/function (_Parser3) {
+  function OrderRow() {
+    var _this9;
+    var doc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    _classCallCheck(this, OrderRow);
+    _this9 = _callSuper(this, OrderRow);
+    _defineProperty(_this9, "_fields", ["id", "url", "date", "total"]);
+    _defineProperty(_this9, "_identifers", []);
+    _this9.doc = doc;
+    return _this9;
+  }
+
+  /**
+   * The order detail page URL, minus all the extra params.
+   *
+   * @return {string}
+   */
+  _inherits(OrderRow, _Parser3);
+  return _createClass(OrderRow, [{
+    key: "url",
+    get: function get() {
+      var url = this.doc.qsf("a[href^='/account/order-details']").href;
+      return url.replace(/&.*$/, "");
+    }
+
+    /**
+     * The order id.
+     *
+     * @return {string}
+     */
+  }, {
+    key: "id",
+    get: function get() {
+      return this.url.match(/orderId=(.*$)/)[1];
+    }
+
+    /**
+     * The order date.
+     *
+     * @return {string}
+     */
+  }, {
+    key: "date",
+    get: function get() {
+      var _this$doc$qsf$innerHT;
+      var date = (_this$doc$qsf$innerHT = this.doc.qsf(".ui-it-purchasehistory-item-purchasedate").innerHTML) === null || _this$doc$qsf$innerHT === void 0 ? void 0 : _this$doc$qsf$innerHT.trim();
+      return dateString(date);
+    }
+
+    /**
+     * The order total, either dollars or credits.
+     *
+     * @return {string}
+     */
+  }, {
+    key: "total",
+    get: function get() {
+      return this.doc.qsf(".ui-it-purchasehistory-item-total div").innerHTML;
+    }
+  }]);
+}(Parser);
+PurchaseRow = /*#__PURE__*/function (_Parser4) {
+  function PurchaseRow() {
+    var _this10;
+    var doc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    _classCallCheck(this, PurchaseRow);
+    _this10 = _callSuper(this, PurchaseRow);
+    _defineProperty(_this10, "_fields", {
+      asin: "data-order-item-asin",
+      order_id: "data-order-id",
+      title: "data-order-item-name",
+      author: "data-order-item-author",
+      amount: "data-order-item-cost",
+      credits: "data-order-item-credit-cost"
+    });
+    _this10.doc = doc;
+    return _this10;
+  }
+  _inherits(PurchaseRow, _Parser4);
+  return _createClass(PurchaseRow, [{
+    key: "data",
+    value: function data() {
+      var _this11 = this;
+      return Object.fromEntries(Object.entries(this._fields).map(function (_ref9) {
+        var _this11$doc$attribute;
+        var _ref10 = _slicedToArray(_ref9, 2),
+          key = _ref10[0],
+          attr = _ref10[1];
+        return [key, (_this11$doc$attribute = _this11.doc.attributes) === null || _this11$doc$attribute === void 0 || (_this11$doc$attribute = _this11$doc$attribute[attr]) === null || _this11$doc$attribute === void 0 ? void 0 : _this11$doc$attribute.value];
+      }));
+    }
+  }]);
+}(Parser);
+/**
+ * A single purchase history page, usually a year and page
+ * (ie 2024, page 2 of 3).
+ *
+ * Each order page has both a list of orders (OrderRow), and a list of
+ * purchases (PurchaseRow).
+ *
+ * Example:
+ * https://www.audible.com/account/purchase-history?ref=&tf=orders&df=2024&ps=20
+ */
+LedgerPage = (_default_per_page = /*#__PURE__*/new WeakMap(), _valid_date_ranges = /*#__PURE__*/new WeakMap(), _orders = /*#__PURE__*/new WeakMap(), _purchases = /*#__PURE__*/new WeakMap(), _entries = /*#__PURE__*/new WeakMap(), _page_num = /*#__PURE__*/new WeakMap(), _year = /*#__PURE__*/new WeakMap(), _years = /*#__PURE__*/new WeakMap(), _page_count2 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Page4) {
+  function LedgerPage() {
+    var _this12;
+    var year_or_doc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    var page_num = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+    var per_page = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+    _classCallCheck(this, LedgerPage);
+    _this12 = _callSuper(this, LedgerPage);
+    _defineProperty(_this12, "base_url", "https://www.audible.com/account/purchase-history?tf=orders");
+    _classPrivateFieldInitSpec(_this12, _default_per_page, 40);
+    _classPrivateFieldInitSpec(_this12, _valid_date_ranges, ["last_90_days", "last_180_days", "last_365_days"]);
+    _classPrivateFieldInitSpec(_this12, _orders, {});
+    _classPrivateFieldInitSpec(_this12, _purchases, {});
+    _classPrivateFieldInitSpec(_this12, _entries, []);
+    _classPrivateFieldInitSpec(_this12, _page_num, null);
+    _classPrivateFieldInitSpec(_this12, _year, null);
+    _classPrivateFieldInitSpec(_this12, _years, null);
+    _classPrivateFieldInitSpec(_this12, _page_count2, null);
+    _this12.doc = null;
+    if ((typeof year_or_doc == "number" || _classPrivateFieldGet(_valid_date_ranges, _this12).includes(year_or_doc)) && typeof page_num == "number") {
+      _this12.year = year_or_doc;
+      _this12.page_num = page_num;
+    } else if (year_or_doc) {
+      _this12.doc = year_or_doc;
+    }
+    _this12.per_page = per_page || _classPrivateFieldGet(_default_per_page, _this12);
+    _classPrivateFieldSet(_entries, _this12, null);
+    return _this12;
+  }
+
+  /**
+   * Fetch the document for the given year, page number, and per_page.
+   *
+   * @return {Doc}
+   */
+  _inherits(LedgerPage, _Page4);
+  return _createClass(LedgerPage, [{
+    key: "get",
+    value: (function () {
+      var _get2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
+        var url;
+        return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+          while (1) switch (_context7.prev = _context7.next) {
+            case 0:
+              url = "".concat(this.base_url, "&df=").concat(this.year, "&pn=").concat(this.page_num, "&ps=").concat(this.per_page);
+              _context7.next = 3;
+              return this.fetchDoc(url);
+            case 3:
+              this.doc = _context7.sent;
+              return _context7.abrupt("return", this.doc);
+            case 5:
+            case "end":
+              return _context7.stop();
+          }
+        }, _callee7, this);
+      }));
+      function get() {
+        return _get2.apply(this, arguments);
+      }
+      return get;
+    }()
+    /**
+     * The year for this page.
+     *
+     * @return {number}
+     */
+    )
+  }, {
+    key: "year",
+    get: function get() {
+      if (!_classPrivateFieldGet(_year, this) && this.doc) {
+        var _this$doc$qsf3;
+        _classPrivateFieldSet(_year, this, (_this$doc$qsf3 = this.doc.qsf("#ui-it-purchase-history-date-filter option:checked")) === null || _this$doc$qsf3 === void 0 ? void 0 : _this$doc$qsf3.value);
+      }
+      return tryInt(_classPrivateFieldGet(_year, this));
+    }
+
+    /**
+     * Set the year for this page.
+     *
+     * @param {number} value  The year.
+     */,
+    set: function set(value) {
+      _classPrivateFieldSet(_year, this, value);
+    }
+
+    /**
+     * The page number of this page.
+     *
+     * @return {number}
+     */
+  }, {
+    key: "page_num",
+    get: function get() {
+      if (!_classPrivateFieldGet(_page_num, this) && this.doc) {
+        var _this$doc$qsf4;
+        _classPrivateFieldSet(_page_num, this, ((_this$doc$qsf4 = this.doc.qsf("span.purchase-history-pagination-button")) === null || _this$doc$qsf4 === void 0 || (_this$doc$qsf4 = _this$doc$qsf4.innerHTML) === null || _this$doc$qsf4 === void 0 ? void 0 : _this$doc$qsf4.trim()) || 1);
+      }
+      return tryInt(_classPrivateFieldGet(_page_num, this));
+    }
+
+    /**
+     * Set the page number of this page.
+     *
+     * @param {number} value   The page number.
+     */,
+    set: function set(value) {
+      _classPrivateFieldSet(_page_num, this, value);
+    }
+
+    /**
+     * Number of pages for this year (or date range).
+     *
+     * @return {number}
+     */
+  }, {
+    key: "page_count",
+    get: function get() {
+      if (!_classPrivateFieldGet(_page_count2, this) && this.doc) {
+        var link = this.doc.qs("a.purchase-history-pagination-button").last;
+        var count = (link === null || link === void 0 ? void 0 : link.innerHTML.trim()) || 1;
+        _classPrivateFieldSet(_page_count2, this, parseInt(count));
+      }
+      return _classPrivateFieldGet(_page_count2, this);
+    }
+
+    /**
+     * An array of years available in the year drop-down.
+     *
+     * @return {array}
+     */
+  }, {
+    key: "years",
+    get: function get() {
+      if (!_classPrivateFieldGet(_years, this) && this.doc) {
+        var options = this.doc.qs("#ui-it-purchase-history-date-filter option");
+        _classPrivateFieldSet(_years, this, options.map(function (o) {
+          return o.value;
+        }).filter(function (y) {
+          return /^\d+$/.test(y);
+        }));
+      }
+      return _classPrivateFieldGet(_years, this);
+    }
+
+    /**
+     * Data from OrderRow objects on this page, keyed by order id.
+     *
+     * @return {object}
+     */
+  }, {
+    key: "orders",
+    get: function get() {
+      if (this.doc && isEmpty(_classPrivateFieldGet(_orders, this))) {
+        var rows = this.doc.qs("tr:has(a[href^='/account/order-details'])");
+        var orders = rows.map(function (tr) {
+          var row = new OrderRow(tr);
+          return [row.id, row.data()];
+        });
+        _classPrivateFieldSet(_orders, this, Object.fromEntries(orders));
+      }
+      return _classPrivateFieldGet(_orders, this);
+    }
+
+    /**
+     * Data from PurchaseRow objects on this page.
+     *
+     * @returns {Array}
+     */
+  }, {
+    key: "purchases",
+    get: function get() {
+      if (this.doc && isEmpty(_classPrivateFieldGet(_purchases, this))) {
+        var links = this.doc.qs("a[data-order-item-id]");
+        var purchases = links.map(function (a) {
+          return new PurchaseRow(a).data();
+        });
+        _classPrivateFieldSet(_purchases, this, purchases);
+      }
+      return _classPrivateFieldGet(_purchases, this);
+    }
+
+    /**
+     * Merge selected order data and purchase data.
+     *
+     * @return {Array}
+     */
+  }, {
+    key: "entries",
+    get: function get() {
+      var _this13 = this;
+      if (!_classPrivateFieldGet(_entries, this)) {
+        try {
+          var seen = {};
+          _classPrivateFieldSet(_entries, this, this.purchases.reduce(function (arr, p) {
+            if (seen[p.asin]) {
+              error("Duplicate item: /pd/".concat(asin), seen[p.asin], p);
+            } else if (p.title && p.author) {
+              // ^ missing title and author mean credit purchases
+              seen[p.asin] = p;
+              arr.push({
+                asin: p.asin,
+                url: "http://www.audible.com/pd/".concat(p.asin),
+                title: p.title,
+                author: p.author,
+                purchased: dateString(_this13.orders[p.order_id].date)
+              });
+            }
+            return arr;
+          }, []));
+        } catch (err) {
+          error(err);
+        }
+      }
+      return _classPrivateFieldGet(_entries, this);
+    }
+  }]);
+}(Page));
+LedgerFetcher = (_count = /*#__PURE__*/new WeakMap(), _entries2 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
+  function LedgerFetcher() {
+    _classCallCheck(this, LedgerFetcher);
+    _classPrivateFieldInitSpec(this, _count, 0);
+    _classPrivateFieldInitSpec(this, _entries2, null);
+    _classPrivateFieldSet(_count, this, 0);
+    _classPrivateFieldSet(_entries2, this, null);
+    this.pages = [];
+  }
+
+  /**
+   * Fetch the first purchase history page to get the list of years in purchase
+   * history, then fetch the first page of each year to determine how many
+   * pages in each year.
+   *
+   * @fires update-ae-notifier
+   */
+  return _createClass(LedgerFetcher, [{
+    key: "init",
+    value: (function () {
+      var _init = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(limit) {
+        var running_count, page, _iterator7, _step7, year, timer, page_num, page_count, _page;
+        return _regeneratorRuntime().wrap(function _callee8$(_context8) {
+          while (1) switch (_context8.prev = _context8.next) {
+            case 0:
+              // request to get the years in purchase history
+              running_count = 0;
+              page = new LedgerPage("last_90_days", 1, 20);
+              _context8.next = 4;
+              return page.get();
+            case 4:
+              this.years = page.years;
+              if (limit && this.years.length > limit) {
+                this.years.splice(limit);
+              }
+              fireEvent({
+                years: this.years
+              });
+              _iterator7 = _createForOfIteratorHelper(this.years);
+              _context8.prev = 8;
+              _iterator7.s();
+            case 10:
+              if ((_step7 = _iterator7.n()).done) {
+                _context8.next = 34;
+                break;
+              }
+              year = _step7.value;
+              timer = new Timer();
+              timer.start();
+              fireEvent({
+                year: year
+              });
+              page_num = 1;
+              page_count = void 0;
+            case 17:
+              _page = new LedgerPage(tryInt(year), page_num);
+              if (!(page_num == 1)) {
+                _context8.next = 22;
+                break;
+              }
+              _context8.next = 21;
+              return _page.get();
+            case 21:
+              page_count = _page.page_count;
+            case 22:
+              this.pages.push(_page);
+              running_count++;
+              page_num++;
+              if (!(limit && running_count >= limit)) {
+                _context8.next = 29;
+                break;
+              }
+              this.years.splice(this.years.indexOf(year));
+              fireEvent({
+                years: this.years
+              });
+              return _context8.abrupt("break", 30);
+            case 29:
+              if (page_num <= page_count) {
+                _context8.next = 17;
+                break;
+              }
+            case 30:
+              timer.stop();
+              fireEvent({
+                timer: timer
+              });
+            case 32:
+              _context8.next = 10;
+              break;
+            case 34:
+              _context8.next = 39;
+              break;
+            case 36:
+              _context8.prev = 36;
+              _context8.t0 = _context8["catch"](8);
+              _iterator7.e(_context8.t0);
+            case 39:
+              _context8.prev = 39;
+              _iterator7.f();
+              return _context8.finish(39);
+            case 42:
+              fireEvent({
+                percent: 1
+              });
+            case 43:
+            case "end":
+              return _context8.stop();
+          }
+        }, _callee8, this, [[8, 36, 39, 42]]);
+      }));
+      function init(_x5) {
+        return _init.apply(this, arguments);
+      }
+      return init;
+    }()
+    /**
+     * Fetch all of the pages, up to limit.
+     *
+     * @param {integer} limit   Number of pages to stop at.
+     *
+     * @fires update-ae-notifier
+     */
+    )
+  }, {
+    key: "populate",
+    value: (function () {
+      var _populate3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
+        var limit,
+          i,
+          _iterator8,
+          _step8,
+          page,
+          timer,
+          _args9 = arguments;
+        return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+          while (1) switch (_context9.prev = _context9.next) {
+            case 0:
+              limit = _args9.length > 0 && _args9[0] !== undefined ? _args9[0] : null;
+              if (limit) {
+                this.pages.splice(limit, this.pages.length);
+              }
+              fireEvent({
+                total: this.pages.length
+              });
+              i = 0;
+              _iterator8 = _createForOfIteratorHelper(this.pages);
+              _context9.prev = 5;
+              _iterator8.s();
+            case 7:
+              if ((_step8 = _iterator8.n()).done) {
+                _context9.next = 26;
+                break;
+              }
+              page = _step8.value;
+              timer = new Timer();
+              timer.start();
+              fireEvent({
+                year: page.year,
+                year_page: page.page_num,
+                item_no: i
+              });
+              if (page.doc) {
+                _context9.next = 18;
+                break;
+              }
+              _context9.next = 15;
+              return page.get();
+            case 15:
+              fireEvent({
+                page_count: page.page_count
+              });
+              _context9.next = 21;
+              break;
+            case 18:
+              fireEvent({
+                page_count: page.page_count
+              });
+              _context9.next = 21;
+              return delay(500);
+            case 21:
+              i++;
+              timer.stop();
+              fireEvent({
+                timer: timer
+              });
+            case 24:
+              _context9.next = 7;
+              break;
+            case 26:
+              _context9.next = 31;
+              break;
+            case 28:
+              _context9.prev = 28;
+              _context9.t0 = _context9["catch"](5);
+              _iterator8.e(_context9.t0);
+            case 31:
+              _context9.prev = 31;
+              _iterator8.f();
+              return _context9.finish(31);
+            case 34:
+              fireEvent({
+                percent: 1
+              });
+            case 35:
+            case "end":
+              return _context9.stop();
+          }
+        }, _callee9, this, [[5, 28, 31, 34]]);
+      }));
+      function populate() {
+        return _populate3.apply(this, arguments);
+      }
+      return populate;
+    }()
+    /**
+     * Return the total number entries in all ledger pages.
+     *
+     * @return {number}
+     */
+    )
+  }, {
+    key: "count",
+    get: function get() {
+      if (!_classPrivateFieldGet(_count, this)) {
+        _classPrivateFieldSet(_count, this, this.pages.reduce(function (sum, p) {
+          return sum + p.entries.length;
+        }, 0));
+      }
+      return _classPrivateFieldGet(_count, this);
+    }
+
+    /**
+     * Entries from all pages keyed by ASIN.
+     *
+     * @return {object}
+     */
+  }, {
+    key: "entries",
+    get: function get() {
+      if (!_classPrivateFieldGet(_entries2, this)) {
+        var entries = {};
+        var _iterator9 = _createForOfIteratorHelper(this.pages),
+          _step9;
+        try {
+          for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
+            var page = _step9.value;
+            var _iterator10 = _createForOfIteratorHelper(page.entries),
+              _step10;
+            try {
+              for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
+                var item = _step10.value;
+                entries[item.asin] = item;
+              }
+            } catch (err) {
+              _iterator10.e(err);
+            } finally {
+              _iterator10.f();
+            }
+          }
+        } catch (err) {
+          _iterator9.e(err);
+        } finally {
+          _iterator9.f();
+        }
+        _classPrivateFieldSet(_entries2, this, entries);
+      }
+      return _classPrivateFieldGet(_entries2, this);
+    }
+
+    /**
+     * Set entries.
+     *
+     * @param {object}
+     */,
+    set: function set(value) {
+      _classPrivateFieldSet(_entries2, this, value);
+    }
+  }]);
+}());
+/**
+ * Result.
+ *
+ * Final result set for a book from library data, order data, and book details
+ * data.
+ */
+Result = (_headers = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
+  function Result() {
+    var library = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    var details = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+    var order = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+    _classCallCheck(this, Result);
+    /**
+     * Mapping of header to list of sources in order of precedence.
+     *
+     * @access private
+     */
+    _classPrivateFieldInitSpec(this, _headers, {
+      asin: ["order", "library", "details"],
+      url: ["order", "library"],
+      title: ["order", "details", "library"],
+      authors: ["details", "library"],
+      narrators: ["details", "library"],
+      series: ["library", "details"],
+      publisher: ["details"],
+      duration: ["details"],
+      released: ["details"],
+      released_ts: ["details"],
+      purchased: ["order"],
+      language: ["details"],
+      summary: ["details"],
+      rating: ["details"],
+      num_ratings: ["details"],
+      audible_original: ["details"],
+      type: ["details"],
+      genre: ["details"],
+      subgenre: ["details"],
+      tags: ["details"],
+      is_adult: ["details"]
+    });
+    this.library = library || {};
+    this.details = details || {};
+    this.order = order || {};
+  }
+
+  /**
+   * Get the value for key from the first source that has it defined.
+   *
+   * @param {string} key  Key from .#headers.
+   *
+   * @return {any}
+   */
+  return _createClass(Result, [{
+    key: "first",
+    value: function first(key) {
+      var _this14 = this;
+      // the objects to look for key in
+      var sources = _toConsumableArray(_classPrivateFieldGet(_headers, this)[key]);
+      return sources.reduce(function (fallback, source, _, arr) {
+        var value = _this14[source][key];
+
+        // if the key is there, return it and break early
+        if (!["null", "undefined"].includes(_typeof(value))) {
+          arr.splice(1);
+          return value;
+        } else {
+          // otherwise, return ""
+          return fallback;
+        }
+      }, "");
+    }
+
+    /**
+     * Mapping of keys from .#headers to the value pulled from source data.
+     *
+     * @return {object}
+     */
+  }, {
+    key: "data",
+    value: function data() {
+      var _this15 = this;
+      return Object.fromEntries(Object.keys(_classPrivateFieldGet(_headers, this)).map(function (key) {
+        return [key, _this15.first(key)];
+      }));
+    }
+  }]);
+}());
+/**
+ * Module that handles extracting and organizing the data.
+ */
+
+/**
+ * Exporter class.
+ */
+Exporter = /*#__PURE__*/function () {
+  function Exporter() {
+    var limit = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    _classCallCheck(this, Exporter);
+    this.limit = limit;
+    this.timer = new Timer();
+    this.ledger = new LedgerFetcher();
+    this.library = new LibraryFetcher();
+    this.details = new DetailsFetcher();
+    this.results = [];
+  }
+  return _createClass(Exporter, [{
+    key: "getPurchaseHistory",
+    value: function () {
+      var _getPurchaseHistory = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee10() {
+        return _regeneratorRuntime().wrap(function _callee10$(_context10) {
+          while (1) switch (_context10.prev = _context10.next) {
+            case 0:
+              _context10.next = 2;
+              return this.ledger.init(this.limit);
+            case 2:
+            case "end":
+              return _context10.stop();
+          }
+        }, _callee10, this);
+      }));
+      function getPurchaseHistory() {
+        return _getPurchaseHistory.apply(this, arguments);
+      }
+      return getPurchaseHistory;
+    }()
+  }, {
+    key: "getLedger",
+    value: function () {
+      var _getLedger = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee11() {
+        return _regeneratorRuntime().wrap(function _callee11$(_context11) {
+          while (1) switch (_context11.prev = _context11.next) {
+            case 0:
+              _context11.next = 2;
+              return this.ledger.populate(this.limit);
+            case 2:
+            case "end":
+              return _context11.stop();
+          }
+        }, _callee11, this);
+      }));
+      function getLedger() {
+        return _getLedger.apply(this, arguments);
+      }
+      return getLedger;
+    }()
+  }, {
+    key: "getLibrary",
+    value: function () {
+      var _getLibrary = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee12() {
+        return _regeneratorRuntime().wrap(function _callee12$(_context12) {
+          while (1) switch (_context12.prev = _context12.next) {
+            case 0:
+              _context12.next = 2;
+              return this.library.populate(this.limit);
+            case 2:
+            case "end":
+              return _context12.stop();
+          }
+        }, _callee12, this);
+      }));
+      function getLibrary() {
+        return _getLibrary.apply(this, arguments);
+      }
+      return getLibrary;
+    }()
+  }, {
+    key: "getBookDetails",
+    value: function () {
+      var _getBookDetails = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee13() {
+        return _regeneratorRuntime().wrap(function _callee13$(_context13) {
+          while (1) switch (_context13.prev = _context13.next) {
+            case 0:
+              this.details.library = this.library.books;
+              _context13.next = 3;
+              return this.details.populate();
+            case 3:
+            case "end":
+              return _context13.stop();
+          }
+        }, _callee13, this);
+      }));
+      function getBookDetails() {
+        return _getBookDetails.apply(this, arguments);
+      }
+      return getBookDetails;
+    }()
+  }, {
+    key: "getResults",
+    value: function getResults() {
+      var library_info, order_info, book_info, info;
+      var results = [];
+      var _iterator11 = _createForOfIteratorHelper(this.library.books),
+        _step11;
+      try {
+        for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
+          library_info = _step11.value;
+          book_info = this.details.books[library_info.asin];
+          order_info = this.ledger.entries[library_info.asin];
+          var result = new Result(library_info, book_info, order_info);
+          results.push(result.data());
+        }
+      } catch (err) {
+        _iterator11.e(err);
+      } finally {
+        _iterator11.f();
+      }
+      this.results = results;
+      return results;
+    }
+
+    /**
+     * For TSV files, flatten results to a single string per field.
+     */
+  }, {
+    key: "flatten",
+    value: function flatten() {
+      for (var _i3 = 0, _Object$entries3 = Object.entries(this.results); _i3 < _Object$entries3.length; _i3++) {
+        var _Object$entries3$_i = _slicedToArray(_Object$entries3[_i3], 2),
+          i = _Object$entries3$_i[0],
+          record = _Object$entries3$_i[1];
+        if (record.series) {
+          record.series = record.series.map(function (series) {
+            return series.name + (series.number ? " #".concat(series.number) : "");
+          }).join(", ");
+        }
+        if (record.authors) {
+          record.authors = record.authors.map(function (a) {
+            return a.name;
+          }).join(", ");
+        }
+      }
+    }
+  }]);
+}();
+/**
+ * Domain class.
+ *
+ * Parses the subdomain, name, second level domain, and top level domain from a
+ * host.
+ */
+Domain = /*#__PURE__*/function () {
+  /**
+   * Create a Domain object.
+   *
+   * @param {string} host  The host portion of the URL.
+   *
+   * @example
+   *
+   * new Domain("example.co.uk");
+   */
+  function _class3() {
+    var host = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    _classCallCheck(this, _class3);
+    this.host = host;
+  }
+
+  /**
+   * Create a domain object from a URL.
+   *
+   * @param {string} address  URL
+   * @example
+   *
+   * Domain.fromURL("http://www.google.com/")
+   */
+  return _createClass(_class3, [{
+    key: "labels",
+    get:
+    /**
+     * Array of dot seperated labels that make up the domain name.
+     *
+     * @example
+     * new Domain("example.com").labels == ["example", "com"];
+     */
+    function get() {
+      return this.host.split(".");
+    }
+
+    /**
+     * Array of second level domains available for this top level domain.
+     */
+  }, {
+    key: "ok_slds",
+    get: function get() {
+      return this.SLDS[this.tld] || [];
+    }
+
+    /**
+     * Top level domain.
+     *
+     * @example
+     * new Domain("example.com").tld == "com";
+     */
+  }, {
+    key: "tld",
+    get: function get() {
+      return this.labels.slice(-1)[0];
+    }
+
+    /**
+     * Second level domain(s).
+     *
+     * @example
+     * new Domain("example.co.uk").sld == "co";
+     */
+  }, {
+    key: "sld",
+    get: function get() {
+      if (!this.ok_slds.length) return "";
+      var labels = this.labels.slice(0, -1);
+      var i = labels.length - 1;
+      var sld;
+      do {
+        var attempt = labels.slice(i).join(".");
+        if (!this.ok_slds.includes(attempt)) {
+          break;
+        }
+        sld = attempt;
+        i--;
+      } while (i > 0);
+      return sld || "";
+    }
+
+    /**
+     * Domain name.
+     *
+     * @example
+     * new Domain("example.com").name == "example";
+     */
+  }, {
+    key: "name",
+    get: function get() {
+      // count of slds + 1 (tld)
+      var suffixes = (this.sld ? this.sld.split(".").length : 0) + 1;
+      // name is one backwards from there
+      var idx = this.labels.length - suffixes - 1;
+      return this.labels[idx];
+    }
+
+    /**
+     * Subdomain(s).
+     *
+     * @example
+     * new Domain("help.example.com").labels == "help";
+     */
+  }, {
+    key: "subdomain",
+    get: function get() {
+      var labels = this.labels.slice();
+      // number of slds + 1 (tld) + 1 (name)
+      var suffixes = (this.sld ? this.sld.split(".").length : 0) + 2;
+
+      // chop off everything starting at the name
+      labels.splice(-suffixes);
+
+      // whatever is left is the subdomain
+      var subdomain = labels.join(".");
+      return subdomain;
+    }
+  }], [{
+    key: "fromURL",
+    value: function fromURL(address) {
+      var url = new URL(address);
+      var domain = new Domain(url.host);
+      domain.url = url;
+      return domain;
+    }
+  }]);
+}();
+Domain.prototype.TLDS = ["asia", "blue", "ca", "ceo", "ch", "club", "cm", "co", "com", "de", "es", "fr", "in", "international", "it", "jp", "lu", "mobi", "mp", "name", "net", "nyc", "org", "pink", "pk", "red", "se", "si", "ws"];
+Domain.prototype.SLDS = {
+  es: ["com", "edu", "gob", "nom", "org"],
+  fr: ["aeroport", "avoues", "cci", "chambagri", "chirurgiens-dentistes", "experts-comptables", "geometre-expert", "greta", "huissier-justice", "medecin", "notaires", "pharmacien", "port", "prd", "veterinaire"],
+  "in": ["5g", "6g", "ac", "ai", "am", "bihar", "biz", "business", "ca", "cn", "co", "com", "com", "coop", "cs", "delhi", "dr", "edu", "er", "ernet", "firm", "gen", "gov", "gujarat", "ind", "info", "int", "internet", "io", "me", "mil", "net", "org", "pg", "post", "pro", "res", "travel", "tv", "uk", "up", "us"],
+  jp: ["ac", "ad", "co", "ed", "go", "gr", "lg", "ne", "or"],
+  pk: ["biz", "com", "edu", "fam", "gkp", "gob", "gog", "gok", "gop", "gos", "gov", "ltd", "mil", "net", "org", "res", "web"],
+  uk: ["ac", "bl", "co", "gov", "judiciary", "ltd", "me", "mod", "net", "nhs", "nic", "org", "parliament", "plc", "police", "rct", "royal", "sch", "ukaea"],
+  us: ["dni", "fed", "isa", "nsn"]
+};
 /**
  * Manage elements in the DOM.
  */
@@ -774,16 +2741,16 @@ Doc = /*#__PURE__*/function () {
 DOM = /*#__PURE__*/function () {
   function DOM() {
     var _window,
-      _this3 = this;
+      _this16 = this;
     _classCallCheck(this, DOM);
     (_window = window).ae || (_window.ae = {});
     ["id", "class", "classList"].forEach(function (k) {
-      Object.defineProperty(_this3, k, {
+      Object.defineProperty(_this16, k, {
         get: function get() {
-          return _this3.wrapper[k];
+          return _this16.wrapper[k];
         },
         set: function set(v) {
-          _this3.wrapper[k] = v;
+          _this16.wrapper[k] = v;
         }
       });
     });
@@ -897,18 +2864,18 @@ DOM = /*#__PURE__*/function () {
 
 Style = (_wrapper = /*#__PURE__*/new WeakMap(), _css = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_DOM) {
   function Style() {
-    var _this4;
+    var _this17;
     _classCallCheck(this, Style);
     for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
       args[_key4] = arguments[_key4];
     }
-    _this4 = _callSuper(this, Style, [].concat(args));
-    _classPrivateFieldInitSpec(_this4, _wrapper, null);
-    _classPrivateFieldInitSpec(_this4, _css, null);
-    _defineProperty(_this4, "selectors", {
+    _this17 = _callSuper(this, Style, [].concat(args));
+    _classPrivateFieldInitSpec(_this17, _wrapper, null);
+    _classPrivateFieldInitSpec(_this17, _css, null);
+    _defineProperty(_this17, "selectors", {
       wrapper: "ae-style"
     });
-    return _this4;
+    return _this17;
   }
   _inherits(Style, _DOM);
   return _createClass(Style, [{
@@ -994,20 +2961,20 @@ Styled = /*#__PURE__*/function (_DOM2) {
 
 Dialog = (_wrapper2 = /*#__PURE__*/new WeakMap(), _head = /*#__PURE__*/new WeakMap(), _content = /*#__PURE__*/new WeakMap(), _copy = /*#__PURE__*/new WeakMap(), _actions = /*#__PURE__*/new WeakMap(), _close_btn = /*#__PURE__*/new WeakMap(), _selectors = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Styled) {
   function Dialog() {
-    var _this5;
+    var _this18;
     _classCallCheck(this, Dialog);
     for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
       args[_key5] = arguments[_key5];
     }
-    _this5 = _callSuper(this, Dialog, [].concat(args));
-    _classPrivateFieldInitSpec(_this5, _wrapper2, null);
-    _classPrivateFieldInitSpec(_this5, _head, null);
-    _classPrivateFieldInitSpec(_this5, _content, null);
-    _classPrivateFieldInitSpec(_this5, _copy, null);
-    _classPrivateFieldInitSpec(_this5, _actions, null);
-    _classPrivateFieldInitSpec(_this5, _close_btn, null);
-    _defineProperty(_this5, "title", "");
-    _classPrivateFieldInitSpec(_this5, _selectors, {
+    _this18 = _callSuper(this, Dialog, [].concat(args));
+    _classPrivateFieldInitSpec(_this18, _wrapper2, null);
+    _classPrivateFieldInitSpec(_this18, _head, null);
+    _classPrivateFieldInitSpec(_this18, _content, null);
+    _classPrivateFieldInitSpec(_this18, _copy, null);
+    _classPrivateFieldInitSpec(_this18, _actions, null);
+    _classPrivateFieldInitSpec(_this18, _close_btn, null);
+    _defineProperty(_this18, "title", "");
+    _classPrivateFieldInitSpec(_this18, _selectors, {
       wrapper: "ae-modal",
       content: "ae-content",
       head: "ae-head",
@@ -1015,7 +2982,7 @@ Dialog = (_wrapper2 = /*#__PURE__*/new WeakMap(), _head = /*#__PURE__*/new WeakM
       actions: "ae-actions",
       close_btn: "ae-close-btn"
     });
-    return _this5;
+    return _this18;
   }
   _inherits(Dialog, _Styled);
   return _createClass(Dialog, [{
@@ -1178,17 +3145,17 @@ Dialog = (_wrapper2 = /*#__PURE__*/new WeakMap(), _head = /*#__PURE__*/new WeakM
 
 ErrorDialog = (_wrapper3 = /*#__PURE__*/new WeakMap(), _head2 = /*#__PURE__*/new WeakMap(), _content2 = /*#__PURE__*/new WeakMap(), _close_btn2 = /*#__PURE__*/new WeakMap(), _copy2 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Dialog) {
   function ErrorDialog() {
-    var _this6;
+    var _this19;
     var paragraphs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     _classCallCheck(this, ErrorDialog);
-    _this6 = _callSuper(this, ErrorDialog);
-    _classPrivateFieldInitSpec(_this6, _wrapper3, null);
-    _classPrivateFieldInitSpec(_this6, _head2, null);
-    _classPrivateFieldInitSpec(_this6, _content2, null);
-    _classPrivateFieldInitSpec(_this6, _close_btn2, null);
-    _classPrivateFieldInitSpec(_this6, _copy2, null);
-    _this6.paragraphs = paragraphs;
-    return _this6;
+    _this19 = _callSuper(this, ErrorDialog);
+    _classPrivateFieldInitSpec(_this19, _wrapper3, null);
+    _classPrivateFieldInitSpec(_this19, _head2, null);
+    _classPrivateFieldInitSpec(_this19, _content2, null);
+    _classPrivateFieldInitSpec(_this19, _close_btn2, null);
+    _classPrivateFieldInitSpec(_this19, _copy2, null);
+    _this19.paragraphs = paragraphs;
+    return _this19;
   }
 
   /* Elements
@@ -1233,11 +3200,11 @@ ErrorDialog = (_wrapper3 = /*#__PURE__*/new WeakMap(), _head2 = /*#__PURE__*/new
   }, {
     key: "copy",
     get: function get() {
-      var _this7 = this;
+      var _this20 = this;
       if (!_classPrivateFieldGet(_copy2, this)) {
         _classPrivateFieldSet(_copy2, this, _superPropGet(ErrorDialog, "copy", this, 1));
         this.paragraphs.forEach(function (text) {
-          _classPrivateFieldGet(_copy2, _this7).append(_this7.p(text));
+          _classPrivateFieldGet(_copy2, _this20).append(_this20.p(text));
         });
       }
       return _classPrivateFieldGet(_copy2, this);
@@ -1250,23 +3217,23 @@ ErrorDialog = (_wrapper3 = /*#__PURE__*/new WeakMap(), _head2 = /*#__PURE__*/new
 
 StartDialog = (_wrapper4 = /*#__PURE__*/new WeakMap(), _content3 = /*#__PURE__*/new WeakMap(), _actions2 = /*#__PURE__*/new WeakMap(), _close_btn3 = /*#__PURE__*/new WeakMap(), _ft_select = /*#__PURE__*/new WeakMap(), _start_btn = /*#__PURE__*/new WeakMap(), _file = /*#__PURE__*/new WeakMap(), _selectors2 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Dialog2) {
   function StartDialog() {
-    var _this8;
+    var _this21;
     _classCallCheck(this, StartDialog);
     for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
       args[_key6] = arguments[_key6];
     }
-    _this8 = _callSuper(this, StartDialog, [].concat(args));
-    _classPrivateFieldInitSpec(_this8, _wrapper4, null);
-    _classPrivateFieldInitSpec(_this8, _content3, null);
-    _classPrivateFieldInitSpec(_this8, _actions2, null);
-    _classPrivateFieldInitSpec(_this8, _close_btn3, null);
-    _classPrivateFieldInitSpec(_this8, _ft_select, null);
-    _classPrivateFieldInitSpec(_this8, _start_btn, null);
-    _classPrivateFieldInitSpec(_this8, _file, null);
-    _classPrivateFieldInitSpec(_this8, _selectors2, {
+    _this21 = _callSuper(this, StartDialog, [].concat(args));
+    _classPrivateFieldInitSpec(_this21, _wrapper4, null);
+    _classPrivateFieldInitSpec(_this21, _content3, null);
+    _classPrivateFieldInitSpec(_this21, _actions2, null);
+    _classPrivateFieldInitSpec(_this21, _close_btn3, null);
+    _classPrivateFieldInitSpec(_this21, _ft_select, null);
+    _classPrivateFieldInitSpec(_this21, _start_btn, null);
+    _classPrivateFieldInitSpec(_this21, _file, null);
+    _classPrivateFieldInitSpec(_this21, _selectors2, {
       start_btn: "ae-start-btn"
     });
-    return _this8;
+    return _this21;
   }
   _inherits(StartDialog, _Dialog2);
   return _createClass(StartDialog, [{
@@ -1300,14 +3267,14 @@ StartDialog = (_wrapper4 = /*#__PURE__*/new WeakMap(), _content3 = /*#__PURE__*/
   }, {
     key: "content",
     get: function get() {
-      var _this9 = this;
+      var _this22 = this;
       if (!_classPrivateFieldGet(_content3, this)) {
         var content = _superPropGet(StartDialog, "content", this, 1);
         var ul = Doc.create("ul");
         content.append(this.copy);
         var need = ["be on audible.com and logged in.", "not close this browser window.", "not navigate away from this page.", "stay online (avoid sleep mode)."];
         ul.append.apply(ul, _toConsumableArray(need.map(function (text) {
-          return _this9.li(text);
+          return _this22.li(text);
         })));
         this.copy.append(this.p("This will export your audible library. It might take awhile."), this.p("Until it's done, you must:"), ul, this.p("Click the button to get started!"), this.actions);
         _classPrivateFieldSet(_content3, this, content);
@@ -1342,25 +3309,25 @@ StartDialog = (_wrapper4 = /*#__PURE__*/new WeakMap(), _content3 = /*#__PURE__*/
   }, {
     key: "start",
     value: (function () {
-      var _start = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(evt) {
+      var _start = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee14(evt) {
         var _window$ae2, _window$ae3;
-        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-          while (1) switch (_context2.prev = _context2.next) {
+        return _regeneratorRuntime().wrap(function _callee14$(_context14) {
+          while (1) switch (_context14.prev = _context14.next) {
             case 0:
               (_window$ae2 = window.ae) === null || _window$ae2 === void 0 || (_window$ae2 = _window$ae2.modal) === null || _window$ae2 === void 0 || _window$ae2.hide();
               if (!((_window$ae3 = window.ae) !== null && _window$ae3 !== void 0 && _window$ae3.run)) {
-                _context2.next = 4;
+                _context14.next = 4;
                 break;
               }
-              _context2.next = 4;
+              _context14.next = 4;
               return window.ae.run();
             case 4:
             case "end":
-              return _context2.stop();
+              return _context14.stop();
           }
-        }, _callee2);
+        }, _callee14);
       }));
-      function start(_x2) {
+      function start(_x6) {
         return _start.apply(this, arguments);
       }
       return start;
@@ -1373,25 +3340,25 @@ StartDialog = (_wrapper4 = /*#__PURE__*/new WeakMap(), _content3 = /*#__PURE__*/
 
 DownloadDialog = (_wrapper5 = /*#__PURE__*/new WeakMap(), _head3 = /*#__PURE__*/new WeakMap(), _content4 = /*#__PURE__*/new WeakMap(), _copy3 = /*#__PURE__*/new WeakMap(), _actions3 = /*#__PURE__*/new WeakMap(), _ft_select2 = /*#__PURE__*/new WeakMap(), _dl_btn = /*#__PURE__*/new WeakMap(), _file2 = /*#__PURE__*/new WeakMap(), _selectors3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Dialog3) {
   function DownloadDialog() {
-    var _this10;
+    var _this23;
     _classCallCheck(this, DownloadDialog);
     for (var _len7 = arguments.length, args = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
       args[_key7] = arguments[_key7];
     }
-    _this10 = _callSuper(this, DownloadDialog, [].concat(args));
-    _classPrivateFieldInitSpec(_this10, _wrapper5, null);
-    _classPrivateFieldInitSpec(_this10, _head3, null);
-    _classPrivateFieldInitSpec(_this10, _content4, null);
-    _classPrivateFieldInitSpec(_this10, _copy3, null);
-    _classPrivateFieldInitSpec(_this10, _actions3, null);
-    _classPrivateFieldInitSpec(_this10, _ft_select2, null);
-    _classPrivateFieldInitSpec(_this10, _dl_btn, null);
-    _classPrivateFieldInitSpec(_this10, _file2, null);
-    _classPrivateFieldInitSpec(_this10, _selectors3, {
+    _this23 = _callSuper(this, DownloadDialog, [].concat(args));
+    _classPrivateFieldInitSpec(_this23, _wrapper5, null);
+    _classPrivateFieldInitSpec(_this23, _head3, null);
+    _classPrivateFieldInitSpec(_this23, _content4, null);
+    _classPrivateFieldInitSpec(_this23, _copy3, null);
+    _classPrivateFieldInitSpec(_this23, _actions3, null);
+    _classPrivateFieldInitSpec(_this23, _ft_select2, null);
+    _classPrivateFieldInitSpec(_this23, _dl_btn, null);
+    _classPrivateFieldInitSpec(_this23, _file2, null);
+    _classPrivateFieldInitSpec(_this23, _selectors3, {
       ft_select: "ae-filetype",
       dl_btn: "ae-download-btn"
     });
-    return _this10;
+    return _this23;
   }
   _inherits(DownloadDialog, _Dialog3);
   return _createClass(DownloadDialog, [{
@@ -1490,10 +3457,10 @@ DownloadDialog = (_wrapper5 = /*#__PURE__*/new WeakMap(), _head3 = /*#__PURE__*/
           json: "JSON",
           tsv: "TSV"
         };
-        for (var _i3 = 0, _Object$entries3 = Object.entries(options); _i3 < _Object$entries3.length; _i3++) {
-          var _Object$entries3$_i = _slicedToArray(_Object$entries3[_i3], 2),
-            ft = _Object$entries3$_i[0],
-            label = _Object$entries3$_i[1];
+        for (var _i4 = 0, _Object$entries4 = Object.entries(options); _i4 < _Object$entries4.length; _i4++) {
+          var _Object$entries4$_i = _slicedToArray(_Object$entries4[_i4], 2),
+            ft = _Object$entries4$_i[0],
+            label = _Object$entries4$_i[1];
           var option = Doc.create("option", {
             value: ft
           });
@@ -1578,31 +3545,31 @@ DownloadDialog = (_wrapper5 = /*#__PURE__*/new WeakMap(), _head3 = /*#__PURE__*/
     }
   }]);
 }(Dialog));
-Notifier = (_wrapper6 = /*#__PURE__*/new WeakMap(), _bar = /*#__PURE__*/new WeakMap(), _status = /*#__PURE__*/new WeakMap(), _percentage = /*#__PURE__*/new WeakMap(), _messages = /*#__PURE__*/new WeakMap(), _context3 = /*#__PURE__*/new WeakMap(), _steps = /*#__PURE__*/new WeakMap(), _estimate = /*#__PURE__*/new WeakMap(), _percent = /*#__PURE__*/new WeakMap(), _item_no = /*#__PURE__*/new WeakMap(), _total = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Styled2) {
+Notifier = (_wrapper6 = /*#__PURE__*/new WeakMap(), _bar = /*#__PURE__*/new WeakMap(), _status = /*#__PURE__*/new WeakMap(), _percentage = /*#__PURE__*/new WeakMap(), _messages = /*#__PURE__*/new WeakMap(), _context15 = /*#__PURE__*/new WeakMap(), _steps = /*#__PURE__*/new WeakMap(), _estimate = /*#__PURE__*/new WeakMap(), _percent = /*#__PURE__*/new WeakMap(), _item_no = /*#__PURE__*/new WeakMap(), _total = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Styled2) {
   function Notifier() {
-    var _this11;
+    var _this24;
     _classCallCheck(this, Notifier);
     for (var _len8 = arguments.length, args = new Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
       args[_key8] = arguments[_key8];
     }
-    _this11 = _callSuper(this, Notifier, [].concat(args));
-    _classPrivateFieldInitSpec(_this11, _wrapper6, null);
-    _classPrivateFieldInitSpec(_this11, _bar, null);
-    _classPrivateFieldInitSpec(_this11, _status, null);
-    _classPrivateFieldInitSpec(_this11, _percentage, null);
-    _classPrivateFieldInitSpec(_this11, _messages, null);
-    _classPrivateFieldInitSpec(_this11, _context3, null);
-    _classPrivateFieldInitSpec(_this11, _steps, null);
-    _classPrivateFieldInitSpec(_this11, _estimate, null);
-    _classPrivateFieldInitSpec(_this11, _percent, null);
-    _classPrivateFieldInitSpec(_this11, _item_no, null);
-    _classPrivateFieldInitSpec(_this11, _total, null);
-    _defineProperty(_this11, "step_no", null);
-    _defineProperty(_this11, "total_steps", 4);
-    _defineProperty(_this11, "estimate_padding", 1.05);
-    _defineProperty(_this11, "event_name", "update-ae-notifier");
-    _defineProperty(_this11, "times", []);
-    _defineProperty(_this11, "selectors", {
+    _this24 = _callSuper(this, Notifier, [].concat(args));
+    _classPrivateFieldInitSpec(_this24, _wrapper6, null);
+    _classPrivateFieldInitSpec(_this24, _bar, null);
+    _classPrivateFieldInitSpec(_this24, _status, null);
+    _classPrivateFieldInitSpec(_this24, _percentage, null);
+    _classPrivateFieldInitSpec(_this24, _messages, null);
+    _classPrivateFieldInitSpec(_this24, _context15, null);
+    _classPrivateFieldInitSpec(_this24, _steps, null);
+    _classPrivateFieldInitSpec(_this24, _estimate, null);
+    _classPrivateFieldInitSpec(_this24, _percent, null);
+    _classPrivateFieldInitSpec(_this24, _item_no, null);
+    _classPrivateFieldInitSpec(_this24, _total, null);
+    _defineProperty(_this24, "step_no", null);
+    _defineProperty(_this24, "total_steps", 4);
+    _defineProperty(_this24, "estimate_padding", 1.05);
+    _defineProperty(_this24, "event_name", "update-ae-notifier");
+    _defineProperty(_this24, "times", []);
+    _defineProperty(_this24, "selectors", {
       wrapper: "ae-notifier",
       bar: "ae-bar",
       messages: "ae-messages",
@@ -1612,7 +3579,7 @@ Notifier = (_wrapper6 = /*#__PURE__*/new WeakMap(), _bar = /*#__PURE__*/new Weak
       steps: "ae-steps-text",
       estimate: "ae-estimate-text"
     });
-    return _this11;
+    return _this24;
   }
   _inherits(Notifier, _Styled2);
   return _createClass(Notifier, [{
@@ -1717,13 +3684,13 @@ Notifier = (_wrapper6 = /*#__PURE__*/new WeakMap(), _bar = /*#__PURE__*/new Weak
   }, {
     key: "context",
     get: function get() {
-      if (!_classPrivateFieldGet(_context3, this)) {
-        _classPrivateFieldSet(_context3, this, Doc.create("div", {
+      if (!_classPrivateFieldGet(_context15, this)) {
+        _classPrivateFieldSet(_context15, this, Doc.create("div", {
           "class": "".concat(this.selectors.context, " ae-row empty")
         }));
-        _classPrivateFieldGet(_context3, this).append(this.steps, this.estimate);
+        _classPrivateFieldGet(_context15, this).append(this.steps, this.estimate);
       }
-      return _classPrivateFieldGet(_context3, this);
+      return _classPrivateFieldGet(_context15, this);
     }
 
     /**
@@ -2067,10 +4034,10 @@ Notifier = (_wrapper6 = /*#__PURE__*/new WeakMap(), _bar = /*#__PURE__*/new Weak
     key: "listen",
     value: function listen(evt) {
       var notifier = window.ae.notifier;
-      for (var _i4 = 0, _Object$entries4 = Object.entries(evt.detail); _i4 < _Object$entries4.length; _i4++) {
-        var _Object$entries4$_i = _slicedToArray(_Object$entries4[_i4], 2),
-          k = _Object$entries4$_i[0],
-          v = _Object$entries4$_i[1];
+      for (var _i5 = 0, _Object$entries5 = Object.entries(evt.detail); _i5 < _Object$entries5.length; _i5++) {
+        var _Object$entries5$_i = _slicedToArray(_Object$entries5[_i5], 2),
+          k = _Object$entries5$_i[0],
+          v = _Object$entries5$_i[1];
         notifier[k] = v;
       }
     }
@@ -2138,18 +4105,18 @@ Notifier = (_wrapper6 = /*#__PURE__*/new WeakMap(), _bar = /*#__PURE__*/new Weak
     }
   }]);
 }(Styled));
-PurchaseHistoryNotifier = (_year = /*#__PURE__*/new WeakMap(), _years = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Notifier) {
+PurchaseHistoryNotifier = (_year2 = /*#__PURE__*/new WeakMap(), _years2 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Notifier) {
   function PurchaseHistoryNotifier() {
-    var _this12;
+    var _this25;
     var years = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
     _classCallCheck(this, PurchaseHistoryNotifier);
-    _this12 = _callSuper(this, PurchaseHistoryNotifier);
-    _classPrivateFieldInitSpec(_this12, _year, null);
-    _classPrivateFieldInitSpec(_this12, _years, null);
-    _defineProperty(_this12, "step_no", 1);
-    _this12.times = [];
-    _this12.years = years || [];
-    return _this12;
+    _this25 = _callSuper(this, PurchaseHistoryNotifier);
+    _classPrivateFieldInitSpec(_this25, _year2, null);
+    _classPrivateFieldInitSpec(_this25, _years2, null);
+    _defineProperty(_this25, "step_no", 1);
+    _this25.times = [];
+    _this25.years = years || [];
+    return _this25;
   }
   _inherits(PurchaseHistoryNotifier, _Notifier);
   return _createClass(PurchaseHistoryNotifier, [{
@@ -2170,7 +4137,7 @@ PurchaseHistoryNotifier = (_year = /*#__PURE__*/new WeakMap(), _years = /*#__PUR
   }, {
     key: "year",
     get: function get() {
-      return _classPrivateFieldGet(_year, this);
+      return _classPrivateFieldGet(_year2, this);
     }
 
     /**
@@ -2179,7 +4146,7 @@ PurchaseHistoryNotifier = (_year = /*#__PURE__*/new WeakMap(), _years = /*#__PUR
      * @param {string} value  The year being processed.
      */,
     set: function set(value) {
-      _classPrivateFieldSet(_year, this, value);
+      _classPrivateFieldSet(_year2, this, value);
       this.text = this.message;
       this.percent = this.ratio;
       this.time = this.time_left;
@@ -2193,7 +4160,7 @@ PurchaseHistoryNotifier = (_year = /*#__PURE__*/new WeakMap(), _years = /*#__PUR
   }, {
     key: "years",
     get: function get() {
-      return _classPrivateFieldGet(_years, this);
+      return _classPrivateFieldGet(_years2, this);
     }
 
     /**
@@ -2202,7 +4169,7 @@ PurchaseHistoryNotifier = (_year = /*#__PURE__*/new WeakMap(), _years = /*#__PUR
      * @param {string[]} value  Array of years to process.
      */,
     set: function set(value) {
-      _classPrivateFieldSet(_years, this, value);
+      _classPrivateFieldSet(_years2, this, value);
       this.percent = this.ratio;
       this.step = this.step_text;
     }
@@ -2232,21 +4199,21 @@ PurchaseHistoryNotifier = (_year = /*#__PURE__*/new WeakMap(), _years = /*#__PUR
     }
   }]);
 }(Notifier));
-OrderNotifier = (_year2 = /*#__PURE__*/new WeakMap(), _year_page = /*#__PURE__*/new WeakMap(), _item_no2 = /*#__PURE__*/new WeakMap(), _page_count = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Notifier2) {
+OrderNotifier = (_year3 = /*#__PURE__*/new WeakMap(), _year_page = /*#__PURE__*/new WeakMap(), _item_no2 = /*#__PURE__*/new WeakMap(), _page_count3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Notifier2) {
   function OrderNotifier() {
-    var _this13;
+    var _this26;
     var total = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
     var years = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
     _classCallCheck(this, OrderNotifier);
-    _this13 = _callSuper(this, OrderNotifier);
-    _classPrivateFieldInitSpec(_this13, _year2, null);
-    _classPrivateFieldInitSpec(_this13, _year_page, null);
-    _classPrivateFieldInitSpec(_this13, _item_no2, null);
-    _classPrivateFieldInitSpec(_this13, _page_count, null);
-    _defineProperty(_this13, "step_no", 2);
-    _this13.total = total;
-    _this13.years = years;
-    return _this13;
+    _this26 = _callSuper(this, OrderNotifier);
+    _classPrivateFieldInitSpec(_this26, _year3, null);
+    _classPrivateFieldInitSpec(_this26, _year_page, null);
+    _classPrivateFieldInitSpec(_this26, _item_no2, null);
+    _classPrivateFieldInitSpec(_this26, _page_count3, null);
+    _defineProperty(_this26, "step_no", 2);
+    _this26.total = total;
+    _this26.years = years;
+    return _this26;
   }
   _inherits(OrderNotifier, _Notifier2);
   return _createClass(OrderNotifier, [{
@@ -2267,7 +4234,7 @@ OrderNotifier = (_year2 = /*#__PURE__*/new WeakMap(), _year_page = /*#__PURE__*/
   }, {
     key: "year",
     get: function get() {
-      return _classPrivateFieldGet(_year2, this);
+      return _classPrivateFieldGet(_year3, this);
     }
 
     /**
@@ -2276,7 +4243,7 @@ OrderNotifier = (_year2 = /*#__PURE__*/new WeakMap(), _year_page = /*#__PURE__*/
      * @params {string} value  The year being processed.
      */,
     set: function set(value) {
-      _classPrivateFieldSet(_year2, this, value);
+      _classPrivateFieldSet(_year3, this, value);
       this.text = this.message;
     }
 
@@ -2307,14 +4274,14 @@ OrderNotifier = (_year2 = /*#__PURE__*/new WeakMap(), _year_page = /*#__PURE__*/
   }, {
     key: "page_count",
     get: function get() {
-      return _classPrivateFieldGet(_page_count, this);
+      return _classPrivateFieldGet(_page_count3, this);
     }
 
     /**
      * Set the page_count and update text.
      */,
     set: function set(value) {
-      _classPrivateFieldSet(_page_count, this, value);
+      _classPrivateFieldSet(_page_count3, this, value);
       this.text = this.message;
     }
 
@@ -2346,16 +4313,16 @@ OrderNotifier = (_year2 = /*#__PURE__*/new WeakMap(), _year_page = /*#__PURE__*/
 }(Notifier));
 LibraryNotifier = (_item_no3 = /*#__PURE__*/new WeakMap(), _total2 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Notifier3) {
   function LibraryNotifier() {
-    var _this14;
+    var _this27;
     _classCallCheck(this, LibraryNotifier);
     for (var _len9 = arguments.length, args = new Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
       args[_key9] = arguments[_key9];
     }
-    _this14 = _callSuper(this, LibraryNotifier, [].concat(args));
-    _classPrivateFieldInitSpec(_this14, _item_no3, null);
-    _classPrivateFieldInitSpec(_this14, _total2, null);
-    _defineProperty(_this14, "step_no", 3);
-    return _this14;
+    _this27 = _callSuper(this, LibraryNotifier, [].concat(args));
+    _classPrivateFieldInitSpec(_this27, _item_no3, null);
+    _classPrivateFieldInitSpec(_this27, _total2, null);
+    _defineProperty(_this27, "step_no", 3);
+    return _this27;
   }
   _inherits(LibraryNotifier, _Notifier3);
   return _createClass(LibraryNotifier, [{
@@ -2396,16 +4363,16 @@ LibraryNotifier = (_item_no3 = /*#__PURE__*/new WeakMap(), _total2 = /*#__PURE__
 
 DetailsNotifier = (_item_no4 = /*#__PURE__*/new WeakMap(), _total3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Notifier4) {
   function DetailsNotifier() {
-    var _this15;
+    var _this28;
     _classCallCheck(this, DetailsNotifier);
     for (var _len10 = arguments.length, args = new Array(_len10), _key10 = 0; _key10 < _len10; _key10++) {
       args[_key10] = arguments[_key10];
     }
-    _this15 = _callSuper(this, DetailsNotifier, [].concat(args));
-    _classPrivateFieldInitSpec(_this15, _item_no4, null);
-    _classPrivateFieldInitSpec(_this15, _total3, null);
-    _defineProperty(_this15, "step_no", 4);
-    return _this15;
+    _this28 = _callSuper(this, DetailsNotifier, [].concat(args));
+    _classPrivateFieldInitSpec(_this28, _item_no4, null);
+    _classPrivateFieldInitSpec(_this28, _total3, null);
+    _defineProperty(_this28, "step_no", 4);
+    return _this28;
   }
   _inherits(DetailsNotifier, _Notifier4);
   return _createClass(DetailsNotifier, [{
@@ -2445,1973 +4412,6 @@ DetailsNotifier = (_item_no4 = /*#__PURE__*/new WeakMap(), _total3 = /*#__PURE__
     }
   }]);
 }(Notifier));
-/*
- * Parser.
- *
- * DOM Element Parser.
- */
-
-/*
- * Parser class.
- *
- *
- */
-Parser = (_doc = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
-  function Parser() {
-    _classCallCheck(this, Parser);
-    _classPrivateFieldInitSpec(this, _doc, null);
-    /**
-     * List of .data() object properties mapped to class members.
-     *
-     * To be defined in subclasses.
-     *
-     * @access protected
-     */
-    _defineProperty(this, "_fields", []);
-    /*
-     * List of class members to identify an individual page for error messages.
-     *
-     * To be defined in subclasses.
-     *
-     * @access protected
-     */
-    _defineProperty(this, "_identifiers", []);
-  }
-  return _createClass(Parser, [{
-    key: "doc",
-    get:
-    /**
-     * Get #doc.
-     *
-     * @return {Doc}
-     */
-    function get() {
-      return _classPrivateFieldGet(_doc, this);
-    }
-
-    /**
-     * Set #doc.
-     *
-     * @param {Doc} value
-     */,
-    set: function set(value) {
-      if (value) {
-        if (!value) return;
-        if (!(value instanceof Doc)) {
-          value = new Doc(value);
-        }
-        _classPrivateFieldSet(_doc, this, value);
-      }
-    }
-
-    /**
-     * Return the data parsed from the .doc.
-     *
-     * Construct data object by mapping list of ._fields to class member values.
-     *
-     * Catch and re-raise exceptions using ._identifiers class member values in
-     * error message.
-     *
-     * @return {Object}
-     */
-  }, {
-    key: "data",
-    value: function data() {
-      var _this16 = this;
-      var f;
-      var data = {};
-      for (var i in this._fields) {
-        try {
-          f = this._fields[i];
-          data[f] = this[f];
-        } catch (err) {
-          var identifiers = this._identifers.map(function (i) {
-            return "".concat(i, ": ").concat(_this16[i]);
-          }).join(", ");
-          error("".concat(this.constructor.name, ".").concat(f, " (").concat(identifiers, "):\n"), err);
-        }
-      }
-      return cleanObject(data);
-    }
-  }]);
-}());
-LibraryBookRow = /*#__PURE__*/function (_Parser) {
-  function LibraryBookRow() {
-    var _this17;
-    var doc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    var page_num = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-    var row_num = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-    _classCallCheck(this, LibraryBookRow);
-    _this17 = _callSuper(this, LibraryBookRow);
-    _defineProperty(_this17, "_fields", ["asin", "url", "title", "authors", "narrators", "series"]);
-    _defineProperty(_this17, "_identifers", ["page_num", "row_num"]);
-    _this17.doc = doc;
-    _this17.page_num = page_num;
-    _this17.row_num = row_num;
-    return _this17;
-  }
-  _inherits(LibraryBookRow, _Parser);
-  return _createClass(LibraryBookRow, [{
-    key: "asin",
-    get: function get() {
-      return this.doc.id.replace("adbl-library-content-row-", "");
-    }
-  }, {
-    key: "ul",
-    get: function get() {
-      return this.doc.qsf(".bc-list.bc-list-nostyle");
-    }
-  }, {
-    key: "url",
-    get: function get() {
-      var _this$ul$gcf$parentEl;
-      return (_this$ul$gcf$parentEl = this.ul.gcf("bc-size-headline3").parentElement.attributes["href"]) === null || _this$ul$gcf$parentEl === void 0 ? void 0 : _this$ul$gcf$parentEl.value.replace(/\?.+/, "");
-    }
-  }, {
-    key: "title",
-    get: function get() {
-      var _this$ul$gcf;
-      var title = (_this$ul$gcf = this.ul.gcf("bc-size-headline3")) === null || _this$ul$gcf === void 0 ? void 0 : _this$ul$gcf.innerHTML.trim();
-      return entityDecode(title);
-    }
-  }, {
-    key: "authors",
-    get: function get() {
-      var links = this.ul.qs(".authorLabel a.bc-color-base");
-      return links.map(function (a) {
-        var author = {
-          name: a.innerHTML.trim()
-        };
-        var found = a.href.match(/*#__PURE__*/_wrapRegExp(/[/]author[/]([^?]+)/, {
-          id: 1
-        }));
-        if (found) {
-          author.id = found.groups.id;
-          author.url = "/author/".concat(found.groups.id);
-        }
-        return author;
-      });
-    }
-  }, {
-    key: "narrators",
-    get: function get() {
-      var links = this.ul.qs(".narratorLabel .bc-color-base");
-      return links.map(function (a) {
-        return a.innerHTML.trim();
-      });
-    }
-  }, {
-    key: "series",
-    get: function get() {
-      var i = 1;
-      var series = [];
-      var links = this.ul.qs(".seriesLabel a");
-      var _iterator2 = _createForOfIteratorHelper(links),
-        _step2;
-      try {
-        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-          var _span$innerHTML;
-          var link = _step2.value;
-          var _ref5 = /(\/series\/.*\/(.*))\?/.exec(link.href) || [null, "", ""],
-            _ref6 = _slicedToArray(_ref5, 3),
-            _ = _ref6[0],
-            url = _ref6[1],
-            id = _ref6[2];
-          var span = this.ul.qsf(".seriesLabel a:nth-child(".concat(i, ") + span"));
-          var number = (span === null || span === void 0 || (_span$innerHTML = span.innerHTML) === null || _span$innerHTML === void 0 ? void 0 : _span$innerHTML.trim().replace("Book ", "")) || "";
-          series.push({
-            id: id,
-            url: url,
-            name: link.innerHTML.trim(),
-            number: number
-          });
-          i++;
-        }
-      } catch (err) {
-        _iterator2.e(err);
-      } finally {
-        _iterator2.f();
-      }
-      return series;
-    }
-  }]);
-}(Parser);
-Page = /*#__PURE__*/function (_Parser2) {
-  function Page() {
-    _classCallCheck(this, Page);
-    return _callSuper(this, Page, arguments);
-  }
-  _inherits(Page, _Parser2);
-  return _createClass(Page, [{
-    key: "fetchDoc",
-    value: function () {
-      var _fetchDoc = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(url) {
-        var res, text;
-        return _regeneratorRuntime().wrap(function _callee3$(_context4) {
-          while (1) switch (_context4.prev = _context4.next) {
-            case 0:
-              _context4.prev = 0;
-              _context4.next = 3;
-              return fetch(url);
-            case 3:
-              res = _context4.sent;
-              if (!res.ok) {
-                error("Page.fetchDoc(\"".concat(url.trim(), "\"): Response status: ").concat(res.status));
-              }
-              _context4.next = 7;
-              return res.text();
-            case 7:
-              text = _context4.sent;
-              return _context4.abrupt("return", new DOMParser().parseFromString(text, "text/html"));
-            case 11:
-              _context4.prev = 11;
-              _context4.t0 = _context4["catch"](0);
-              error("Page.fetchDoc(\"".concat(url.trim(), "\"):\n"), _context4.t0);
-            case 14:
-            case "end":
-              return _context4.stop();
-          }
-        }, _callee3, null, [[0, 11]]);
-      }));
-      function fetchDoc(_x3) {
-        return _fetchDoc.apply(this, arguments);
-      }
-      return fetchDoc;
-    }()
-  }]);
-}(Parser);
-LibraryPage = (_default_page_size = /*#__PURE__*/new WeakMap(), _rows = /*#__PURE__*/new WeakMap(), _books = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Page) {
-  function LibraryPage() {
-    var _this18;
-    var doc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    _classCallCheck(this, LibraryPage);
-    _this18 = _callSuper(this, LibraryPage);
-    _classPrivateFieldInitSpec(_this18, _default_page_size, 20);
-    _classPrivateFieldInitSpec(_this18, _rows, null);
-    _classPrivateFieldInitSpec(_this18, _books, null);
-    _this18.doc = doc;
-    _classPrivateFieldSet(_rows, _this18, null);
-    _classPrivateFieldSet(_books, _this18, null);
-    return _this18;
-  }
-  _inherits(LibraryPage, _Page);
-  return _createClass(LibraryPage, [{
-    key: "page_size",
-    get: function get() {
-      var _this$doc$qsf;
-      if (!this.doc) return null;
-      var size = ((_this$doc$qsf = this.doc.qsf("select[name='pageSize'] option:checked")) === null || _this$doc$qsf === void 0 ? void 0 : _this$doc$qsf.value) || _classPrivateFieldGet(_default_page_size, this);
-      return parseInt(size);
-    }
-  }, {
-    key: "page_num",
-    get: function get() {
-      var _this$doc$qsf2;
-      if (!this.doc) return null;
-      var num = ((_this$doc$qsf2 = this.doc.qsf("span.pageNumberElement")) === null || _this$doc$qsf2 === void 0 ? void 0 : _this$doc$qsf2.innerHTML) || 1;
-      return parseInt(num);
-    }
-  }, {
-    key: "page_count",
-    get: function get() {
-      var _links$last;
-      if (!this.doc) return null;
-      var links = this.doc.qs("a.pageNumberElement");
-      var count = ((_links$last = links.last) === null || _links$last === void 0 ? void 0 : _links$last.innerHTML) || 1;
-      return parseInt(count);
-    }
-  }, {
-    key: "rows",
-    get: function get() {
-      if (!_classPrivateFieldGet(_rows, this)) {
-        var i = 0;
-        var arr = [];
-        var rows = this.doc.gc("adbl-library-content-row");
-        var _iterator3 = _createForOfIteratorHelper(rows),
-          _step3;
-        try {
-          for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-            var row = _step3.value;
-            arr.push(new LibraryBookRow(row, this.page_num, i + 1));
-            i++;
-          }
-        } catch (err) {
-          _iterator3.e(err);
-        } finally {
-          _iterator3.f();
-        }
-        _classPrivateFieldSet(_rows, this, arr);
-      }
-      return _classPrivateFieldGet(_rows, this);
-    }
-  }, {
-    key: "books",
-    get: function get() {
-      if (!_classPrivateFieldGet(_books, this)) {
-        try {
-          _classPrivateFieldSet(_books, this, this.rows.reduce(function (arr, row) {
-            if (row.title == "Your First Listen") {
-              return arr;
-            }
-            arr.push(row.data());
-            return arr;
-          }, []));
-        } catch (err) {
-          error(err);
-        }
-      }
-      return _classPrivateFieldGet(_books, this);
-    }
-  }]);
-}(Page));
-LibraryFetcher = (_books2 = /*#__PURE__*/new WeakMap(), _page_count2 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Page2) {
-  function LibraryFetcher() {
-    var _this19;
-    _classCallCheck(this, LibraryFetcher);
-    _this19 = _callSuper(this, LibraryFetcher);
-    _defineProperty(_this19, "page_size", 50);
-    _defineProperty(_this19, "base_url", "https://www.audible.com/library/titles");
-    _classPrivateFieldInitSpec(_this19, _books2, []);
-    _classPrivateFieldInitSpec(_this19, _page_count2, null);
-    _this19.pages = [];
-    _classPrivateFieldSet(_books2, _this19, null);
-    return _this19;
-  }
-  _inherits(LibraryFetcher, _Page2);
-  return _createClass(LibraryFetcher, [{
-    key: "fetchPage",
-    value: function () {
-      var _fetchPage = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(i) {
-        var url, doc;
-        return _regeneratorRuntime().wrap(function _callee4$(_context5) {
-          while (1) switch (_context5.prev = _context5.next) {
-            case 0:
-              url = "".concat(this.base_url, "?pageSize=").concat(this.page_size, "&page=").concat(i);
-              _context5.next = 3;
-              return this.fetchDoc(url);
-            case 3:
-              doc = _context5.sent;
-              return _context5.abrupt("return", new LibraryPage(doc));
-            case 5:
-            case "end":
-              return _context5.stop();
-          }
-        }, _callee4, this);
-      }));
-      function fetchPage(_x4) {
-        return _fetchPage.apply(this, arguments);
-      }
-      return fetchPage;
-    }()
-  }, {
-    key: "populate",
-    value: function () {
-      var _populate = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
-        var limit,
-          i,
-          timer,
-          page_num,
-          page,
-          _args5 = arguments;
-        return _regeneratorRuntime().wrap(function _callee5$(_context6) {
-          while (1) switch (_context6.prev = _context6.next) {
-            case 0:
-              limit = _args5.length > 0 && _args5[0] !== undefined ? _args5[0] : null;
-              i = 0;
-            case 2:
-              timer = new Timer();
-              timer.start();
-              if (limit) {
-                this.page_count = limit;
-                fireEvent({
-                  total: this.page_count
-                });
-                this.page_size = 20;
-              }
-              page_num = i + 1;
-              fireEvent({
-                item_no: page_num
-              });
-              _context6.next = 9;
-              return this.fetchPage(page_num);
-            case 9:
-              page = _context6.sent;
-              this.pages.push(page);
-              i++;
-              timer.stop();
-              fireEvent({
-                item_no: page_num,
-                total: this.page_count,
-                timer: timer
-              });
-            case 14:
-              if (i < this.page_count) {
-                _context6.next = 2;
-                break;
-              }
-            case 15:
-              fireEvent({
-                percent: 1
-              });
-              return _context6.abrupt("return", this.pages);
-            case 17:
-            case "end":
-              return _context6.stop();
-          }
-        }, _callee5, this);
-      }));
-      function populate() {
-        return _populate.apply(this, arguments);
-      }
-      return populate;
-    }()
-  }, {
-    key: "book_count",
-    get: function get() {
-      if (!this.pages) return null;
-      var page = this.pages[0];
-      return page.page_size * page.page_count;
-    }
-  }, {
-    key: "page_count",
-    get: function get() {
-      if (!_classPrivateFieldGet(_page_count2, this)) {
-        _classPrivateFieldSet(_page_count2, this, Math.ceil(this.book_count / this.page_size));
-      }
-      return _classPrivateFieldGet(_page_count2, this);
-    },
-    set: function set(value) {
-      _classPrivateFieldSet(_page_count2, this, value);
-    }
-  }, {
-    key: "books",
-    get: function get() {
-      if (!_classPrivateFieldGet(_books2, this)) {
-        var books = this.pages.reduce(function (arr, page) {
-          return arr.concat(
-          // map books by URL to avoid duplicates
-          page.books.map(function (book) {
-            return [book.url, book];
-          }));
-        }, []);
-        _classPrivateFieldSet(_books2, this, Object.values(Object.fromEntries(books)));
-      }
-      return _classPrivateFieldGet(_books2, this);
-    },
-    set: function set(value) {
-      _classPrivateFieldSet(_books2, this, value);
-    }
-  }]);
-}(Page));
-/**
- * Book page.
- *
- * Parse the book details from an audible book page.
- *
- */
-
-BookPage = (_types = /*#__PURE__*/new WeakMap(), _category_genres = /*#__PURE__*/new WeakMap(), _tags = /*#__PURE__*/new WeakMap(), _json = /*#__PURE__*/new WeakMap(), _audiobook_data = /*#__PURE__*/new WeakMap(), _product_data = /*#__PURE__*/new WeakMap(), _product_info = /*#__PURE__*/new WeakMap(), _digital_data = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Page3) {
-  function _class3() {
-    var _this20;
-    var doc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    _classCallCheck(this, _class3);
-    _this20 = _callSuper(this, _class3);
-    _classPrivateFieldInitSpec(_this20, _types, ["Fiction", "Nonfiction"]);
-    _classPrivateFieldInitSpec(_this20, _category_genres, {
-      "Arts & Entertainment": "nonfiction",
-      "Biographies & Memoirs": "nonfiction",
-      "Business & Careers": "nonfiction",
-      "Children's Audiobooks": null,
-      "Action & Adventure": "fiction",
-      // children"s audiobooks
-      "Activities & Hobbies": "nonfiction",
-      // children"s audiobooks
-      "Animals & Nature": "nonfiction",
-      // children"s audiobooks
-      "Fairy Tales, Folk Tales & Myths": "fiction",
-      "Geography & Cultures": "nonfiction",
-      "Comedy & Humor": null,
-      "Performing Arts": "nonfiction",
-      // comedy & humor
-      "Computers & Technology": "nonfiction",
-      "Education & Learning": "nonfiction",
-      Erotica: null,
-      "Sex Instruction": "nonfiction",
-      // erotica
-      "Health & Wellness": "nonfiction",
-      History: "nonfiction",
-      "Home & Garden": "nonfiction",
-      "LGBTQ+": null,
-      "LGBTQ+ Studies": "nonfiction",
-      "Parenting & Families": "nonfiction",
-      "Literature & Fiction": "fiction",
-      "Money & Finance": "nonfiction",
-      "Mystery, Thriller & Suspense": null,
-      "True Crime": "nonfiction",
-      // mystery, thriller & suspense
-      Mystery: "fiction",
-      // mystery, thriller & suspense
-      "Thriller & Suspense": "fiction",
-      // mystery, thriller & suspense
-      "Crime Fiction": "fiction",
-      // mystery, thriller & suspense
-      "Politics & Social Sciences": "nonfiction",
-      "Politics, Society & Current Events": "nonfiction",
-      "Relationships, Parenting & Personal Development": "nonfiction",
-      "Religion & Spirituality": "nonfiction",
-      Romance: "fiction",
-      "Science & Engineering": "nonfiction",
-      "Sports & Outdoors": "nonfiction",
-      "Teen & Young Adult": null,
-      "Health, Lifestyle & Relationships": "nonfiction",
-      // teen & young adult
-      "History & Culture": "nonfiction",
-      // teen & young adult
-      "Travel & Tourism": "nonfiction"
-    });
-    _defineProperty(_this20, "_fields", ["asin", "title", "authors", "narrators", "duration", "language", "released", "released_ts", "publisher", "summary", "audible_original", "series", "type", "genre", "subgenre", "tags", "rating", "num_ratings", "is_adult"]);
-    _defineProperty(_this20, "_identifers", ["url"]);
-    _classPrivateFieldInitSpec(_this20, _tags, []);
-    _classPrivateFieldInitSpec(_this20, _json, null);
-    _classPrivateFieldInitSpec(_this20, _audiobook_data, null);
-    _classPrivateFieldInitSpec(_this20, _product_data, null);
-    _classPrivateFieldInitSpec(_this20, _product_info, null);
-    _classPrivateFieldInitSpec(_this20, _digital_data, null);
-    _this20.doc = doc;
-    return _this20;
-  }
-
-  /**
-   * Get parsed JSON from script tags.
-   *
-   * Parse the JSON from script tags and return an object mapping each objects
-   * "@type" key to the object.
-   *
-   * @return {Object} Object of parsed JSON mapping @type -> object.
-   */
-  _inherits(_class3, _Page3);
-  return _createClass(_class3, [{
-    key: "json",
-    get: function get() {
-      if (!_classPrivateFieldGet(_json, this) && this.doc) {
-        var scripts = this.doc.qs("script[type='application/ld+json']");
-        _classPrivateFieldSet(_json, this, scripts.reduce(function (obj, doc) {
-          var json = JSON.parse(doc.innerHTML);
-          if (!(json instanceof Array)) {
-            json = [json];
-          }
-          json.forEach(function (child) {
-            obj[child["@type"]] = child;
-          });
-          return obj;
-        }, {}));
-      }
-      return _classPrivateFieldGet(_json, this);
-    }
-  }, {
-    key: "audiobook_data",
-    get: function get() {
-      if (!_classPrivateFieldGet(_audiobook_data, this) && this.doc) {
-        _classPrivateFieldSet(_audiobook_data, this, this.json["Audiobook"] || {});
-      }
-      return _classPrivateFieldGet(_audiobook_data, this);
-    }
-  }, {
-    key: "product_data",
-    get: function get() {
-      if (!_classPrivateFieldGet(_product_data, this) && this.doc) {
-        _classPrivateFieldSet(_product_data, this, this.json["Product"] || {});
-      }
-      return _classPrivateFieldGet(_product_data, this);
-    }
-
-    /**
-     * Return digitalData value;
-     *
-     * @return {object}
-     */
-  }, {
-    key: "digital_data",
-    get: function get() {
-      if (!_classPrivateFieldGet(_digital_data, this) && this.doc) {
-        var digitalData;
-        var tags = this.doc.qs("script[type='text/javascript']");
-        var script = tags.filter(function (t) {
-          return t.innerHTML.match(/digitalData/);
-        });
-        var js = script[0].innerHTML;
-        js = js.replace("var digitalData = ", "digitalData =");
-        eval(js);
-        _classPrivateFieldSet(_digital_data, this, digitalData);
-      }
-      return _classPrivateFieldGet(_digital_data, this);
-    }
-
-    /**
-     * Return the relevant data from the digitalData variable.
-     *
-     * Same as:
-     *   digitalData.product[0].productInfo;
-     *
-     * @return {object}
-     */
-  }, {
-    key: "product_info",
-    get: function get() {
-      if (!_classPrivateFieldGet(_product_info, this) && this.doc) {
-        _classPrivateFieldSet(_product_info, this, this.digital_data.product[0].productInfo);
-      }
-      return _classPrivateFieldGet(_product_info, this);
-    }
-
-    /**
-     * Return an array of author objects.
-     *
-     * Each object includes a name and may include id and url.
-     *
-     * @return {Array}
-     */
-  }, {
-    key: "authors",
-    get: function get() {
-      var authors = this.product_info.authors.map(function (a) {
-        var author = {
-          name: a.fullName
-        };
-        if (a.id) {
-          author.id = a.id;
-          author.url = "/author/".concat(a.id);
-        }
-        return author;
-      });
-      return authors || [];
-    }
-  }, {
-    key: "narrators",
-    get: function get() {
-      return this.product_info.narrators;
-    }
-  }, {
-    key: "rating",
-    get: function get() {
-      var _this$audiobook_data$;
-      var rating = tryFloat((_this$audiobook_data$ = this.audiobook_data.aggregateRating) === null || _this$audiobook_data$ === void 0 ? void 0 : _this$audiobook_data$.ratingValue);
-      return rating ? +rating.toFixed(1) : "";
-    }
-  }, {
-    key: "num_ratings",
-    get: function get() {
-      var _this$audiobook_data$2;
-      return tryInt((_this$audiobook_data$2 = this.audiobook_data.aggregateRating) === null || _this$audiobook_data$2 === void 0 ? void 0 : _this$audiobook_data$2.ratingCount);
-    }
-  }, {
-    key: "asin",
-    get: function get() {
-      return this.product_data.productID;
-    }
-  }, {
-    key: "date",
-    get: function get() {
-      var date = this.audiobook_data.datePublished;
-      if (!date) return null;
-      return new Date("".concat(date, ":00:00:01"));
-    }
-  }, {
-    key: "released",
-    get: function get() {
-      if (!this.date) return null;
-      return dateString(this.date);
-    }
-  }, {
-    key: "released_ts",
-    get: function get() {
-      return this.date.getTime();
-    }
-  }, {
-    key: "title",
-    get: function get() {
-      var _this$audiobook_data;
-      return (_this$audiobook_data = this.audiobook_data) === null || _this$audiobook_data === void 0 ? void 0 : _this$audiobook_data.name;
-    }
-  }, {
-    key: "publisher",
-    get: function get() {
-      return this.audiobook_data.publisher;
-    }
-  }, {
-    key: "summary",
-    get: function get() {
-      var text = this.audiobook_data.description;
-      if (!text) return null;
-      return stripHTML(text);
-    }
-  }, {
-    key: "audible_original",
-    get: function get() {
-      if (!this.publisher) return null;
-      return /^Audible Original/.test(this.publisher);
-    }
-  }, {
-    key: "language",
-    get: function get() {
-      var lang = this.audiobook_data.inLanguage;
-      return titleCase(lang);
-    }
-  }, {
-    key: "is_adult",
-    get: function get() {
-      return this.product_info.isAdultProduct;
-    }
-
-    /**
-     * The duration in minutes.
-     *
-     * Parsed from a string like: "PT2H25M" or "PT15M".
-     *
-     * @type      {number}
-     */
-  }, {
-    key: "duration",
-    get: function get() {
-      var re = /*#__PURE__*/_wrapRegExp(/PT((\d+)H)?((\d+)M)?/, {
-        hours: 2,
-        minutes: 4
-      });
-      var time = this.audiobook_data.duration.match(re);
-      return toMinutes(time.groups.hours, time.groups.minutes);
-    }
-  }, {
-    key: "tags_list",
-    get: function get() {
-      return [];
-    }
-
-    /**
-     * Determine fiction or nonfiction.
-     *
-     * @return {string}
-     */
-  }, {
-    key: "type",
-    get: function get() {
-      var _this21 = this;
-      var labels = [this.genre, this.subgenre].concat(_toConsumableArray(this.tags_list));
-
-      // check if the "Fiction" or "Nonfiction" is in any of the tags
-      var found = _classPrivateFieldGet(_types, this).filter(function (t) {
-        return labels.some(function (l) {
-          return new RegExp("\\b".concat(t, "\\b"), "i").test(l);
-        });
-      });
-      if (found.length) {
-        return found.first;
-      }
-
-      // get the fiction/nonfiction designation from #category_genres
-      var types = _toConsumableArray(new Set(labels.map(function (l) {
-        return _classPrivateFieldGet(_category_genres, _this21)[l];
-      }).filter(function (t) {
-        return t;
-      })));
-      switch (types.length) {
-        case 0:
-          return null;
-        case 1:
-          return titleCase(types.first);
-        default:
-          return "Fiction";
-      }
-    }
-  }, {
-    key: "genre",
-    get: function get() {
-      return this.digital_data.page.category.primaryCategory;
-    }
-  }, {
-    key: "subgenre",
-    get: function get() {
-      return this.digital_data.page.category.subCategory1;
-    }
-
-    /**
-     * Get tags.
-     *
-     * Filter tags_list to exclude generes and types.
-     *
-     * @returns {Array}
-     */
-  }, {
-    key: "tags",
-    get: function get() {
-      if (!_classPrivateFieldGet(_tags, this).length && this.tags_list) {
-        var exclude = [].concat(_toConsumableArray(_classPrivateFieldGet(_types, this)), [this.genre, this.subgenre]);
-        _classPrivateFieldSet(_tags, this, this.tags_list.filter(function (t) {
-          return !exclude.includes(t);
-        }));
-      }
-      return _classPrivateFieldGet(_tags, this);
-    }
-  }], [{
-    key: "new",
-    value:
-    /**
-     * Return a BookPage instance of the correct subclass (ADBLBookPage or
-     * NormalBookPage).
-     *
-     * @param {HTMLDocument} html  Document parsed from page contents.
-     *
-     * @returns {BookPage}
-     */
-    function _new(html) {
-      var doc = new Doc(html);
-      var page;
-      if (doc.gt("adbl-product-details").length) {
-        page = new ADBLBookPage(doc);
-      } else {
-        page = new NormalBookPage(doc);
-      }
-      return page;
-    }
-
-    /**
-     * Fetch the book page and return the BookPage object.
-     *
-     * Return either an ADBLBookPage or NormalBookPage.
-     *
-     * @param {string} url
-     *
-     * @returns {BookPage}
-     */
-  }, {
-    key: "get",
-    value: (function () {
-      var _get2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6(url) {
-        var doc, page;
-        return _regeneratorRuntime().wrap(function _callee6$(_context7) {
-          while (1) switch (_context7.prev = _context7.next) {
-            case 0:
-              _context7.next = 2;
-              return new Page().fetchDoc(url);
-            case 2:
-              doc = _context7.sent;
-              page = BookPage["new"](doc);
-              page.url = url;
-              return _context7.abrupt("return", page);
-            case 6:
-            case "end":
-              return _context7.stop();
-          }
-        }, _callee6);
-      }));
-      function get(_x5) {
-        return _get2.apply(this, arguments);
-      }
-      return get;
-    }())
-  }]);
-}(Page));
-
-/* Book pages which use custom <adbl-*> tags.
- *
- * (Note: Not audible-original books.)
- *
- * @link https://www.audible.com/pd/Ghosts-of-Zenith-Audiobook/B0BL84CBLZ
- *
- */
-ADBLBookPage = /*#__PURE__*/function (_BookPage) {
-  function ADBLBookPage() {
-    _classCallCheck(this, ADBLBookPage);
-    return _callSuper(this, ADBLBookPage, arguments);
-  }
-  _inherits(ADBLBookPage, _BookPage);
-  return _createClass(ADBLBookPage, [{
-    key: "adbl_data",
-    get:
-    /**
-     * Return data parsed from JSON script inside of <adbl-product-metadata> tags.
-     *
-     * @return {object}
-     */
-    function get() {
-      var scripts = this.doc.qs("adbl-product-metadata script");
-      return Object.assign.apply(Object, [{}].concat(_toConsumableArray(scripts.map(function (s) {
-        return JSON.parse(s.textContent);
-      }))));
-    }
-
-    /**
-     * Parse list of tags.
-     *
-     * @return {Array}
-     */
-  }, {
-    key: "tags_list",
-    get: function get() {
-      return this.doc.qs("adbl-chip-group.product-topictag-impression adbl-chip").map(function (c) {
-        return entityDecode(c.innerHTML);
-      });
-    }
-  }, {
-    key: "series",
-    get: function get() {
-      var _this$adbl_data;
-      var series = [];
-      var _iterator4 = _createForOfIteratorHelper(((_this$adbl_data = this.adbl_data) === null || _this$adbl_data === void 0 ? void 0 : _this$adbl_data.series) || []),
-        _step4;
-      try {
-        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-          var _s$url, _s$url2, _s$part;
-          var s = _step4.value;
-          series.push({
-            id: ((_s$url = s.url) === null || _s$url === void 0 || (_s$url = _s$url.match(/series\/.*\/(.*)\?/)) === null || _s$url === void 0 ? void 0 : _s$url[1]) || "",
-            url: ((_s$url2 = s.url) === null || _s$url2 === void 0 ? void 0 : _s$url2.replace(/\?.*$/, "")) || "",
-            name: s.name,
-            number: ((_s$part = s.part) === null || _s$part === void 0 ? void 0 : _s$part.replace("Book ", "")) || ""
-          });
-        }
-      } catch (err) {
-        _iterator4.e(err);
-      } finally {
-        _iterator4.f();
-      }
-      return series;
-    }
-  }]);
-}(BookPage);
-
-/* Book pages which do not use custom <adbl-*> tags.
- *
- * (Note: Possibly only Audible originals books.)
- *
- * @link https://www.audible.com/pd/Midnight-Riot-Audiobook//B009CZNUGU
- *
- */
-NormalBookPage = /*#__PURE__*/function (_BookPage2) {
-  function NormalBookPage() {
-    _classCallCheck(this, NormalBookPage);
-    return _callSuper(this, NormalBookPage, arguments);
-  }
-  _inherits(NormalBookPage, _BookPage2);
-  return _createClass(NormalBookPage, [{
-    key: "tags_list",
-    get: function get() {
-      return this.doc.gc("bc-chip-text").map(function (c) {
-        return c.attributes["data-text"].value;
-      });
-    }
-  }, {
-    key: "series",
-    get: function get() {
-      var li = this.doc.qsf("li.seriesLabel");
-      if (!(li !== null && li !== void 0 && li.element)) return [];
-      var series = [];
-      var children = Array.from(li.childNodes);
-      for (var i in children) {
-        var node = children[i];
-        if (!(node instanceof HTMLAnchorElement)) continue;
-        var _ref7 = /(\/series\/.*\/(.*))\?/.exec(node.href) || [null, "", ""],
-          _ref8 = _slicedToArray(_ref7, 3),
-          _ = _ref8[0],
-          url = _ref8[1],
-          id = _ref8[2];
-        var number = "";
-        var sibling = node.nextSibling;
-        if (sibling && sibling instanceof Text) {
-          var _sibling$textContent$;
-          number = ((_sibling$textContent$ = sibling.textContent.match(/[\d.-]+/)) === null || _sibling$textContent$ === void 0 ? void 0 : _sibling$textContent$[0]) || "";
-        }
-        series.push({
-          id: id,
-          url: url,
-          name: node.innerHTML.trim(),
-          number: number
-        });
-      }
-      return series;
-    }
-  }]);
-}(BookPage);
-/**
- * Fetch all book details.
- *
- * Fetch book pages to gather additional details for all objects in the library
- * array.
- */
-
-DetailsFetcher = (_books3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
-  /**
-   * Constructor.
-   *
-   * @params {object[]} [library]  List of objects that contain a url key.
-   */
-  function DetailsFetcher() {
-    var library = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    _classCallCheck(this, DetailsFetcher);
-    _classPrivateFieldInitSpec(this, _books3, {});
-    this.library = library;
-    _classPrivateFieldSet(_books3, this, null);
-    this.pages = [];
-  }
-
-  /**
-   * Fetch the book pages and fire events to update the DetailsNotifier.
-   *
-   * @fires update-ae-notifier
-   */
-  return _createClass(DetailsFetcher, [{
-    key: "populate",
-    value: (function () {
-      var _populate2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
-        var book, data, actual, total, i, _iterator5, _step5, timer, page;
-        return _regeneratorRuntime().wrap(function _callee7$(_context8) {
-          while (1) switch (_context8.prev = _context8.next) {
-            case 0:
-              actual = new Timer();
-              actual.start();
-              total = this.library.length;
-              fireEvent({
-                total: total
-              });
-              i = 0;
-              _iterator5 = _createForOfIteratorHelper(this.library);
-              _context8.prev = 6;
-              _iterator5.s();
-            case 8:
-              if ((_step5 = _iterator5.n()).done) {
-                _context8.next = 24;
-                break;
-              }
-              book = _step5.value;
-              if (book.url) {
-                _context8.next = 12;
-                break;
-              }
-              return _context8.abrupt("continue", 22);
-            case 12:
-              timer = new Timer();
-              timer.start();
-              _context8.next = 16;
-              return BookPage.get(book.url.replace("http", "https"));
-            case 16:
-              page = _context8.sent;
-              page.url = book.url;
-              this.pages.push(page);
-              i++;
-              timer.stop();
-              fireEvent({
-                item_no: i,
-                timer: timer
-              });
-            case 22:
-              _context8.next = 8;
-              break;
-            case 24:
-              _context8.next = 29;
-              break;
-            case 26:
-              _context8.prev = 26;
-              _context8.t0 = _context8["catch"](6);
-              _iterator5.e(_context8.t0);
-            case 29:
-              _context8.prev = 29;
-              _iterator5.f();
-              return _context8.finish(29);
-            case 32:
-              actual.stop();
-              fireEvent({
-                percent: 1
-              });
-              info("DetailsFetcher.populate() took: ".concat(actual.minutes, " minutes (").concat(actual.seconds, " seconds)"));
-            case 35:
-            case "end":
-              return _context8.stop();
-          }
-        }, _callee7, this, [[6, 26, 29, 32]]);
-      }));
-      function populate() {
-        return _populate2.apply(this, arguments);
-      }
-      return populate;
-    }()
-    /**
-     * Getter for the list of book data.
-     *
-     * @returns {object}  Book data keyed by ASIN.
-     */
-    )
-  }, {
-    key: "books",
-    get: function get() {
-      if (!_classPrivateFieldGet(_books3, this)) {
-        _classPrivateFieldSet(_books3, this, {});
-        var data, page;
-        var _iterator6 = _createForOfIteratorHelper(this.pages),
-          _step6;
-        try {
-          for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-            page = _step6.value;
-            if (!page) continue;
-            var _data = page.data();
-            _classPrivateFieldGet(_books3, this)[_data.asin] = _data;
-          }
-        } catch (err) {
-          _iterator6.e(err);
-        } finally {
-          _iterator6.f();
-        }
-      }
-      return _classPrivateFieldGet(_books3, this);
-    }
-
-    /**
-     * Setter for the list of book data.
-     *
-     * @param {object}  Book data keyed by ASIN.
-     */,
-    set: function set(value) {
-      _classPrivateFieldSet(_books3, this, value);
-    }
-  }]);
-}());
-/**
- * A row from a LedgerPage (purchase history) that contains order details.
- *
- */
-OrderRow = /*#__PURE__*/function (_Parser3) {
-  function OrderRow() {
-    var _this22;
-    var doc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    _classCallCheck(this, OrderRow);
-    _this22 = _callSuper(this, OrderRow);
-    _defineProperty(_this22, "_fields", ["id", "url", "date", "total"]);
-    _defineProperty(_this22, "_identifers", []);
-    _this22.doc = doc;
-    return _this22;
-  }
-
-  /**
-   * The order detail page URL, minus all the extra params.
-   *
-   * @return {string}
-   */
-  _inherits(OrderRow, _Parser3);
-  return _createClass(OrderRow, [{
-    key: "url",
-    get: function get() {
-      var url = this.doc.qsf("a[href^='/account/order-details']").href;
-      return url.replace(/&.*$/, "");
-    }
-
-    /**
-     * The order id.
-     *
-     * @return {string}
-     */
-  }, {
-    key: "id",
-    get: function get() {
-      return this.url.match(/orderId=(.*$)/)[1];
-    }
-
-    /**
-     * The order date.
-     *
-     * @return {string}
-     */
-  }, {
-    key: "date",
-    get: function get() {
-      var _this$doc$qsf$innerHT;
-      var date = (_this$doc$qsf$innerHT = this.doc.qsf(".ui-it-purchasehistory-item-purchasedate").innerHTML) === null || _this$doc$qsf$innerHT === void 0 ? void 0 : _this$doc$qsf$innerHT.trim();
-      return dateString(date);
-    }
-
-    /**
-     * The order total, either dollars or credits.
-     *
-     * @return {string}
-     */
-  }, {
-    key: "total",
-    get: function get() {
-      return this.doc.qsf(".ui-it-purchasehistory-item-total div").innerHTML;
-    }
-  }]);
-}(Parser);
-PurchaseRow = /*#__PURE__*/function (_Parser4) {
-  function PurchaseRow() {
-    var _this23;
-    var doc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    _classCallCheck(this, PurchaseRow);
-    _this23 = _callSuper(this, PurchaseRow);
-    _defineProperty(_this23, "_fields", {
-      asin: "data-order-item-asin",
-      order_id: "data-order-id",
-      title: "data-order-item-name",
-      author: "data-order-item-author",
-      amount: "data-order-item-cost",
-      credits: "data-order-item-credit-cost"
-    });
-    _this23.doc = doc;
-    return _this23;
-  }
-  _inherits(PurchaseRow, _Parser4);
-  return _createClass(PurchaseRow, [{
-    key: "data",
-    value: function data() {
-      var _this24 = this;
-      return Object.fromEntries(Object.entries(this._fields).map(function (_ref9) {
-        var _this24$doc$attribute;
-        var _ref10 = _slicedToArray(_ref9, 2),
-          key = _ref10[0],
-          attr = _ref10[1];
-        return [key, (_this24$doc$attribute = _this24.doc.attributes) === null || _this24$doc$attribute === void 0 || (_this24$doc$attribute = _this24$doc$attribute[attr]) === null || _this24$doc$attribute === void 0 ? void 0 : _this24$doc$attribute.value];
-      }));
-    }
-  }]);
-}(Parser);
-/**
- * A single purchase history page, usually a year and page
- * (ie 2024, page 2 of 3).
- *
- * Each order page has both a list of orders (OrderRow), and a list of
- * purchases (PurchaseRow).
- *
- * Example:
- * https://www.audible.com/account/purchase-history?ref=&tf=orders&df=2024&ps=20
- */
-LedgerPage = (_default_per_page = /*#__PURE__*/new WeakMap(), _valid_date_ranges = /*#__PURE__*/new WeakMap(), _orders = /*#__PURE__*/new WeakMap(), _purchases = /*#__PURE__*/new WeakMap(), _entries = /*#__PURE__*/new WeakMap(), _page_num = /*#__PURE__*/new WeakMap(), _year3 = /*#__PURE__*/new WeakMap(), _years2 = /*#__PURE__*/new WeakMap(), _page_count3 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function (_Page4) {
-  function LedgerPage() {
-    var _this25;
-    var year_or_doc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    var page_num = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-    var per_page = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-    _classCallCheck(this, LedgerPage);
-    _this25 = _callSuper(this, LedgerPage);
-    _defineProperty(_this25, "base_url", "https://www.audible.com/account/purchase-history?tf=orders");
-    _classPrivateFieldInitSpec(_this25, _default_per_page, 40);
-    _classPrivateFieldInitSpec(_this25, _valid_date_ranges, ["last_90_days", "last_180_days", "last_365_days"]);
-    _classPrivateFieldInitSpec(_this25, _orders, {});
-    _classPrivateFieldInitSpec(_this25, _purchases, {});
-    _classPrivateFieldInitSpec(_this25, _entries, []);
-    _classPrivateFieldInitSpec(_this25, _page_num, null);
-    _classPrivateFieldInitSpec(_this25, _year3, null);
-    _classPrivateFieldInitSpec(_this25, _years2, null);
-    _classPrivateFieldInitSpec(_this25, _page_count3, null);
-    _this25.doc = null;
-    if ((typeof year_or_doc == "number" || _classPrivateFieldGet(_valid_date_ranges, _this25).includes(year_or_doc)) && typeof page_num == "number") {
-      _this25.year = year_or_doc;
-      _this25.page_num = page_num;
-    } else if (year_or_doc) {
-      _this25.doc = year_or_doc;
-    }
-    _this25.per_page = per_page || _classPrivateFieldGet(_default_per_page, _this25);
-    _classPrivateFieldSet(_entries, _this25, null);
-    return _this25;
-  }
-
-  /**
-   * Fetch the document for the given year, page number, and per_page.
-   *
-   * @return {Doc}
-   */
-  _inherits(LedgerPage, _Page4);
-  return _createClass(LedgerPage, [{
-    key: "get",
-    value: (function () {
-      var _get3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
-        var url;
-        return _regeneratorRuntime().wrap(function _callee8$(_context9) {
-          while (1) switch (_context9.prev = _context9.next) {
-            case 0:
-              url = "".concat(this.base_url, "&df=").concat(this.year, "&pn=").concat(this.page_num, "&ps=").concat(this.per_page);
-              _context9.next = 3;
-              return this.fetchDoc(url);
-            case 3:
-              this.doc = _context9.sent;
-              return _context9.abrupt("return", this.doc);
-            case 5:
-            case "end":
-              return _context9.stop();
-          }
-        }, _callee8, this);
-      }));
-      function get() {
-        return _get3.apply(this, arguments);
-      }
-      return get;
-    }()
-    /**
-     * The year for this page.
-     *
-     * @return {number}
-     */
-    )
-  }, {
-    key: "year",
-    get: function get() {
-      if (!_classPrivateFieldGet(_year3, this) && this.doc) {
-        var _this$doc$qsf3;
-        _classPrivateFieldSet(_year3, this, (_this$doc$qsf3 = this.doc.qsf("#ui-it-purchase-history-date-filter option:checked")) === null || _this$doc$qsf3 === void 0 ? void 0 : _this$doc$qsf3.value);
-      }
-      return tryInt(_classPrivateFieldGet(_year3, this));
-    }
-
-    /**
-     * Set the year for this page.
-     *
-     * @param {number} value  The year.
-     */,
-    set: function set(value) {
-      _classPrivateFieldSet(_year3, this, value);
-    }
-
-    /**
-     * The page number of this page.
-     *
-     * @return {number}
-     */
-  }, {
-    key: "page_num",
-    get: function get() {
-      if (!_classPrivateFieldGet(_page_num, this) && this.doc) {
-        var _this$doc$qsf4;
-        _classPrivateFieldSet(_page_num, this, ((_this$doc$qsf4 = this.doc.qsf("span.purchase-history-pagination-button")) === null || _this$doc$qsf4 === void 0 || (_this$doc$qsf4 = _this$doc$qsf4.innerHTML) === null || _this$doc$qsf4 === void 0 ? void 0 : _this$doc$qsf4.trim()) || 1);
-      }
-      return tryInt(_classPrivateFieldGet(_page_num, this));
-    }
-
-    /**
-     * Set the page number of this page.
-     *
-     * @param {number} value   The page number.
-     */,
-    set: function set(value) {
-      _classPrivateFieldSet(_page_num, this, value);
-    }
-
-    /**
-     * Number of pages for this year (or date range).
-     *
-     * @return {number}
-     */
-  }, {
-    key: "page_count",
-    get: function get() {
-      if (!_classPrivateFieldGet(_page_count3, this) && this.doc) {
-        var link = this.doc.qs("a.purchase-history-pagination-button").last;
-        var count = (link === null || link === void 0 ? void 0 : link.innerHTML.trim()) || 1;
-        _classPrivateFieldSet(_page_count3, this, parseInt(count));
-      }
-      return _classPrivateFieldGet(_page_count3, this);
-    }
-
-    /**
-     * An array of years available in the year drop-down.
-     *
-     * @return {array}
-     */
-  }, {
-    key: "years",
-    get: function get() {
-      if (!_classPrivateFieldGet(_years2, this) && this.doc) {
-        var options = this.doc.qs("#ui-it-purchase-history-date-filter option");
-        _classPrivateFieldSet(_years2, this, options.map(function (o) {
-          return o.value;
-        }).filter(function (y) {
-          return /^\d+$/.test(y);
-        }));
-      }
-      return _classPrivateFieldGet(_years2, this);
-    }
-
-    /**
-     * Data from OrderRow objects on this page, keyed by order id.
-     *
-     * @return {object}
-     */
-  }, {
-    key: "orders",
-    get: function get() {
-      if (this.doc && isEmpty(_classPrivateFieldGet(_orders, this))) {
-        var rows = this.doc.qs("tr:has(a[href^='/account/order-details'])");
-        var orders = rows.map(function (tr) {
-          var row = new OrderRow(tr);
-          return [row.id, row.data()];
-        });
-        _classPrivateFieldSet(_orders, this, Object.fromEntries(orders));
-      }
-      return _classPrivateFieldGet(_orders, this);
-    }
-
-    /**
-     * Data from PurchaseRow objects on this page.
-     *
-     * @returns {Array}
-     */
-  }, {
-    key: "purchases",
-    get: function get() {
-      if (this.doc && isEmpty(_classPrivateFieldGet(_purchases, this))) {
-        var links = this.doc.qs("a[data-order-item-id]");
-        var purchases = links.map(function (a) {
-          return new PurchaseRow(a).data();
-        });
-        _classPrivateFieldSet(_purchases, this, purchases);
-      }
-      return _classPrivateFieldGet(_purchases, this);
-    }
-
-    /**
-     * Merge selected order data and purchase data.
-     *
-     * @return {Array}
-     */
-  }, {
-    key: "entries",
-    get: function get() {
-      var _this26 = this;
-      if (!_classPrivateFieldGet(_entries, this)) {
-        try {
-          var seen = {};
-          _classPrivateFieldSet(_entries, this, this.purchases.reduce(function (arr, p) {
-            if (seen[p.asin]) {
-              error("Duplicate item: /pd/".concat(asin), seen[p.asin], p);
-            } else if (p.title && p.author) {
-              // ^ missing title and author mean credit purchases
-              seen[p.asin] = p;
-              arr.push({
-                asin: p.asin,
-                url: "http://www.audible.com/pd/".concat(p.asin),
-                title: p.title,
-                author: p.author,
-                purchased: dateString(_this26.orders[p.order_id].date)
-              });
-            }
-            return arr;
-          }, []));
-        } catch (err) {
-          error(err);
-        }
-      }
-      return _classPrivateFieldGet(_entries, this);
-    }
-  }]);
-}(Page));
-LedgerFetcher = (_count = /*#__PURE__*/new WeakMap(), _entries2 = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
-  function LedgerFetcher() {
-    _classCallCheck(this, LedgerFetcher);
-    _classPrivateFieldInitSpec(this, _count, 0);
-    _classPrivateFieldInitSpec(this, _entries2, null);
-    _classPrivateFieldSet(_count, this, 0);
-    _classPrivateFieldSet(_entries2, this, null);
-    this.pages = [];
-  }
-
-  /**
-   * Fetch the first purchase history page to get the list of years in purchase
-   * history, then fetch the first page of each year to determine how many
-   * pages in each year.
-   *
-   * @fires update-ae-notifier
-   */
-  return _createClass(LedgerFetcher, [{
-    key: "init",
-    value: (function () {
-      var _init = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee9(limit) {
-        var running_count, page, _iterator7, _step7, year, timer, page_num, page_count, _page;
-        return _regeneratorRuntime().wrap(function _callee9$(_context10) {
-          while (1) switch (_context10.prev = _context10.next) {
-            case 0:
-              // request to get the years in purchase history
-              running_count = 0;
-              page = new LedgerPage("last_90_days", 1, 20);
-              _context10.next = 4;
-              return page.get();
-            case 4:
-              this.years = page.years;
-              if (limit && this.years.length > limit) {
-                this.years.splice(limit);
-              }
-              fireEvent({
-                years: this.years
-              });
-              _iterator7 = _createForOfIteratorHelper(this.years);
-              _context10.prev = 8;
-              _iterator7.s();
-            case 10:
-              if ((_step7 = _iterator7.n()).done) {
-                _context10.next = 34;
-                break;
-              }
-              year = _step7.value;
-              timer = new Timer();
-              timer.start();
-              fireEvent({
-                year: year
-              });
-              page_num = 1;
-              page_count = void 0;
-            case 17:
-              _page = new LedgerPage(tryInt(year), page_num);
-              if (!(page_num == 1)) {
-                _context10.next = 22;
-                break;
-              }
-              _context10.next = 21;
-              return _page.get();
-            case 21:
-              page_count = _page.page_count;
-            case 22:
-              this.pages.push(_page);
-              running_count++;
-              page_num++;
-              if (!(limit && running_count >= limit)) {
-                _context10.next = 29;
-                break;
-              }
-              this.years.splice(this.years.indexOf(year));
-              fireEvent({
-                years: this.years
-              });
-              return _context10.abrupt("break", 30);
-            case 29:
-              if (page_num <= page_count) {
-                _context10.next = 17;
-                break;
-              }
-            case 30:
-              timer.stop();
-              fireEvent({
-                timer: timer
-              });
-            case 32:
-              _context10.next = 10;
-              break;
-            case 34:
-              _context10.next = 39;
-              break;
-            case 36:
-              _context10.prev = 36;
-              _context10.t0 = _context10["catch"](8);
-              _iterator7.e(_context10.t0);
-            case 39:
-              _context10.prev = 39;
-              _iterator7.f();
-              return _context10.finish(39);
-            case 42:
-              fireEvent({
-                percent: 1
-              });
-            case 43:
-            case "end":
-              return _context10.stop();
-          }
-        }, _callee9, this, [[8, 36, 39, 42]]);
-      }));
-      function init(_x6) {
-        return _init.apply(this, arguments);
-      }
-      return init;
-    }()
-    /**
-     * Fetch all of the pages, up to limit.
-     *
-     * @param {integer} limit   Number of pages to stop at.
-     *
-     * @fires update-ae-notifier
-     */
-    )
-  }, {
-    key: "populate",
-    value: (function () {
-      var _populate3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee10() {
-        var limit,
-          i,
-          _iterator8,
-          _step8,
-          page,
-          timer,
-          _args10 = arguments;
-        return _regeneratorRuntime().wrap(function _callee10$(_context11) {
-          while (1) switch (_context11.prev = _context11.next) {
-            case 0:
-              limit = _args10.length > 0 && _args10[0] !== undefined ? _args10[0] : null;
-              if (limit) {
-                this.pages.splice(limit, this.pages.length);
-              }
-              fireEvent({
-                total: this.pages.length
-              });
-              i = 0;
-              _iterator8 = _createForOfIteratorHelper(this.pages);
-              _context11.prev = 5;
-              _iterator8.s();
-            case 7:
-              if ((_step8 = _iterator8.n()).done) {
-                _context11.next = 26;
-                break;
-              }
-              page = _step8.value;
-              timer = new Timer();
-              timer.start();
-              fireEvent({
-                year: page.year,
-                year_page: page.page_num,
-                item_no: i
-              });
-              if (page.doc) {
-                _context11.next = 18;
-                break;
-              }
-              _context11.next = 15;
-              return page.get();
-            case 15:
-              fireEvent({
-                page_count: page.page_count
-              });
-              _context11.next = 21;
-              break;
-            case 18:
-              fireEvent({
-                page_count: page.page_count
-              });
-              _context11.next = 21;
-              return delay(500);
-            case 21:
-              i++;
-              timer.stop();
-              fireEvent({
-                timer: timer
-              });
-            case 24:
-              _context11.next = 7;
-              break;
-            case 26:
-              _context11.next = 31;
-              break;
-            case 28:
-              _context11.prev = 28;
-              _context11.t0 = _context11["catch"](5);
-              _iterator8.e(_context11.t0);
-            case 31:
-              _context11.prev = 31;
-              _iterator8.f();
-              return _context11.finish(31);
-            case 34:
-              fireEvent({
-                percent: 1
-              });
-            case 35:
-            case "end":
-              return _context11.stop();
-          }
-        }, _callee10, this, [[5, 28, 31, 34]]);
-      }));
-      function populate() {
-        return _populate3.apply(this, arguments);
-      }
-      return populate;
-    }()
-    /**
-     * Return the total number entries in all ledger pages.
-     *
-     * @return {number}
-     */
-    )
-  }, {
-    key: "count",
-    get: function get() {
-      if (!_classPrivateFieldGet(_count, this)) {
-        _classPrivateFieldSet(_count, this, this.pages.reduce(function (sum, p) {
-          return sum + p.entries.length;
-        }, 0));
-      }
-      return _classPrivateFieldGet(_count, this);
-    }
-
-    /**
-     * Entries from all pages keyed by ASIN.
-     *
-     * @return {object}
-     */
-  }, {
-    key: "entries",
-    get: function get() {
-      if (!_classPrivateFieldGet(_entries2, this)) {
-        var entries = {};
-        var _iterator9 = _createForOfIteratorHelper(this.pages),
-          _step9;
-        try {
-          for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
-            var page = _step9.value;
-            var _iterator10 = _createForOfIteratorHelper(page.entries),
-              _step10;
-            try {
-              for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
-                var item = _step10.value;
-                entries[item.asin] = item;
-              }
-            } catch (err) {
-              _iterator10.e(err);
-            } finally {
-              _iterator10.f();
-            }
-          }
-        } catch (err) {
-          _iterator9.e(err);
-        } finally {
-          _iterator9.f();
-        }
-        _classPrivateFieldSet(_entries2, this, entries);
-      }
-      return _classPrivateFieldGet(_entries2, this);
-    }
-
-    /**
-     * Set entries.
-     *
-     * @param {object}
-     */,
-    set: function set(value) {
-      _classPrivateFieldSet(_entries2, this, value);
-    }
-  }]);
-}());
-/**
- * Result.
- *
- * Final result set for a book from library data, order data, and book details
- * data.
- */
-Result = (_headers = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
-  function Result() {
-    var library = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    var details = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-    var order = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-    _classCallCheck(this, Result);
-    /**
-     * Mapping of header to list of sources in order of precedence.
-     *
-     * @access private
-     */
-    _classPrivateFieldInitSpec(this, _headers, {
-      asin: ["order", "library", "details"],
-      url: ["order", "library"],
-      title: ["order", "details", "library"],
-      authors: ["details", "library"],
-      narrators: ["details", "library"],
-      series: ["library", "details"],
-      publisher: ["details"],
-      duration: ["details"],
-      released: ["details"],
-      released_ts: ["details"],
-      purchased: ["order"],
-      language: ["details"],
-      summary: ["details"],
-      rating: ["details"],
-      num_ratings: ["details"],
-      audible_original: ["details"],
-      type: ["details"],
-      genre: ["details"],
-      subgenre: ["details"],
-      tags: ["details"],
-      is_adult: ["details"]
-    });
-    this.library = library || {};
-    this.details = details || {};
-    this.order = order || {};
-  }
-
-  /**
-   * Get the value for key from the first source that has it defined.
-   *
-   * @param {string} key  Key from .#headers.
-   *
-   * @return {any}
-   */
-  return _createClass(Result, [{
-    key: "first",
-    value: function first(key) {
-      var _this27 = this;
-      // the objects to look for key in
-      var sources = _toConsumableArray(_classPrivateFieldGet(_headers, this)[key]);
-      return sources.reduce(function (fallback, source, _, arr) {
-        var value = _this27[source][key];
-
-        // if the key is there, return it and break early
-        if (!["null", "undefined"].includes(_typeof(value))) {
-          arr.splice(1);
-          return value;
-        } else {
-          // otherwise, return ""
-          return fallback;
-        }
-      }, "");
-    }
-
-    /**
-     * Mapping of keys from .#headers to the value pulled from source data.
-     *
-     * @return {object}
-     */
-  }, {
-    key: "data",
-    value: function data() {
-      var _this28 = this;
-      return Object.fromEntries(Object.keys(_classPrivateFieldGet(_headers, this)).map(function (key) {
-        return [key, _this28.first(key)];
-      }));
-    }
-  }]);
-}());
-/**
- * Module that handles extracting and organizing the data.
- */
-
-/**
- * Exporter class.
- */
-Exporter = /*#__PURE__*/function () {
-  function Exporter() {
-    var limit = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    _classCallCheck(this, Exporter);
-    this.limit = limit;
-    this.timer = new Timer();
-    this.ledger = new LedgerFetcher();
-    this.library = new LibraryFetcher();
-    this.details = new DetailsFetcher();
-    this.results = [];
-  }
-  return _createClass(Exporter, [{
-    key: "getPurchaseHistory",
-    value: function () {
-      var _getPurchaseHistory = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee11() {
-        return _regeneratorRuntime().wrap(function _callee11$(_context12) {
-          while (1) switch (_context12.prev = _context12.next) {
-            case 0:
-              _context12.next = 2;
-              return this.ledger.init(this.limit);
-            case 2:
-            case "end":
-              return _context12.stop();
-          }
-        }, _callee11, this);
-      }));
-      function getPurchaseHistory() {
-        return _getPurchaseHistory.apply(this, arguments);
-      }
-      return getPurchaseHistory;
-    }()
-  }, {
-    key: "getLedger",
-    value: function () {
-      var _getLedger = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee12() {
-        return _regeneratorRuntime().wrap(function _callee12$(_context13) {
-          while (1) switch (_context13.prev = _context13.next) {
-            case 0:
-              _context13.next = 2;
-              return this.ledger.populate(this.limit);
-            case 2:
-            case "end":
-              return _context13.stop();
-          }
-        }, _callee12, this);
-      }));
-      function getLedger() {
-        return _getLedger.apply(this, arguments);
-      }
-      return getLedger;
-    }()
-  }, {
-    key: "getLibrary",
-    value: function () {
-      var _getLibrary = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee13() {
-        return _regeneratorRuntime().wrap(function _callee13$(_context14) {
-          while (1) switch (_context14.prev = _context14.next) {
-            case 0:
-              _context14.next = 2;
-              return this.library.populate(this.limit);
-            case 2:
-            case "end":
-              return _context14.stop();
-          }
-        }, _callee13, this);
-      }));
-      function getLibrary() {
-        return _getLibrary.apply(this, arguments);
-      }
-      return getLibrary;
-    }()
-  }, {
-    key: "getBookDetails",
-    value: function () {
-      var _getBookDetails = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee14() {
-        return _regeneratorRuntime().wrap(function _callee14$(_context15) {
-          while (1) switch (_context15.prev = _context15.next) {
-            case 0:
-              this.details.library = this.library.books;
-              _context15.next = 3;
-              return this.details.populate();
-            case 3:
-            case "end":
-              return _context15.stop();
-          }
-        }, _callee14, this);
-      }));
-      function getBookDetails() {
-        return _getBookDetails.apply(this, arguments);
-      }
-      return getBookDetails;
-    }()
-  }, {
-    key: "getResults",
-    value: function getResults() {
-      var library_info, order_info, book_info, info;
-      var results = [];
-      var _iterator11 = _createForOfIteratorHelper(this.library.books),
-        _step11;
-      try {
-        for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
-          library_info = _step11.value;
-          book_info = this.details.books[library_info.asin];
-          order_info = this.ledger.entries[library_info.asin];
-          var result = new Result(library_info, book_info, order_info);
-          results.push(result.data());
-        }
-      } catch (err) {
-        _iterator11.e(err);
-      } finally {
-        _iterator11.f();
-      }
-      this.results = results;
-      return results;
-    }
-
-    /**
-     * For TSV files, flatten results to a single string per field.
-     */
-  }, {
-    key: "flatten",
-    value: function flatten() {
-      for (var _i5 = 0, _Object$entries5 = Object.entries(this.results); _i5 < _Object$entries5.length; _i5++) {
-        var _Object$entries5$_i = _slicedToArray(_Object$entries5[_i5], 2),
-          i = _Object$entries5$_i[0],
-          record = _Object$entries5$_i[1];
-        if (record.series) {
-          record.series = record.series.map(function (series) {
-            return series.name + (series.number ? " #".concat(series.number) : "");
-          }).join(", ");
-        }
-        if (record.authors) {
-          record.authors = record.authors.map(function (a) {
-            return a.name;
-          }).join(", ");
-        }
-      }
-    }
-  }]);
-}();
 VirtualFile = (_contents = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
   function VirtualFile() {
     var contents = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
