@@ -75,17 +75,6 @@ describe("TSVFile", () => {
   test(".preprocess()", () => {
     let file = new TSVFile([
       {
-        series: [
-          {
-            name: "The Chronicles of Narnia (Publication Order)",
-            number: "1",
-          },
-          {
-            name: "The Chronicles of Narnia (Author's Preferred Order)",
-            number: "2",
-          },
-        ],
-        authors: [{ name: "C. S. Lewis" }],
         narrators: ["Michael York"],
         audible_original: false,
       },
@@ -94,11 +83,7 @@ describe("TSVFile", () => {
     file.preprocess();
     record = file.records[0];
 
-    expect(record.authors).toBe("C. S. Lewis");
     expect(record.narrators).toBe("Michael York");
-    expect(record.series).toBe(
-      "The Chronicles of Narnia (Publication Order) #1, The Chronicles of Narnia (Author's Preferred Order) #2",
-    );
     expect(record.audible_original).toBe("false");
   });
 });

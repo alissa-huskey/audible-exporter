@@ -112,3 +112,4 @@ x 2025-05-03 2025-02-23 @feature Add series ID.
 x 2025-05-03 2025-05-02 @refactor Rename Purchase -> PurchaseRow.
 x 2025-05-03 2025-05-03 @bug Rename tests/notifier.js -> notifier.test.js and fix tests.
 x 2025-05-03 2025-03-15 Consider removing testcafe.
+x 2025-05-03 2025-05-03 @refactor @tsv Move field-specific preprocessing from TSVFile -> Exporter.flatten().

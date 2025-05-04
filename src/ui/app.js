@@ -23,11 +23,16 @@ require("../tsv-file.js");
  * Event listener to create the export file and start the download.
  */
 download = () => {
-  let exporter = window.ae;
-  let modal = exporter.modal;
+  let app = window.ae;
+  let modal = app.modal;
   if (!modal.filetype) return;
-  let klass = exporter.formats[modal.filetype];
-  let file = new klass(exporter.results);
+  let klass = app.formats[modal.filetype];
+
+  if (klass == TSVFile) {
+    app.exporter.flatten();
+  }
+
+  let file = new klass(app.exporter.results);
   modal.file = file;
   modal.hide();
 };

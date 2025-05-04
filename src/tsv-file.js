@@ -41,18 +41,6 @@ TSVFile = class extends VirtualFile {
 
   preprocess() {
     for (let [i, record] of Object.entries(this.records)) {
-      if (record.series) {
-        record.series = record.series
-          .map((series) => {
-            return series.name + (series.number ? ` #${series.number}` : "");
-          })
-          .join(", ");
-      }
-
-      if (record.authors) {
-        record.authors = record.authors.map((a) => a.name).join(", ");
-      }
-
       Object.entries(record).forEach(([field, value]) => {
         if (value instanceof Array) {
           record[field] = value.join(", ");

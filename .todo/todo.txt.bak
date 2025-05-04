@@ -49,7 +49,6 @@
 2025-03-15 @bug Fix / detect sign in error.
 (B) 2025-03-15 @ux @bug Close button on error modal still has focus-visible styling (outline). (In safari I think.)
 (D) 2025-03-15 @ux Download file selector looks funny in Safari.
-x 2025-05-03 2025-03-15 Consider removing testcafe.
 (B) 2025-03-16 @ux When checking if on audible.com, exclude help.audible.com.
 (A) 2025-05-01 @feature Add purchase information to download.
 (A) 2025-05-01 @feature Add option to skip purchase information
@@ -64,4 +63,4 @@ x 2025-05-03 2025-03-15 Consider removing testcafe.
 (A) 2025-05-02 @data @tsv Look into not escaping single quotes (look at series: https://www.audible.com/pd/House-of-Blades-Audiobook/B0B29L7HZ8)
 (B) 2025-05-03 @data Parse reviews from listener page: https://www.audible.com/listener
 2025-05-03 @ux Get total books from credit summary page first (for estimate): https://www.audible.com/account/credits
-(A) 2025-05-03 @tsv Move field-specific out of TSVFile.
+x 2025-05-03 2025-05-03 @refactor @tsv Move field-specific preprocessing from TSVFile -> Exporter.flatten().

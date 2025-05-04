@@ -4387,6 +4387,29 @@ Exporter = /*#__PURE__*/function () {
       this.results = results;
       return results;
     }
+
+    /**
+     * For TSV files, flatten results to a single string per field.
+     */
+  }, {
+    key: "flatten",
+    value: function flatten() {
+      for (var _i5 = 0, _Object$entries5 = Object.entries(this.results); _i5 < _Object$entries5.length; _i5++) {
+        var _Object$entries5$_i = _slicedToArray(_Object$entries5[_i5], 2),
+          i = _Object$entries5$_i[0],
+          record = _Object$entries5$_i[1];
+        if (record.series) {
+          record.series = record.series.map(function (series) {
+            return series.name + (series.number ? " #".concat(series.number) : "");
+          }).join(", ");
+        }
+        if (record.authors) {
+          record.authors = record.authors.map(function (a) {
+            return a.name;
+          }).join(", ");
+        }
+      }
+    }
   }]);
 }();
 VirtualFile = (_contents = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
@@ -4503,19 +4526,9 @@ TSVFile = (_headers3 = /*#__PURE__*/new WeakMap(), _rows3 = /*#__PURE__*/new Wea
     key: "preprocess",
     value: function preprocess() {
       var _loop2 = function _loop2() {
-        var _Object$entries5$_i = _slicedToArray(_Object$entries5[_i5], 2),
-          i = _Object$entries5$_i[0],
-          record = _Object$entries5$_i[1];
-        if (record.series) {
-          record.series = record.series.map(function (series) {
-            return series.name + (series.number ? " #".concat(series.number) : "");
-          }).join(", ");
-        }
-        if (record.authors) {
-          record.authors = record.authors.map(function (a) {
-            return a.name;
-          }).join(", ");
-        }
+        var _Object$entries6$_i = _slicedToArray(_Object$entries6[_i6], 2),
+          i = _Object$entries6$_i[0],
+          record = _Object$entries6$_i[1];
         Object.entries(record).forEach(function (_ref11) {
           var _ref12 = _slicedToArray(_ref11, 2),
             field = _ref12[0],
@@ -4527,7 +4540,7 @@ TSVFile = (_headers3 = /*#__PURE__*/new WeakMap(), _rows3 = /*#__PURE__*/new Wea
           }
         });
       };
-      for (var _i5 = 0, _Object$entries5 = Object.entries(this.records); _i5 < _Object$entries5.length; _i5++) {
+      for (var _i6 = 0, _Object$entries6 = Object.entries(this.records); _i6 < _Object$entries6.length; _i6++) {
         _loop2();
       }
     }
@@ -4551,11 +4564,14 @@ TSVFile = (_headers3 = /*#__PURE__*/new WeakMap(), _rows3 = /*#__PURE__*/new Wea
  * Event listener to create the export file and start the download.
  */
 download = function download() {
-  var exporter = window.ae;
-  var modal = exporter.modal;
+  var app = window.ae;
+  var modal = app.modal;
   if (!modal.filetype) return;
-  var klass = exporter.formats[modal.filetype];
-  var file = new klass(exporter.results);
+  var klass = app.formats[modal.filetype];
+  if (klass == TSVFile) {
+    app.exporter.flatten();
+  }
+  var file = new klass(app.exporter.results);
   modal.file = file;
   modal.hide();
 };

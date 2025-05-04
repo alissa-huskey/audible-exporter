@@ -55,4 +55,23 @@ Exporter = class {
     this.results = results;
     return results;
   }
+
+  /**
+   * For TSV files, flatten results to a single string per field.
+   */
+  flatten() {
+    for (let [i, record] of Object.entries(this.results)) {
+      if (record.series) {
+        record.series = record.series
+          .map((series) => {
+            return series.name + (series.number ? ` #${series.number}` : "");
+          })
+          .join(", ");
+      }
+
+      if (record.authors) {
+        record.authors = record.authors.map((a) => a.name).join(", ");
+      }
+    }
+  }
 };

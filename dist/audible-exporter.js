@@ -4356,6 +4356,25 @@ Exporter = class {
     this.results = results;
     return results;
   }
+
+  /**
+   * For TSV files, flatten results to a single string per field.
+   */
+  flatten() {
+    for (let [i, record] of Object.entries(this.results)) {
+      if (record.series) {
+        record.series = record.series
+          .map((series) => {
+            return series.name + (series.number ? ` #${series.number}` : "");
+          })
+          .join(", ");
+      }
+
+      if (record.authors) {
+        record.authors = record.authors.map((a) => a.name).join(", ");
+      }
+    }
+  }
 };
 VirtualFile = class {
   #contents = null;
@@ -4446,18 +4465,6 @@ TSVFile = class extends VirtualFile {
 
   preprocess() {
     for (let [i, record] of Object.entries(this.records)) {
-      if (record.series) {
-        record.series = record.series
-          .map((series) => {
-            return series.name + (series.number ? ` #${series.number}` : "");
-          })
-          .join(", ");
-      }
-
-      if (record.authors) {
-        record.authors = record.authors.map((a) => a.name).join(", ");
-      }
-
       Object.entries(record).forEach(([field, value]) => {
         if (value instanceof Array) {
           record[field] = value.join(", ");
@@ -4494,11 +4501,16 @@ TSVFile = class extends VirtualFile {
  * Event listener to create the export file and start the download.
  */
 download = () => {
-  let exporter = window.ae;
-  let modal = exporter.modal;
+  let app = window.ae;
+  let modal = app.modal;
   if (!modal.filetype) return;
-  let klass = exporter.formats[modal.filetype];
-  let file = new klass(exporter.results);
+  let klass = app.formats[modal.filetype];
+
+  if (klass == TSVFile) {
+    app.exporter.flatten();
+  }
+
+  let file = new klass(app.exporter.results);
   modal.file = file;
   modal.hide();
 };
