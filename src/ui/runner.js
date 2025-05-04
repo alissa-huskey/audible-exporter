@@ -1,2 +1,2 @@
-exporter = new Exporter();
+exporter = new App();
 exporter.start();

@@ -1,10 +1,9 @@
+/**
+ * User interface.
+ */
+
 require("../util.js");
 require("../timer.js");
-
-require("../etl/library-fetcher.js");
-require("../etl/details-fetcher.js");
-require("../etl/ledger-fetcher.js");
-require("../etl/result.js");
 
 require("./domain.js");
 require("./error-dialog.js");
@@ -14,6 +13,8 @@ require("./purchase-history-notifier.js");
 require("./order-notifier.js");
 require("./library-notifier.js");
 require("./details-notifier.js");
+
+require("../etl/exporter.js");
 
 require("../json-file.js");
 require("../tsv-file.js");
@@ -32,19 +33,16 @@ download = () => {
 };
 
 /**
- * Exporter class.
+ * App class.
  */
-Exporter = class {
+App = class {
   formats = { json: JSONFile, tsv: TSVFile };
 
   constructor(limit = null) {
     this.limit = limit;
     this.timer = new Timer();
     this.notifier = new Notifier();
-    this.ledger = new LedgerFetcher();
-    this.library = new LibraryFetcher();
-    this.details = new DetailsFetcher();
-    this.results = [];
+    this.exporter = new Exporter(limit);
 
     window.ae = this;
 
@@ -86,7 +84,7 @@ Exporter = class {
     this.notifier = new PurchaseHistoryNotifier();
     this.notifier.create();
 
-    await this.ledger.init(this.limit);
+    await this.exporter.getPurchaseHistory();
 
     await delay(1000);
     timer.stop();
@@ -102,14 +100,14 @@ Exporter = class {
 
     this.notifier.remove();
     this.notifier = new OrderNotifier(
-      this.ledger.pages.length,
-      this.ledger.years,
+      this.exporter.ledger.pages.length,
+      this.exporter.ledger.years,
     );
     this.notifier.create();
 
-    await this.ledger.populate(this.limit);
+    await this.exporter.getLedger();
 
-    log_table("purchases", this.ledger.entries);
+    log_table("purchases", this.exporter.ledger.entries);
 
     await delay(1000);
 
@@ -117,7 +115,7 @@ Exporter = class {
     info(
       `getLedger() took ${timer.minutes} minutes (${timer.seconds} seconds).`,
     );
-    return this.ledger.entries;
+    return this.exporter.ledger.entries;
   }
 
   async getLibrary() {
@@ -127,9 +125,9 @@ Exporter = class {
     this.notifier.remove();
     this.notifier = new LibraryNotifier();
     this.notifier.create();
-    await this.library.populate(this.limit);
+    await this.exporter.getLibrary();
 
-    log_table("library", this.library.books);
+    log_table("library", this.exporter.library.books);
 
     await delay(1000);
     timer.stop();
@@ -146,10 +144,10 @@ Exporter = class {
     this.notifier = new DetailsNotifier();
     this.notifier.create();
 
-    this.details.library = this.library.books;
-    await this.details.populate();
+    this.exporter.details.library = this.exporter.library.books;
+    await this.exporter.getBookDetails();
 
-    log_table("details", this.details.books);
+    log_table("details", this.exporter.details.books);
     await delay(1500);
     timer.stop();
     info(
@@ -158,16 +156,7 @@ Exporter = class {
   }
 
   getResults() {
-    let library_info, order_info, book_info, info;
-    let results = [];
-
-    for (library_info of this.library.books) {
-      book_info = this.details.books[library_info.asin];
-      order_info = this.ledger.entries[library_info.asin];
-      let result = new Result(library_info, book_info, order_info);
-      results.push(result.data());
-    }
-
+    let results = this.exporter.getResults();
     log_table("Your audible data", results);
 
     this.results = results;
@@ -217,7 +206,7 @@ Exporter = class {
       await this.getBookDetails();
       this.getResults();
 
-      if (!this.results || this.results.length == 0) {
+      if (!this.exporter.results || this.exporter.results.length == 0) {
         error("Failed to download books.");
         return;
       }

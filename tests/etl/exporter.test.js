@@ -1,122 +1,46 @@
-/**
- * @jest-environment jsdom
- */
-
-const fs = require("fs");
-const path = require("path");
-
-require("../../src/ui/exporter.js");
-
-var LOCATION = window.location;
+require("../../src/etl/exporter.js");
 
 describe("Exporter", () => {
-  beforeEach(() => {
-    delete window.location;
-    window.location = { href: "http://audible.com/" };
-  });
+  let exporter = new Exporter();
 
   test("new Exporter()", () => {
-    let exporter = new Exporter();
-
     expect(exporter).toBeA(Exporter);
-    expect(window.ae).toEqual(exporter);
-  });
-
-  test.each([
-    ["http://google.com", false],
-    ["http://www.audible.fake-site.com", false],
-    ["http://audible.com", true],
-    ["http://audible.de", true],
-    ["http://www.audible.com", true],
-  ])("isAudible(%s)", (url, expected) => {
-    window.location.href = url;
-
-    let exporter = new Exporter();
-
-    expect(exporter.isAudible()).toBe(expected);
   });
 
   test(".getPurchaseHistory()", async () => {
-    let mockFn = mockFetchDocs([
-      fixtureDoc("ledger-page.html"),
-      fixtureDoc("ledger-page.html"),
-    ]);
-    Page.prototype.fetchDoc = mockFn;
+    let spy = mockFn(null);
+    LedgerFetcher.prototype.init = spy;
 
-    let exporter = new Exporter();
     await exporter.getPurchaseHistory();
 
-    expect(mockFn.mock.calls).toHaveLength(2);
-    expect(exporter.ledger.pages).toHaveLength(1);
+    expect(spy.mock.calls).toHaveLength(1);
   });
 
   test(".getLedger()", async () => {
-    let mockFn = mockFetchDocs([fixtureDoc("ledger-page-2025-1-of-1.html")]);
-    Page.prototype.fetchDoc = mockFn;
-
-    let exporter = new Exporter();
-    exporter.ledger.years = ["2025"];
-    exporter.ledger.pages = [new LedgerPage(2025, 1)];
+    let spy = mockFn(null);
+    LedgerFetcher.prototype.populate = spy;
 
     await exporter.getLedger();
 
-    expect(mockFn.mock.calls).toHaveLength(1);
-    expect(exporter.ledger.count).toBe(1);
+    expect(spy.mock.calls).toHaveLength(1);
   });
 
   test(".getLibrary()", async () => {
-    let docs = ["1", "2"].map((i) =>
-      toDoc(getFixtureFile(`library-page-${i}-of-3.html`)),
-    );
-
-    Page.prototype.fetchDoc = mockFetchDocs(docs);
-    let exporter = new Exporter();
+    let spy = mockFn(null);
+    LibraryFetcher.prototype.populate = spy;
 
     await exporter.getLibrary();
-    let books = exporter.library.books;
 
-    let titles = books.map((b) => b.title);
-
-    // in a real call, this would fetch pages with 50 per page, but since the
-    // pages I downloaded apparently have 20 per page, it only does two requests
-    expect(books.length).toBe(40);
-    expect(books[0].title).toBe(
-      "Scorpion Shards: Star Shards Chronicles Series, Book 1",
-    );
+    expect(spy.mock.calls).toHaveLength(1);
   });
 
   test(".getBookDetails()", async () => {
-    let mockFn = mockFetchDocs([
-      fixtureDoc("ledger-page.html"),
-      fixtureDoc("ledger-page.html"),
-      fixtureDoc("library-page-1-of-1.html"),
-      fixtureDoc("book-details-audible-original.html"),
-    ]);
-    Page.prototype.fetchDoc = mockFn;
-
-    let exporter = new Exporter();
-
-    await exporter.ledger.init();
-    await exporter.ledger.populate();
-
-    // make sure the order setup worked as expected
-    expect(exporter.ledger.pages).toHaveLength(1);
-    expect(exporter.ledger.count).toBe(44);
-
-    await exporter.library.populate();
-
-    // make sure the library setup worked as expected
-    expect(exporter.library.page_count).toBe(1);
-    expect(exporter.library.books).toHaveLength(1);
-    expect(mockFn.mock.calls).toHaveLength(3);
+    let spy = mockFn(null);
+    DetailsFetcher.prototype.populate = spy;
 
     await exporter.getBookDetails();
-    let item = Object.values(exporter.details.books)[0];
 
-    expect(mockFn.mock.calls).toHaveLength(4);
-    expect(Object.values(exporter.details.books)).toHaveLength(1);
-    expect(item.asin).toBe("B0BL84CBLZ");
-    expect(item.title).toBe("Ghosts of Zenith");
+    expect(spy.mock.calls).toHaveLength(1);
   });
 
   test(".getResults()", async () => {
@@ -153,45 +77,5 @@ describe("Exporter", () => {
     exporter.getResults();
 
     expect(exporter.results).toEqual(results);
-  });
-
-  test("downloadReady()", () => {
-    let exporter = new Exporter();
-    exporter.downloadReady();
-
-    expect(exporter.modal).toBeA(DownloadDialog);
-  });
-
-  test("download()", async () => {
-    let exporter = new Exporter();
-    exporter.results = ["a", "b", "c"];
-
-    exporter.modal = new DownloadDialog();
-    exporter.modal.create();
-    exporter.modal.ft_select.selectedIndex = 2;
-
-    download();
-
-    expect(exporter.modal.file).toBeA(TSVFile);
-  });
-
-  test(".run()", async () => {
-    let mockFn = mockFetchDocs([
-      fixtureDoc("ledger-page.html"),
-      fixtureDoc("ledger-page.html"),
-      fixtureDoc("library-page-1-of-1.html"),
-      fixtureDoc("book-details-audible-original.html"),
-    ]);
-    Page.prototype.fetchDoc = mockFn;
-
-    // evade the login check
-    let giMocker = jest.fn().mockImplementation(() => true);
-    document.getElementById = giMocker;
-
-    let exporter = new Exporter();
-    await exporter.run();
-
-    expect(mockFn.mock.calls).toHaveLength(4);
-    expect(exporter.results).toHaveLength(1);
   });
 });

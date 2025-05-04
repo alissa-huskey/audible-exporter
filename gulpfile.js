@@ -150,10 +150,10 @@ task("ui", () => {
 });
 
 /**
- * Bundle exporter and save in build/dev/.
+ * Bundle app and save in build/dev/.
  */
-task("exporter.js", () => {
-  return src([`${dirs.prep}/ui/exporter.js`])
+task("app.js", () => {
+  return src([`${dirs.prep}/ui/app.js`])
     .pipe(using({}))
     .pipe(bundle())
     .pipe(dest(dirs.dev));
@@ -164,7 +164,7 @@ task("exporter.js", () => {
  * build/dev/audible-exporter.js.
  */
 task("audible-exporter.js", () => {
-  return src([`${dirs.dev}/exporter.js`, `${dirs.prep}/ui/runner.js`])
+  return src([`${dirs.dev}/app.js`, `${dirs.prep}/ui/runner.js`])
     .pipe(using({}))
     .pipe(concat("audible-exporter.js"))
     .pipe(replace("CONSOLE_OUTPUT = false", (_) => "CONSOLE_OUTPUT = true"))
@@ -202,10 +202,7 @@ task("corejs", () => {
   return res;
 });
 
-task(
-  "dev",
-  series("copy", "index.html", "style.css", "style.js", "ui", "exporter.js"),
-);
+task("dev", series("copy", "style.css", "style.js", "ui", "app.js"));
 task("exporter", series("dev", "audible-exporter.js"));
 task("compat", series("exporter", "babel", "corejs"));
 task("default", parallel("exporter", "compat"));
