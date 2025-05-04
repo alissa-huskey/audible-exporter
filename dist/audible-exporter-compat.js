@@ -2588,6 +2588,22 @@ Exporter = /*#__PURE__*/function () {
         }
       }
     }
+
+    /**
+     * For JSON files, add metadata.
+     */
+  }, {
+    key: "prepend_metadata",
+    value: function prepend_metadata(timer) {
+      var time = new Date();
+      var data = {};
+      data.book_count = this.results.length;
+      data.downloaded_at = time.toLocaleString();
+      data.timestamp = time.getTime();
+      data.processing_time = timer.seconds;
+      data.books = this.results;
+      this.results = data;
+    }
   }]);
 }();
 /**
@@ -4568,8 +4584,13 @@ download = function download() {
   var modal = app.modal;
   if (!modal.filetype) return;
   var klass = app.formats[modal.filetype];
-  if (klass == TSVFile) {
-    app.exporter.flatten();
+  switch (klass) {
+    case TSVFile:
+      app.exporter.flatten();
+      break;
+    case JSONFile:
+      app.exporter.prepend_metadata(app.timer);
+      break;
   }
   var file = new klass(app.exporter.results);
   modal.file = file;

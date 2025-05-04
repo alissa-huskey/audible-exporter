@@ -1919,6 +1919,22 @@ Exporter = class {
       }
     }
   }
+
+  /**
+   * For JSON files, add metadata.
+   */
+  prepend_metadata(timer) {
+    let time = new Date();
+    let data = {};
+
+    data.book_count = this.results.length;
+    data.downloaded_at = time.toLocaleString();
+    data.timestamp = time.getTime();
+    data.processing_time = timer.seconds;
+    data.books = this.results;
+
+    this.results = data;
+  }
 };
 /**
  * Domain class.
@@ -4506,8 +4522,13 @@ download = () => {
   if (!modal.filetype) return;
   let klass = app.formats[modal.filetype];
 
-  if (klass == TSVFile) {
-    app.exporter.flatten();
+  switch (klass) {
+    case TSVFile:
+      app.exporter.flatten();
+      break;
+    case JSONFile:
+      app.exporter.prepend_metadata(app.timer);
+      break;
   }
 
   let file = new klass(app.exporter.results);

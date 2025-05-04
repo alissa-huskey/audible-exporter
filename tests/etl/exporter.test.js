@@ -1,3 +1,4 @@
+require("../../src/timer.js");
 require("../../src/etl/exporter.js");
 
 describe("Exporter", () => {
@@ -103,5 +104,18 @@ describe("Exporter", () => {
     expect(record.series).toBe(
       "The Chronicles of Narnia (Publication Order) #1, The Chronicles of Narnia (Author's Preferred Order) #2",
     );
+  });
+
+  test(".prepend_metadata()", () => {
+    exporter.results = [1, 2, 3];
+
+    exporter.prepend_metadata(new Timer(0, 10000));
+
+    expect(exporter.results).toBeA(Object);
+    expect(exporter.results.book_count).toBe(3);
+    expect(exporter.results.downloaded_at).toBeA("String");
+    expect(exporter.results.timestamp).toBeA("Number");
+    expect(exporter.results.processing_time).toBe(10);
+    expect(exporter.results.books).toEqual([1, 2, 3]);
   });
 });

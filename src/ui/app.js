@@ -28,8 +28,13 @@ download = () => {
   if (!modal.filetype) return;
   let klass = app.formats[modal.filetype];
 
-  if (klass == TSVFile) {
-    app.exporter.flatten();
+  switch (klass) {
+    case TSVFile:
+      app.exporter.flatten();
+      break;
+    case JSONFile:
+      app.exporter.prepend_metadata(app.timer);
+      break;
   }
 
   let file = new klass(app.exporter.results);

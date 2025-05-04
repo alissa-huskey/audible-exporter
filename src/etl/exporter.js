@@ -74,4 +74,20 @@ Exporter = class {
       }
     }
   }
+
+  /**
+   * For JSON files, add metadata.
+   */
+  prepend_metadata(timer) {
+    let time = new Date();
+    let data = {};
+
+    data.book_count = this.results.length;
+    data.downloaded_at = time.toLocaleString();
+    data.timestamp = time.getTime();
+    data.processing_time = timer.seconds;
+    data.books = this.results;
+
+    this.results = data;
+  }
 };
