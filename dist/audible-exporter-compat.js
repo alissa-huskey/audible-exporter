@@ -4129,7 +4129,7 @@ PurchaseHistoryNotifier = (_year2 = /*#__PURE__*/new WeakMap(), _years2 = /*#__P
     _this25 = _callSuper(this, PurchaseHistoryNotifier);
     _classPrivateFieldInitSpec(_this25, _year2, null);
     _classPrivateFieldInitSpec(_this25, _years2, null);
-    _defineProperty(_this25, "step_no", 1);
+    _defineProperty(_this25, "step_no", 2);
     _this25.times = [];
     _this25.years = years || [];
     return _this25;
@@ -4226,7 +4226,7 @@ OrderNotifier = (_year3 = /*#__PURE__*/new WeakMap(), _year_page = /*#__PURE__*/
     _classPrivateFieldInitSpec(_this26, _year_page, null);
     _classPrivateFieldInitSpec(_this26, _item_no2, null);
     _classPrivateFieldInitSpec(_this26, _page_count3, null);
-    _defineProperty(_this26, "step_no", 2);
+    _defineProperty(_this26, "step_no", 3);
     _this26.total = total;
     _this26.years = years;
     return _this26;
@@ -4337,7 +4337,7 @@ LibraryNotifier = (_item_no3 = /*#__PURE__*/new WeakMap(), _total2 = /*#__PURE__
     _this27 = _callSuper(this, LibraryNotifier, [].concat(args));
     _classPrivateFieldInitSpec(_this27, _item_no3, null);
     _classPrivateFieldInitSpec(_this27, _total2, null);
-    _defineProperty(_this27, "step_no", 3);
+    _defineProperty(_this27, "step_no", 1);
     return _this27;
   }
   _inherits(LibraryNotifier, _Notifier3);
@@ -4831,13 +4831,13 @@ App = /*#__PURE__*/function () {
               info("Started at ".concat(this.timer.started_at.toLocaleTimeString()));
               this.notifier.create();
               _context20.next = 12;
-              return this.getPurchaseHistory();
+              return this.getLibrary();
             case 12:
               _context20.next = 14;
-              return this.getLedger();
+              return this.getPurchaseHistory();
             case 14:
               _context20.next = 16;
-              return this.getLibrary();
+              return this.getLedger();
             case 16:
               _context20.next = 18;
               return this.getBookDetails();

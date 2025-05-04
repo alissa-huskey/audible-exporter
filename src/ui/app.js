@@ -210,9 +210,9 @@ App = class {
 
       this.notifier.create();
 
+      await this.getLibrary();
       await this.getPurchaseHistory();
       await this.getLedger();
-      await this.getLibrary();
       await this.getBookDetails();
       this.getResults();
 

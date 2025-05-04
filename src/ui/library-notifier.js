@@ -5,7 +5,7 @@ LibraryNotifier = class extends Notifier {
   #item_no = null;
   #total = null;
 
-  step_no = 3;
+  step_no = 1;
 
   get step_desc() {
     let message = "Your library";

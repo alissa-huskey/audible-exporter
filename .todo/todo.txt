@@ -39,7 +39,6 @@
 (B) 2025-03-07 @reliability Make all requests from / instead of audible.com/
 (D) 2025-03-07 @performance look intoperformance (memory specifically) testing
 (Z) 2025-03-08 @feature Add an option to download as CSV. https://stackoverflow.com/questions/14964035/how-to-export-javascript-array-info-to-csv-on-client-side
-(B) 2025-03-08 @ux Make getLibrary() the first step. (would help with overall time estimate and quick download option.
 (C) 2025-03-08 @refactor Rethink how .create() functions handles if it exists (.remove(), remove outter HTML?, replace in .ae.notifier/whatever?)
 (C) 2025-03-09 @reliability In fetch, check if the current page is the one being fetched, if so use document.body
 (B) 2025-03-09 @refactor look into switching everything to query selectors.

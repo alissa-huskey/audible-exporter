@@ -113,3 +113,4 @@ x 2025-05-03 2025-05-02 @refactor Rename Purchase -> PurchaseRow.
 x 2025-05-03 2025-05-03 @bug Rename tests/notifier.js -> notifier.test.js and fix tests.
 x 2025-05-03 2025-03-15 Consider removing testcafe.
 x 2025-05-03 2025-05-03 @refactor @tsv Move field-specific preprocessing from TSVFile -> Exporter.flatten().
+x 2025-05-03 2025-03-08 @ux Make getLibrary() the first step. (would help with overall time estimate and quick download option.

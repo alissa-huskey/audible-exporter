@@ -4129,7 +4129,7 @@ PurchaseHistoryNotifier = class extends Notifier {
   #year = null;
   #years = null;
 
-  step_no = 1;
+  step_no = 2;
 
   constructor(years = null) {
     super();
@@ -4215,7 +4215,7 @@ OrderNotifier = class extends Notifier {
   #item_no = null;
   #page_count = null;
 
-  step_no = 2;
+  step_no = 3;
 
   constructor(total = null, years = null) {
     super();
@@ -4315,7 +4315,7 @@ LibraryNotifier = class extends Notifier {
   #item_no = null;
   #total = null;
 
-  step_no = 3;
+  step_no = 1;
 
   get step_desc() {
     let message = "Your library";
@@ -4704,9 +4704,9 @@ App = class {
 
       this.notifier.create();
 
+      await this.getLibrary();
       await this.getPurchaseHistory();
       await this.getLedger();
-      await this.getLibrary();
       await this.getBookDetails();
       this.getResults();
 

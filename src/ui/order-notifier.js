@@ -7,7 +7,7 @@ OrderNotifier = class extends Notifier {
   #item_no = null;
   #page_count = null;
 
-  step_no = 2;
+  step_no = 3;
 
   constructor(total = null, years = null) {
     super();

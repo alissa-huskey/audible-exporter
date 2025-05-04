@@ -5,7 +5,7 @@ PurchaseHistoryNotifier = class extends Notifier {
   #year = null;
   #years = null;
 
-  step_no = 1;
+  step_no = 2;
 
   constructor(years = null) {
     super();
