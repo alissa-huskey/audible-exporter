@@ -29,6 +29,7 @@ describe("LibraryPage", () => {
         },
       ],
       narrators: ["Joe Hempel"],
+      is_fav: false,
       series: [
         {
           id: "B08CVC76VZ",

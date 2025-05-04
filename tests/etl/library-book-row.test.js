@@ -1,11 +1,17 @@
 require("../../src/etl/library-book-row.js");
 
+let fixtures = [
+  "library-book-row-fav-finished-pdf.html",
+  "library-book-row-multiple-authors.html",
+  "library-book-row-no-series.html",
+  "library-book-row.html",
+];
+let docs = Object.fromEntries(
+  fixtures.map((f) => [f, fixtureElement(f, ".adbl-library-content-row:first-child")]),
+);
+
 describe("LibraryBookRow", () => {
-  let doc = fixtureElement(
-    "library-book-row.html",
-    ".adbl-library-content-row:first-child",
-  );
-  let row = new LibraryBookRow(doc);
+  let row = new LibraryBookRow(docs["library-book-row.html"]);
 
   test("new LibraryBookRow()", () => {
     let row = new LibraryBookRow();
@@ -17,7 +23,7 @@ describe("LibraryBookRow", () => {
   });
 
   test("new LibraryBookRow(doc, page, row)", () => {
-    let row = new LibraryBookRow(doc, 1, 5);
+    let row = new LibraryBookRow(docs["library-book-row.html"], 1, 5);
     expect(row.doc).toBeA(Doc);
     expect(row.page_num).toBe(1);
     expect(row.row_num).toBe(5);
@@ -43,11 +49,7 @@ describe("LibraryBookRow", () => {
   });
 
   test("authors (multiple)", () => {
-    let doc = fixtureElement(
-      "library-book-row-multiple-authors.html",
-      ".adbl-library-content-row:first-child",
-    );
-    let row = new LibraryBookRow(doc);
+    let row = new LibraryBookRow(docs["library-book-row-multiple-authors.html"]);
 
     let authors = [
       {
@@ -76,6 +78,34 @@ describe("LibraryBookRow", () => {
 
   test("narrators", () => {
     expect(row.narrators).toEqual(["Joe Hempel"]);
+  });
+
+  test.each([
+    {
+      fixture: "library-book-row.html",
+      is_fav: false,
+    },
+    {
+      fixture: "library-book-row-fav-finished-pdf.html",
+      is_fav: true,
+    },
+  ])(".is_fav", ({ fixture, is_fav }) => {
+    let row = new LibraryBookRow(docs[fixture]);
+    expect(row.is_fav).toBe(is_fav);
+  });
+
+  test.each([
+    {
+      fixture: "library-book-row.html",
+      rating: 3,
+    },
+    {
+      fixture: "library-book-row-fav-finished-pdf.html",
+      rating: null,
+    },
+  ])(".my_rating", ({ fixture, rating }) => {
+    let row = new LibraryBookRow(docs[fixture]);
+    expect(row.my_rating).toBe(rating);
   });
 
   test.each([
@@ -111,11 +141,7 @@ describe("LibraryBookRow", () => {
       ],
     },
   ])("series: $desc", ({ fixture, desc, series }) => {
-    let doc = fixtureElement(
-      `library-book-row${fixture}.html`,
-      ".adbl-library-content-row:first-child",
-    );
-    let row = new LibraryBookRow(doc);
+    let row = new LibraryBookRow(docs[`library-book-row${fixture}.html`]);
     expect(row.series).toEqual(series);
   });
 
@@ -132,6 +158,8 @@ describe("LibraryBookRow", () => {
         },
       ],
       narrators: ["Joe Hempel"],
+      is_fav: false,
+      my_rating: 3,
       series: [
         {
           id: "B08CVC76VZ",
@@ -150,9 +178,10 @@ describe("LibraryBookRow", () => {
     global.console.errors = spy.mockImplementation(() => {});
 
     let row = new LibraryBookRow(null, 2, 8);
+    let field_count = row._fields.length;
 
     row.data();
 
-    expect(spy.mock.calls).toHaveLength(6);
+    expect(spy.mock.calls).toHaveLength(field_count);
   });
 });

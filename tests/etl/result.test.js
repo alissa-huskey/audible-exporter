@@ -149,6 +149,8 @@ describe("Result", () => {
       genre: "Science Fiction & Fantasy",
       subgenre: "Fantasy",
       tags: ["Fantasy"],
+      my_rating: "",
+      is_fav: "",
       rating: 4.7,
       num_ratings: 168,
       is_adult: false,

@@ -721,7 +721,7 @@ LibraryBookRow = /*#__PURE__*/function (_Parser) {
     var row_num = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
     _classCallCheck(this, LibraryBookRow);
     _this4 = _callSuper(this, LibraryBookRow);
-    _defineProperty(_this4, "_fields", ["asin", "url", "title", "authors", "narrators", "series"]);
+    _defineProperty(_this4, "_fields", ["asin", "url", "title", "authors", "narrators", "my_rating", "is_fav", "series"]);
     _defineProperty(_this4, "_identifers", ["page_num", "row_num"]);
     _this4.doc = doc;
     _this4.page_num = page_num;
@@ -777,6 +777,18 @@ LibraryBookRow = /*#__PURE__*/function (_Parser) {
       return links.map(function (a) {
         return a.innerHTML.trim();
       });
+    }
+  }, {
+    key: "my_rating",
+    get: function get() {
+      var _star$attributes;
+      var star = this.doc.qsf(".bc-rating-star[aria-checked=true]");
+      return tryInt(star === null || star === void 0 || (_star$attributes = star.attributes) === null || _star$attributes === void 0 || (_star$attributes = _star$attributes["data-index"]) === null || _star$attributes === void 0 ? void 0 : _star$attributes.value) || null;
+    }
+  }, {
+    key: "is_fav",
+    get: function get() {
+      return !!this.doc.qsf(".add-to-favorites-button.bc-pub-hidden").element;
     }
   }, {
     key: "series",
@@ -2387,6 +2399,8 @@ Result = (_headers = /*#__PURE__*/new WeakMap(), /*#__PURE__*/function () {
       purchased: ["order"],
       language: ["details"],
       summary: ["details"],
+      my_rating: ["library"],
+      is_fav: ["library"],
       rating: ["details"],
       num_ratings: ["details"],
       audible_original: ["details"],

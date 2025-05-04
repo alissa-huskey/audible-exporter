@@ -5,11 +5,9 @@
 (Z) 2025-02-17 @feature parse anthologies from book details
 (Z) 2025-02-21 @feature get finished/not-finished status
 (Z) 2025-02-22 @feature Add my_review
-(Z) 2025-02-22 @feature Add my_rating
 (Z) 2025-02-23 @feature Get collections
 (Z) 2025-02-23 @feature Get wishlist https://www.audible.com/library/wishlist
 (Z) 2025-02-23 @feature Get saved authors https://www.audible.com/library/authors
-(A) 2025-02-23 @feature Get if it is added to favorites https://www.audible.com/library/collections/__FAVORITES
 (A) 2025-02-23 @feature Get if a book is marked as finished.
 (Z) 2025-02-23 @feature Get if a book has a PDF https://www.audible.com/companion-file/B0CQ3759C3
 (Z) 2025-02-23 @feature Get a list of authors you follow
@@ -62,3 +60,5 @@
 (A) 2025-05-02 @data @tsv Look into not escaping single quotes (look at series: https://www.audible.com/pd/House-of-Blades-Audiobook/B0B29L7HZ8)
 (B) 2025-05-03 @data Parse reviews from listener page: https://www.audible.com/listener
 2025-05-03 @ux Get total books from credit summary page first (for estimate): https://www.audible.com/account/credits
+(A) 2025-05-03 @download Move cleanObject logic to Exporter.flatten().
+2025-05-03 @refactor Exporter.getResults(): Try getting rid of .data() methods and just use objects.

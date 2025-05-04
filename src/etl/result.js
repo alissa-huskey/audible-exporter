@@ -26,6 +26,8 @@ Result = class {
     purchased: ["order"],
     language: ["details"],
     summary: ["details"],
+    my_rating: ["library"],
+    is_fav: ["library"],
     rating: ["details"],
     num_ratings: ["details"],
     audible_original: ["details"],

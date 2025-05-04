@@ -114,3 +114,5 @@ x 2025-05-03 2025-05-03 @bug Rename tests/notifier.js -> notifier.test.js and fi
 x 2025-05-03 2025-03-15 Consider removing testcafe.
 x 2025-05-03 2025-05-03 @refactor @tsv Move field-specific preprocessing from TSVFile -> Exporter.flatten().
 x 2025-05-03 2025-03-08 @ux Make getLibrary() the first step. (would help with overall time estimate and quick download option.
+x 2025-05-03 2025-02-23 @feature Get if it is added to favorites https://www.audible.com/library/collections/__FAVORITES
+x 2025-05-03 2025-02-22 @feature Add my_rating

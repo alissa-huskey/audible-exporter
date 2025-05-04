@@ -581,7 +581,7 @@ Parser = class {
   }
 };
 LibraryBookRow = class extends Parser {
-  _fields = ["asin", "url", "title", "authors", "narrators", "series"];
+  _fields = ["asin", "url", "title", "authors", "narrators", "my_rating", "is_fav", "series"];
   _identifers = ["page_num", "row_num"];
 
   constructor(doc = null, page_num = null, row_num = null) {
@@ -626,6 +626,15 @@ LibraryBookRow = class extends Parser {
   get narrators() {
     let links = this.ul.qs(".narratorLabel .bc-color-base");
     return links.map((a) => a.innerHTML.trim());
+  }
+
+  get my_rating() {
+    let star = this.doc.qsf(".bc-rating-star[aria-checked=true]");
+    return tryInt(star?.attributes?.["data-index"]?.value) || null;
+  }
+
+  get is_fav() {
+    return !!this.doc.qsf(".add-to-favorites-button.bc-pub-hidden").element;
   }
 
   get series() {
@@ -1797,6 +1806,8 @@ Result = class {
     purchased: ["order"],
     language: ["details"],
     summary: ["details"],
+    my_rating: ["library"],
+    is_fav: ["library"],
     rating: ["details"],
     num_ratings: ["details"],
     audible_original: ["details"],
